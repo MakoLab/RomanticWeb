@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="EntityFactoryTests.cs" />
     <Compile Include="EntityIdTests.cs" />
+    <Compile Include="Helpers\TripleStoreExtensions.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreTests.cs" />
     <Compile Include="PredicateAccessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,6 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestGraphs\TriplesWithLiteralSubjects.ttl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestGraphs\AssociatedInstances.ttl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

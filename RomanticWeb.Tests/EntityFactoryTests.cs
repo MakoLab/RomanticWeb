@@ -48,7 +48,7 @@ namespace RomanticWeb.Tests
   
             // then
             Assert.That(entity.foaf, Is.Not.Null);
-            Assert.That(entity.foaf, Is.TypeOf<PredicateAccessor>());
+            Assert.That(entity.foaf, Is.InstanceOf<PredicateAccessor>());
         }
     }
 }

@@ -1,0 +1,6 @@
+﻿base <http://magi/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+<people/Tomasz> foaf:knows <people/Karol> .
+
+<people/Karol> foaf:givenName "Karol" .

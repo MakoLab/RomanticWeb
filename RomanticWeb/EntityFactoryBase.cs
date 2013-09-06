@@ -15,13 +15,13 @@
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                entity[ontology.Prefix] = CreatePredicateAccessor(entity);
+                entity[ontology.Prefix] = CreatePredicateAccessor(entity, ontology);
             }
 
             return entity;
         }
 
-        protected abstract PredicateAccessor<TTripleSource> CreatePredicateAccessor(Entity entity);
+        protected abstract PredicateAccessor<TTripleSource> CreatePredicateAccessor(Entity entity, Ontology ontology);
 
         protected abstract Entity CreateInternal(EntityId entityId);
     }

@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using NullGuard;
 
 namespace RomanticWeb
 {
     internal interface IPredicateAccessor
     {
-        dynamic GetSubjects(Uri baseUri, Property predicate);
+        dynamic GetObjects(Uri baseUri, Property predicate);
     }
 
+    [NullGuard(ValidationFlags.OutValues)] 
     public abstract class PredicateAccessor<TTriplesSource> : DynamicObject, IPredicateAccessor
     {
         private readonly TTriplesSource _tripleSource;
         private readonly EntityId _entityId;
         private readonly Ontology _ontology;
 
-        protected PredicateAccessor(TTriplesSource tripleSource, EntityId entityId, Ontology ontology)
+        protected PredicateAccessor(TTriplesSource tripleSource, Entity entity, Ontology ontology)
         {
             _tripleSource = tripleSource;
-            _entityId = entityId;
+            _entityId = entity.Id;
             _ontology = ontology;
         }
 
@@ -28,9 +30,19 @@ namespace RomanticWeb
             get { return _entityId; }
         }
 
-        dynamic IPredicateAccessor.GetSubjects(Uri baseUri, Property predicate)
+        dynamic IPredicateAccessor.GetObjects(Uri baseUri, Property predicate)
         {
-            var subjectValues = GetSubjects(_tripleSource, baseUri, predicate).ToList();
+            var subjectValues = GetObjects(_tripleSource, baseUri, predicate).ToList();
+
+            if (subjectValues.Count == 1)
+            {
+                return subjectValues.Single();
+            }
+
+            if (subjectValues.Count == 0)
+            {
+                return null;
+            }
 
             return subjectValues;
         }
@@ -39,11 +51,11 @@ namespace RomanticWeb
         {
             var predicate = _ontology.Predicates.Single(p => p.PredicateUri == binder.Name);
 
-            result = ((IPredicateAccessor) this).GetSubjects(_ontology.BaseUri, predicate);
+            result = ((IPredicateAccessor) this).GetObjects(_ontology.BaseUri, predicate);
 
             return true;
         }
 
-        protected abstract IEnumerable<string> GetSubjects(TTriplesSource triplesSource, Uri baseUri, Property predicate);
+        protected abstract IEnumerable<string> GetObjects(TTriplesSource triplesSource, Uri baseUri, Property predicate);
     }
 }

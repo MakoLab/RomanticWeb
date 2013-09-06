@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq.Expressions;
-using VDS.RDF;
+﻿using VDS.RDF;
 
 namespace RomanticWeb.dotNetRDF
 {
     public class EntityFactory : EntityFactoryBase<ITripleStore>
     {
-        public EntityFactory(IOntologyProvider ontologyProvider) : base(ontologyProvider)
+        private readonly ITripleStore _tripeStore;
+
+        public EntityFactory(ITripleStore tripeStore, IOntologyProvider ontologyProvider) : base(ontologyProvider)
         {
+            _tripeStore = tripeStore;
         }
 
-        protected override PredicateAccessor<ITripleStore> CreatePredicateAccessor(Entity entity)
+        protected override PredicateAccessor<ITripleStore> CreatePredicateAccessor(Entity entity, Ontology ontology)
         {
-            throw new NotImplementedException();
+            return new PredicateAccessor(_tripeStore, entity, ontology);
         }
 
         protected override Entity CreateInternal(EntityId entityId)

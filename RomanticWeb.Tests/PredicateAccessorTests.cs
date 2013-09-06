@@ -9,7 +9,7 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class PredicateAccessorTests
     {
-        private readonly EntityId _entityId = new EntityId(Uri);
+        private readonly Entity _entity = new Entity(new EntityId(Uri));
         private Mock<ITripleStore> _store;
         private Ontology _ontology;
         private const string Uri = "urn:test:identity";
@@ -27,13 +27,13 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Getting_known_predicate_should_return_subjects()
+        public void Getting_known_predicate_should_return_objects()
         {
             // given
             var graph = new Mock<IGraph>(MockBehavior.Strict);
             graph.Setup(g => g.GetTriplesWithSubjectPredicate(It.IsAny<IUriNode>(), It.IsAny<IUriNode>())).Returns(new Triple[0]);
             _store.Setup(s => s.Graphs[null]).Returns(graph.Object);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entityId, _ontology);
+            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology);
 
             // when
             var givenName = accessor.givenName;

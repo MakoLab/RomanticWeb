@@ -9,12 +9,12 @@ namespace RomanticWeb.dotNetRDF
     {
         static readonly NodeFactory NodeFactory = new NodeFactory();
 
-        public PredicateAccessor(ITripleStore tripleStore, EntityId entityId, Ontology ontology)
+        public PredicateAccessor(ITripleStore tripleStore, Entity entityId, Ontology ontology)
             : base(tripleStore, entityId, ontology)
         {
         }
 
-        protected override IEnumerable<string> GetSubjects(ITripleStore triplesSource, Uri baseUri, Property predicate)
+        protected override IEnumerable<string> GetObjects(ITripleStore triplesSource, Uri baseUri, Property predicate)
         {
             IGraph sourceGraph = triplesSource.Graphs[null];
 
@@ -22,7 +22,7 @@ namespace RomanticWeb.dotNetRDF
             INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri, predicate.PredicateUri));
 
             return sourceGraph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
-                              .Select(s => s.Subject.ToString());
+                              .Select(s => s.Object.ToString());
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.dotNetRDF;
+using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
@@ -10,12 +12,14 @@ namespace RomanticWeb.Tests
     {
         private IEntityFactory _entityFactory;
         private IOntologyProvider _ontologyProvider;
+        private Mock<ITripleStore> _store;
 
-        [SetUp]
+            [SetUp]
         public void Setup()
         {
             _ontologyProvider = new StaticOntologyProvider();
-            _entityFactory = new EntityFactory(_ontologyProvider);
+            _store = new Mock<ITripleStore>(MockBehavior.Strict);
+            _entityFactory = new EntityFactory(_store.Object, _ontologyProvider);
         }
 
         [Test]

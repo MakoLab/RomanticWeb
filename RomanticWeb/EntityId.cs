@@ -6,19 +6,19 @@ namespace RomanticWeb
     {
         protected bool Equals(EntityId other)
         {
-            return Equals(_iri, other._iri);
+            return Equals(_uri, other._uri);
         }
 
         public override int GetHashCode()
         {
-            return (_iri != null ? _iri.GetHashCode() : 0);
+            return (_uri != null ? _uri.GetHashCode() : 0);
         }
 
-        private readonly Uri _iri;
+        private readonly Uri _uri;
 
-        public EntityId(string iri)
+        public EntityId(string uri)
         {
-            _iri = new Uri(iri);
+            _uri = new Uri(uri);
         }
 
         public override bool Equals(object obj)
@@ -33,7 +33,7 @@ namespace RomanticWeb
                 return true;
             }
 
-            return _iri == ((EntityId)obj)._iri;
+            return _uri == ((EntityId)obj)._uri;
         }
 
         public static bool operator ==(EntityId left, EntityId right)
@@ -44,6 +44,11 @@ namespace RomanticWeb
         public static bool operator !=(EntityId left, EntityId right)
         {
             return !(left == right);
+        }
+
+        public Uri Uri
+        {
+            get { return _uri; }
         }
     }
 }

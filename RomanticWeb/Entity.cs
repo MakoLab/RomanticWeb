@@ -1,6 +1,8 @@
+using ImpromptuInterface.Dynamic;
+
 namespace RomanticWeb
 {
-    public class Entity
+    public class Entity : ImpromptuDictionary
     {
         private readonly EntityId _entityId;
 

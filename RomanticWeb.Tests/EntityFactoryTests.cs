@@ -1,5 +1,4 @@
 ﻿using System;
-using Moq;
 using NUnit.Framework;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.dotNetRDF;
@@ -35,6 +34,17 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
             _entityFactory.Create(null);
+        }
+
+        [Test]
+        public void Creating_new_Entity_should_add_getters_for_known_ontology_namespaces()
+        {
+            // when
+            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+  
+            // then
+            Assert.That(entity.foaf, Is.Not.Null);
+            Assert.That(entity.foaf, Is.TypeOf<IPredicateAccessor>());
         }
     }
 }

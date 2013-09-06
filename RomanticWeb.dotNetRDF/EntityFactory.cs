@@ -1,15 +1,23 @@
-﻿namespace RomanticWeb.dotNetRDF
-{
-    public class EntityFactory : IEntityFactory
-    {
-        private readonly IOntologyProvider _ontologyProvider;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq.Expressions;
+using VDS.RDF;
 
-        public EntityFactory(IOntologyProvider ontologyProvider)
+namespace RomanticWeb.dotNetRDF
+{
+    public class EntityFactory : EntityFactoryBase<ITripleStore>
+    {
+        public EntityFactory(IOntologyProvider ontologyProvider) : base(ontologyProvider)
         {
-            _ontologyProvider = ontologyProvider;
         }
 
-        public Entity Create(EntityId entityId)
+        protected override PredicateAccessor<ITripleStore> CreatePredicateAccessor(Entity entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Entity CreateInternal(EntityId entityId)
         {
             return new Entity(entityId);
         }

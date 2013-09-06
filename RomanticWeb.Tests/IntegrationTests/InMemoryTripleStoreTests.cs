@@ -45,5 +45,33 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(tomasz.foaf.nick == null);
         }
+
+        [Test]
+        public void Creating_Entity_should_allow_associated_Entity_subjects()
+        {
+            // given
+            _store.LoadFromEmbeddedResource("RomanticWeb.Tests.TestGraphs.TriplesWithLiteralSubjects.ttl, RomanticWeb.Tests");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.That(tomasz.foaf.knows, Is.TypeOf<Entity>());
+            Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new EntityId("http://magi/people/Karol")));
+        }
+
+        [Test]
+        public void Associated_Entity_should_allow_fetching_its_properties()
+        {
+            // given
+            _store.LoadFromEmbeddedResource("RomanticWeb.Tests.TestGraphs.TriplesWithLiteralSubjects.ttl, RomanticWeb.Tests");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic karol = tomasz.foaf.knows;
+
+            // then
+            Assert.That(karol.foaf.givenName, Is.EqualTo("Karol"));
+        }
     }
 }

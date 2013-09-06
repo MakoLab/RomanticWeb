@@ -11,6 +11,7 @@ namespace RomanticWeb.Tests
     {
         private readonly Entity _entity = new Entity(new EntityId(Uri));
         private Mock<ITripleStore> _store;
+        private Mock<IEntityFactory> _entityFactory;
         private Ontology _ontology;
         private const string Uri = "urn:test:identity";
 
@@ -24,6 +25,7 @@ namespace RomanticWeb.Tests
         public void Setup()
         {
             _store = new Mock<ITripleStore>(MockBehavior.Strict);
+            _entityFactory = new Mock<IEntityFactory>();
         }
 
         [Test]
@@ -33,7 +35,7 @@ namespace RomanticWeb.Tests
             var graph = new Mock<IGraph>(MockBehavior.Strict);
             graph.Setup(g => g.GetTriplesWithSubjectPredicate(It.IsAny<IUriNode>(), It.IsAny<IUriNode>())).Returns(new Triple[0]);
             _store.Setup(s => s.Graphs[null]).Returns(graph.Object);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology);
+            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.givenName;

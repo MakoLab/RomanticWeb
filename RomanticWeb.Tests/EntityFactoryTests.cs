@@ -14,7 +14,7 @@ namespace RomanticWeb.Tests
         private IOntologyProvider _ontologyProvider;
         private Mock<ITripleStore> _store;
 
-            [SetUp]
+        [SetUp]
         public void Setup()
         {
             _ontologyProvider = new StaticOntologyProvider();
@@ -48,7 +48,7 @@ namespace RomanticWeb.Tests
   
             // then
             Assert.That(entity.foaf, Is.Not.Null);
-            Assert.That(entity.foaf, Is.TypeOf<IPredicateAccessor>());
+            Assert.That(entity.foaf, Is.TypeOf<PredicateAccessor>());
         }
     }
 }

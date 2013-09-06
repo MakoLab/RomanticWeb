@@ -13,7 +13,7 @@ namespace RomanticWeb.dotNetRDF
 
         protected override PredicateAccessor<ITripleStore> CreatePredicateAccessor(Entity entity, Ontology ontology)
         {
-            return new PredicateAccessor(_tripeStore, entity, ontology);
+            return new PredicateAccessor(_tripeStore, entity, ontology, this);
         }
 
         protected override Entity CreateInternal(EntityId entityId)

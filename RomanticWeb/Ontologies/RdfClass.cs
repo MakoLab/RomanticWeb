@@ -1,4 +1,4 @@
-﻿namespace RomanticWeb
+﻿namespace RomanticWeb.Ontologies
 {
     public class RdfClass
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using NullGuard;
 
-namespace RomanticWeb
+namespace RomanticWeb.Ontologies
 {
     public class RdfNode
     {

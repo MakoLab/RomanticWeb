@@ -48,22 +48,22 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatatypeProperty.cs" />
-    <Compile Include="DefaultOntologiesProvider.cs" />
+    <Compile Include="Ontologies\DatatypeProperty.cs" />
+    <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityFactoryBase.cs" />
     <Compile Include="EntityId.cs" />
     <Compile Include="IEntityFactory.cs" />
-    <Compile Include="IOntologyProvider.cs" />
+    <Compile Include="Ontologies\IOntologyProvider.cs" />
     <Compile Include="IPredicateAccessor.cs" />
-    <Compile Include="NamespaceSpecification.cs" />
-    <Compile Include="ObjectProperty.cs" />
-    <Compile Include="Ontology.cs" />
+    <Compile Include="Ontologies\NamespaceSpecification.cs" />
+    <Compile Include="Ontologies\ObjectProperty.cs" />
+    <Compile Include="Ontologies\Ontology.cs" />
     <Compile Include="PredicateAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="RdfClass.cs" />
-    <Compile Include="RdfNode.cs" />
+    <Compile Include="Ontologies\Property.cs" />
+    <Compile Include="Ontologies\RdfClass.cs" />
+    <Compile Include="Ontologies\RdfNode.cs" />
     <Compile Include="UnknownNamespaceException.cs" />
     <Compile Include="UnknownPredicateException.cs" />
   </ItemGroup>

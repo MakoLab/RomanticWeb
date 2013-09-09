@@ -1,6 +1,7 @@
 ﻿using System;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.dotNetRDF;
 using VDS.RDF;

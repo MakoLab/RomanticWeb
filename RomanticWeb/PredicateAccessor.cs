@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {

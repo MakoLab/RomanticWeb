@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace RomanticWeb
+namespace RomanticWeb.Ontologies
 {
     public class Ontology
     {

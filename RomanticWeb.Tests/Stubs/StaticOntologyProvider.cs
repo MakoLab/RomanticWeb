@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {

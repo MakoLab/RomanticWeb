@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RomanticWeb
+namespace RomanticWeb.Ontologies
 {
     public sealed class NamespaceSpecification
     {

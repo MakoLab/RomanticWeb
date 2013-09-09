@@ -1,4 +1,5 @@
-﻿using VDS.RDF;
+﻿using RomanticWeb.Ontologies;
+using VDS.RDF;
 
 namespace RomanticWeb.dotNetRDF
 {

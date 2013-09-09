@@ -6,11 +6,6 @@ using NullGuard;
 
 namespace RomanticWeb
 {
-    internal interface IPredicateAccessor
-    {
-        dynamic GetObjects(Uri baseUri, Property predicate);
-    }
-
     [NullGuard(ValidationFlags.OutValues)]
     public abstract class PredicateAccessor<TTriplesSource> : DynamicObject, IPredicateAccessor
     {

@@ -48,14 +48,19 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatatypeProperty.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityFactoryBase.cs" />
     <Compile Include="EntityId.cs" />
     <Compile Include="IEntityFactory.cs" />
     <Compile Include="IOntologyProvider.cs" />
+    <Compile Include="IPredicateAccessor.cs" />
     <Compile Include="NamespaceSpecification.cs" />
+    <Compile Include="ObjectProperty.cs" />
+    <Compile Include="Ontology.cs" />
     <Compile Include="PredicateAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="RdfNode.cs" />
   </ItemGroup>
   <ItemGroup>

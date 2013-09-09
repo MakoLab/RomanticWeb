@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace RomanticWeb.Ontologies
 {
-    public sealed class DefaultOntologiesProvider : IOntologyProvider
+    internal sealed class DefaultOntologiesProvider : IOntologyProvider
     {
-        private IList<Ontology> _ontologies;
+        private readonly IList<Ontology> _ontologies;
 
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider)
         {
@@ -16,12 +16,10 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                yield return new Ontology(new NamespaceSpecification("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"), 
-                    new Property[]
-                        {
-                            new ObjectProperty("type"), 
-                        }, 
-                    new RdfClass[0]);
+                yield return new Ontology(
+                    new NamespaceSpecification("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
+                    new ObjectProperty("type")
+                );
             }
         }
 

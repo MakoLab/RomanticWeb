@@ -47,7 +47,7 @@ namespace RomanticWeb.Tests
                                                                Times.Once);
         }
 
-        [Test, ExpectedException(typeof(UnknownPredicateException))]
+        [Test, ExpectedException(typeof(UnknownPropertyException))]
         public void Getting_unknown_predicate_should_throw()
         {
             // given

@@ -59,13 +59,16 @@
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
+    <Compile Include="Ontologies\RdfTerm.cs" />
     <Compile Include="PredicateAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\RdfClass.cs" />
     <Compile Include="Ontologies\RdfNode.cs" />
+    <Compile Include="TypeCheckerAccessor.cs" />
+    <Compile Include="UnknownClassException.cs" />
     <Compile Include="UnknownNamespaceException.cs" />
-    <Compile Include="UnknownPredicateException.cs" />
+    <Compile Include="UnknownPropertyException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

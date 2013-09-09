@@ -1,12 +1,22 @@
 ﻿namespace RomanticWeb.Ontologies
 {
-    public class Property
+    /// <summary>
+    /// A base classs for RDF properties
+    /// </summary>
+    public abstract class Property : RdfTerm
     {
-        public string PredicateUri { get; private set; }
+        /// <summary>
+        /// Gets the term name
+        /// </summary>
+        /// <remarks>See remarks under <see cref="RdfTerm.TermName"/></remarks>
+        public string PredicateName { get { return TermName; } }
 
-        public Property(string predicateUri)
+        /// <summary>
+        /// Creates a new Property
+        /// </summary>
+        protected Property(string predicateName)
+            : base(predicateName)
         {
-            PredicateUri = predicateUri;
         }
     }
 }

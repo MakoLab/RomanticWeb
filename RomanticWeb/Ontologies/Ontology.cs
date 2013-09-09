@@ -1,28 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RomanticWeb.Ontologies
 {
-    public class Ontology
+    /// <summary>
+    /// Encapsulates metadata about an ontology (like Foaf, Dublin Core, Rdfs, etc.)
+    /// </summary>
+    public sealed class Ontology
     {
         private readonly NamespaceSpecification _namespace;
 
-        public Ontology(NamespaceSpecification ns, IEnumerable<Property> predicates, IEnumerable<RdfClass> classes)
+        /// <summary>
+        /// Creates a new <see cref="Ontology"/> specification
+        /// </summary>
+        /// <param name="ns">Namespace prefix and base URI</param>
+        /// <param name="rdfTerms">A collection of RDF classes and properties</param>
+        public Ontology(NamespaceSpecification ns, params RdfTerm[] rdfTerms)
         {
-            Predicates = predicates;
+            Properties = rdfTerms.OfType<Property>().ToList();
             _namespace = ns;
-            Classes = classes;
+            Classes = rdfTerms.OfType<RdfClass>().ToList();
         }
 
+        /// <summary>
+        /// Gets the namespace prefix
+        /// </summary>
         public string Prefix { get { return _namespace.Prefix; } }
 
-        public IEnumerable<Property> Predicates { get; private set; }
+        /// <summary>
+        /// Gets the ontology's properties
+        /// </summary>
+        public IEnumerable<Property> Properties { get; private set; }
 
+        /// <summary>
+        /// Gets the ontology's base URI
+        /// </summary>
         public Uri BaseUri { get { return _namespace.BaseUri; } }
 
+        /// <summary>
+        /// Gets the ontology's classes
+        /// </summary>
         public IEnumerable<RdfClass> Classes { get; private set; }
 
-        public Uri ResolveUri(string rdfTermRelativeUri)
+        internal Uri ResolveUri(string rdfTermRelativeUri)
         {
             return new Uri(BaseUri + rdfTermRelativeUri);
         }

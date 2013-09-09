@@ -10,7 +10,7 @@ namespace RomanticWeb.dotNetRDF
     {
         static readonly NodeFactory NodeFactory = new NodeFactory();
 
-        internal PredicateAccessor(ITripleStore tripleStore, Entity entityId, Ontology ontology, IEntityFactory entityFactory)
+        protected internal PredicateAccessor(ITripleStore tripleStore, Entity entityId, Ontology ontology, IEntityFactory entityFactory)
             : base(tripleStore, entityId, ontology, entityFactory)
         {
         }
@@ -20,7 +20,7 @@ namespace RomanticWeb.dotNetRDF
             IGraph sourceGraph = triplesSource.Graphs[null];
 
             INode entityNode = NodeFactory.CreateUriNode(EntityId.Uri);
-            INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri + predicate.PredicateUri));
+            INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri + predicate.PredicateName));
 
             return sourceGraph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
                               .Select(t=>WrapObjectNode(t.Object));
@@ -28,12 +28,12 @@ namespace RomanticWeb.dotNetRDF
 
         private static RdfNode WrapObjectNode(INode arg)
         {
-            ILiteralNode literal = arg as ILiteralNode;
+            var literal = arg as ILiteralNode;
             if (literal != null)
             {
                 return RdfNode.ForLiteral(literal.Value, literal.Language, literal.DataType);
             }
-            IUriNode uriNode = arg as IUriNode;
+            var uriNode = arg as IUriNode;
             if (uriNode != null)
             {
                 return RdfNode.ForUri(uriNode.Uri);

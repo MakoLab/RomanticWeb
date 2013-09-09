@@ -2,6 +2,9 @@
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Exceptiopn thrown when an ontology is accessed, whose namespace cannot be found
+    /// </summary>
     public class UnknownNamespaceException : Exception
     {
         internal UnknownNamespaceException(string namespacePrefix)

@@ -1,0 +1,4 @@
+﻿base <http://magi/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+<people/Tomasz> a foaf:Person, foaf:Agent .

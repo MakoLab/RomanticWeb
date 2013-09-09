@@ -74,5 +74,20 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(karol.foaf.givenName.ToString(), Is.EqualTo("Karol"));
         }
+
+        [Test]
+        public void Created_Entity_should_allow_checking_Rdf_type()
+        {
+            // given
+            _store.LoadTestFile("TypedInstance.ttl");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.That(tomasz.IsA.foaf.Person, Is.True);
+            Assert.That(tomasz.IsA.foaf.Agent, Is.True);
+            Assert.That(tomasz.IsA.foaf.Document, Is.False);
+        }
     }
 }

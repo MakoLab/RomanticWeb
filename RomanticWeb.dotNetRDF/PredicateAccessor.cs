@@ -19,7 +19,7 @@ namespace RomanticWeb.dotNetRDF
             IGraph sourceGraph = triplesSource.Graphs[null];
 
             INode entityNode = NodeFactory.CreateUriNode(EntityId.Uri);
-            INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri, predicate.PredicateUri));
+            INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri + predicate.PredicateUri));
 
             return sourceGraph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
                               .Select(t=>WrapObjectNode(t.Object));

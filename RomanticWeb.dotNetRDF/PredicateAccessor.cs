@@ -9,7 +9,7 @@ namespace RomanticWeb.dotNetRDF
     {
         static readonly NodeFactory NodeFactory = new NodeFactory();
 
-        public PredicateAccessor(ITripleStore tripleStore, Entity entityId, Ontology ontology, IEntityFactory entityFactory)
+        internal PredicateAccessor(ITripleStore tripleStore, Entity entityId, Ontology ontology, IEntityFactory entityFactory)
             : base(tripleStore, entityId, ontology, entityFactory)
         {
         }

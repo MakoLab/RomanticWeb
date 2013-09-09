@@ -45,5 +45,15 @@ namespace RomanticWeb.Tests
                                                                It.Is<IUriNode>(n => n.Uri.Equals(new Uri("http://xmlns.com/foaf/0.1/givenName")))),
                                                                Times.Once);
         }
+
+        [Test, ExpectedException(typeof(UnknownPredicateException))]
+        public void Getting_unknown_predicate_should_throw()
+        {
+            // given
+            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology, _entityFactory.Object);
+
+            // when
+            var givenName = accessor.fullName;
+        }
     }
 }

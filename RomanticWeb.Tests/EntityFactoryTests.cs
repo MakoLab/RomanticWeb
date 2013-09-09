@@ -50,5 +50,15 @@ namespace RomanticWeb.Tests
             Assert.That(entity.foaf, Is.Not.Null);
             Assert.That(entity.foaf, Is.InstanceOf<PredicateAccessor>());
         }
+
+        [Test, ExpectedException(typeof(UnknownNamespaceException))]
+        public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces()
+        {
+            // given
+            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+
+            // when
+            var accessor = entity.dcterms;
+        }
     }
 }

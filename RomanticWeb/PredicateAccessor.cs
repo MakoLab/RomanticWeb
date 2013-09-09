@@ -59,7 +59,12 @@ namespace RomanticWeb
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var predicate = _ontology.Predicates.Single(p => p.PredicateUri == binder.Name);
+            var predicate = _ontology.Predicates.SingleOrDefault(p => p.PredicateUri == binder.Name);
+
+            if (predicate == null)
+            {
+                throw new UnknownPredicateException(_ontology.BaseUri, binder.Name);
+            }
 
             result = ((IPredicateAccessor)this).GetObjects(_ontology.BaseUri, predicate);
 

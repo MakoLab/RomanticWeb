@@ -1,4 +1,5 @@
 using ImpromptuInterface.Dynamic;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace RomanticWeb
 {
@@ -14,6 +15,18 @@ namespace RomanticWeb
         protected internal EntityId Id
         {
             get { return _entityId; }
+        }
+
+        public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object result)
+        {
+            bool gettingMemberSucceeded = base.TryGetMember(binder, out result);
+            
+            if (!gettingMemberSucceeded)
+            {
+                throw new UnknownNamespaceException(binder.Name);
+            }
+
+            return true;
         }
     }
 }

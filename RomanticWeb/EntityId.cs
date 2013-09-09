@@ -16,9 +16,13 @@ namespace RomanticWeb
 
         private readonly Uri _uri;
 
-        public EntityId(string uri)
+        public EntityId(string uri) : this(new Uri(uri))
         {
-            _uri = new Uri(uri);
+        }
+
+        public EntityId(Uri uri)
+        {
+            _uri = uri;
         }
 
         public override bool Equals(object obj)

@@ -29,8 +29,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));
-            Assert.That(tomasz.foaf.familyName, Is.EqualTo("Pluskiewicz"));
+            Assert.That(tomasz.foaf.givenName.ToString(), Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.foaf.familyName.ToString(), Is.EqualTo("Pluskiewicz"));
             Assert.That(tomasz.foaf.nick == null);
         }
 
@@ -72,7 +72,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic karol = tomasz.foaf.knows;
 
             // then
-            Assert.That(karol.foaf.givenName, Is.EqualTo("Karol"));
+            Assert.That(karol.foaf.givenName.ToString(), Is.EqualTo("Karol"));
         }
     }
 }

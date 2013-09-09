@@ -14,7 +14,7 @@ namespace RomanticWeb.dotNetRDF
         {
         }
 
-        protected override IEnumerable<string> GetObjects(ITripleStore triplesSource, Uri baseUri, Property predicate)
+        protected override IEnumerable<RdfNode> GetObjectNodes(ITripleStore triplesSource, Uri baseUri, Property predicate)
         {
             IGraph sourceGraph = triplesSource.Graphs[null];
 
@@ -22,7 +22,23 @@ namespace RomanticWeb.dotNetRDF
             INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri, predicate.PredicateUri));
 
             return sourceGraph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
-                              .Select(s => s.Object.ToString());
+                              .Select(t=>WrapObjectNode(t.Object));
+        }
+
+        private static RdfNode WrapObjectNode(INode arg)
+        {
+            ILiteralNode literal = arg as ILiteralNode;
+            if (literal != null)
+            {
+                return RdfNode.ForLiteral(literal.Value, literal.Language, literal.DataType);
+            }
+            IUriNode uriNode = arg as IUriNode;
+            if (uriNode != null)
+            {
+                return RdfNode.ForUri(uriNode.Uri);
+            }
+
+            throw new NotImplementedException("Blank nodes aren't supported yet");
         }
     }
 }

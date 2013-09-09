@@ -33,9 +33,9 @@ namespace RomanticWeb
 
         dynamic IPredicateAccessor.GetObjects(Uri baseUri, Property predicate)
         {
-            var subjectValues = GetObjects(_tripleSource, baseUri, predicate);
+            var subjectValues = GetObjectNodes(_tripleSource, baseUri, predicate);
             var subjects = (from subject in subjectValues
-                            select Convert(subject, predicate)).ToList();
+                            select Convert(subject)).ToList();
 
             if (subjects.Count == 1)
             {
@@ -50,11 +50,11 @@ namespace RomanticWeb
             return subjects;
         }
 
-        private object Convert(string subject, Property predicate)
+        private object Convert(RdfNode subject)
         {
-            if (predicate is ObjectProperty)
+            if (subject.IsUri)
             {
-                return EntityFactory.Create(new EntityId(subject));
+                return EntityFactory.Create(new EntityId(subject.Uri));
             }
 
             return subject;
@@ -71,6 +71,9 @@ namespace RomanticWeb
             return true;
         }
 
-        protected abstract IEnumerable<string> GetObjects(TTriplesSource triplesSource, Uri baseUri, Property predicate);
+        /// <summary>
+        /// Gets all RDF objects together with language tags and data type information for literals
+        /// </summary>
+        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Uri baseUri, Property predicate);
     }
 }

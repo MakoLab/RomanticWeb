@@ -1,8 +1,11 @@
-﻿namespace RomanticWeb.Ontologies
+﻿using System.Diagnostics;
+
+namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// Represents an RDF class
     /// </summary>
+    [DebuggerDisplay("Class {Prefix}:{ClassName}")]
     public class RdfClass : RdfTerm
     {
         /// <summary>

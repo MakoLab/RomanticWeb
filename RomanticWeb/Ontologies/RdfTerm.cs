@@ -52,6 +52,14 @@ namespace RomanticWeb.Ontologies
             }
         }
 
+        internal string Prefix
+        {
+            get
+            {
+                return Ontology == null ? "?" : Ontology.Prefix;
+            }
+        }
+
         public override bool Equals([AllowNull] object obj)
         {
             if (ReferenceEquals(null, obj)) return false;

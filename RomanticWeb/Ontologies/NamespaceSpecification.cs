@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// Represents a prefix-URI pair used for defining namespaces
     /// </summary>
+    [DebuggerDisplay("PREFIX {Prefix}: <{BaseUri}>")]
     public sealed class NamespaceSpecification
     {
         /// <summary>

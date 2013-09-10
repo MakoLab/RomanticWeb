@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NullGuard;
 
@@ -8,6 +9,7 @@ namespace RomanticWeb.Ontologies
     /// <summary>
     /// Encapsulates metadata about an ontology (like Foaf, Dublin Core, Rdfs, etc.)
     /// </summary>
+    [DebuggerDisplay("Ontology {Prefix} (<{BaseUri}>)")]
     public sealed class Ontology
     {
         private readonly NamespaceSpecification _namespace;

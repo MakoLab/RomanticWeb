@@ -1,8 +1,11 @@
-﻿namespace RomanticWeb.Ontologies
+﻿using System.Diagnostics;
+
+namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// An Datatype property as defined in the OWL standard
     /// </summary>
+    [DebuggerDisplay("Datatype property {Prefix}:{TermName}")]
     public sealed class DatatypeProperty : Property
     {
         /// <summary>

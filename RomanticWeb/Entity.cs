@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using ImpromptuInterface.Dynamic;
@@ -9,6 +10,7 @@ namespace RomanticWeb
     /// An RDF entity, which can be used to dynamically access RDF triples
     /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
+    [DebuggerDisplay("Entity <{Id}>")]
     public class Entity : ImpromptuDictionary
     {
         private readonly EntityId _entityId;

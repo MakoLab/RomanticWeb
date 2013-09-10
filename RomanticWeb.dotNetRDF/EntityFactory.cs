@@ -6,7 +6,7 @@ namespace RomanticWeb.dotNetRDF
     /// <summary>
     /// Entity factory implementation backed by a triple store
     /// </summary>
-    public class EntityFactory : EntityFactoryBase<ITripleStore>
+    public class EntityFactory : EntityFactoryBase
     {
         private readonly ITripleStore _tripeStore;
 
@@ -20,9 +20,10 @@ namespace RomanticWeb.dotNetRDF
             _tripeStore = tripeStore;
         }
 
-        protected override PredicateAccessor<ITripleStore> CreatePredicateAccessor(Entity entity, Ontology ontology)
+        protected override RomanticWeb.PredicateAccessor CreatePredicateAccessor(Entity entity, Ontology ontology)
         {
-            return new PredicateAccessor(_tripeStore, entity, ontology, this);
+            ITriplesSource source = new SingleGraphSource(_tripeStore.Graphs[null]);
+            return new PredicateAccessor(source, entity, ontology, this);
         }
 
         protected override Entity CreateInternal(EntityId entityId)

@@ -11,9 +11,9 @@ namespace RomanticWeb.Tests
     public class PredicateAccessorTests
     {
         private readonly Entity _entity = new Entity(new EntityId(Uri));
-        private Mock<ITripleStore> _store;
         private Mock<IEntityFactory> _entityFactory;
         private Ontology _ontology;
+        private Mock<ITriplesSource> _graph;
         private const string Uri = "urn:test:identity";
 
         [TestFixtureSetUp]
@@ -25,44 +25,49 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _store = new Mock<ITripleStore>(MockBehavior.Strict);
+            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
             _entityFactory = new Mock<IEntityFactory>();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            _graph.VerifyAll();
+            _entityFactory.VerifyAll();
         }
 
         [Test]
         public void Getting_known_predicate_should_return_objects()
         {
             // given
-            var graph = new Mock<IGraph>(MockBehavior.Strict);
-            graph.Setup(g => g.GetTriplesWithSubjectPredicate(It.IsAny<IUriNode>(), It.IsAny<IUriNode>())).Returns(new Triple[0]);
-            _store.Setup(s => s.Graphs[null]).Returns(graph.Object);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology, _entityFactory.Object);
+            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
+            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
+            dynamic accessor = new dotNetRDF.PredicateAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.givenName;
 
             // then
-            graph.Verify(s => s.GetTriplesWithSubjectPredicate(It.Is<IUriNode>(n => n.Uri.Equals(new Uri(Uri))),
-                                                               It.Is<IUriNode>(n => n.Uri.Equals(new Uri("http://xmlns.com/foaf/0.1/givenName")))),
-                                                               Times.Once);
+            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
+                                                        new DatatypeProperty("givenName").InOntology(_ontology)),
+                                                        Times.Once);
         }
 
         [Test]
         public void Getting_unknown_predicate_should_use_the_property_name()
         {
             // given
-            var graph = new Mock<IGraph>(MockBehavior.Strict);
-            graph.Setup(g => g.GetTriplesWithSubjectPredicate(It.IsAny<IUriNode>(), It.IsAny<IUriNode>())).Returns(new Triple[0]);
-            _store.Setup(s => s.Graphs[null]).Returns(graph.Object);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology, _entityFactory.Object);
+            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
+            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
+            dynamic accessor = new dotNetRDF.PredicateAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.fullName;
 
             // then
-            graph.Verify(s => s.GetTriplesWithSubjectPredicate(It.Is<IUriNode>(n => n.Uri.Equals(new Uri(Uri))),
-                                                               It.Is<IUriNode>(n => n.Uri.Equals(new Uri("http://xmlns.com/foaf/0.1/fullName")))),
-                                                               Times.Once);
+            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
+                                                        new DatatypeProperty("fullName").InOntology(_ontology)),
+                                                        Times.Once);
         }
     }
 }

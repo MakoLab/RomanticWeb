@@ -11,5 +11,11 @@
         public DatatypeProperty(string predicateName) : base(predicateName)
         {
         }
+
+        public override string ToString()
+        {
+            string prefix = Ontology == null ? "_" : Ontology.Prefix;
+            return string.Format("Datatype property {0}:{1}", prefix, PropertyName);
+        }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="EntityFactory.cs" />
     <Compile Include="PredicateAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SingleGraphSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />

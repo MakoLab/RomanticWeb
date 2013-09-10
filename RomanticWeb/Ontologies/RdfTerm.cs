@@ -1,4 +1,5 @@
 ﻿using System;
+using NullGuard;
 
 namespace RomanticWeb.Ontologies
 {
@@ -49,6 +50,40 @@ namespace RomanticWeb.Ontologies
 
                 _ontology = value;
             }
+        }
+
+        public override bool Equals([AllowNull] object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((RdfTerm) obj);
+        }
+
+        protected bool Equals([AllowNull] RdfTerm other)
+        {
+            return Equals(_uri, other._uri) && Equals(_ontology, other._ontology) && string.Equals(TermName, other.TermName);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (_uri != null ? _uri.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_ontology != null ? _ontology.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (TermName != null ? TermName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==([AllowNull] RdfTerm left, [AllowNull] RdfTerm right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=([AllowNull] RdfTerm left, [AllowNull] RdfTerm right)
+        {
+            return !Equals(left, right);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace RomanticWeb.Tests
         {
             _ontologyProvider = new StaticOntologyProvider();
             _store = new Mock<ITripleStore>(MockBehavior.Strict);
+            _store.Setup(s => s.Graphs[null]).Returns(new Mock<IGraph>().Object);
             _entityFactory = new EntityFactory(_store.Object, _ontologyProvider);
         }
 

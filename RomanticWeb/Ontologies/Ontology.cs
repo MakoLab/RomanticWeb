@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NullGuard;
 
 namespace RomanticWeb.Ontologies
 {
@@ -46,6 +47,33 @@ namespace RomanticWeb.Ontologies
         internal Uri ResolveUri(string rdfTermRelativeUri)
         {
             return new Uri(BaseUri + rdfTermRelativeUri);
+        }
+
+        private bool Equals([AllowNull] Ontology other)
+        {
+            return Equals(_namespace, other._namespace);
+        }
+
+        public override bool Equals([AllowNull] object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is Ontology && Equals((Ontology)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_namespace != null ? _namespace.GetHashCode() : 0);
+        }
+
+        public static bool operator ==([AllowNull] Ontology left, [AllowNull] Ontology right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=([AllowNull] Ontology left, [AllowNull] Ontology right)
+        {
+            return !Equals(left, right);
         }
     }
 }

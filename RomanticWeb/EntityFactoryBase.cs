@@ -9,7 +9,7 @@ namespace RomanticWeb
     /// Base class for factories, which produce <see cref="Entity"/> instances
     /// </summary>
     /// <typeparam name="TTripleSource">Type of RDF datasource, like graph of triple store</typeparam>
-    public abstract class EntityFactoryBase<TTripleSource> : IEntityFactory
+    public abstract class EntityFactoryBase : IEntityFactory
     {
         private readonly IOntologyProvider _ontologyProvider;
 
@@ -36,7 +36,7 @@ namespace RomanticWeb
             return entity;
         }
 
-        protected abstract PredicateAccessor<TTripleSource> CreatePredicateAccessor(Entity entity, Ontology ontology);
+        protected abstract PredicateAccessor CreatePredicateAccessor(Entity entity, Ontology ontology);
 
         protected abstract Entity CreateInternal(EntityId entityId);
     }

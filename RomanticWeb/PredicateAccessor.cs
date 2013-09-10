@@ -11,21 +11,21 @@ namespace RomanticWeb
     /// Base class for accessing triple subjects from entities
     /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
-    public abstract class PredicateAccessor<TTriplesSource> : DynamicObject, IPredicateAccessor
+    public abstract class PredicateAccessor : DynamicObject, IPredicateAccessor
     {
-        private readonly TTriplesSource _tripleSource;
+        private readonly ITriplesSource _tripleSource;
         private readonly EntityId _entityId;
         private readonly Ontology _ontology;
         private readonly IEntityFactory _entityFactory;
 
         /// <summary>
-        /// Creates a new instance of <see cref="PredicateAccessor{TTriplesSource}"/>
+        /// Creates a new instance of <see cref="PredicateAccessor"/>
         /// </summary>
         /// <param name="tripleSource">underlying RDF source</param>
         /// <param name="entity">the access Entity</param>
         /// <param name="ontology">Ontolgy used to resolve predicate names</param>
         /// <param name="entityFactory">factory used to produce associated Entities</param>
-        protected PredicateAccessor(TTriplesSource tripleSource, Entity entity, Ontology ontology, IEntityFactory entityFactory)
+        protected PredicateAccessor(ITriplesSource tripleSource, Entity entity, Ontology ontology, IEntityFactory entityFactory)
         {
             _tripleSource = tripleSource;
             _entityId = entity.Id;
@@ -66,11 +66,11 @@ namespace RomanticWeb
         /// <summary>
         /// Gets all RDF objects together with language tags and data type information for literals
         /// </summary>
-        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Uri predicate);
+        protected abstract IEnumerable<RdfNode> GetObjectNodes(ITriplesSource triplesSource, Property predicate);
 
         dynamic IPredicateAccessor.GetObjects(Property predicate)
         {
-            var subjectValues = GetObjectNodes(_tripleSource, predicate.Uri);
+            var subjectValues = GetObjectNodes(_tripleSource, predicate);
             var subjects = (from subject in subjectValues
                             select Convert(subject)).ToList();
 
@@ -96,5 +96,10 @@ namespace RomanticWeb
 
             return subject.Literal;
         }
+    }
+
+    public interface ITriplesSource
+    {
+        IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate);
     }
 }

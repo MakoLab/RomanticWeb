@@ -1,4 +1,5 @@
 using System;
+using NullGuard;
 
 namespace RomanticWeb
 {
@@ -45,7 +46,7 @@ namespace RomanticWeb
         /// <summary>
         /// Checks if two Entity identifiers are equal
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals([AllowNull] object obj)
         {
             if (obj == null || GetType() != obj.GetType())
             {
@@ -63,7 +64,7 @@ namespace RomanticWeb
         /// <summary>
         /// Check for equality with <param name="other"></param>
         /// </summary>
-        protected bool Equals(EntityId other)
+        protected bool Equals([AllowNull] EntityId other)
         {
             return Equals(_uri, other._uri);
         }
@@ -71,7 +72,7 @@ namespace RomanticWeb
         /// <summary>
         /// Checks if two Entity identifiers are equal
         /// </summary>
-        public static bool operator ==(EntityId left, EntityId right)
+        public static bool operator ==([AllowNull] EntityId left, [AllowNull] EntityId right)
         {
             return Equals(left, right);
         }
@@ -79,9 +80,14 @@ namespace RomanticWeb
         /// <summary>
         /// Checks if two Entity identifiers are not equal
         /// </summary>
-        public static bool operator !=(EntityId left, EntityId right)
+        public static bool operator !=([AllowNull] EntityId left, [AllowNull] EntityId right)
         {
             return !(left == right);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("<{0}>", Uri);
         }
     }
 }

@@ -29,12 +29,12 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_create_an_instance_with_id()
         {
             // when
-            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // when
             Assert.That(entity, Is.Not.Null);
             Assert.That(entity, Is.TypeOf<Entity>());
-            Assert.That(entity.Id, Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
+            Assert.That(entity.Id, Is.EqualTo(new UriId("http://magi/people/Tomasz")));
         }
 
         [Test, ExpectedException(typeof (ArgumentNullException))]
@@ -47,7 +47,7 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_add_getters_for_known_ontology_namespaces()
         {
             // when
-            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
   
             // then
             Assert.That(entity.foaf, Is.Not.Null);
@@ -58,7 +58,7 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces()
         {
             // given
-            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // when
             var accessor = entity.dcterms;

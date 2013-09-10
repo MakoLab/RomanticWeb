@@ -22,7 +22,7 @@ namespace RomanticWeb.dotNetRDF
             var queryableStore = _tripleStore as IInMemoryQueryableStore;
             if (queryableStore != null)
             {
-                INode entityNode = NodeFactory.CreateUriNode(entityId.Uri);
+                INode entityNode = entityId.ToNode(NodeFactory);
                 INode predicateNode = NodeFactory.CreateUriNode(predicate.Uri);
 
                 return queryableStore.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
@@ -34,7 +34,7 @@ namespace RomanticWeb.dotNetRDF
             {
                 var query = new SparqlParameterizedString();
                 query.CommandText = "SELECT ?o { GRAPH ?g { @entity @predicate ?o } }";
-                query.SetUri("entity", entityId.Uri);
+                query.SetParameter("entity", entityId.ToNode(NodeFactory));
                 query.SetUri("predicate", predicate.Uri);
 
                 return from SparqlResult result in (SparqlResultSet)nativeStore.ExecuteQuery(query.ToString())

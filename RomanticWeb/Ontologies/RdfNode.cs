@@ -13,6 +13,8 @@ namespace RomanticWeb.Ontologies
         private string _language;
         private Uri _dataType;
         private Uri _uri;
+        private string _blankNodeId;
+        private Uri _graphUri;
 
         private RdfNode() { }
 
@@ -33,6 +35,14 @@ namespace RomanticWeb.Ontologies
         }
 
         /// <summary>
+        /// Gets the value indicating that the node is a blank node
+        /// </summary>
+        public bool IsBlank
+        {
+            get { return _blankNodeId != null; }
+        }
+
+        /// <summary>
         /// Gets the URI of a URI node
         /// </summary>
         /// <exception cref="InvalidOperationException">thrown when node is a literal</exception>
@@ -40,9 +50,9 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                if (IsLiteral)
+                if (IsLiteral || IsBlank)
                 {
-                    throw new InvalidOperationException("Literal node does not have a Uri");
+                    throw new InvalidOperationException("Literal and blank nodes do not have a Uri");
                 }
 
                 return _uri;
@@ -58,9 +68,9 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                if (IsUri)
+                if (IsUri || IsBlank)
                 {
-                    throw new InvalidOperationException("Uri node does not have a literal value");
+                    throw new InvalidOperationException("Uri and blank nodes do not have a literal value");
                 }
 
                 return _literal;
@@ -77,9 +87,9 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                if (IsUri)
+                if (IsUri || IsBlank)
                 {
-                    throw new InvalidOperationException("Uri node does not have a data type");
+                    throw new InvalidOperationException("Uri and blank nodes do not have a data type");
                 }
 
                 return _dataType;
@@ -96,14 +106,43 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                if (IsUri)
+                if (IsUri || IsBlank)
                 {
-                    throw new InvalidOperationException("Uri node does not have a language tag");
+                    throw new InvalidOperationException("Uri and blank nodes do not have a language tag");
                 }
 
                 return _language;
             }
             set { _language = value; }
+        }
+
+        [AllowNull]
+        public Uri GraphUri
+        {
+            get
+            {
+                if (!IsBlank)
+                {
+                    throw new InvalidOperationException("Graph URI is currently only used with blank nodes");
+                }
+                
+                return _graphUri;
+            }
+            private set { _graphUri = value; }
+        }
+
+        public string BlankNodeId
+        {
+            get
+            {
+                if (!IsBlank)
+                {
+                    throw new InvalidOperationException("Only blank nodes have blank node identifiers");
+                } 
+                
+                return _blankNodeId;
+            }
+            private set { _blankNodeId = value; }
         }
 
         /// <summary>
@@ -116,12 +155,17 @@ namespace RomanticWeb.Ontologies
             {
                 return Literal;
             }
-            if(IsUri)
+            if (IsUri)
             {
                 return Uri.ToString();
             }
+            if (IsBlank)
+            {
+                var graphString = GraphUri == null ? "default graph" : string.Format("<{0}>", GraphUri);
+                return string.Format("_:{0} from graph {1}", BlankNodeId, graphString);
+            }
 
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Invalid node state");
         }
 
         /// <summary>
@@ -145,6 +189,15 @@ namespace RomanticWeb.Ontologies
                     Literal = value,
                     Language = language,
                     DataType = dataType
+                };
+        }
+
+        public static RdfNode ForBlank(string blankNodeId, [AllowNull] Uri graphUri)
+        {
+            return new RdfNode
+                {
+                    BlankNodeId = blankNodeId,
+                    GraphUri = graphUri
                 };
         }
     }

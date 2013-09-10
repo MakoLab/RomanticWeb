@@ -77,7 +77,11 @@ namespace RomanticWeb
         {
             if (subject.IsUri)
             {
-                return _entityFactory.Create(new EntityId(subject.Uri));
+                return _entityFactory.Create(new UriId(subject.Uri));
+            }
+            if (subject.IsBlank)
+            {
+                return _entityFactory.Create(new BlankId(subject.BlankNodeId, subject.GraphUri));
             }
 
             return subject.Literal;

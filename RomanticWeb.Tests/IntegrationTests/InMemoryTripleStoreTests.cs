@@ -26,7 +26,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));
@@ -41,7 +41,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.nick == null);
@@ -54,11 +54,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("AssociatedInstances.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.knows, Is.TypeOf<Entity>());
-            Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new EntityId("http://magi/people/Karol")));
+            Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new UriId("http://magi/people/Karol")));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("AssociatedInstances.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
             dynamic karol = tomasz.foaf.knows;
 
             // then
@@ -82,7 +82,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TypedInstance.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.IsA.foaf.Person, Is.True);
@@ -97,7 +97,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
@@ -110,7 +110,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             var exception = Assert.Throws<AmbiguousPropertyException>(() => { var nick = tomasz.nick; });
@@ -124,7 +124,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store.LoadTestFile("TypedInstance.ttl");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.Throws<UnknownClassException>(() =>
@@ -134,13 +134,13 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Created_should_retrieve_triples_from_Union_Graph()
+        public void Created_Entiy_should_retrieve_triples_from_Union_Graph()
         {
             // given
             _store.LoadTestFile("TriplesInNamedGraphs.trig");
 
             // when
-            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.knows != null);
@@ -149,5 +149,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(tomasz.givenName != null);
             Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
         }
+
+        [Test]
+        public void Should_read_blank_node_associated_Entities()
+        {
+            // given
+            _store.LoadTestFile("BlankNodes.ttl");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.That(tomasz.knows != null);
+            Assert.That(tomasz.knows, Is.InstanceOf<Entity>());
+            Assert.That(tomasz.knows.Id, Is.InstanceOf<BlankId>());
+            Assert.That(tomasz.knows.givenName != null);
+            Assert.That(tomasz.knows.givenName, Is.EqualTo("Karol"));
+        } 
     }
 }

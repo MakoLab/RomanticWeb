@@ -16,7 +16,7 @@ namespace RomanticWeb.dotNetRDF
 
         public override IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
         {
-            INode entityNode = _graph.CreateUriNode(entityId.Uri);
+            INode entityNode = entityId.ToNode(_graph);
             INode predicateNode = _graph.CreateUriNode(predicate.Uri);
 
             return _graph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)

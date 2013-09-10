@@ -7,14 +7,14 @@ namespace RomanticWeb
     /// Represents na Entity's identifies
     /// </summary>
     /// <remarks>Currently only URIs are supported</remarks>
-    public class EntityId
+    public class UriId : EntityId
     {
         private readonly Uri _uri;
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityId"/> from string
         /// </summary>
-        public EntityId(string uri)
+        public UriId(string uri)
             : this(new Uri(uri))
         {
         }
@@ -22,7 +22,7 @@ namespace RomanticWeb
         /// <summary>
         /// Creates a new instance of <see cref="EntityId"/> from an Uniform Resource Identifies
         /// </summary>
-        public EntityId(Uri uri)
+        public UriId(Uri uri)
         {
             _uri = uri;
         }
@@ -58,13 +58,13 @@ namespace RomanticWeb
                 return true;
             }
 
-            return _uri == ((EntityId)obj)._uri;
+            return _uri == ((UriId)obj)._uri;
         }
 
         /// <summary>
         /// Check for equality with <param name="other"></param>
         /// </summary>
-        protected bool Equals([AllowNull] EntityId other)
+        protected bool Equals([AllowNull] UriId other)
         {
             return Equals(_uri, other._uri);
         }
@@ -72,7 +72,7 @@ namespace RomanticWeb
         /// <summary>
         /// Checks if two Entity identifiers are equal
         /// </summary>
-        public static bool operator ==([AllowNull] EntityId left, [AllowNull] EntityId right)
+        public static bool operator ==([AllowNull] UriId left, [AllowNull] UriId right)
         {
             return Equals(left, right);
         }
@@ -80,7 +80,7 @@ namespace RomanticWeb
         /// <summary>
         /// Checks if two Entity identifiers are not equal
         /// </summary>
-        public static bool operator !=([AllowNull] EntityId left, [AllowNull] EntityId right)
+        public static bool operator !=([AllowNull] UriId left, [AllowNull] UriId right)
         {
             return !(left == right);
         }
@@ -89,5 +89,21 @@ namespace RomanticWeb
         {
             return string.Format("<{0}>", Uri);
         }
+    }
+
+    public abstract class EntityId
+    {
+    }
+
+    public sealed class BlankId : EntityId
+    {
+        public BlankId(string id, [AllowNull] Uri graphUri)
+        {
+            Id = id;
+            GraphUri = graphUri;
+        }
+
+        public string Id { get; private set; }
+        public Uri GraphUri { get; private set; }
     }
 }

@@ -26,7 +26,7 @@ namespace RomanticWeb
             }
 
             IEnumerable<object> types = _entity.rdf.type;
-            result = types.OfType<Entity>().Any(t => t.Id == new EntityId(_ontology.ResolveUri(binder.Name)));
+            result = types.OfType<Entity>().Any(t => t.Id == new UriId(_ontology.ResolveUri(binder.Name)));
 
             return true;
         }

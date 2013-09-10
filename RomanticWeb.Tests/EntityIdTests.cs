@@ -1,10 +1,9 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace RomanticWeb.Tests
 {
     [TestFixture]
-    public class EntityIdTests
+    public class UriIdTests
     {
         [Test]
         public void Two_instances_should_be_equal()
@@ -13,8 +12,8 @@ namespace RomanticWeb.Tests
             const string id = "urn:test:identifier";
 
             // when
-            var entityId1 = new EntityId(id);
-            var entityId2 = new EntityId(id);
+            var entityId1 = new UriId(id);
+            var entityId2 = new UriId(id);
 
             Assert.That(entityId1, Is.EqualTo(entityId2));
         }

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
+    <Compile Include="ITriplesSource.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
     <Compile Include="Entity.cs" />
@@ -56,13 +57,13 @@
     <Compile Include="EntityId.cs" />
     <Compile Include="IEntityFactory.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
-    <Compile Include="IPredicateAccessor.cs" />
+    <Compile Include="IObjectAccessor.cs" />
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
     <Compile Include="Ontologies\RdfTerm.cs" />
     <Compile Include="Ontologies\RdfTermExtensions.cs" />
-    <Compile Include="PredicateAccessor.cs" />
+    <Compile Include="OntologyAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\RdfClass.cs" />

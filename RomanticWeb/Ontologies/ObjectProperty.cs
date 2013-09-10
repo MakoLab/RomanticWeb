@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Ontologies
 {
@@ -15,6 +16,7 @@ namespace RomanticWeb.Ontologies
         {
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             string prefix = Ontology == null ? "_" : Ontology.Prefix;

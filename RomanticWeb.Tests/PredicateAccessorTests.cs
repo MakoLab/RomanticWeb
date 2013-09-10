@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Ontologies;
-using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
     [TestFixture]
-    public class PredicateAccessorTests
+    public class ObjectAccessorTests
     {
         private readonly Entity _entity = new Entity(new EntityId(Uri));
         private Mock<IEntityFactory> _entityFactory;
@@ -42,7 +40,7 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
+            dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.givenName;
@@ -59,14 +57,14 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
-            dynamic accessor = new dotNetRDF.PredicateAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
+            dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.fullName;
 
             // then
             _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
-                                                        new DatatypeProperty("fullName").InOntology(_ontology)),
+                                                        new Property("fullName").InOntology(_ontology)),
                                                         Times.Once);
         }
     }

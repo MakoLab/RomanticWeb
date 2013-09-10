@@ -3,7 +3,7 @@
     /// <summary>
     /// A base classs for RDF properties
     /// </summary>
-    public abstract class Property : RdfTerm
+    public class Property : RdfTerm
     {
         /// <summary>
         /// Gets the term name
@@ -14,7 +14,7 @@
         /// <summary>
         /// Creates a new Property
         /// </summary>
-        protected Property(string predicateName)
+        internal Property(string predicateName)
             : base(predicateName)
         {
         }

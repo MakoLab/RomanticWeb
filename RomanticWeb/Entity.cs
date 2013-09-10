@@ -54,7 +54,7 @@ namespace RomanticWeb
 
         private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
         {
-            var matchingPredicates = (from accessor in Values.OfType<IPredicateAccessor>()
+            var matchingPredicates = (from accessor in Values.OfType<OntologyAccessor>()
                                       from property in accessor.KnownProperties
                                       where property.PropertyName == binder.Name
                                       select new
@@ -66,7 +66,7 @@ namespace RomanticWeb
             if (matchingPredicates.Count == 1)
             {
                 var singleMatch = matchingPredicates.Single();
-                result = singleMatch.accessor.GetObjects(singleMatch.property);
+                result = ((IObjectAccessor)singleMatch.accessor).GetObjects(Id, singleMatch.property);
                 return true;
             }
 

@@ -20,10 +20,10 @@ namespace RomanticWeb.dotNetRDF
             _tripeStore = tripeStore;
         }
 
-        protected override RomanticWeb.PredicateAccessor CreatePredicateAccessor(Entity entity, Ontology ontology)
+        protected override OntologyAccessor CreateOntologyAccessor(Entity entity, Ontology ontology)
         {
             ITriplesSource source = new SingleGraphSource(_tripeStore.Graphs[null]);
-            return new PredicateAccessor(source, entity, ontology, this);
+            return new OntologyAccessor(source, entity, ontology, this);
         }
 
         protected override Entity CreateInternal(EntityId entityId)

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using RomanticWeb.Ontologies;
 
@@ -28,7 +27,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                entity[ontology.Prefix] = CreatePredicateAccessor(entity, ontology);
+                entity[ontology.Prefix] = CreateOntologyAccessor(entity, ontology);
                 typeCheckerExpando[ontology.Prefix] = new TypeCheckerAccessor(entity, ontology);
             }
             entity["IsA"] = typeCheckerExpando;
@@ -36,7 +35,7 @@ namespace RomanticWeb
             return entity;
         }
 
-        protected abstract PredicateAccessor CreatePredicateAccessor(Entity entity, Ontology ontology);
+        protected abstract OntologyAccessor CreateOntologyAccessor(Entity entity, Ontology ontology);
 
         protected abstract Entity CreateInternal(EntityId entityId);
     }

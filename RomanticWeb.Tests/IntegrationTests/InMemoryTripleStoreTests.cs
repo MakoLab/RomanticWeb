@@ -132,5 +132,22 @@ namespace RomanticWeb.Tests.IntegrationTests
                     bool isOfType = tomasz.IsA.foaf.Group;
                 });
         }
+
+        [Test]
+        public void Created_should_retrieve_triples_from_Union_Graph()
+        {
+            // given
+            _store.LoadTestFile("TriplesInNamedGraphs.trig");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.That(tomasz.knows != null);
+            Assert.That(tomasz.knows.Count, Is.EqualTo(2));
+            Assert.That(tomasz.knows[0], Is.InstanceOf<Entity>());
+            Assert.That(tomasz.givenName != null);
+            Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
+        }
     }
 }

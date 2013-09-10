@@ -54,6 +54,8 @@
     <Compile Include="EntityFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleGraphSource.cs" />
+    <Compile Include="TriplesSourceBase.cs" />
+    <Compile Include="UnionGraphSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />

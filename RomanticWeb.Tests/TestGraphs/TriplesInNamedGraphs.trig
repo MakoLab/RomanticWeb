@@ -1,0 +1,13 @@
+﻿@prefix people: <http://magi/people/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<personal://magi/people/tomasz>
+{
+	people:Tomasz foaf:givenName "Tomasz" ;
+					foaf:familyName "Pluskiewicz" .
+}
+
+<friendsOf://magi/people/tomasz>
+{
+	people:Tomasz foaf:knows people:Karol , people:Gniewko.
+}

@@ -22,7 +22,7 @@ namespace RomanticWeb.dotNetRDF
 
         protected override OntologyAccessor CreateOntologyAccessor(Entity entity, Ontology ontology)
         {
-            ITriplesSource source = new SingleGraphSource(_tripeStore.Graphs[null]);
+            ITriplesSource source = new UnionGraphSource(_tripeStore);
             return new OntologyAccessor(source, entity, ontology, this);
         }
 

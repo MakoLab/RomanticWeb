@@ -18,6 +18,9 @@ namespace RomanticWeb.Tests.Stubs
                                           new RdfClass("Agent"),
                                           new RdfClass("Document")
                     );
+
+                yield return new Ontology(new NamespaceSpecification("dummy", "http://example.com"),
+                                          new DatatypeProperty("nick"));
             }
         }
     }

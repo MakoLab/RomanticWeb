@@ -5,6 +5,8 @@ namespace RomanticWeb
 {
     internal interface IPredicateAccessor
     {
-        dynamic GetObjects(Uri baseUri, Property predicate);
+        dynamic GetObjects(Property predicate);
+
+        Ontology Ontology { get; }
     }
 }

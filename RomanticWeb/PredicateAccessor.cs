@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
@@ -41,19 +40,24 @@ namespace RomanticWeb
             get { return _entityId; }
         }
 
+        public Ontology Ontology
+        {
+            get { return _ontology; }
+        }
+
         /// <summary>
         /// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
         /// </summary>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var predicate = _ontology.Properties.SingleOrDefault(p => p.PredicateName == binder.Name);
+            var predicate = Ontology.Properties.SingleOrDefault(p => p.PredicateName == binder.Name);
 
             if (predicate == null)
             {
-                throw new UnknownPropertyException(_ontology.BaseUri, binder.Name);
+                throw new UnknownPropertyException(Ontology.BaseUri, binder.Name);
             }
 
-            result = ((IPredicateAccessor)this).GetObjects(_ontology.BaseUri, predicate);
+            result = ((IPredicateAccessor)this).GetObjects(predicate);
 
             return true;
         }
@@ -61,11 +65,11 @@ namespace RomanticWeb
         /// <summary>
         /// Gets all RDF objects together with language tags and data type information for literals
         /// </summary>
-        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Uri baseUri, Property predicate);
+        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Property predicate);
 
-        dynamic IPredicateAccessor.GetObjects(Uri baseUri, Property predicate)
+        dynamic IPredicateAccessor.GetObjects(Property predicate)
         {
-            var subjectValues = GetObjectNodes(_tripleSource, baseUri, predicate);
+            var subjectValues = GetObjectNodes(_tripleSource, predicate);
             var subjects = (from subject in subjectValues
                             select Convert(subject)).ToList();
 
@@ -89,7 +93,7 @@ namespace RomanticWeb
                 return _entityFactory.Create(new EntityId(subject.Uri));
             }
 
-            return subject;
+            return subject.Literal;
         }
     }
 }

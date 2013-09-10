@@ -15,12 +15,12 @@ namespace RomanticWeb.dotNetRDF
         {
         }
 
-        protected override IEnumerable<RdfNode> GetObjectNodes(ITripleStore triplesSource, Uri baseUri, Property predicate)
+        protected override IEnumerable<RdfNode> GetObjectNodes(ITripleStore triplesSource, Property predicate)
         {
             IGraph sourceGraph = triplesSource.Graphs[null];
 
             INode entityNode = NodeFactory.CreateUriNode(EntityId.Uri);
-            INode predicateNode = NodeFactory.CreateUriNode(new Uri(baseUri + predicate.PredicateName));
+            INode predicateNode = NodeFactory.CreateUriNode(new Uri(Ontology.BaseUri + predicate.PredicateName));
 
             return sourceGraph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
                               .Select(t=>WrapObjectNode(t.Object));

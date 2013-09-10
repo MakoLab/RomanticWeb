@@ -10,7 +10,7 @@ namespace RomanticWeb
         internal UnknownNamespaceException(string namespacePrefix)
             : base(string.Format("No ontology was found for namespace prefix '{0}'", namespacePrefix))
         {
-            
+
         }
     }
 }

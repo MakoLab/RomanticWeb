@@ -1,3 +1,5 @@
+using System.Dynamic;
+using System.Linq;
 using ImpromptuInterface.Dynamic;
 
 namespace RomanticWeb
@@ -26,16 +28,51 @@ namespace RomanticWeb
             get { return _entityId; }
         }
 
-        public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            // first look for ontology prefix
             bool gettingMemberSucceeded = base.TryGetMember(binder, out result);
-            
-            if (!gettingMemberSucceeded)
+
+            if (gettingMemberSucceeded)
             {
-                throw new UnknownNamespaceException(binder.Name);
+                return true;
             }
 
-            return true;
+            // then look for properties in ontologies
+            if (TryGetPropertyFromOntologies(binder, out result))
+            {
+                return true;
+            }
+
+            throw new UnknownNamespaceException(binder.Name);
+        }
+
+        private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
+        {
+            var matchingPredicates = (from accessor in Values.OfType<IPredicateAccessor>()
+                                      from property in accessor.Ontology.Properties
+                                      where property.PredicateName == binder.Name
+                                      select new
+                                          {
+                                              accessor,
+                                              property
+                                          }).ToList();
+
+            if (matchingPredicates.Count == 1)
+            {
+                var singleMatch = matchingPredicates.Single();
+                result = singleMatch.accessor.GetObjects(singleMatch.property);
+                return true;
+            }
+
+            if (matchingPredicates.Count == 0)
+            {
+                result = null;
+                return false;
+            }
+
+            var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.accessor.Ontology.Prefix);
+            throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
         }
     }
 }

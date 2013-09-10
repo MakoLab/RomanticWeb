@@ -47,14 +47,22 @@ namespace RomanticWeb.Tests
                                                                Times.Once);
         }
 
-        [Test, ExpectedException(typeof(UnknownPropertyException))]
-        public void Getting_unknown_predicate_should_throw()
+        [Test]
+        public void Getting_unknown_predicate_should_use_the_property_name()
         {
             // given
+            var graph = new Mock<IGraph>(MockBehavior.Strict);
+            graph.Setup(g => g.GetTriplesWithSubjectPredicate(It.IsAny<IUriNode>(), It.IsAny<IUriNode>())).Returns(new Triple[0]);
+            _store.Setup(s => s.Graphs[null]).Returns(graph.Object);
             dynamic accessor = new dotNetRDF.PredicateAccessor(_store.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.fullName;
+
+            // then
+            graph.Verify(s => s.GetTriplesWithSubjectPredicate(It.Is<IUriNode>(n => n.Uri.Equals(new Uri(Uri))),
+                                                               It.Is<IUriNode>(n => n.Uri.Equals(new Uri("http://xmlns.com/foaf/0.1/fullName")))),
+                                                               Times.Once);
         }
     }
 }

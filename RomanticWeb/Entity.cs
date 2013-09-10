@@ -1,12 +1,14 @@
 using System.Dynamic;
 using System.Linq;
 using ImpromptuInterface.Dynamic;
+using NullGuard;
 
 namespace RomanticWeb
 {
     /// <summary>
     /// An RDF entity, which can be used to dynamically access RDF triples
     /// </summary>
+    [NullGuard(ValidationFlags.OutValues)]
     public class Entity : ImpromptuDictionary
     {
         private readonly EntityId _entityId;
@@ -44,14 +46,15 @@ namespace RomanticWeb
                 return true;
             }
 
-            throw new UnknownNamespaceException(binder.Name);
+            //throw new UnknownNamespaceException(binder.Name);
+            return false;
         }
 
         private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
         {
             var matchingPredicates = (from accessor in Values.OfType<IPredicateAccessor>()
-                                      from property in accessor.Ontology.Properties
-                                      where property.PredicateName == binder.Name
+                                      from property in accessor.KnownProperties
+                                      where property.PropertyName == binder.Name
                                       select new
                                           {
                                               accessor,
@@ -71,7 +74,7 @@ namespace RomanticWeb
                 return false;
             }
 
-            var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.accessor.Ontology.Prefix);
+            var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
             throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
         }
     }

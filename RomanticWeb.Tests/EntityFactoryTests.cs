@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Ontologies;
@@ -52,7 +53,7 @@ namespace RomanticWeb.Tests
             Assert.That(entity.foaf, Is.InstanceOf<PredicateAccessor>());
         }
 
-        [Test, ExpectedException(typeof(UnknownNamespaceException))]
+        [Test, ExpectedException(typeof(RuntimeBinderException))]
         public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces()
         {
             // given

@@ -18,9 +18,9 @@ namespace RomanticWeb.Ontologies
         /// <param name="rdfTerms">A collection of RDF classes and properties</param>
         public Ontology(NamespaceSpecification ns, params RdfTerm[] rdfTerms)
         {
-            Properties = rdfTerms.OfType<Property>().ToList();
+            Properties = rdfTerms.OfType<Property>().Select(p => p.InOntology(this)).ToList();
             _namespace = ns;
-            Classes = rdfTerms.OfType<RdfClass>().ToList();
+            Classes = rdfTerms.OfType<RdfClass>().Select(c => c.InOntology(this)).ToList();
         }
 
         /// <summary>

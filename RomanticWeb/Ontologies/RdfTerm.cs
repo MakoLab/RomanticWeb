@@ -1,10 +1,15 @@
-﻿namespace RomanticWeb.Ontologies
+﻿using System;
+
+namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// Base class for RDF terms (properties and classes)
     /// </summary>
     public abstract class RdfTerm
     {
+        private Uri _uri;
+        private Ontology _ontology;
+
         /// <summary>
         /// Gets the term name
         /// </summary>
@@ -17,6 +22,33 @@
         protected RdfTerm(string termName)
         {
             TermName = termName;
+        }
+
+        public Uri Uri
+        {
+            get
+            {
+                if (_ontology == null)
+                {
+                    throw new InvalidOperationException("Ontology isn't set");
+                }
+
+                return new Uri(Ontology.BaseUri + TermName);
+            }
+        }
+
+        public Ontology Ontology
+        {
+            get { return _ontology; }
+            internal set
+            {
+                if (_ontology != null)
+                {
+                    throw new InvalidOperationException("Ontology is already set");
+                }
+
+                _ontology = value;
+            }
         }
     }
 }

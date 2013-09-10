@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
@@ -31,7 +32,7 @@ namespace RomanticWeb
             _ontology = ontology;
             _entityFactory = entityFactory;
         }
-        
+
         /// <summary>
         /// Gets the accessed Entity's identifies
         /// </summary>
@@ -40,9 +41,9 @@ namespace RomanticWeb
             get { return _entityId; }
         }
 
-        public Ontology Ontology
+        public IEnumerable<Property> KnownProperties
         {
-            get { return _ontology; }
+            get { return _ontology.Properties; }
         }
 
         /// <summary>
@@ -50,14 +51,14 @@ namespace RomanticWeb
         /// </summary>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var predicate = Ontology.Properties.SingleOrDefault(p => p.PredicateName == binder.Name);
+            var property = KnownProperties.SingleOrDefault(p => p.PropertyName == binder.Name);
 
-            if (predicate == null)
+            if (property == null)
             {
-                throw new UnknownPropertyException(Ontology.BaseUri, binder.Name);
+                property = new DatatypeProperty(binder.Name).InOntology(_ontology);
             }
 
-            result = ((IPredicateAccessor)this).GetObjects(predicate);
+            result = ((IPredicateAccessor)this).GetObjects(property);
 
             return true;
         }
@@ -65,11 +66,11 @@ namespace RomanticWeb
         /// <summary>
         /// Gets all RDF objects together with language tags and data type information for literals
         /// </summary>
-        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Property predicate);
+        protected abstract IEnumerable<RdfNode> GetObjectNodes(TTriplesSource triplesSource, Uri predicate);
 
         dynamic IPredicateAccessor.GetObjects(Property predicate)
         {
-            var subjectValues = GetObjectNodes(_tripleSource, predicate);
+            var subjectValues = GetObjectNodes(_tripleSource, predicate.Uri);
             var subjects = (from subject in subjectValues
                             select Convert(subject)).ToList();
 

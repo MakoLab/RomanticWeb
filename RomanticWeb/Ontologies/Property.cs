@@ -9,7 +9,7 @@
         /// Gets the term name
         /// </summary>
         /// <remarks>See remarks under <see cref="RdfTerm.TermName"/></remarks>
-        public string PredicateName { get { return TermName; } }
+        public string PropertyName { get { return TermName; } }
 
         /// <summary>
         /// Creates a new Property

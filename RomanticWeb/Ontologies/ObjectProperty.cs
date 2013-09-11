@@ -1,12 +1,10 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// An object property as defined by the OWL standard
     /// </summary>
-    [DebuggerDisplay("Datatype property {Prefix}:{TermName}")]
     public sealed class ObjectProperty : Property
     {
         /// <summary>

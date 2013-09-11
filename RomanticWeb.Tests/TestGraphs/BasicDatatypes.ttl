@@ -1,0 +1,11 @@
+﻿base <http://magi/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+<people/Tomasz> foaf:knows [
+	foaf:givenName "Karol" ;
+	foaf:familyName "Szczepański" 
+] .
+
+_:gniewko
+	foaf:knows <people/Tomasz>;
+	foaf:givenName "Gniewosław" .

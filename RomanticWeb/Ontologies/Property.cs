@@ -1,4 +1,6 @@
-﻿namespace RomanticWeb.Ontologies
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RomanticWeb.Ontologies
 {
     /// <summary>
     /// A base classs for RDF properties
@@ -17,6 +19,13 @@
         internal Property(string predicateName)
             : base(predicateName)
         {
+        }
+
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            string prefix = Ontology == null ? "_" : Ontology.Prefix;
+            return string.Format("Property {0}:{1}", prefix, PropertyName);
         }
     }
 }

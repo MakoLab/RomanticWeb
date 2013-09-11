@@ -46,11 +46,6 @@ namespace RomanticWeb.Ontologies
         /// </summary>
         public IEnumerable<RdfClass> Classes { get; private set; }
 
-        internal Uri ResolveUri(string rdfTermRelativeUri)
-        {
-            return new Uri(BaseUri + rdfTermRelativeUri);
-        }
-
         private bool Equals([AllowNull] Ontology other)
         {
             return Equals(_namespace, other._namespace);

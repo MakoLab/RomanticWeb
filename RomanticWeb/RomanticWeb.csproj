@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
+    <Compile Include="BlankId.cs" />
     <Compile Include="ITriplesSource.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
@@ -69,7 +70,7 @@
     <Compile Include="Ontologies\RdfClass.cs" />
     <Compile Include="Ontologies\RdfNode.cs" />
     <Compile Include="TypeCheckerAccessor.cs" />
-    <Compile Include="UnknownClassException.cs" />
+    <Compile Include="UriId.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

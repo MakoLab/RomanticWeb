@@ -118,7 +118,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_throw_if_an_RDF_class_doesnt_exist()
+        public void Should_not_throw_when_cheking_type_which_is_undefined()
         {
             // given
             _store.LoadTestFile("TypedInstance.ttl");
@@ -127,10 +127,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
 
             // then
-            Assert.Throws<UnknownClassException>(() =>
-                {
-                    bool isOfType = tomasz.IsA.foaf.Group;
-                });
+            Assert.That(tomasz.IsA.foaf.Group, Is.False);
         }
 
         [Test]

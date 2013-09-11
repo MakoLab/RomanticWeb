@@ -22,11 +22,11 @@ namespace RomanticWeb
 
             if (rdfClass == null)
             {
-                throw new UnknownClassException(_ontology.BaseUri, binder.Name);
+                rdfClass = new RdfClass(binder.Name).InOntology(_ontology);
             }
 
             IEnumerable<object> types = _entity.rdf.type;
-            result = types.OfType<Entity>().Any(t => t.Id == new UriId(_ontology.ResolveUri(binder.Name)));
+            result = types.OfType<Entity>().Any(t => Equals(t.Id, new UriId(rdfClass.Uri)));
 
             return true;
         }

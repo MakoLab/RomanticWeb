@@ -39,6 +39,9 @@
     <Reference Include="dotNetRDF">
       <HintPath>..\packages\dotNetRDF.1.0.0.2533\lib\net40\dotNetRDF.dll</HintPath>
     </Reference>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\packages\FluentAssertions.2.1.0.0\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -119,7 +122,7 @@
     <EmbeddedResource Include="TestGraphs\BlankNodes.ttl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TestGraphs\RdfList.ttl" />
+    <EmbeddedResource Include="TestGraphs\RdfLists.ttl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Ontologies;
@@ -72,6 +73,7 @@ namespace RomanticWeb
             return subjects;
         }
 
+        // todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
         private IEnumerable<object> Convert(IEnumerable<RdfNode> subjects)
         {
             foreach (var subject in subjects)
@@ -94,9 +96,40 @@ namespace RomanticWeb
                 }
                 else
                 {
-                    yield return subject.Literal;
+                    object value;
+                    if (TryConvert(subject, out value))
+                    {
+                        yield return value;
+                    }
+                    else
+                    {
+                        yield return subject.Literal;
+                    }
                 }
             }
+        }
+
+        // todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
+        private bool TryConvert(RdfNode subject, out object value)
+        {
+            if (subject.DataType != null)
+            {
+                switch (subject.DataType.ToString())
+                {
+                    case "http://www.w3.org/2001/XMLSchema#int":
+                    case "http://www.w3.org/2001/XMLSchema#integer":
+                        int integer;
+                        if (int.TryParse(subject.Literal, NumberStyles.Any, CultureInfo.InvariantCulture, out integer))
+                        {
+                            value = integer;
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            value = null;
+            return false;
         }
     }
 }

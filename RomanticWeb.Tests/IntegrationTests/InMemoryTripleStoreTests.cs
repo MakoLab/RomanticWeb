@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using FluentAssertions;
+using ImpromptuInterface;
 using NUnit.Framework;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
@@ -167,10 +169,10 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_read_rdf_lists_as_collection()
+        public void Should_read_rdf_lists_as_collection_of_Entities()
         {
             // given
-            _store.LoadTestFile("RdfList.ttl");
+            _store.LoadTestFile("RdfLists.ttl");
 
             // when
             dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
@@ -183,6 +185,39 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(people[2].Id.Equals(new UriId("http://magi/people/Monika")));
             Assert.That(people[3].Id.Equals(new UriId("http://magi/people/Dominik")));
             Assert.That(people[4].Id.Equals(new UriId("http://magi/people/Przemek")));
+        }
+
+        [Test]
+        public void Should_read_rdf_lists_as_collection_of_literals()
+        {
+            // given
+            _store.LoadTestFile("RdfLists.ttl");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+            dynamic people = tomasz.foaf.mbox;
+
+            // then
+            Assert.That(people.Count, Is.EqualTo(2));
+            Assert.That(people[0], Is.EqualTo("tomasz.pluskiewicz@makolab.net"));
+            Assert.That(people[1], Is.EqualTo("tomasz.pluskiewicz@makolab.pl"));
+        }
+
+        [Test]
+        public void Should_read_nested_rdf_lists_as_collection_of_lists()
+        {
+            // given
+            _store.LoadTestFile("RdfLists.ttl");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/test/array"));
+            var people = (IList)tomasz.math.matrix;
+
+            // then
+            Assert.That(people != null);
+            Assert.That(people.Count, Is.EqualTo(2));
+            people[0].ActLike<IList>().Should().ContainInOrder(0, 1, 2);
+            people[1].ActLike<IList>().Should().ContainInOrder(3, 4, 5);
         }
     }
 }

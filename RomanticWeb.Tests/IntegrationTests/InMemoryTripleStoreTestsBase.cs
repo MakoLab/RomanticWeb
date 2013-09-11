@@ -21,7 +21,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected void LoadTestFile(string fileName)
         {
-            _store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
+            _store.LoadTestFile(fileName);
         }
     }
 }

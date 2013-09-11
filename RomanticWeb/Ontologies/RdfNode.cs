@@ -161,7 +161,7 @@ namespace RomanticWeb.Ontologies
             }
             if (IsBlank)
             {
-                var graphString = GraphUri == null ? "default graph" : string.Format("<{0}>", GraphUri);
+                var graphString = GraphUri == null ? "default" : string.Format("<{0}>", GraphUri);
                 return string.Format("_:{0} from graph {1}", BlankNodeId, graphString);
             }
 

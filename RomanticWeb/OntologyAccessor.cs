@@ -57,8 +57,7 @@ namespace RomanticWeb
         dynamic IObjectAccessor.GetObjects(EntityId entity, Property predicate)
         {
             var subjectValues = _tripleSource.GetObjectsForPredicate(entity, predicate);
-            var subjects = (from subject in subjectValues
-                            select Convert(subject)).ToList();
+            var subjects = Convert(subjectValues).ToList();
 
             if (subjects.Count == 1)
             {
@@ -73,18 +72,31 @@ namespace RomanticWeb
             return subjects;
         }
 
-        private object Convert(RdfNode subject)
+        private IEnumerable<object> Convert(IEnumerable<RdfNode> subjects)
         {
-            if (subject.IsUri)
+            foreach (var subject in subjects)
             {
-                return _entityFactory.Create(new UriId(subject.Uri));
+                if (subject.IsUri)
+                {
+                    yield return _entityFactory.Create(new UriId(subject.Uri));
+                }
+                else if (subject.IsBlank)
+                {
+                    IEnumerable<RdfNode> listElements;
+                    if (_tripleSource.TryGetListElements(subject, out listElements))
+                    {
+                        yield return Convert(listElements).ToList();
+                    }
+                    else
+                    {
+                        yield return _entityFactory.Create(new BlankId(subject.BlankNodeId, subject.GraphUri));
+                    }
+                }
+                else
+                {
+                    yield return subject.Literal;
+                }
             }
-            if (subject.IsBlank)
-            {
-                return _entityFactory.Create(new BlankId(subject.BlankNodeId, subject.GraphUri));
-            }
-
-            return subject.Literal;
         }
     }
 }

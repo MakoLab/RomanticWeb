@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
 
-namespace RomanticWeb.dotNetRDF
+namespace RomanticWeb.dotNetRDF.TripleSources
 {
-    public abstract class TriplesSourceBase : ITriplesSource
+    internal static class NodeExtensions
     {
-        protected static RdfNode WrapObjectNode(INode node)
+        public static RdfNode WrapNode(this INode node)
         {
             var literal = node as ILiteralNode;
             if (literal != null)
@@ -19,16 +18,14 @@ namespace RomanticWeb.dotNetRDF
             {
                 return RdfNode.ForUri(uriNode.Uri);
             }
-            
+
             var blankNode = node as IBlankNode;
-            if(blankNode != null)
+            if (blankNode != null)
             {
                 return RdfNode.ForBlank(blankNode.InternalID, blankNode.GraphUri);
             }
 
             throw new ArgumentException("The node was neither URI, literal nor blank", "node");
         }
-
-        public abstract IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate);
     }
 }

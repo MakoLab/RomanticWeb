@@ -3,9 +3,9 @@ using System.Linq;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
 
-namespace RomanticWeb.dotNetRDF
+namespace RomanticWeb.dotNetRDF.TripleSources
 {
-    public class SingleGraphSource : TriplesSourceBase
+    public class SingleGraphSource : ITriplesSource
     {
         private readonly IGraph _graph;
 
@@ -14,13 +14,18 @@ namespace RomanticWeb.dotNetRDF
             _graph = graph;
         }
 
-        public override IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
+        public virtual IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
         {
             INode entityNode = entityId.ToNode(_graph);
             INode predicateNode = _graph.CreateUriNode(predicate.Uri);
 
             return _graph.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
-                         .Select(t => WrapObjectNode(t.Object));
+                         .Select(t => t.Object.WrapNode());
+        }
+
+        public bool TryGetListElements(RdfNode rdfList, out IEnumerable<RdfNode> listElements)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

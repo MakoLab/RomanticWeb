@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.dotNetRDF;
@@ -162,6 +164,25 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(tomasz.knows.Id, Is.InstanceOf<BlankId>());
             Assert.That(tomasz.knows.givenName != null);
             Assert.That(tomasz.knows.givenName, Is.EqualTo("Karol"));
-        } 
+        }
+
+        [Test]
+        public void Should_read_rdf_lists_as_collection()
+        {
+            // given
+            _store.LoadTestFile("RdfList.ttl");
+
+            // when
+            dynamic tomasz = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+            dynamic people = tomasz.knows;
+
+            // then
+            Assert.That(people.Count, Is.EqualTo(5));
+            Assert.That(people[0].Id.Equals(new UriId("http://magi/people/Karol")));
+            Assert.That(people[1].Id.Equals(new UriId("http://magi/people/Gniewko")));
+            Assert.That(people[2].Id.Equals(new UriId("http://magi/people/Monika")));
+            Assert.That(people[3].Id.Equals(new UriId("http://magi/people/Dominik")));
+            Assert.That(people[4].Id.Equals(new UriId("http://magi/people/Przemek")));
+        }
     }
 }

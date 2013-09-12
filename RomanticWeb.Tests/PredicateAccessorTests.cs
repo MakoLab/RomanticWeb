@@ -9,7 +9,7 @@ namespace RomanticWeb.Tests
     public class ObjectAccessorTests
     {
         private readonly Entity _entity = new Entity(new UriId(Uri));
-        private Mock<IEntityFactory> _entityFactory;
+        private Mock<IRdfNodeConverter> _entityFactory;
         private Ontology _ontology;
         private Mock<ITriplesSource> _graph;
         private const string Uri = "urn:test:identity";
@@ -24,7 +24,7 @@ namespace RomanticWeb.Tests
         public void Setup()
         {
             _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
-            _entityFactory = new Mock<IEntityFactory>();
+            _entityFactory = new Mock<IRdfNodeConverter>();
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
-            dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
+            dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.givenName;
@@ -57,7 +57,7 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
-            dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
+            dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
             // when
             var givenName = accessor.fullName;

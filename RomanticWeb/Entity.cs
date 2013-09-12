@@ -11,8 +11,9 @@ namespace RomanticWeb
     /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("Entity <{Id}>")]
-    public class Entity : ImpromptuDictionary
+    public class Entity : ImpromptuDictionary, IEntity
     {
+        private readonly EntityFactoryBase _entityFactory;
         private readonly EntityId _entityId;
 
         /// <summary>
@@ -24,10 +25,16 @@ namespace RomanticWeb
             _entityId = entityId;
         }
 
+        internal Entity(EntityId entityId, EntityFactoryBase entityFactory)
+            : this(entityId)
+        {
+            _entityFactory = entityFactory;
+        }
+
         /// <summary>
         /// Gets the entity's identifier
         /// </summary>
-        protected internal EntityId Id
+        public EntityId Id
         {
             get { return _entityId; }
         }
@@ -48,8 +55,17 @@ namespace RomanticWeb
                 return true;
             }
 
-            //throw new UnknownNamespaceException(binder.Name);
             return false;
+        }
+
+        public override TInterface ActLike<TInterface>(params System.Type[] otherInterfaces)
+        {
+            if (_entityFactory != null)
+            {
+                return _entityFactory.EntityAs<TInterface>(this);
+            }
+
+            return base.ActLike<TInterface>(otherInterfaces);
         }
 
         private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)

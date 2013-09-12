@@ -50,6 +50,11 @@
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
     <Compile Include="BlankId.cs" />
+    <Compile Include="EntityProxy.cs" />
+    <Compile Include="IEntity.cs" />
+    <Compile Include="IMapping.cs" />
+    <Compile Include="IMappingProvider.cs" />
+    <Compile Include="IRdfNodeConverter.cs" />
     <Compile Include="ITriplesSource.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
@@ -69,6 +74,7 @@
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\RdfClass.cs" />
     <Compile Include="Ontologies\RdfNode.cs" />
+    <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="TypeCheckerAccessor.cs" />
     <Compile Include="UriId.cs" />
   </ItemGroup>

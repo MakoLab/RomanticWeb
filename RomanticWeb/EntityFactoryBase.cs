@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using ImpromptuInterface;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -7,13 +8,14 @@ namespace RomanticWeb
     /// <summary>
     /// Base class for factories, which produce <see cref="Entity"/> instances
     /// </summary>
-    /// <typeparam name="TTripleSource">Type of RDF datasource, like graph of triple store</typeparam>
     public abstract class EntityFactoryBase : IEntityFactory
     {
+        private readonly IMappingProvider _mappings;
         private readonly IOntologyProvider _ontologyProvider;
 
-        protected EntityFactoryBase(IOntologyProvider ontologyProvider)
+        protected EntityFactoryBase(IMappingProvider mappings, IOntologyProvider ontologyProvider)
         {
+            _mappings = mappings;
             _ontologyProvider = new DefaultOntologiesProvider(ontologyProvider);
         }
 
@@ -22,12 +24,13 @@ namespace RomanticWeb
         /// </summary>
         public Entity Create(EntityId entityId)
         {
-            Entity entity = CreateInternal(entityId);
+            var entity = new Entity(entityId, this);
             IDictionary<string, object> typeCheckerExpando = new ExpandoObject();
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                entity[ontology.Prefix] = CreateOntologyAccessor(entity, ontology);
+                var source = CreateTriplesSourceForOntology();
+                entity[ontology.Prefix] = new OntologyAccessor(source, entityId, ontology, new RdfNodeConverter(this));
                 typeCheckerExpando[ontology.Prefix] = new TypeCheckerAccessor(entity, ontology);
             }
             entity["IsA"] = typeCheckerExpando;
@@ -35,8 +38,19 @@ namespace RomanticWeb
             return entity;
         }
 
-        protected abstract OntologyAccessor CreateOntologyAccessor(Entity entity, Ontology ontology);
+        public T Create<T>(EntityId entityId) where T : class
+        {
+            return EntityAs<T>(Create(entityId));
+        }
 
-        protected abstract Entity CreateInternal(EntityId entityId);
+        internal TEntity EntityAs<TEntity>(IEntity entity) where TEntity : class
+        {
+            var triplesSource = CreateTriplesSourceForEntity(_mappings.MappingFor<TEntity>());
+            return new EntityProxy<TEntity>(triplesSource, entity.Id, _mappings.MappingFor<TEntity>(), new RdfNodeConverter(this)).ActLike<TEntity>();
+        }
+
+        protected abstract ITriplesSource CreateTriplesSourceForEntity<TEntity>(IMapping<TEntity> mappingFor);
+
+        protected abstract ITriplesSource CreateTriplesSourceForOntology();
     }
 }

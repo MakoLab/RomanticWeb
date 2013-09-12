@@ -7,7 +7,7 @@ namespace RomanticWeb.dotNetRDF
     /// <summary>
     /// Entity factory implementation backed by a triple store
     /// </summary>
-    public class EntityFactory : EntityFactoryBase
+    public class EntityFactory : RomanticWeb.EntityFactoryBase
     {
         private readonly ITripleStore _tripeStore;
 
@@ -16,20 +16,20 @@ namespace RomanticWeb.dotNetRDF
         /// </summary>
         /// <param name="tripeStore">Triples will be read from this triple store</param>
         /// <param name="ontologyProvider">Entites will expose dynamic members for the provided ontologies</param>
-        public EntityFactory(ITripleStore tripeStore, IOntologyProvider ontologyProvider) : base(ontologyProvider)
+        public EntityFactory(ITripleStore tripeStore, IMappingProvider mappings, IOntologyProvider ontologyProvider)
+            : base(mappings, ontologyProvider)
         {
             _tripeStore = tripeStore;
         }
 
-        protected override OntologyAccessor CreateOntologyAccessor(Entity entity, Ontology ontology)
+        protected override ITriplesSource CreateTriplesSourceForEntity<TEntity>(IMapping<TEntity> mappingFor)
         {
-            ITriplesSource source = new UnionGraphSource(_tripeStore);
-            return new OntologyAccessor(source, entity, ontology, this);
+            return new UnionGraphSource(_tripeStore);
         }
 
-        protected override Entity CreateInternal(EntityId entityId)
+        protected override ITriplesSource CreateTriplesSourceForOntology()
         {
-            return new Entity(entityId);
+            return new UnionGraphSource(_tripeStore);
         }
     }
 }

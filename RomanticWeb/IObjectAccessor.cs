@@ -2,7 +2,7 @@
 
 namespace RomanticWeb
 {
-    internal interface IObjectAccessor
+    public interface IObjectAccessor
     {
         dynamic GetObjects(EntityId entity, Property predicate);
     }

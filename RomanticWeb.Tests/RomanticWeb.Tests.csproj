@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="dotNetRDF">
       <HintPath>..\packages\dotNetRDF.1.0.0.2533\lib\net40\dotNetRDF.dll</HintPath>
     </Reference>
@@ -92,6 +95,7 @@
     <Compile Include="IntegrationTests\InMemoryTripleStoreRdfListTests.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreBasicTests.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreTestsBase.cs" />
+    <Compile Include="Mapping\MappingPropertiesWithPrivateSettersTests.cs" />
     <Compile Include="PredicateAccessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\StaticOntologyProvider.cs" />

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.dotNetRDF;
@@ -10,13 +11,16 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         private TripleStore _store;
 
+        private Mock<IMappingProvider> _mappings;
+
         public IEntityFactory EntityFactory { get; private set; }
 
         [SetUp]
         public void Setup()
         {
             _store = new TripleStore();
-            EntityFactory = new EntityFactory(_store, new StaticOntologyProvider());
+            _mappings = new Mock<IMappingProvider>(MockBehavior.Strict);
+            EntityFactory = new dotNetRDF.EntityFactory(_store, _mappings.Object, new StaticOntologyProvider());
         }
 
         protected void LoadTestFile(string fileName)

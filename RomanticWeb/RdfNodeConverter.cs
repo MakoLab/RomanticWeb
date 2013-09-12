@@ -15,7 +15,7 @@ namespace RomanticWeb
         }
 
         // todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
-        public IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITriplesSource tripleSource)
+        public IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITripleSource tripleSource)
         {
             foreach (var subject in subjects)
             {

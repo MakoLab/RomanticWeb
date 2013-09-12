@@ -6,7 +6,7 @@ using VDS.RDF;
 namespace RomanticWeb.dotNetRDF.TripleSources
 {
     [NullGuard(ValidationFlags.OutValues)]
-    public class UnionGraphSource : TriplesSourceBase
+    public class UnionGraphSource : TripleSourceBase
     {
         public UnionGraphSource(ITripleStore tripleStore)
             : base(CreateQueryStrategy(tripleStore))

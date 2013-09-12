@@ -8,12 +8,12 @@ namespace RomanticWeb
 {
     internal class EntityProxy<TEntity> : DynamicObject
     {
-        private readonly ITriplesSource _source;
+        private readonly ITripleSource _source;
         private readonly EntityId _entityId;
         private readonly IMapping<TEntity> _mappings;
         private readonly RdfNodeConverter _converter;
 
-        public EntityProxy(ITriplesSource source, EntityId entity, IMapping<TEntity> mappings, RdfNodeConverter converter)
+        public EntityProxy(ITripleSource source, EntityId entity, IMapping<TEntity> mappings, RdfNodeConverter converter)
         {
             _source = source;
             _entityId = entity;

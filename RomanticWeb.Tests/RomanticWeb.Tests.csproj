@@ -36,9 +36,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
     <Reference Include="dotNetRDF">
       <HintPath>..\packages\dotNetRDF.1.0.0.2533\lib\net40\dotNetRDF.dll</HintPath>
     </Reference>
@@ -90,6 +87,7 @@
   <ItemGroup>
     <Compile Include="EntityFactoryTests.cs" />
     <Compile Include="EntityIdTests.cs" />
+    <Compile Include="EntityTests.cs" />
     <Compile Include="Helpers\TripleStoreExtensions.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreDatatypeTests.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreRdfListTests.cs" />

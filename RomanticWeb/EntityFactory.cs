@@ -8,14 +8,16 @@ namespace RomanticWeb
     /// <summary>
     /// Base class for factories, which produce <see cref="Entity"/> instances
     /// </summary>
-    public abstract class EntityFactoryBase : IEntityFactory
+    public class EntityFactory : IEntityFactory
     {
         private readonly IMappingProvider _mappings;
+        private readonly TripleSourceFactoryBase _sourceFactoryBase;
         private readonly IOntologyProvider _ontologyProvider;
 
-        protected EntityFactoryBase(IMappingProvider mappings, IOntologyProvider ontologyProvider)
+        internal EntityFactory(IMappingProvider mappings, IOntologyProvider ontologyProvider, TripleSourceFactoryBase sourceFactoryBase)
         {
             _mappings = mappings;
+            _sourceFactoryBase = sourceFactoryBase;
             _ontologyProvider = new DefaultOntologiesProvider(ontologyProvider);
         }
 
@@ -29,7 +31,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                var source = CreateTriplesSourceForOntology();
+                var source = _sourceFactoryBase.CreateTriplesSourceForOntology();
                 entity[ontology.Prefix] = new OntologyAccessor(source, entityId, ontology, new RdfNodeConverter(this));
                 typeCheckerExpando[ontology.Prefix] = new TypeCheckerAccessor(entity, ontology);
             }
@@ -45,12 +47,8 @@ namespace RomanticWeb
 
         internal TEntity EntityAs<TEntity>(IEntity entity) where TEntity : class
         {
-            var triplesSource = CreateTriplesSourceForEntity(_mappings.MappingFor<TEntity>());
+            var triplesSource = _sourceFactoryBase.CreateTriplesSourceForEntity(_mappings.MappingFor<TEntity>());
             return new EntityProxy<TEntity>(triplesSource, entity.Id, _mappings.MappingFor<TEntity>(), new RdfNodeConverter(this)).ActLike<TEntity>();
         }
-
-        protected abstract ITriplesSource CreateTriplesSourceForEntity<TEntity>(IMapping<TEntity> mappingFor);
-
-        protected abstract ITriplesSource CreateTriplesSourceForOntology();
     }
 }

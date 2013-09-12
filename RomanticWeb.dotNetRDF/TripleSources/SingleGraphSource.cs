@@ -5,7 +5,7 @@ using VDS.RDF;
 
 namespace RomanticWeb.dotNetRDF.TripleSources
 {
-    public class SingleGraphSource : ITriplesSource
+    public class SingleGraphSource : ITripleSource
     {
         private readonly IGraph _graph;
 

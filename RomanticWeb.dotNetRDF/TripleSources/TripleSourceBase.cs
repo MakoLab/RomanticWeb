@@ -3,11 +3,11 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.dotNetRDF.TripleSources
 {
-    public abstract class TriplesSourceBase : ITriplesSource
+    public abstract class TripleSourceBase : ITripleSource
     {
         private readonly IStoreQueryStrategy _queryStrategy;
 
-        protected TriplesSourceBase(IStoreQueryStrategy queryStrategy)
+        protected TripleSourceBase(IStoreQueryStrategy queryStrategy)
         {
             _queryStrategy = queryStrategy;
         }

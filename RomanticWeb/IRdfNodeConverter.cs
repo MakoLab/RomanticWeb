@@ -5,6 +5,6 @@ namespace RomanticWeb
 {
     public interface IRdfNodeConverter
     {
-        IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITriplesSource tripleSource);
+        IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITripleSource tripleSource);
     }
 }

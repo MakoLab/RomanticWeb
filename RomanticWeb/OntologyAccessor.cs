@@ -12,7 +12,7 @@ namespace RomanticWeb
     [NullGuard(ValidationFlags.OutValues)]
     public sealed class OntologyAccessor : DynamicObject, IObjectAccessor
     {
-        private readonly ITriplesSource _tripleSource;
+        private readonly ITripleSource _tripleSource;
         private readonly EntityId _entityId;
         private readonly Ontology _ontology;
         private readonly IRdfNodeConverter _nodeConverter;
@@ -24,7 +24,7 @@ namespace RomanticWeb
         /// <param name="entity">the access Entity</param>
         /// <param name="ontology">Ontolgy used to resolve predicate names</param>
         /// <param name="entityFactory">factory used to produce associated Entities</param>
-        public OntologyAccessor(ITriplesSource tripleSource, EntityId entityId, Ontology ontology, IRdfNodeConverter nodeConverter)
+        public OntologyAccessor(ITripleSource tripleSource, EntityId entityId, Ontology ontology, IRdfNodeConverter nodeConverter)
         {
             _tripleSource = tripleSource;
             _entityId = entityId;

@@ -28,7 +28,8 @@ namespace RomanticWeb.Tests.Mapping
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(_personMapping.Object);
             var staticOntologyProvider = new StaticOntologyProvider();
             _foaf = staticOntologyProvider.Ontologies.First();
-            var factory = new dotNetRDF.EntityFactory(_tripleStore, _mappings.Object, staticOntologyProvider);
+            var tripleSourceFactory = new TripleStoreTripleSourceFactory(_tripleStore);
+            var factory = new EntityFactory(_mappings.Object, staticOntologyProvider, tripleSourceFactory);
             _entity = factory.Create<IPerson>(new UriId("http://magi/people/Tomasz"));
         }
 

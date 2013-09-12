@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests
         private readonly Entity _entity = new Entity(new UriId(Uri));
         private Mock<IRdfNodeConverter> _entityFactory;
         private Ontology _ontology;
-        private Mock<ITriplesSource> _graph;
+        private Mock<ITripleSource> _graph;
         private const string Uri = "urn:test:identity";
 
         [TestFixtureSetUp]
@@ -23,7 +23,7 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
+            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
             _entityFactory = new Mock<IRdfNodeConverter>();
         }
 
@@ -38,7 +38,7 @@ namespace RomanticWeb.Tests
         public void Getting_known_predicate_should_return_objects()
         {
             // given
-            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
+            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
@@ -55,7 +55,7 @@ namespace RomanticWeb.Tests
         public void Getting_unknown_predicate_should_use_the_property_name()
         {
             // given
-            _graph = new Mock<ITriplesSource>(MockBehavior.Strict);
+            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 

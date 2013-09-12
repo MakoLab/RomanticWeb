@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
@@ -13,8 +15,9 @@ namespace RomanticWeb
     [DebuggerDisplay("Entity <{Id}>")]
     public class Entity : ImpromptuDictionary, IEntity
     {
-        private readonly EntityFactoryBase _entityFactory;
+        private readonly EntityFactory _entityFactory;
         private readonly EntityId _entityId;
+        private readonly IDictionary<Type, object> _knownActLike = new Dictionary<Type, object>(); 
 
         /// <summary>
         /// Creates a new instance of <see cref="Entity"/>
@@ -25,7 +28,7 @@ namespace RomanticWeb
             _entityId = entityId;
         }
 
-        internal Entity(EntityId entityId, EntityFactoryBase entityFactory)
+        internal Entity(EntityId entityId, EntityFactory entityFactory)
             : this(entityId)
         {
             _entityFactory = entityFactory;
@@ -58,14 +61,19 @@ namespace RomanticWeb
             return false;
         }
 
-        public override TInterface ActLike<TInterface>(params System.Type[] otherInterfaces)
+        public TInterface ActLike<TInterface>() where TInterface : class
         {
             if (_entityFactory != null)
             {
                 return _entityFactory.EntityAs<TInterface>(this);
             }
 
-            return base.ActLike<TInterface>(otherInterfaces);
+            if (!_knownActLike.ContainsKey(typeof (TInterface)))
+            {
+                _knownActLike[typeof (TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
+            }
+
+            return (TInterface) _knownActLike[typeof (TInterface)];
         }
 
         private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)

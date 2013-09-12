@@ -20,7 +20,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             _store = new TripleStore();
             _mappings = new Mock<IMappingProvider>(MockBehavior.Strict);
-            EntityFactory = new dotNetRDF.EntityFactory(_store, _mappings.Object, new StaticOntologyProvider());
+            var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
+            EntityFactory = new EntityFactory(_mappings.Object, new StaticOntologyProvider(), tripleSourceFactory);
         }
 
         protected void LoadTestFile(string fileName)

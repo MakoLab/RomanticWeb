@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RomanticWeb.Ontologies;
 
@@ -17,7 +18,7 @@ namespace RomanticWeb.dotNetRDF.TripleSources
             get { return _queryStrategy; }
         }
 
-        public abstract IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate);
+        public abstract IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Uri predicate);
         public abstract bool TryGetListElements(RdfNode rdfList, out IEnumerable<RdfNode> listElements);
     }
 }

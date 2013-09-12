@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
@@ -16,10 +17,10 @@ namespace RomanticWeb.dotNetRDF.TripleSources
             _tripleStore = tripleStore;
         }
 
-        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
+        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Uri predicate)
         {
             INode entityNode = entityId.ToNode(NodeFactory);
-            INode predicateNode = NodeFactory.CreateUriNode(predicate.Uri);
+            INode predicateNode = NodeFactory.CreateUriNode(predicate);
 
             return _tripleStore.GetTriplesWithSubjectPredicate(entityNode, predicateNode)
                                .Select(t => t.Object.WrapNode());

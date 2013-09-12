@@ -13,15 +13,37 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         private Mock<IMappingProvider> _mappings;
 
-        public IEntityFactory EntityFactory { get; private set; }
+        protected IEntityFactory EntityFactory { get; set; }
 
         [SetUp]
         public void Setup()
         {
             _store = new TripleStore();
-            _mappings = new Mock<IMappingProvider>(MockBehavior.Strict);
+            _mappings = SetupMappings();
             var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
             EntityFactory = new EntityFactory(_mappings.Object, new StaticOntologyProvider(), tripleSourceFactory);
+
+            ChildSetup();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            _mappings.VerifyAll();
+            ChildTeardown();
+        }
+
+        protected virtual void ChildTeardown()
+        {
+        }
+
+        protected virtual Mock<IMappingProvider> SetupMappings()
+        {
+            return new Mock<IMappingProvider>(MockBehavior.Strict);
+        }
+
+        protected virtual void ChildSetup()
+        {
         }
 
         protected void LoadTestFile(string fileName)

@@ -1,4 +1,5 @@
 ﻿using System;
+using NullGuard;
 using RomanticWeb.dotNetRDF.TripleSources;
 using VDS.RDF;
 
@@ -20,12 +21,17 @@ namespace RomanticWeb.dotNetRDF
             _tripeStore = tripeStore;
         }
 
-        public override ITripleSource CreateSourceForGraph(Uri namedGraph)
+        protected override ITripleSource CreateSourceForDefaultGraph()
+        {
+            return CreateSourceForNamedGraph(null);
+        }
+
+        protected override ITripleSource CreateSourceForNamedGraph([AllowNull] Uri namedGraph)
         {
             return new SingleGraphSource(_tripeStore[namedGraph]);
         }
 
-        public override ITripleSource CreateSourceForUnionGraph()
+        protected override ITripleSource CreateSourceForUnionGraph()
         {
             return new UnionGraphSource(_tripeStore);
         }

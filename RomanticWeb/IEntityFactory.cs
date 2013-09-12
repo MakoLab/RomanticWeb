@@ -10,5 +10,7 @@ namespace RomanticWeb
         /// </summary>
         /// <param name="entityId">Entity identifier</param>
         Entity Create(EntityId entityId);
+
+        T Create<T>(EntityId entityId) where T : class;
     }
 }

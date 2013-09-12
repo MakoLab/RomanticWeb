@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
@@ -16,12 +17,12 @@ namespace RomanticWeb.dotNetRDF.TripleSources
             _nativeStore = tripleStore;
         }
 
-        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
+        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Uri predicate)
         {
             var query = new SparqlParameterizedString();
             query.CommandText = "SELECT ?o { GRAPH ?g { @entity @predicate ?o } }";
             query.SetParameter("entity", entityId.ToNode(NodeFactory));
-            query.SetUri("predicate", predicate.Uri);
+            query.SetUri("predicate", predicate);
 
             return from SparqlResult result in (SparqlResultSet)_nativeStore.ExecuteQuery(query.ToString())
                    where result.HasBoundValue("o")

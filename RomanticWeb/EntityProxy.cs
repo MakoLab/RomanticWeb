@@ -2,20 +2,19 @@
 using System.Collections;
 using System.Dynamic;
 using System.Linq;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
     internal class EntityProxy<TEntity> : DynamicObject
     {
-        private readonly ITripleSource _source;
+        private readonly TripleSourceFactoryBase _sourceFactory;
         private readonly EntityId _entityId;
         private readonly IMapping<TEntity> _mappings;
         private readonly RdfNodeConverter _converter;
 
-        public EntityProxy(ITripleSource source, EntityId entity, IMapping<TEntity> mappings, RdfNodeConverter converter)
+        public EntityProxy(TripleSourceFactoryBase source, EntityId entity, IMapping<TEntity> mappings, RdfNodeConverter converter)
         {
-            _source = source;
+            _sourceFactory = source;
             _entityId = entity;
             _mappings = mappings;
             _converter = converter;
@@ -23,9 +22,10 @@ namespace RomanticWeb
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            Property property = _mappings.PropertyFor(binder.Name);
+            var property = _mappings.PropertyFor(binder.Name).Uri;
 
-            IList objectsForPredicate = _converter.Convert(_source.GetObjectsForPredicate(_entityId, property), _source).ToList();
+            ITripleSource source = _sourceFactory.CreateTripleSourceForProperty(_entityId, _mappings.PropertyFor(binder.Name));
+            IList objectsForPredicate = _converter.Convert(source.GetObjectsForPredicate(_entityId, property), source).ToList();
 
             if (objectsForPredicate.Count == 1)
             {

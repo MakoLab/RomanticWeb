@@ -56,7 +56,7 @@ namespace RomanticWeb
 
         dynamic IObjectAccessor.GetObjects(EntityId entity, Property predicate)
         {
-            var subjectValues = _tripleSource.GetObjectsForPredicate(entity, predicate);
+            var subjectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri);
             var subjects = _nodeConverter.Convert(subjectValues, _tripleSource).ToList();
 
             if (subjects.Count == 1)

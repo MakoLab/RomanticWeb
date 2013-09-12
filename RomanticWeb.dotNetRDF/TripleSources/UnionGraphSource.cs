@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NullGuard;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
@@ -23,7 +24,7 @@ namespace RomanticWeb.dotNetRDF.TripleSources
             return new SparqlQueryStrategy((INativelyQueryableStore)tripleStore);
         }
 
-        public override IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Property predicate)
+        public override IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Uri predicate)
         {
             return QueryStrategy.GetObjectsForPredicate(entityId, predicate);
         }

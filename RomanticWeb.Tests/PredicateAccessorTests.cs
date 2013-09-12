@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Ontologies;
@@ -39,7 +40,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<ITripleSource>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
             // when
@@ -47,7 +48,7 @@ namespace RomanticWeb.Tests
 
             // then
             _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
-                                                        new DatatypeProperty("givenName").InOntology(_ontology)),
+                                                        new DatatypeProperty("givenName").InOntology(_ontology).Uri),
                                                         Times.Once);
         }
 
@@ -56,7 +57,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<ITripleSource>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Property>())).Returns(new RdfNode[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
             // when
@@ -64,7 +65,7 @@ namespace RomanticWeb.Tests
 
             // then
             _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
-                                                        new Property("fullName").InOntology(_ontology)),
+                                                        new Property("fullName").InOntology(_ontology).Uri),
                                                         Times.Once);
         }
     }

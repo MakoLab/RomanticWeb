@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace RomanticWeb
+﻿namespace RomanticWeb
 {
     public interface ITripleSourceFactory
     {
-        ITripleSource CreateSourceForGraph(Uri namedGraph);
-
-        ITripleSource CreateSourceForUnionGraph();
+        ITripleSource CreateTriplesSourceForOntology();
+        ITripleSource CreateTriplesSourceForEntity<TEntity>(IMapping<TEntity> mappingFor) where TEntity : class;
+        ITripleSource CreateTripleSourceForProperty(EntityId entityId, IPropertyMapping property);
     }
 }

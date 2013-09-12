@@ -47,8 +47,7 @@ namespace RomanticWeb
 
         internal TEntity EntityAs<TEntity>(IEntity entity) where TEntity : class
         {
-            var triplesSource = _sourceFactoryBase.CreateTriplesSourceForEntity(_mappings.MappingFor<TEntity>());
-            return new EntityProxy<TEntity>(triplesSource, entity.Id, _mappings.MappingFor<TEntity>(), new RdfNodeConverter(this)).ActLike<TEntity>();
+            return new EntityProxy<TEntity>(_sourceFactoryBase, entity.Id, _mappings.MappingFor<TEntity>(), new RdfNodeConverter(this)).ActLike<TEntity>();
         }
     }
 }

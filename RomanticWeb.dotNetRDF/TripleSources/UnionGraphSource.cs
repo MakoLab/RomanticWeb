@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NullGuard;
+using System.Linq;
 using RomanticWeb.Ontologies;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -35,10 +36,10 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			return QueryStrategy.TryGetListElements(rdfList,out listElements);
 		}
 
-		public override IEnumerable<RdfNode> GetNodesForQery(string commandText)
+		public override IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string commandText)
 		{
 			SparqlQuery query=new SparqlQueryParser().ParseFromString(commandText);
-			return QueryStrategy.GetNodesForQuery(query);
+			return QueryStrategy.GetNodesForQuery(query).Triples.Select(t => new Tuple<RdfNode,RdfNode,RdfNode>(t.Subject.WrapNode(),t.Predicate.WrapNode(),t.Object.WrapNode()));
 		}
 	}
 }

@@ -72,6 +72,7 @@
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
+    <Compile Include="Ontologies\RdfNodeEqualityComparer.cs" />
     <Compile Include="Ontologies\RdfTerm.cs" />
     <Compile Include="Ontologies\RdfTermExtensions.cs" />
     <Compile Include="OntologyAccessor.cs" />

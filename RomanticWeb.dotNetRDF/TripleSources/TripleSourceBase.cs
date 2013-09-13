@@ -19,7 +19,7 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			get { return _queryStrategy; }
 		}
 
-		public abstract IEnumerable<RdfNode> GetNodesForQery(string commandText);
+		public abstract IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string commandText);
 		public abstract IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId,Uri predicate);
 		public abstract bool TryGetListElements(RdfNode rdfList,out IEnumerable<RdfNode> listElements);
 	}

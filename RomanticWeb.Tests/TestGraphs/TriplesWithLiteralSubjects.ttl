@@ -1,8 +1,10 @@
 ﻿base <http://magi/>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
 
-<people/Tomasz> foaf:givenName "Tomasz" ;
+<people/Tomasz> a foaf:Person;
+				foaf:givenName "Tomasz" ;
 				foaf:familyName "Pluskiewicz" .
 
-<people/Karol> foaf:givenName "Karol" ;
+<people/Karol>	a foaf:Person;
+				foaf:givenName "Karol" ;
 				foaf:familyName "Szczepański" .

@@ -9,12 +9,7 @@ namespace RomanticWeb.Linq
 {
 	public class EntityQueryable<T>:QueryableBase<T> where T:class,IEntity
 	{
-		private static EntityQueryProvider<T> CreateDefaultEntityQueryProvider(IEntityFactory entityFactory)
-		{
-			return new EntityQueryProvider<T>(entityFactory);
-		}
-
-		internal protected EntityQueryable(IEntityFactory entityFactory):base(CreateDefaultEntityQueryProvider(entityFactory))
+		internal protected EntityQueryable(IEntityFactory entityFactory):base(new EntityQueryProvider<T>(entityFactory))
 		{
 			if (entityFactory==null)
 				throw new ArgumentNullException("entityFactory");

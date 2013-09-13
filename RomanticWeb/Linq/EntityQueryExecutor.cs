@@ -43,7 +43,17 @@ namespace RomanticWeb.Linq
 
 		public T ExecuteSingle<T>(QueryModel queryModel,bool returnDefaultWhenEmpty)
 		{
-			throw new NotImplementedException();
+			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
+				throw new ArgumentOutOfRangeException("T");
+			T result=default(T);
+			string commandText=_translator.CreateSingleResultCommandText(queryModel);
+			if (commandText.Length>0)
+			{
+				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
+					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
+				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText })).FirstOrDefault();
+			}
+			return result;
 		}
 	}
 }

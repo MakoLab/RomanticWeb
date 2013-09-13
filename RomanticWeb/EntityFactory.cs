@@ -13,10 +13,12 @@ namespace RomanticWeb
 	/// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
 	public class EntityFactory:IEntityFactory
 	{
-		private readonly IMappingProvider _mappings;
 		private readonly TripleSourceFactoryBase _sourceFactoryBase;
-		private readonly IOntologyProvider _ontologyProvider;
 
+		private readonly IMappingProvider _mappings;
+		IMappingProvider IEntityFactory.Mappings { get { return _mappings; } }
+
+		private readonly IOntologyProvider _ontologyProvider;
 		IOntologyProvider IEntityFactory.OntologyProvider { get { return _ontologyProvider; } }
 
 		internal EntityFactory(IMappingProvider mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
@@ -54,7 +56,10 @@ namespace RomanticWeb
 
 		public T Create<T>(EntityId entityId) where T:class,IEntity
 		{
-			return EntityAs<T>(Create(entityId));
+			if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
+				return (T)(IEntity)Create(entityId);
+			else
+				return EntityAs<T>(Create(entityId));
 		}
 
 		public IEnumerable<Entity> Create(string sparqlConstruct)
@@ -64,15 +69,12 @@ namespace RomanticWeb
 
 		public IEnumerable<T> Create<T>(string sparqlConstruct) where T:class,IEntity
 		{
-			IList<T> entities=new T[0];
+			IList<T> entities=new List<T>();
 
 			ITripleSource tripleSource=_sourceFactoryBase.CreateTriplesSourceForOntology();
-			IEnumerable<RdfNode> triples=tripleSource.GetNodesForQery(sparqlConstruct);
-			Entity lastEntity=null;
-			
-			foreach (RdfNode node in triples)
-			{
-			}
+			IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> triples=tripleSource.GetNodesForQuery(sparqlConstruct);
+			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct(RdfNodeEqualityComparer.Default))
+				entities.Add(Create<T>(EntityId.Create(subject.ToString())));
 
 			return entities;
 		}

@@ -30,13 +30,30 @@ namespace RomanticWeb.Linq
 			if (queryModel.SelectClause==null)
 				throw new ArgumentOutOfRangeException("There is no select clause associated with query.");
 			Dictionary<object,char> variableMap=new Dictionary<object,char>();
-			string whereClause="?s ?p ?o.";
+			string whereClause="\t?s ?p ?o."+Environment.NewLine;
 			foreach (IBodyClause clause in queryModel.BodyClauses)
 			{
 				if (clause is WhereClause)
-					whereClause+=" "+TransformWhereClause(queryModel,(WhereClause)clause,ref variableMap);
+					whereClause+="\t"+TransformWhereClause(queryModel,(WhereClause)clause,ref variableMap)+Environment.NewLine;
 			}
-			string result=System.String.Format("CONSTRUCT {{ ?s ?p ?o }} WHERE {{ {0} }}",whereClause);
+			string result=System.String.Format(
+@"CONSTRUCT {{ ?s ?p ?o }}
+WHERE {{
+{1}}}",Environment.NewLine,whereClause);
+			return result;
+		}
+
+		internal string CreateSingleResultCommandText(QueryModel queryModel)
+		{
+			string result=CreateCommandText(queryModel);
+			if (result.Length>0)
+				result=System.String.Format(
+@"CONSTRUCT {{ ?s ?p ?o. }}
+WHERE {{
+	?s ?p ?o.
+	{{ {1} LIMIT 1
+	}} FILTER (?s=?_s)
+}}",Environment.NewLine,result.Replace("\r","").Replace("\n",System.Environment.NewLine+"\t\t").Replace("?s","?_s").Replace("CONSTRUCT { ?_s ?p ?o }","SELECT DISTINCT ?_s"));
 			return result;
 		}
 
@@ -47,7 +64,7 @@ namespace RomanticWeb.Linq
 			if (transformMethodInfo!=null)
 				result=(string)transformMethodInfo.Invoke(this,new object[] { whereClause.Predicate });
 			else
-				throw new ArgumentNullException("Unsupported where clause.");
+				throw new InvalidOperationException("Unsupported where clause.");
 			return result;
 		}
 
@@ -63,7 +80,7 @@ namespace RomanticWeb.Linq
 				{
 					MethodCallExpression methodCall=(MethodCallExpression)current;
 					if ((methodCall.Method.Name=="get_Item")&&(methodCall.Arguments.Count==1)&&(methodCall.Arguments[0] is ConstantExpression)&&
-						((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(Entity)))||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
+						((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
 					{
 						callStack.Push(methodCall);
 						current=methodCall.Object;
@@ -132,7 +149,7 @@ namespace RomanticWeb.Linq
 				}
 			}
 			else
-				throw new ArgumentOutOfRangeException("Unsupported unary expression.");
+				throw new InvalidOperationException("Unsupported unary expression.");
 			return result;
 		}
 
@@ -159,11 +176,39 @@ namespace RomanticWeb.Linq
 					result=System.String.Format("{0} {1}",TransformMethodUnaryExpression((UnaryExpression)expression.Right),System.String.Format(
 						((((ConstantExpression)expression.Left).Type.IsValueType)||(((ConstantExpression)expression.Right).Type==typeof(string))?"\"{0}\"":"<{0}>"),((ConstantExpression)expression.Left).Value.ToString()));
 				else
-					throw new ArgumentNullException("Unsupported binary expression.");
+					throw new InvalidOperationException("Unsupported binary expression.");
 			}
 			else
-				throw new ArgumentNullException("Unsupported binary expression.");
+				throw new InvalidOperationException("Unsupported binary expression.");
 			return result;
+		}
+
+		private string TransformTypeBinaryExpression(TypeBinaryExpression expression)
+		{
+			string result="";
+			if (expression.NodeType==ExpressionType.TypeIs)
+			{
+				if (!typeof(IEntity).IsAssignableFrom(expression.TypeOperand))
+					ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+				MethodInfo mappingForMethodInfo=_entityFactory.Mappings.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.TypeOperand });
+				IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_entityFactory.Mappings,null);
+				if ((mapping!=null)&&(mapping.Type!=null))
+				{
+					Ontology ontology=_entityFactory.OntologyProvider.Ontologies.Where(item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+					if (ontology!=null)
+						result=System.String.Format("?s a <{0}>",mapping.Type.Uri.AbsoluteUri);
+					else
+						ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+				}
+				else
+					ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+			}
+			return result;
+		}
+
+		private void ThrowInvalidCastException(Type expectedType,Type foundType)
+		{
+			throw new InvalidCastException(System.String.Format("Expected '{0}' type, found '{1}'.",expectedType.FullName,foundType.FullName));
 		}
 	}
 }

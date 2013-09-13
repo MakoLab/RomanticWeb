@@ -44,15 +44,16 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			return false;
 		}
 
-		public IEnumerable<RdfNode> GetNodesForQuery(SparqlQuery query)
+		public ITripleStore GetNodesForQuery(SparqlQuery query)
 		{
-			IEnumerable<RdfNode> result=new RdfNode[0];
+			ITripleStore result=null;
 			InMemoryDataset dataSet=new InMemoryDataset(_tripleStore);
 			ISparqlQueryProcessor processor=new LeviathanQueryProcessor(dataSet);
 			object results=processor.ProcessQuery(query);
 			if (results is IGraph)
 			{
-				// TODO: create triples?
+				result=new TripleStore();
+				result.Add((IGraph)results);
 			}
 			return result;
 		}

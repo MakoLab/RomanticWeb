@@ -34,9 +34,11 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			throw new System.NotImplementedException();
 		}
 
-		public IEnumerable<RdfNode> GetNodesForQuery(SparqlQuery query)
+		public ITripleStore GetNodesForQuery(SparqlQuery query)
 		{
-			return ((SparqlResultSet)_nativeStore.ExecuteQuery(query.ToString())).ToTripleCollection(null).Select(t => t.Object.WrapNode());
+			TripleStore result=new TripleStore();
+			result.Add(new Graph(((SparqlResultSet)_nativeStore.ExecuteQuery(query.ToString())).ToTripleCollection(null)));
+			return result;
 		}
 	}
 }

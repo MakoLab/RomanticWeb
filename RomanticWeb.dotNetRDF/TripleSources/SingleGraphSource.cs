@@ -32,15 +32,15 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			throw new System.NotImplementedException();
 		}
 
-		public IEnumerable<RdfNode> GetNodesForQery(string commandText)
+		public IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string commandText)
 		{
-			IEnumerable<RdfNode> result=new RdfNode[0];
+			IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> result=new Tuple<RdfNode,RdfNode,RdfNode>[0];
 			SparqlQuery query=new SparqlQueryParser().ParseFromString(commandText);
 			InMemoryDataset dataSet=new InMemoryDataset(_graph);
 			ISparqlQueryProcessor processor=new LeviathanQueryProcessor(dataSet);
 			object results=processor.ProcessQuery(query);
 			if (results is IGraph)
-				result=((IGraph)result).Triples.Select(t => t.Object.WrapNode());
+				result=((IGraph)result).Triples.Select(t => new Tuple<RdfNode,RdfNode,RdfNode>(t.Subject.WrapNode(),t.Predicate.WrapNode(),t.Object.WrapNode()));
 			return result;
 		}
 	}

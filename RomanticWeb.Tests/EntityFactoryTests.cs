@@ -42,7 +42,7 @@ namespace RomanticWeb.Tests
         [Test, ExpectedException(typeof (ArgumentNullException))]
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
-            _entityFactory.Create(null);
+            _entityFactory.Create((EntityId)null);
         }
 
         [Test]

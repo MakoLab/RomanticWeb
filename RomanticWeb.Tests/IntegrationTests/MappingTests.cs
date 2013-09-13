@@ -47,7 +47,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(firstName, Is.EqualTo("Tomasz"));
         }
 
-        public interface IPerson
+		public interface IPerson:IEntity
         {
             string FirstName { get; }
         }

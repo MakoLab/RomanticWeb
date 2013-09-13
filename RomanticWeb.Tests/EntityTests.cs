@@ -35,12 +35,12 @@ namespace RomanticWeb.Tests
             Assert.That(otherEntity.Name, Is.Null);
         }
 
-        public interface ITestEntity
+        public interface ITestEntity:IEntity
         {
             string Name { get; set; }
         }
 
-        public interface IOtherEntity
+		public interface IOtherEntity:IEntity
         {
             string Name { get; set; }
         }

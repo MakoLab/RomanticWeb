@@ -4,9 +4,10 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    public interface ITripleSource
-    {
-        IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId, Uri predicate);
-        bool TryGetListElements(RdfNode rdfList, out IEnumerable<RdfNode> listElements);
-    }
+	public interface ITripleSource
+	{
+		IEnumerable<RdfNode> GetNodesForQery(string commandText);
+		IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId,Uri predicate);
+		bool TryGetListElements(RdfNode rdfList,out IEnumerable<RdfNode> listElements);
+	}
 }

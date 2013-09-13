@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using ImpromptuInterface.Dynamic;
 using NullGuard;
 using RomanticWeb.Ontologies;
 
@@ -10,7 +11,7 @@ namespace RomanticWeb
     /// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
     /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
-    public sealed class OntologyAccessor : DynamicObject, IObjectAccessor
+    public sealed class OntologyAccessor : ImpromptuDictionary, IObjectAccessor
     {
         private readonly ITripleSource _tripleSource;
         private readonly EntityId _entityId;

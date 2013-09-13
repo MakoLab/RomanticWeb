@@ -8,100 +8,89 @@ using NullGuard;
 
 namespace RomanticWeb
 {
-    /// <summary>
-    /// An RDF entity, which can be used to dynamically access RDF triples
-    /// </summary>
-    [NullGuard(ValidationFlags.OutValues)]
-    [DebuggerDisplay("Entity <{Id}>")]
-    public class Entity : ImpromptuDictionary, IEntity
-    {
-        private readonly EntityFactory _entityFactory;
-        private readonly EntityId _entityId;
-        private readonly IDictionary<Type, object> _knownActLike = new Dictionary<Type, object>(); 
+	/// <summary>
+	/// An RDF entity, which can be used to dynamically access RDF triples
+	/// </summary>
+	[NullGuard(ValidationFlags.OutValues)]
+	[DebuggerDisplay("Entity <{Id}>")]
+	public class Entity:ImpromptuDictionary,IEntity
+	{
+		private readonly EntityFactory _entityFactory;
+		private readonly EntityId _entityId;
+		private readonly IDictionary<Type,object> _knownActLike=new Dictionary<Type,object>();
 
-        /// <summary>
-        /// Creates a new instance of <see cref="Entity"/>
-        /// </summary>
-        /// <remarks>It will not be backed by <b>any</b> triples, when not created via factory</remarks>
-        public Entity(EntityId entityId)
-        {
-            _entityId = entityId;
-        }
+		protected dynamic _asDynamic;
+		public dynamic AsDynamic { get { return _asDynamic; } }
 
-        internal Entity(EntityId entityId, EntityFactory entityFactory)
-            : this(entityId)
-        {
-            _entityFactory = entityFactory;
-        }
+		/// <summary>Creates a new instance of <see cref="Entity"/></summary>
+		/// <remarks>It will not be backed by <b>any</b> triples, when not created via factory</remarks>
+		public Entity(EntityId entityId)
+		{
+			_asDynamic=(dynamic)this;
+			_entityId=entityId;
+		}
 
-        /// <summary>
-        /// Gets the entity's identifier
-        /// </summary>
-        public EntityId Id
-        {
-            get { return _entityId; }
-        }
+		internal Entity(EntityId entityId,EntityFactory entityFactory):this(entityId)
+		{
+			_entityFactory=entityFactory;
+		}
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            // first look for ontology prefix
-            bool gettingMemberSucceeded = base.TryGetMember(binder, out result);
+		public EntityId Id { get { return _entityId; } }
 
-            if (gettingMemberSucceeded)
-            {
-                return true;
-            }
+		public override bool TryGetMember(GetMemberBinder binder,out object result)
+		{
+			// first look for ontology prefix
+			bool gettingMemberSucceeded=base.TryGetMember(binder,out result);
 
-            // then look for properties in ontologies
-            if (TryGetPropertyFromOntologies(binder, out result))
-            {
-                return true;
-            }
+			if (gettingMemberSucceeded)
+				return true;
 
-            return false;
-        }
+			// then look for properties in ontologies
+			if (TryGetPropertyFromOntologies(binder,out result))
+				return true;
 
-        public TInterface ActLike<TInterface>() where TInterface : class
-        {
-            if (_entityFactory != null)
-            {
-                return _entityFactory.EntityAs<TInterface>(this);
-            }
+			return false;
+		}
 
-            if (!_knownActLike.ContainsKey(typeof (TInterface)))
-            {
-                _knownActLike[typeof (TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
-            }
+		public T ActLike<T>() where T:class,IEntity
+		{
+			if (_entityFactory!=null)
+				return _entityFactory.EntityAs<T>(this);
 
-            return (TInterface) _knownActLike[typeof (TInterface)];
-        }
+			if (!_knownActLike.ContainsKey(typeof(T)))
+			{
+				_knownActLike[typeof(T)]=new ImpromptuDictionary().ActLike<T>();
+			}
 
-        private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
-        {
-            var matchingPredicates = (from accessor in Values.OfType<OntologyAccessor>()
-                                      from property in accessor.KnownProperties
-                                      where property.PropertyName == binder.Name
-                                      select new
-                                          {
-                                              accessor,
-                                              property
-                                          }).ToList();
+			return (T)_knownActLike[typeof(T)];
+		}
 
-            if (matchingPredicates.Count == 1)
-            {
-                var singleMatch = matchingPredicates.Single();
-                result = ((IObjectAccessor)singleMatch.accessor).GetObjects(Id, singleMatch.property);
-                return true;
-            }
+		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
+		{
+			var matchingPredicates=(from accessor in Values.OfType<OntologyAccessor>()
+									from property in accessor.KnownProperties
+									where property.PropertyName==binder.Name
+									select new
+										{
+											accessor,
+											property
+										}).ToList();
 
-            if (matchingPredicates.Count == 0)
-            {
-                result = null;
-                return false;
-            }
+			if (matchingPredicates.Count==1)
+			{
+				var singleMatch=matchingPredicates.Single();
+				result=((IObjectAccessor)singleMatch.accessor).GetObjects(Id,singleMatch.property);
+				return true;
+			}
 
-            var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
-            throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
-        }
-    }
+			if (matchingPredicates.Count==0)
+			{
+				result=null;
+				return false;
+			}
+
+			var matchedPropertiesQNames=matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
+			throw new AmbiguousPropertyException(binder.Name,matchedPropertiesQNames);
+		}
+	}
 }

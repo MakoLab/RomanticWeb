@@ -1,55 +1,93 @@
-﻿using System;
-using Moq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
-using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Mapping;
+using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
     [TestFixture]
     public class MappingTests : InMemoryTripleStoreTestsBase
     {
-        private IPerson _entity;
-        private Mock<IMapping<IPerson>> _personMapping;
-
-        protected override void ChildSetup()
+        private new TestMappingsRepository Mappings
         {
-            _entity = EntityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz"));
+            get { return (TestMappingsRepository)base.Mappings; }
         }
 
-        protected override Mock<IMappingProvider> SetupMappings()
+        protected IPerson Entity
         {
-            var mappings = new Mock<IMappingProvider>();
-            _personMapping = new Mock<IMapping<IPerson>>();
-            mappings.Setup(m => m.MappingFor<IPerson>()).Returns(_personMapping.Object);
-            return mappings;
+            get { return EntityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")); }
         }
 
-        protected override void ChildTeardown()
+        protected override IMappingsRepository SetupMappings()
         {
-            _personMapping.VerifyAll();
+            return new TestMappingsRepository();
         }
 
         [Test]
-        public void Should_return_actual_value_from_rdf_data()
+        public void Property_should_be_mapped_to_default_graph()
         {
             // given
+            Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesWithLiteralSubjects.ttl");
-            // todo refactor Property so that it can be used with Uris
-            _personMapping.Setup(m => m.PropertyFor("FirstName")).Returns(new TestPropertyMapping
-                {
-                    Uri = new Uri("http://xmlns.com/foaf/0.1/givenName")
-                });
 
             // when
-            string firstName = _entity.FirstName;
+            string firstName = Entity.FirstName;
 
             // then
             Assert.That(firstName, Is.EqualTo("Tomasz"));
         }
 
-		public interface IPerson:IEntity
+        [Test]
+        public void Mapping_property_to_specific_graph_should_be_possible()
         {
-            string FirstName { get; }
+            // given
+            Mappings.Add(new NamedGraphsPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+
+            // when
+            string firstName = Entity.FirstName;
+            string lastName = Entity.LastName;
+
+            // then
+            Assert.That(firstName, Is.EqualTo("Tomasz"));
+            Assert.That(lastName, Is.EqualTo("Pluskiewicz"));
+        }
+
+        [Test]
+        public void Mapping_simple_collections_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("LooseCollections.ttl");
+
+            // when
+            var interests = Entity.Interests;
+
+            // then
+            Assert.That(interests, Has.Count.EqualTo(5));
+            interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
+        }
+    }
+
+    public class TestMappingsRepository : IMappingsRepository
+    {
+        private readonly List<EntityMap> _entityMaps;
+
+        public TestMappingsRepository(params EntityMap[] entityMaps)
+        {
+            _entityMaps = entityMaps.ToList();
+        }
+
+        public IMapping MappingFor<TEntity>()
+        {
+            return _entityMaps.Where(map => map.EntityType == typeof(TEntity)).Cast<IMappingProvider>().First().GetMapping();
+        }
+
+        public void Add(EntityMap personMapping)
+        {
+            _entityMaps.Add(personMapping);
         }
     }
 }

@@ -22,9 +22,9 @@ namespace RomanticWeb.Tests.Linq
 		private TripleStore _store;
 		private Mock<ITypeMapping> _personTypeMappingMock;
 		private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
-		private Mock<IMapping<IPerson>> _personMappingMock;
-		private Mock<IMappingProvider> _mappingsMock;
-		private IMappingProvider _mappings;
+		private Mock<IMapping> _personMappingMock;
+		private Mock<IMappingsRepository> _mappingsMock;
+        private IMappingsRepository _mappings;
 
 		[SetUp]
 		public void Setup()
@@ -35,16 +35,17 @@ namespace RomanticWeb.Tests.Linq
 			_personTypeMappingMock.SetupGet(typeMapping => typeMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/Person"));
 			_firstNamePropertyMappingMock=new Mock<IPropertyMapping>();
 			_firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/firstName"));
-			_personMappingMock=new Mock<IMapping<IPerson>>();
+			_personMappingMock=new Mock<IMapping>();
 			_personMappingMock.SetupGet(mapping => mapping.Type).Returns(_personTypeMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("FirstName")).Returns(_firstNamePropertyMappingMock.Object);
-			_mappingsMock=new Mock<IMappingProvider>(MockBehavior.Strict);
+            _mappingsMock = new Mock<IMappingsRepository>(MockBehavior.Strict);
 			_mappingsMock.Setup(mapping => mapping.MappingFor<IPerson>()).Returns(_personMappingMock.Object);
 			_mappings=_mappingsMock.Object;
 			_entityFactory=new EntityFactory(_mappings,new StaticOntologyProvider(),new TripleStoreTripleSourceFactory(_store));
 		}
 
-		[Test]
+        [Test]
+        [Repeat(5)]
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_from_pointed_ontology_test()
 		{
 			IList<Entity> entities=(from resources in _entityFactory.AsQueryable<Entity>()
@@ -57,7 +58,8 @@ namespace RomanticWeb.Tests.Linq
 			Assert.That(entities[0].AsDynamic.foaf.familyName,Is.EqualTo("Pluskiewicz"));
 		}
 
-		[Test]
+        [Test]
+        [Repeat(5)]
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_test()
 		{
 			IList<Entity> entities=(from resources in _entityFactory.AsQueryable<Entity>()
@@ -71,6 +73,7 @@ namespace RomanticWeb.Tests.Linq
 		}
 
 		[Test]
+        [Repeat(5)]
 		public void Selecting_entities_by_providing_subject_identifier_condition_test()
 		{
 			Entity entity=(from resources in _entityFactory.AsQueryable<Entity>()
@@ -81,7 +84,8 @@ namespace RomanticWeb.Tests.Linq
 			Assert.That(entity.AsDynamic.foaf.givenName,Is.EqualTo("Karol"));
 			Assert.That(entity.AsDynamic.foaf.familyName,Is.EqualTo("Szczepański"));
 		}
-
+        
+        [Repeat(5)]
 		[Test]
 		public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
 		{

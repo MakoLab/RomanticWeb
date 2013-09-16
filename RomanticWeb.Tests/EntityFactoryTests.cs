@@ -14,7 +14,7 @@ namespace RomanticWeb.Tests
     {
         private IEntityFactory _entityFactory;
         private IOntologyProvider _ontologyProvider;
-        private Mock<IMappingProvider> _mappings;
+        private Mock<IMappingsRepository> _mappings;
         private ITripleStore _store;
 
         [SetUp]
@@ -22,7 +22,7 @@ namespace RomanticWeb.Tests
         {
             _ontologyProvider = new StaticOntologyProvider();
             _store = new TripleStore();
-            _mappings = new Mock<IMappingProvider>(MockBehavior.Strict);
+            _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
             _entityFactory = new EntityFactory(_mappings.Object, _ontologyProvider, tripleSourceFactory);
         }

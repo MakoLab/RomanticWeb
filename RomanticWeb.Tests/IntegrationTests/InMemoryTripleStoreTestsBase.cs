@@ -11,9 +11,14 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         private TripleStore _store;
 
-        private Mock<IMappingProvider> _mappings;
+        private IMappingsRepository _mappings;
 
         protected IEntityFactory EntityFactory { get; set; }
+
+        public IMappingsRepository Mappings
+        {
+            get { return _mappings; }
+        }
 
         [SetUp]
         public void Setup()
@@ -21,7 +26,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _store = new TripleStore();
             _mappings = SetupMappings();
             var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
-            EntityFactory = new EntityFactory(_mappings.Object, new StaticOntologyProvider(), tripleSourceFactory);
+            EntityFactory = new EntityFactory(Mappings, new StaticOntologyProvider(), tripleSourceFactory);
 
             ChildSetup();
         }
@@ -29,7 +34,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         [TearDown]
         public void Teardown()
         {
-            _mappings.VerifyAll();
             ChildTeardown();
         }
 
@@ -37,9 +41,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
         }
 
-        protected virtual Mock<IMappingProvider> SetupMappings()
+        protected virtual IMappingsRepository SetupMappings()
         {
-            return new Mock<IMappingProvider>(MockBehavior.Strict);
+            return new Mock<IMappingsRepository>(MockBehavior.Strict).Object;
         }
 
         protected virtual void ChildSetup()

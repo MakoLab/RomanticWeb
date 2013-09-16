@@ -15,13 +15,13 @@ namespace RomanticWeb
 	{
 		private readonly TripleSourceFactoryBase _sourceFactoryBase;
 
-		private readonly IMappingProvider _mappings;
-		IMappingProvider IEntityFactory.Mappings { get { return _mappings; } }
+        private readonly IMappingsRepository _mappings;
+        IMappingsRepository IEntityFactory.Mappings { get { return _mappings; } }
 
 		private readonly IOntologyProvider _ontologyProvider;
 		IOntologyProvider IEntityFactory.OntologyProvider { get { return _ontologyProvider; } }
 
-		internal EntityFactory(IMappingProvider mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
+		internal EntityFactory(IMappingsRepository mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
 		{
 			_mappings=mappings;
 			_sourceFactoryBase=sourceFactoryBase;
@@ -59,7 +59,7 @@ namespace RomanticWeb
 			if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
 				return (T)(IEntity)Create(entityId);
 			else
-				return EntityAs<T>(Create(entityId));
+			return EntityAs<T>(Create(entityId));
 		}
 
 		public IEnumerable<Entity> Create(string sparqlConstruct)

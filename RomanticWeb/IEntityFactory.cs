@@ -8,7 +8,7 @@ namespace RomanticWeb
 	public interface IEntityFactory
 	{
 		/// <summary>Gets access to the mappings associated with given entity factory.</summary>
-		IMappingProvider Mappings { get; }
+		IMappingsRepository Mappings { get; }
 
 		/// <summary>Gets access to the ontology provider associated with given entity factory.</summary>
 		IOntologyProvider OntologyProvider { get; }

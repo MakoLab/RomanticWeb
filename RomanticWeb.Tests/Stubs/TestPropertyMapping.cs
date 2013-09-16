@@ -7,5 +7,6 @@ namespace RomanticWeb.Tests.Stubs
         public Uri Uri { get; set; }
         public IGraphSelectionStrategy GraphSelector { get; set; }
         public bool UsesUnionGraph { get; set; }
+        public string Name { get; set; }
     }
 }

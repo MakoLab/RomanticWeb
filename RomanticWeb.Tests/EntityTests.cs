@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests
         {
             // given
             var entity = new Entity(new UriId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
-            var testEntity = entity.ActLike<ITestEntity>();
+            var testEntity = entity.AsEntity<ITestEntity>();
 
             // when
             testEntity.Name = "Tomasz";
@@ -25,11 +25,11 @@ namespace RomanticWeb.Tests
         {
             // given
             var entity = new Entity(new UriId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
-            var testEntity = entity.ActLike<ITestEntity>();
+            var testEntity = entity.AsEntity<ITestEntity>();
             testEntity.Name = "Tomasz";
 
             // when
-            var otherEntity = entity.ActLike<IOtherEntity>();
+            var otherEntity = entity.AsEntity<IOtherEntity>();
 
             // then
             Assert.That(otherEntity.Name, Is.Null);

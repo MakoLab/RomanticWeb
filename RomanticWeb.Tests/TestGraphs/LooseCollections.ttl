@@ -1,0 +1,4 @@
+﻿base <http://magi/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+<people/Tomasz> foaf:topic_interest "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" .

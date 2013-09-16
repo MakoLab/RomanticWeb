@@ -51,27 +51,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
-    <Compile Include="BlankId.cs" />
+    <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityFactory.cs" />
     <Compile Include="EntityProxy.cs" />
-    <Compile Include="IEntity.cs" />
+    <Compile Include="Entities\IEntity.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
-    <Compile Include="IMapping.cs" />
-    <Compile Include="IMappingsRepository.cs" />
-    <Compile Include="IPropertyMapping.cs" />
+    <Compile Include="Mapping\Model\IMapping.cs" />
+    <Compile Include="Mapping\IMappingsRepository.cs" />
+    <Compile Include="Mapping\Model\IPropertyMapping.cs" />
     <Compile Include="IRdfNodeConverter.cs" />
     <Compile Include="ITripleSource.cs" />
     <Compile Include="ITripleSourceFactory.cs" />
-    <Compile Include="ITypeMapping.cs" />
+    <Compile Include="Mapping\Model\ITypeMapping.cs" />
     <Compile Include="Mapping\CollectionMap.cs" />
     <Compile Include="Mapping\EntityMap.cs" />
-    <Compile Include="Mapping\EntityMapping.cs" />
+    <Compile Include="Mapping\Model\EntityMapping.cs" />
     <Compile Include="Mapping\FuncGraphSelector.cs" />
     <Compile Include="Mapping\IMappingProvider.cs" />
     <Compile Include="Mapping\NamedGraphPart.cs" />
     <Compile Include="Mapping\PredicatePart.cs" />
     <Compile Include="Mapping\PropertyMap.cs" />
-    <Compile Include="Mapping\PropertyMapping.cs" />
+    <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
@@ -79,8 +79,8 @@
     <Compile Include="Mapping\ReflectionHelper.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="EntityId.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityId.cs" />
     <Compile Include="IEntityFactory.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
     <Compile Include="IObjectAccessor.cs" />
@@ -98,7 +98,7 @@
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="TripleSourceFactoryBase.cs" />
     <Compile Include="TypeCheckerAccessor.cs" />
-    <Compile Include="UriId.cs" />
+    <Compile Include="Entities\UriId.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

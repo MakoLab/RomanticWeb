@@ -2,8 +2,8 @@
 {
     using RomanticWeb.Mapping.Model;
 
-    public interface IMappingProvider
+    public interface IMappingsRepository
 	{
-		IMapping GetMapping();
+		IMapping MappingFor<TEntity>();
 	}
 }

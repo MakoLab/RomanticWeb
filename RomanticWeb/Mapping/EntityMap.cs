@@ -6,6 +6,8 @@ namespace RomanticWeb.Mapping
 {
     using System.Diagnostics.CodeAnalysis;
 
+    using RomanticWeb.Mapping.Model;
+
     public abstract class EntityMap<TEntity> : EntityMap
 	{
 		protected EntityMap()

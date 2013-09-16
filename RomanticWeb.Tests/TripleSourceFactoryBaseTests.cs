@@ -5,7 +5,9 @@ using NUnit.Framework;
 
 namespace RomanticWeb.Tests
 {
-	[TestFixture]
+    using RomanticWeb.Mapping.Model;
+
+    [TestFixture]
 	public class TripleSourceFactoryBaseTests
 	{
 		private TripleSourceFactoryBaseTestable _factory;

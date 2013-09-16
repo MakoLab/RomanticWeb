@@ -7,7 +7,9 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-	public class InMemoryTripleStoreTestsBase
+    using RomanticWeb.Mapping;
+
+    public class InMemoryTripleStoreTestsBase
 	{
 		private TripleStore _store;
 

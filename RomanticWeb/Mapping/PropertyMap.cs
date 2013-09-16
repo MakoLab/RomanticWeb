@@ -3,7 +3,9 @@ using System.Reflection;
 
 namespace RomanticWeb.Mapping
 {
-	public class PropertyMap
+    using RomanticWeb.Mapping.Model;
+
+    public class PropertyMap
 	{
 		private readonly PropertyInfo _propertyInfo;
 

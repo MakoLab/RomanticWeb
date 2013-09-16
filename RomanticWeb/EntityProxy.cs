@@ -5,7 +5,9 @@ using System.Linq;
 
 namespace RomanticWeb
 {
-	internal class EntityProxy<T>:DynamicObject where T:IEntity
+    using RomanticWeb.Mapping.Model;
+
+    internal class EntityProxy<T>:DynamicObject where T:IEntity
 	{
 		private readonly TripleSourceFactoryBase _sourceFactory;
 		private readonly EntityId _entityId;

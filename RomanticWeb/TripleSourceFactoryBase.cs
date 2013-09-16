@@ -2,7 +2,9 @@
 
 namespace RomanticWeb
 {
-	public abstract class TripleSourceFactoryBase:ITripleSourceFactory
+    using RomanticWeb.Mapping.Model;
+
+    public abstract class TripleSourceFactoryBase:ITripleSourceFactory
 	{
 		public ITripleSource CreateTriplesSourceForOntology()
 		{

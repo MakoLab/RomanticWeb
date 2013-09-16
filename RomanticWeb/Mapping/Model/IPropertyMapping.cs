@@ -1,8 +1,8 @@
-﻿using System;
-
-namespace RomanticWeb
+﻿namespace RomanticWeb.Mapping.Model
 {
-	public interface IPropertyMapping
+    using System;
+
+    public interface IPropertyMapping
 	{
 		Uri Uri { get; }
 

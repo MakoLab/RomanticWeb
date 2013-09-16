@@ -1,4 +1,4 @@
-﻿namespace RomanticWeb
+﻿namespace RomanticWeb.Mapping.Model
 {
 	public interface IMapping
 	{

@@ -10,7 +10,10 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests.Linq
 {
-	[TestFixture]
+    using RomanticWeb.Mapping;
+    using RomanticWeb.Mapping.Model;
+
+    [TestFixture]
 	public class SparqlTests
 	{
 		public interface IPerson:IEntity

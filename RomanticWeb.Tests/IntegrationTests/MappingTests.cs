@@ -7,7 +7,9 @@ using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-	[TestFixture]
+    using RomanticWeb.Mapping.Model;
+
+    [TestFixture]
 	public class MappingTests : InMemoryTripleStoreTestsBase
 	{
 		private new TestMappingsRepository Mappings

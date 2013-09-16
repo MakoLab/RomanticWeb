@@ -13,6 +13,9 @@ namespace RomanticWeb.Linq
 {
     using System.Linq;
 
+    using RomanticWeb.Mapping;
+    using RomanticWeb.Mapping.Model;
+
     internal class EntitySparqlQueryModelTranslator
 	{
         private IMappingsRepository _mappings;
@@ -21,22 +24,12 @@ namespace RomanticWeb.Linq
 
 	    internal EntitySparqlQueryModelTranslator(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
 		{
-			if (entityFactory==null)
-			{
-			    throw new ArgumentNullException("entityFactory");
-			}
-
 	        _mappings=mappings;
 	        _ontologyProvider=ontologyProvider;
 		}
 
 		internal string CreateCommandText(QueryModel queryModel)
 		{
-			if (queryModel==null)
-			{
-			    throw new ArgumentNullException("queryModel");
-			}
-
 			if (queryModel.SelectClause==null)
 			{
 			    throw new ArgumentOutOfRangeException("There is no select clause associated with query.");

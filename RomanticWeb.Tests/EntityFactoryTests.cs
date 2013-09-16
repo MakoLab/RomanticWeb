@@ -9,7 +9,9 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
-	[TestFixture]
+    using RomanticWeb.Mapping;
+
+    [TestFixture]
 	public class EntityFactoryTests
 	{
 		private IEntityFactory _entityFactory;

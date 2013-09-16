@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using NullGuard;
-using RomanticWeb.dotNetRDF.TripleSources;
-using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Query.Datasets;
 
-namespace RomanticWeb.dotNetRDF
+using NullGuard;
+using RomanticWeb.DotNetRDF.TripleSources;
+using VDS.RDF;
+
+namespace RomanticWeb.DotNetRDF
 {
-	/// <summary>
+    /// <summary>
 	/// Entity factory implementation backed by a triple store
 	/// </summary>
 	public class TripleStoreTripleSourceFactory:TripleSourceFactoryBase

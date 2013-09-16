@@ -1,7 +1,7 @@
 ﻿namespace RomanticWeb
 {
-    public interface IMappingsRepository
-    {
-        IMapping MappingFor<TEntity>();
-    }
+	public interface IMappingsRepository
+	{
+		IMapping MappingFor<TEntity>();
+	}
 }

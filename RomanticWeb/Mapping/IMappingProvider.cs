@@ -1,7 +1,7 @@
 ﻿namespace RomanticWeb.Mapping
 {
-    public interface IMappingProvider
-    {
-        IMapping GetMapping();
-    }
+	public interface IMappingProvider
+	{
+		IMapping GetMapping();
+	}
 }

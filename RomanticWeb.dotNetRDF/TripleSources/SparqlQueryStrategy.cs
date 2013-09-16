@@ -5,12 +5,13 @@ using RomanticWeb.Ontologies;
 using VDS.RDF;
 using VDS.RDF.Query;
 
-namespace RomanticWeb.dotNetRDF.TripleSources
+namespace RomanticWeb.DotNetRDF.TripleSources
 {
-	class SparqlQueryStrategy:IStoreQueryStrategy
-	{
+	internal class SparqlQueryStrategy:IStoreQueryStrategy
+    {
+        private static readonly NodeFactory NodeFactory = new NodeFactory();
+
 		private readonly INativelyQueryableStore _nativeStore;
-		private static readonly NodeFactory NodeFactory=new NodeFactory();
 
 		public SparqlQueryStrategy(INativelyQueryableStore tripleStore)
 		{

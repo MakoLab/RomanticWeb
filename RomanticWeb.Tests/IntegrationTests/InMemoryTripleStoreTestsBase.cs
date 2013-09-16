@@ -2,57 +2,57 @@
 using NUnit.Framework;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
-using RomanticWeb.dotNetRDF;
+using RomanticWeb.DotNetRDF;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    public class InMemoryTripleStoreTestsBase
-    {
-        private TripleStore _store;
+	public class InMemoryTripleStoreTestsBase
+	{
+		private TripleStore _store;
 
-        private IMappingsRepository _mappings;
+		private IMappingsRepository _mappings;
 
-        protected IEntityFactory EntityFactory { get; set; }
+		protected IEntityFactory EntityFactory { get; set; }
 
-        public IMappingsRepository Mappings
-        {
-            get { return _mappings; }
-        }
+		public IMappingsRepository Mappings
+		{
+			get { return _mappings; }
+		}
 
-        [SetUp]
-        public void Setup()
-        {
-            _store = new TripleStore();
-            _mappings = SetupMappings();
-            var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
-            EntityFactory = new EntityFactory(Mappings, new StaticOntologyProvider(), tripleSourceFactory);
+		[SetUp]
+		public void Setup()
+		{
+			_store = new TripleStore();
+			_mappings = SetupMappings();
+			var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
+			EntityFactory = new EntityFactory(Mappings, new StaticOntologyProvider(), tripleSourceFactory);
 
-            ChildSetup();
-        }
+			ChildSetup();
+		}
 
-        [TearDown]
-        public void Teardown()
-        {
-            ChildTeardown();
-        }
+		[TearDown]
+		public void Teardown()
+		{
+			ChildTeardown();
+		}
 
-        protected virtual void ChildTeardown()
-        {
-        }
+		protected virtual void ChildTeardown()
+		{
+		}
 
-        protected virtual IMappingsRepository SetupMappings()
-        {
-            return new Mock<IMappingsRepository>(MockBehavior.Strict).Object;
-        }
+		protected virtual IMappingsRepository SetupMappings()
+		{
+			return new Mock<IMappingsRepository>(MockBehavior.Strict).Object;
+		}
 
-        protected virtual void ChildSetup()
-        {
-        }
+		protected virtual void ChildSetup()
+		{
+		}
 
-        protected void LoadTestFile(string fileName)
-        {
-            _store.LoadTestFile(fileName);
-        }
-    }
+		protected void LoadTestFile(string fileName)
+		{
+			_store.LoadTestFile(fileName);
+		}
+	}
 }

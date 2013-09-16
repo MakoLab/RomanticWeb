@@ -6,67 +6,67 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests
 {
-    [TestFixture]
-    public class ObjectAccessorTests
-    {
-        private readonly Entity _entity = new Entity(new UriId(Uri));
-        private Mock<IRdfNodeConverter> _entityFactory;
-        private Ontology _ontology;
-        private Mock<ITripleSource> _graph;
-        private const string Uri = "urn:test:identity";
+	[TestFixture]
+	public class ObjectAccessorTests
+	{
+		private readonly Entity _entity = new Entity(new UriId(Uri));
+		private Mock<IRdfNodeConverter> _entityFactory;
+		private Ontology _ontology;
+		private Mock<ITripleSource> _graph;
+		private const string Uri = "urn:test:identity";
 
-        [TestFixtureSetUp]
-        public void TestFixtureSetup()
-        {
-            _ontology = new Stubs.StaticOntologyProvider().Ontologies.First();
-        }
+		[TestFixtureSetUp]
+		public void TestFixtureSetup()
+		{
+			_ontology = new Stubs.StaticOntologyProvider().Ontologies.First();
+		}
 
-        [SetUp]
-        public void Setup()
-        {
-            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
-            _entityFactory = new Mock<IRdfNodeConverter>();
-        }
+		[SetUp]
+		public void Setup()
+		{
+			_graph = new Mock<ITripleSource>(MockBehavior.Strict);
+			_entityFactory = new Mock<IRdfNodeConverter>();
+		}
 
-        [TearDown]
-        public void Teardown()
-        {
-            _graph.VerifyAll();
-            _entityFactory.VerifyAll();
-        }
+		[TearDown]
+		public void Teardown()
+		{
+			_graph.VerifyAll();
+			_entityFactory.VerifyAll();
+		}
 
-        [Test]
-        public void Getting_known_predicate_should_return_objects()
-        {
-            // given
-            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
-            dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
+		[Test]
+		public void Getting_known_predicate_should_return_objects()
+		{
+			// given
+			_graph = new Mock<ITripleSource>(MockBehavior.Strict);
+			_graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
+			dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
-            // when
-            var givenName = accessor.givenName;
+			// when
+			var givenName = accessor.givenName;
 
-            // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
-                                                        new DatatypeProperty("givenName").InOntology(_ontology).Uri),
-                                                        Times.Once);
-        }
+			// then
+			_graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
+							                            new DatatypeProperty("givenName").InOntology(_ontology).Uri),
+							                            Times.Once);
+		}
 
-        [Test]
-        public void Getting_unknown_predicate_should_use_the_property_name()
-        {
-            // given
-            _graph = new Mock<ITripleSource>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
-            dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
+		[Test]
+		public void Getting_unknown_predicate_should_use_the_property_name()
+		{
+			// given
+			_graph = new Mock<ITripleSource>(MockBehavior.Strict);
+			_graph.Setup(g => g.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>())).Returns(new RdfNode[0]);
+			dynamic accessor = new OntologyAccessor(_graph.Object, _entity.Id, _ontology, _entityFactory.Object);
 
-            // when
-            var givenName = accessor.fullName;
+			// when
+			var givenName = accessor.fullName;
 
-            // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
-                                                        new Property("fullName").InOntology(_ontology).Uri),
-                                                        Times.Once);
-        }
-    }
+			// then
+			_graph.Verify(s => s.GetObjectsForPredicate(_entity.Id,
+							                            new Property("fullName").InOntology(_ontology).Uri),
+							                            Times.Once);
+		}
+	}
 }

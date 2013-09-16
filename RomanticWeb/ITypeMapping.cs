@@ -2,8 +2,8 @@
 
 namespace RomanticWeb
 {
-    public interface ITypeMapping
-    {
-        Uri Uri { get; }
-    }
+	public interface ITypeMapping
+	{
+		Uri Uri { get; }
+	}
 }

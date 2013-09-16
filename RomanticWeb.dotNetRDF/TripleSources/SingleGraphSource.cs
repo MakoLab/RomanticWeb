@@ -7,7 +7,7 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 
-namespace RomanticWeb.dotNetRDF.TripleSources
+namespace RomanticWeb.DotNetRDF.TripleSources
 {
 	public class SingleGraphSource:ITripleSource
 	{
@@ -40,7 +40,10 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 			ISparqlQueryProcessor processor=new LeviathanQueryProcessor(dataSet);
 			object results=processor.ProcessQuery(query);
 			if (results is IGraph)
-				result=((IGraph)result).Triples.Select(t => new Tuple<RdfNode,RdfNode,RdfNode>(t.Subject.WrapNode(),t.Predicate.WrapNode(),t.Object.WrapNode()));
+			{
+			    result=((IGraph)result).Triples.Select(t => new Tuple<RdfNode,RdfNode,RdfNode>(t.Subject.WrapNode(),t.Predicate.WrapNode(),t.Object.WrapNode()));
+			}
+
 			return result;
 		}
 	}

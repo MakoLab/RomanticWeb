@@ -2,8 +2,8 @@
 
 namespace RomanticWeb
 {
-    public interface IGraphSelectionStrategy
-    {
-        Uri SelectGraph(EntityId entityId);
-    }
+	public interface IGraphSelectionStrategy
+	{
+		Uri SelectGraph(EntityId entityId);
+	}
 }

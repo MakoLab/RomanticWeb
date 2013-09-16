@@ -7,9 +7,9 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 
-namespace RomanticWeb.dotNetRDF.TripleSources
+namespace RomanticWeb.DotNetRDF.TripleSources
 {
-	class InMemoryApiStrategy:IStoreQueryStrategy
+	internal class InMemoryApiStrategy:IStoreQueryStrategy
 	{
 		private static readonly NodeFactory NodeFactory=new NodeFactory();
 		private readonly IInMemoryQueryableStore _tripleStore;
@@ -55,6 +55,7 @@ namespace RomanticWeb.dotNetRDF.TripleSources
 				result=new TripleStore();
 				result.Add((IGraph)results);
 			}
+
 			return result;
 		}
 	}

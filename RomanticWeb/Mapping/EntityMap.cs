@@ -4,54 +4,57 @@ using System.Linq.Expressions;
 
 namespace RomanticWeb.Mapping
 {
+    using System.Diagnostics.CodeAnalysis;
+
     public abstract class EntityMap<TEntity> : EntityMap
-    {
-        protected EntityMap()
-            : base(typeof(TEntity))
-        {
+	{
+		protected EntityMap()
+			: base(typeof(TEntity))
+		{
+		}
 
-        }
+		protected PropertyMap Property<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
+		{
+			var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
 
-        protected PropertyMap Property<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
-        {
-            var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
+			MappedProperties.Add(propertyMap);
 
-            MappedProperties.Add(propertyMap);
+			return propertyMap;
+		}
 
-            return propertyMap;
-        }
+		protected PropertyMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
+		{
+			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
 
-        protected PropertyMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
-        {
-            var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
+			MappedProperties.Add(propertyMap);
 
-            MappedProperties.Add(propertyMap);
+			return propertyMap;
+		}
+	}
 
-            return propertyMap;
-        }
-    }
-
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
     public abstract class EntityMap : IMappingProvider
-    {
-        protected EntityMap(Type type)
-        {
-            EntityType = type;
-            MappedProperties = new List<PropertyMap>();
-        }
+	{
+		protected EntityMap(Type type)
+		{
+			EntityType = type;
+			MappedProperties = new List<PropertyMap>();
+		}
 
-        internal Type EntityType { get; set; }
-        internal IList<PropertyMap> MappedProperties { get; private set; }
+		internal Type EntityType { get; set; }
 
-        IMapping IMappingProvider.GetMapping()
-        {
-            var entityMapping = new EntityMapping();
+		internal IList<PropertyMap> MappedProperties { get; private set; }
 
-            foreach (var mappedProperty in MappedProperties)
-            {
-                entityMapping.Properties.Add(mappedProperty.GetMapping());
-            }
+		IMapping IMappingProvider.GetMapping()
+		{
+			var entityMapping = new EntityMapping();
 
-            return entityMapping;
-        }
-    }
+			foreach (var mappedProperty in MappedProperties)
+			{
+				entityMapping.Properties.Add(mappedProperty.GetMapping());
+			}
+
+			return entityMapping;
+		}
+	}
 }

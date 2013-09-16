@@ -18,10 +18,16 @@ namespace RomanticWeb
 		{
 			EntityId _operandB=null;
 			if (operandB!=null)
-				_operandB=EntityId.Create(operandB);
-			if (((Object.Equals(operandA,null))&&(Object.Equals(_operandB,null)))||
-				((!Object.Equals(operandA,null))&&(!Object.Equals(_operandB,null))&&(operandA.Equals(_operandB))))
-				return true;
+			{
+			    _operandB=EntityId.Create(operandB);
+			}
+
+			if (((Object.Equals(operandA,null))&&(Object.Equals(_operandB,null)))
+			    ||((!Object.Equals(operandA,null))&&(!Object.Equals(_operandB,null))&&(operandA.Equals(_operandB))))
+			{
+			    return true;
+			}
+
 			return false;
 		}
 
@@ -34,10 +40,16 @@ namespace RomanticWeb
 		{
 			EntityId _operandA=null;
 			if (operandA!=null)
-				_operandA=EntityId.Create(operandA);
-			if (((Object.Equals(_operandA,null))&&(Object.Equals(operandB,null)))||
-				((!Object.Equals(_operandA,null))&&(!Object.Equals(operandB,null))&&(operandA.Equals(operandB))))
-				return true;
+			{
+			    _operandA=EntityId.Create(operandA);
+			}
+
+			if (((Object.Equals(_operandA,null))&&(Object.Equals(operandB,null)))
+			    ||((!Object.Equals(_operandA,null))&&(!Object.Equals(operandB,null))&&(operandA.Equals(operandB))))
+			{
+			    return true;
+			}
+
 			return false;
 		}
 
@@ -50,7 +62,10 @@ namespace RomanticWeb
 		{
 			EntityId result=null;
 			if (entityId!=null)
-				result=EntityId.Create(entityId);
+			{
+			    result=EntityId.Create(entityId);
+			}
+
 			return result;
 		}
 	}

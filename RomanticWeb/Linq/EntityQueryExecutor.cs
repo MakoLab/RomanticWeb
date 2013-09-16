@@ -16,15 +16,21 @@ namespace RomanticWeb.Linq
 		internal EntityQueryExecutor(IEntityFactory entityFactory)
 		{
 			if (entityFactory==null)
-				throw new ArgumentNullException("entityFactory");
+			{
+			    throw new ArgumentNullException("entityFactory");
+			}
+
 			_entityFactory=entityFactory;
-			_translator=new EntitySparqlQueryModelTranslator(_entityFactory);
+			_translator=new EntitySparqlQueryModelTranslator(_entityFactory,null,null);
 		}
 
 		public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
-				throw new ArgumentOutOfRangeException("T");
+			{
+			    throw new ArgumentOutOfRangeException("T");
+			}
+
 			IEnumerable<T> result=new T[0];
 			string commandText=_translator.CreateCommandText(queryModel);
 			if (commandText.Length>0)
@@ -33,6 +39,7 @@ namespace RomanticWeb.Linq
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText });
 			}
+
 			return result;
 		}
 
@@ -44,7 +51,10 @@ namespace RomanticWeb.Linq
 		public T ExecuteSingle<T>(QueryModel queryModel,bool returnDefaultWhenEmpty)
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
-				throw new ArgumentOutOfRangeException("T");
+			{
+			    throw new ArgumentOutOfRangeException("T");
+			}
+
 			T result=default(T);
 			string commandText=_translator.CreateSingleResultCommandText(queryModel);
 			if (commandText.Length>0)
@@ -53,6 +63,7 @@ namespace RomanticWeb.Linq
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText })).FirstOrDefault();
 			}
+
 			return result;
 		}
 	}

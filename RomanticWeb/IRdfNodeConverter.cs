@@ -3,8 +3,8 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    public interface IRdfNodeConverter
-    {
-        IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITripleSource tripleSource);
-    }
+	public interface IRdfNodeConverter
+	{
+		IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITripleSource tripleSource);
+	}
 }

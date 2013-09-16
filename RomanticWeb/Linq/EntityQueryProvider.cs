@@ -16,23 +16,36 @@ namespace RomanticWeb.Linq
 	{
 		private IEntityFactory _entityFactory;
 
-		internal protected EntityQueryProvider(IEntityFactory entityFactory):base(new QueryParser(new ExpressionTreeParser(
-				ExpressionTreeParser.CreateDefaultNodeTypeProvider(),ExpressionTreeParser.CreateDefaultProcessor(ExpressionTransformerRegistry.CreateDefault()))),
-			new EntityQueryExecutor(entityFactory))
+	    protected internal EntityQueryProvider(IEntityFactory entityFactory)
+	        :base(
+                new QueryParser(
+	                new ExpressionTreeParser(
+	                    ExpressionTreeParser.CreateDefaultNodeTypeProvider(),
+	                    ExpressionTreeParser.CreateDefaultProcessor(ExpressionTransformerRegistry.CreateDefault()))),
+	            new EntityQueryExecutor(entityFactory))
 		{
 			if (entityFactory==null)
-				throw new ArgumentNullException("entityFactory");
+			{
+			    throw new ArgumentNullException("entityFactory");
+			}
+
 			if (!typeof(Entity).IsAssignableFrom(typeof(T)))
-				ThrowGenericArgumentOutOfRangeException();
+			{
+			    ThrowGenericArgumentOutOfRangeException();
+			}
+
 			_entityFactory=entityFactory;
 		}
 
 		public override IQueryable<T> CreateQuery<T>(Expression expression)
 		{
-			ConstructorInfo constructorInfo=typeof(EntityQueryable<>).MakeGenericType(new Type[] { typeof(T) }).GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,
-				new Type[] { typeof(IEntityFactory),typeof(IQueryProvider),typeof(Expression) },null);
+		    Type genericQueryable=typeof(EntityQueryable<>).MakeGenericType(new Type[] { typeof(T) });
+		    ConstructorInfo constructorInfo=genericQueryable.GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,new Type[] { typeof(IEntityFactory),typeof(IQueryProvider),typeof(Expression) },null);
 			if (constructorInfo==null)
-				ThrowGenericArgumentOutOfRangeException();
+			{
+			    ThrowGenericArgumentOutOfRangeException();
+			}
+
 			return (IQueryable<T>)constructorInfo.Invoke(new object[] { _entityFactory,this,expression });
 		}
 

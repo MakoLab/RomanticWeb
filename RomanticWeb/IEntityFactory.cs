@@ -1,19 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
 	/// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
 	public interface IEntityFactory
 	{
-		/// <summary>Gets access to the mappings associated with given entity factory.</summary>
-		IMappingsRepository Mappings { get; }
-
-		/// <summary>Gets access to the ontology provider associated with given entity factory.</summary>
-		IOntologyProvider OntologyProvider { get; }
-
-		/// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>
+	    /// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>
 		/// <returns>A queryable collection of entities.</returns>
 		IQueryable<Entity> AsQueryable();
 

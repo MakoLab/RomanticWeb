@@ -46,23 +46,6 @@ namespace RomanticWeb.Ontologies
         /// </summary>
         public IEnumerable<RdfClass> Classes { get; private set; }
 
-        private bool Equals([AllowNull] Ontology other)
-        {
-            return Equals(_namespace, other._namespace);
-        }
-
-        public override bool Equals([AllowNull] object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj is Ontology && Equals((Ontology)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (_namespace != null ? _namespace.GetHashCode() : 0);
-        }
-
         public static bool operator ==([AllowNull] Ontology left, [AllowNull] Ontology right)
         {
             return Equals(left, right);
@@ -71,6 +54,23 @@ namespace RomanticWeb.Ontologies
         public static bool operator !=([AllowNull] Ontology left, [AllowNull] Ontology right)
         {
             return !Equals(left, right);
+        }
+
+        public override bool Equals([AllowNull] object obj)
+        {
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            return obj is Ontology && Equals((Ontology)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_namespace != null ? _namespace.GetHashCode() : 0);
+        }
+
+        private bool Equals([AllowNull] Ontology other)
+        {
+            return Equals(_namespace, other._namespace);
         }
     }
 }

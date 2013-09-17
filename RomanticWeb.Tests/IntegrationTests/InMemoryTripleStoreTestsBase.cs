@@ -28,7 +28,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			_store = new TripleStore();
 			_mappings = SetupMappings();
 			var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
-			EntityFactory = new EntityFactory(Mappings, new StaticOntologyProvider(), tripleSourceFactory);
+            EntityFactory = new EntityFactory(Mappings, new TestOntologyProvider(), tripleSourceFactory);
 
 			ChildSetup();
 		}

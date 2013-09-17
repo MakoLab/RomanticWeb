@@ -3,7 +3,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {
-	internal class StaticOntologyProvider : IOntologyProvider
+	internal class TestOntologyProvider : IOntologyProvider
 	{
 		public IEnumerable<Ontology> Ontologies
 		{

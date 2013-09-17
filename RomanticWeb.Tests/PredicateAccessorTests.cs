@@ -18,7 +18,7 @@ namespace RomanticWeb.Tests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			_ontology = new Stubs.StaticOntologyProvider().Ontologies.First();
+			_ontology = new Stubs.TestOntologyProvider().Ontologies.First();
 		}
 
 		[SetUp]

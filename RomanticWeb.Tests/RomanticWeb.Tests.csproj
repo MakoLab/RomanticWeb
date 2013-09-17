@@ -109,13 +109,13 @@
       <Project>{AF4CCD1D-3FEF-4F5A-9A89-94D0E7E6D3B5}</Project>
       <Name>RomanticWeb.TestEntities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RomanticWeb\RomanticWeb.csproj">
-      <Project>{0EE621E3-4A27-44B5-AEA9-04B43E730D46}</Project>
-      <Name>RomanticWeb</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.csproj">
       <Project>{B1C2726C-C24A-4DAF-AEFA-A812E3C3D145}</Project>
       <Name>RomanticWeb.dotNetRDF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RomanticWeb\RomanticWeb.csproj">
+      <Project>{0ee621e3-4a27-44b5-aea9-04b43e730d46}</Project>
+      <Name>RomanticWeb</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

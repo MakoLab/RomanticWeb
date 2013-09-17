@@ -9,49 +9,73 @@ using System.Threading.Tasks;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
+using RomanticWeb.Mapping;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
 	public class EntityQueryProvider<T>:QueryProviderBase where T:class,IEntity
 	{
+		#region Fields
 		private IEntityFactory _entityFactory;
+		private IMappingsRepository _mappingsRepository;
+		private IOntologyProvider _ontologyProvider;
+		#endregion
 
-	    protected internal EntityQueryProvider(IEntityFactory entityFactory)
-	        :base(
-                new QueryParser(
-	                new ExpressionTreeParser(
-	                    ExpressionTreeParser.CreateDefaultNodeTypeProvider(),
-	                    ExpressionTreeParser.CreateDefaultProcessor(ExpressionTransformerRegistry.CreateDefault()))),
-	            new EntityQueryExecutor(entityFactory))
+		#region Constructors
+		protected internal EntityQueryProvider(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider):
+			base(EntityQueryProvider<T>.CreateDefaultQueryParser(),new EntityQueryExecutor(entityFactory,mappingsRepository,ontologyProvider))
 		{
 			if (entityFactory==null)
 			{
-			    throw new ArgumentNullException("entityFactory");
+				throw new ArgumentNullException("entityFactory");
+			}
+
+			if (mappingsRepository==null)
+			{
+				throw new ArgumentNullException("mappingsRepository");
+			}
+
+			if (ontologyProvider==null)
+			{
+				throw new ArgumentNullException("ontologyProvider");
 			}
 
 			if (!typeof(Entity).IsAssignableFrom(typeof(T)))
 			{
-			    ThrowGenericArgumentOutOfRangeException();
+				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(Entity),typeof(T));
 			}
 
 			_entityFactory=entityFactory;
+			_mappingsRepository=mappingsRepository;
+			_ontologyProvider=ontologyProvider;
 		}
+		#endregion
 
+		#region Public methods
 		public override IQueryable<T> CreateQuery<T>(Expression expression)
 		{
-		    Type genericQueryable=typeof(EntityQueryable<>).MakeGenericType(new Type[] { typeof(T) });
-		    ConstructorInfo constructorInfo=genericQueryable.GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,new Type[] { typeof(IEntityFactory),typeof(IQueryProvider),typeof(Expression) },null);
+			Type genericQueryable=typeof(EntityQueryable<>).MakeGenericType(new Type[] { typeof(T) });
+			ConstructorInfo constructorInfo=genericQueryable.GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,new Type[] { typeof(IEntityFactory),typeof(IQueryProvider),typeof(Expression) },null);
 			if (constructorInfo==null)
 			{
-			    ThrowGenericArgumentOutOfRangeException();
+				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(Entity),typeof(T));
 			}
 
 			return (IQueryable<T>)constructorInfo.Invoke(new object[] { _entityFactory,this,expression });
 		}
+		#endregion
 
-		private void ThrowGenericArgumentOutOfRangeException()
+		#region Private methods
+		private static QueryParser CreateDefaultQueryParser()
 		{
-			throw new ArgumentOutOfRangeException("T",System.String.Format("Expected '{0}' derived type, but found '{1}'.",typeof(Entity).FullName,typeof(T).FullName));		
+			return new QueryParser(CreateDefaultExpressionTreeParser());
 		}
+
+		private static ExpressionTreeParser CreateDefaultExpressionTreeParser()
+		{
+			return new ExpressionTreeParser(ExpressionTreeParser.CreateDefaultNodeTypeProvider(),ExpressionTreeParser.CreateDefaultProcessor(ExpressionTransformerRegistry.CreateDefault()));
+		}
+		#endregion
 	}
 }

@@ -1,38 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
+using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
-    using System.Linq;
-
-    using RomanticWeb.Mapping;
-    using RomanticWeb.Mapping.Model;
-
-    internal class EntitySparqlQueryModelTranslator
+	internal class EntitySparqlQueryModelTranslator
 	{
-        private IMappingsRepository _mappings;
+		#region Fields
+		private static readonly string ConstructTemplate=
+@"CONSTRUCT {{ ?s ?p ?o }}
+WHERE {{
+{1}}}";
 
-	    private IOntologyProvider _ontologyProvider;
+		private static readonly string SingleConstructTemplate=
+@"CONSTRUCT {{ ?s ?p ?o. }}
+WHERE {{
+	?s ?p ?o.
+	{{ {1} LIMIT 1
+	}} FILTER (?s=?_s)
+}}";
 
-	    internal EntitySparqlQueryModelTranslator(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
+		private IMappingsRepository _mappings;
+
+		private IOntologyProvider _ontologyProvider;
+		#endregion
+
+		#region Constructors
+		internal EntitySparqlQueryModelTranslator(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
 		{
-	        _mappings=mappings;
-	        _ontologyProvider=ontologyProvider;
+			_mappings=mappings;
+			_ontologyProvider=ontologyProvider;
 		}
+		#endregion
 
+		#region Internal methods
 		internal string CreateCommandText(QueryModel queryModel)
 		{
 			if (queryModel.SelectClause==null)
 			{
-			    throw new ArgumentOutOfRangeException("There is no select clause associated with query.");
+				throw new ArgumentOutOfRangeException("There is no select clause associated with query.");
 			}
 
 			Dictionary<object,char> variableMap=new Dictionary<object,char>();
@@ -41,16 +55,18 @@ namespace RomanticWeb.Linq
 			{
 				if (clause is WhereClause)
 				{
-				    whereClause+="\t"+TransformWhereClause(queryModel,(WhereClause)clause,ref variableMap)+Environment.NewLine;
+					string whereClauseText=TransformWhereClause(queryModel,(WhereClause)clause,ref variableMap);
+					if (!System.String.IsNullOrEmpty(whereClauseText))
+					{
+						whereClause+="\t"+whereClauseText+(whereClauseText.TrimEnd().EndsWith(".")?System.String.Empty:".")+Environment.NewLine;
+					}
 				}
 			}
 
-			string result=System.String.Format(
-@"CONSTRUCT {{ ?s ?p ?o }}
-WHERE {{
-{1}}}",
-      Environment.NewLine,
-      whereClause);
+			string result=System.String.Format(ConstructTemplate,Environment.NewLine,whereClause);
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine(result);
+#endif
 			return result;
 		}
 
@@ -58,32 +74,26 @@ WHERE {{
 		{
 			string result=CreateCommandText(queryModel);
 			if (result.Length>0)
-            {
-                result=System.String.Format(
-@"CONSTRUCT {{ ?s ?p ?o. }}
-WHERE {{
-	?s ?p ?o.
-	{{ {1} LIMIT 1
-	}} FILTER (?s=?_s)
-}}",
-   Environment.NewLine,
-   result.Replace("\r",string.Empty).Replace("\n",System.Environment.NewLine+"\t\t").Replace("?s","?_s").Replace("CONSTRUCT { ?_s ?p ?o }","SELECT DISTINCT ?_s"));
-            }
+			{
+				result=System.String.Format(SingleConstructTemplate,Environment.NewLine,result.Replace("\r",System.String.Empty).Replace("\n",System.Environment.NewLine+"\t\t").Replace("?s","?_s").Replace("CONSTRUCT { ?_s ?p ?o }","SELECT DISTINCT ?_s"));
+			}
 
 			return result;
 		}
+		#endregion
 
+		#region Private methods
 		private string TransformWhereClause(QueryModel queryModel,WhereClause whereClause,ref Dictionary<object,char> variableMap)
 		{
 			string result=string.Empty;
 			MethodInfo transformMethodInfo=GetType().GetMethod("Transform"+whereClause.Predicate.GetType().Name,BindingFlags.NonPublic|BindingFlags.Instance);
 			if (transformMethodInfo!=null)
 			{
-			    result=(string)transformMethodInfo.Invoke(this,new object[] { whereClause.Predicate });
+				result=(string)transformMethodInfo.Invoke(this,new object[] { whereClause.Predicate });
 			}
 			else
 			{
-			    throw new InvalidOperationException("Unsupported where clause.");
+				throw new InvalidOperationException("Unsupported where clause.");
 			}
 
 			return result;
@@ -101,16 +111,16 @@ WHERE {{
 				{
 					MethodCallExpression methodCall=(MethodCallExpression)current;
 					if ((methodCall.Method.Name=="get_Item")&&(methodCall.Arguments.Count==1)
-					    &&(methodCall.Arguments[0] is ConstantExpression)
-					    &&((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
-					       ||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
+						&&(methodCall.Arguments[0] is ConstantExpression)
+						&&((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
+						   ||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
 					{
-					    callStack.Push(methodCall);
-					    current=methodCall.Object;
+						callStack.Push(methodCall);
+						current=methodCall.Object;
 					}
 					else
 					{
-					    break;
+						break;
 					}
 				}
 				else if ((current is UnaryExpression)&&(((UnaryExpression)current).NodeType==ExpressionType.Convert))
@@ -126,15 +136,15 @@ WHERE {{
 				}
 				else if (current is QuerySourceReferenceExpression)
 				{
-				    break;
+					break;
 				}
 				else
 				{
 					callStack.Clear();
 					break;
 				}
-			} 
-            while (index>0);
+			}
+			while (index>0);
 			return callStack;
 		}
 
@@ -164,10 +174,17 @@ WHERE {{
 
 			if (ontology!=null)
 			{
-			    result=new Tuple<string,string>("?s","<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
+				result=new Tuple<string,string>("?s","<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
 			}
 
 			return result;
+		}
+		#endregion
+
+		#region Expression transformation methods
+		private string TransformConstantExpression(ConstantExpression expression)
+		{
+			return System.String.Format(((expression.Type.IsValueType)||(expression.Type==typeof(string))?"\"{0}\"":"<{0}"),expression.Value.ToString());
 		}
 
 		private string TransformMethodUnaryExpression(UnaryExpression expression)
@@ -175,18 +192,18 @@ WHERE {{
 			string result=string.Empty;
 			if (expression.NodeType==ExpressionType.Convert)
 			{
-			    if (expression.Operand is MethodCallExpression)
-			    {
-			        Tuple<string,string> tuple=ConvertToPropertyAccessor(expression);
-			        if (tuple!=null)
-			        {
-			            result=System.String.Format("{0} {1}",tuple.Item1,tuple.Item2);
-			        }
-			    }
+				if (expression.Operand is MethodCallExpression)
+				{
+					Tuple<string,string> tuple=ConvertToPropertyAccessor(expression);
+					if (tuple!=null)
+					{
+						result=System.String.Format("{0} {1}",tuple.Item1,tuple.Item2);
+					}
+				}
 			}
 			else
 			{
-			    throw new InvalidOperationException("Unsupported unary expression.");
+				ExceptionHelper.ThrowInvalidOperationException(expression);
 			}
 
 			return result;
@@ -194,50 +211,29 @@ WHERE {{
 
 		private string TransformMethodBinaryExpression(BinaryExpression expression)
 		{
-		    string result=string.Empty;
-		    string operatorSymbol=string.Empty;
-			switch (expression.Method.Name)
+			string result=System.String.Empty;
+			if (expression.Method.Name=="op_Equality")
 			{
-				case "op_Equality": operatorSymbol="=="; 
-                    break;
-			}
+				MemberExpression member=(expression.Left as MemberExpression)??(expression.Right as MemberExpression);
+				ConstantExpression constant=(expression.Left as ConstantExpression)??(expression.Right as ConstantExpression);
+				UnaryExpression unary=(expression.Left as UnaryExpression)??(expression.Right as UnaryExpression);
 
-			if (operatorSymbol.Length>0)
-			{
-			    if ((expression.Left is MemberExpression)&&(((MemberExpression)expression.Left).Member.Name=="Id")
-			        &&(typeof(Entity).IsAssignableFrom(((MemberExpression)expression.Left).Member.DeclaringType))
-			        &&(expression.Right is ConstantExpression))
-			    {
-			        result=System.String.Format("<{0}> ?p ?o",((ConstantExpression)expression.Right).Value.ToString());
-			    }
-			    else if ((expression.Right is MemberExpression)&&(((MemberExpression)expression.Right).Member.Name=="Id")
-			             &&(typeof(Entity).IsAssignableFrom(((MemberExpression)expression.Right).Member.DeclaringType))
-			             &&(expression.Left is ConstantExpression))
-			    {
-			        result=System.String.Format("<{0}> ?p ?o",((ConstantExpression)expression.Left).Value.ToString());
-			    }			    
-                else if ((expression.Left is UnaryExpression)&&(expression.Right is ConstantExpression))
-                {
-                    result=System.String.Format(
-			            "{0} {1}",
-                        TransformMethodUnaryExpression((UnaryExpression)expression.Left),
-                        System.String.Format(((((ConstantExpression)expression.Right).Type.IsValueType)||(((ConstantExpression)expression.Right).Type==typeof(string))?"\"{0}\"":"<{0}"),((ConstantExpression)expression.Right).Value.ToString()));
-                }
-			    else if ((expression.Left is ConstantExpression)&&(expression.Right is UnaryExpression))
-                {
-                    result=System.String.Format(
-			            "{0} {1}",
-			            TransformMethodUnaryExpression((UnaryExpression)expression.Right),
-			            System.String.Format(((((ConstantExpression)expression.Left).Type.IsValueType)||(((ConstantExpression)expression.Right).Type==typeof(string))?"\"{0}\"":"<{0}>"),((ConstantExpression)expression.Left).Value.ToString()));
-                }
-			    else
-			    {
-			        throw new InvalidOperationException("Unsupported binary expression.");
-			    }
+				if ((member!=null)&&(member.Member.Name=="Id")&&(typeof(IEntity).IsAssignableFrom(member.Member.DeclaringType))&&(constant!=null))
+				{
+					result=System.String.Format("?s ?p ?o.{0}FILTER(?s=<{1}>)",Environment.NewLine,constant.Value.ToString());
+				}
+				else if ((unary!=null)&&(constant!=null))
+				{
+					result=System.String.Format("{0} {1}",TransformMethodUnaryExpression(unary),TransformConstantExpression(constant));
+				}
+				else
+				{
+					ExceptionHelper.ThrowInvalidOperationException(expression);
+				}
 			}
 			else
 			{
-			    throw new InvalidOperationException("Unsupported binary expression.");
+				ExceptionHelper.ThrowInvalidOperationException(expression);
 			}
 
 			return result;
@@ -245,42 +241,38 @@ WHERE {{
 
 		private string TransformTypeBinaryExpression(TypeBinaryExpression expression)
 		{
-		    string result=string.Empty;
+			string result=System.String.Empty;
 			if (expression.NodeType==ExpressionType.TypeIs)
 			{
 				if (!typeof(IEntity).IsAssignableFrom(expression.TypeOperand))
 				{
-				    ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+					ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
 				}
 
 				MethodInfo mappingForMethodInfo=_mappings.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.TypeOperand });
 				IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_mappings,null);
 				if ((mapping!=null)&&(mapping.Type!=null))
 				{
-				    Ontology ontology=
-				        _ontologyProvider.Ontologies.Where(
-				            item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
-				    if (ontology!=null)
-				    {
-				        result=System.String.Format("?s a <{0}>",mapping.Type.Uri.AbsoluteUri);
-				    }
-				    else
-				    {
-				        ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
-				    }
+					Ontology ontology=
+						_ontologyProvider.Ontologies.Where(
+							item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+					if (ontology!=null)
+					{
+						result=System.String.Format("?s a <{0}>.",mapping.Type.Uri.AbsoluteUri);
+					}
+					else
+					{
+						ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+					}
 				}
 				else
 				{
-				    ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
+					ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
 				}
 			}
 
 			return result;
 		}
-
-		private void ThrowInvalidCastException(Type expectedType,Type foundType)
-		{
-			throw new InvalidCastException(System.String.Format("Expected '{0}' type, found '{1}'.",expectedType.FullName,foundType.FullName));
-		}
+		#endregion
 	}
 }

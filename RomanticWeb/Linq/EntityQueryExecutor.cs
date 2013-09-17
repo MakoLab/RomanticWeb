@@ -5,37 +5,58 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Remotion.Linq;
+using RomanticWeb.Mapping;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
 	internal class EntityQueryExecutor:IQueryExecutor
 	{
+		#region Fields
 		private IEntityFactory _entityFactory;
+		private IMappingsRepository _mappingRepository;
+		private IOntologyProvider _ontologyProvider;
 		private EntitySparqlQueryModelTranslator _translator;
+		#endregion
 
-		internal EntityQueryExecutor(IEntityFactory entityFactory)
+		#region Constructors
+		internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
 		{
 			if (entityFactory==null)
 			{
-			    throw new ArgumentNullException("entityFactory");
+				throw new ArgumentNullException("entityFactory");
+			}
+
+			if (mappingsRepository==null)
+			{
+				throw new ArgumentNullException("mappingsRepository");
+			}
+
+			if (ontologyProvider==null)
+			{
+				throw new ArgumentNullException("ontologyProvider");
 			}
 
 			_entityFactory=entityFactory;
-			_translator=new EntitySparqlQueryModelTranslator(_entityFactory,null,null);
+			_mappingRepository=mappingsRepository;
+			_ontologyProvider=ontologyProvider;
+			_translator=new EntitySparqlQueryModelTranslator(_entityFactory,_mappingRepository,_ontologyProvider);
 		}
+		#endregion
 
+		#region Public methods
 		public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
 			{
-			    throw new ArgumentOutOfRangeException("T");
+				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(IEntity),typeof(T));
 			}
 
 			IEnumerable<T> result=new T[0];
 			string commandText=_translator.CreateCommandText(queryModel);
 			if (commandText.Length>0)
 			{
-				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item => 
+				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText });
 			}
@@ -52,7 +73,7 @@ namespace RomanticWeb.Linq
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
 			{
-			    throw new ArgumentOutOfRangeException("T");
+				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(IEntity),typeof(T));
 			}
 
 			T result=default(T);
@@ -66,5 +87,6 @@ namespace RomanticWeb.Linq
 
 			return result;
 		}
+		#endregion
 	}
 }

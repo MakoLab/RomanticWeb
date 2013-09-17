@@ -56,7 +56,7 @@ namespace RomanticWeb
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return (_uri != null ? _uri.GetHashCode() : 0);
+		    return _uri.GetHashCode();
 		}
 
 		/// <summary>
@@ -87,7 +87,7 @@ namespace RomanticWeb
         /// </summary>
         protected bool Equals([AllowNull] UriId other)
         {
-            return Equals(_uri, other._uri);
+            return other!=null&&Equals(this._uri, other._uri);
         }
 	}
 }

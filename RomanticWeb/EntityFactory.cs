@@ -9,6 +9,8 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
+    using RomanticWeb.Mapping;
+
 	/// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
 	public class EntityFactory:IEntityFactory
 	{
@@ -16,7 +18,7 @@ namespace RomanticWeb
 
 		private readonly IMappingsRepository _mappings;
 
-		private readonly IOntologyProvider _ontologyProvider;
+	    private readonly IOntologyProvider _ontologyProvider;
 
 		internal EntityFactory(IMappingsRepository mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
 		{
@@ -53,15 +55,15 @@ namespace RomanticWeb
 
 		public T Create<T>(EntityId entityId) where T:class,IEntity
 		{
-			if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
+		    if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
 			{
-				return (T)(IEntity)Create(entityId);
+			    return (T)(IEntity)Create(entityId);
 			}
-
-			return this.EntityAs<T>(this.Create(entityId));
+		
+            return this.EntityAs<T>(this.Create(entityId));
 		}
 
-		public IEnumerable<Entity> Create(string sparqlConstruct)
+	    public IEnumerable<Entity> Create(string sparqlConstruct)
 		{
 			return Create<Entity>(sparqlConstruct);
 		}
@@ -72,17 +74,17 @@ namespace RomanticWeb
 
 			ITripleSource tripleSource=_sourceFactoryBase.CreateTriplesSourceForOntology();
 			IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> triples=tripleSource.GetNodesForQuery(sparqlConstruct);
-			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct(RdfNodeEqualityComparer.Default))
+			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct())
 			{
-				entities.Add(Create<T>(EntityId.Create(subject.ToString())));
+			    entities.Add(Create<T>(EntityId.Create(subject.ToString())));
 			}
 
 			return entities;
 		}
 
-		internal T EntityAs<T>(IEntity entity) where T:class,IEntity
+		internal T EntityAs<T>(Entity entity) where T : class,IEntity
 		{
-			return new EntityProxy<T>(_sourceFactoryBase,entity.Id,_mappings.MappingFor<T>(),new RdfNodeConverter(this)).ActLike<T>();
+			return new EntityProxy(_sourceFactoryBase, entity, _mappings.MappingFor<T>(), new RdfNodeConverter(this)).ActLike<T>();
 		}
 	}
 }

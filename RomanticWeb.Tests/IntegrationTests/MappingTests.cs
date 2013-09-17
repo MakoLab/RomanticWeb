@@ -1,31 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using FluentAssertions;
+
+using ImpromptuInterface;
+
 using NUnit.Framework;
 using RomanticWeb.Mapping;
 using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    using RomanticWeb.Mapping.Model;
-
     [TestFixture]
 	public class MappingTests : InMemoryTripleStoreTestsBase
-	{
-		private new TestMappingsRepository Mappings
-		{
-			get { return (TestMappingsRepository)base.Mappings; }
-		}
+    {
+        protected IPerson Entity
+        {
+            get { return EntityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")); }
+        }
 
-		protected IPerson Entity
-		{
-			get { return EntityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")); }
-		}
-
-		protected override IMappingsRepository SetupMappings()
-		{
-			return new TestMappingsRepository();
-		}
+        private new TestMappingsRepository Mappings
+        {
+            get { return (TestMappingsRepository)base.Mappings; }
+        }
 
 		[Test]
 		public void Property_should_be_mapped_to_default_graph()
@@ -70,26 +68,83 @@ namespace RomanticWeb.Tests.IntegrationTests
 			// then
 			Assert.That(interests, Has.Count.EqualTo(5));
 			interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
-		}
-	}
+        }
 
-	public class TestMappingsRepository : IMappingsRepository
-	{
-		private readonly List<EntityMap> _entityMaps;
+        [Test]
+        public void Mapping_rdflist_of_entites_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("RdfLists.ttl");
 
-		public TestMappingsRepository(params EntityMap[] entityMaps)
-		{
-			_entityMaps = entityMaps.ToList();
-		}
+            // when
+            var friends = Entity.Friends;
 
-		public IMapping MappingFor<TEntity>()
-		{
-			return _entityMaps.Where(map => map.EntityType == typeof(TEntity)).Cast<IMappingProvider>().First().GetMapping();
-		}
+            // then
+            Assert.That(friends, Has.Count.EqualTo(5));
+            friends.Should()
+                   .ContainInOrder(
+                       new Entity(new UriId("http://magi/people/Karol")),
+                       new Entity(new UriId("http://magi/people/Gniewko")),
+                       new Entity(new UriId("http://magi/people/Monika")),
+                       new Entity(new UriId("http://magi/people/Dominik")),
+                       new Entity(new UriId("http://magi/people/Przemek")));
+        }
 
-		public void Add(EntityMap personMapping)
-		{
-			_entityMaps.Add(personMapping);
-		}
+        [Test]
+        public void Mapping_loose_collection_of_entites_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("LooseCollections.ttl");
+
+            // when
+            var friends = Entity.Friends;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(5));
+            friends.Should().Contain(new[]
+                                       {
+                                           new Entity(new UriId("http://magi/people/Karol")),
+                                           new Entity(new UriId("http://magi/people/Gniewko")),
+                                           new Entity(new UriId("http://magi/people/Monika")),
+                                           new Entity(new UriId("http://magi/people/Dominik")),
+                                           new Entity(new UriId("http://magi/people/Przemek"))
+                                       });
+        }
+
+        [Test]
+        public void Mapping_loose_collection_of_entites_should_be_possible_if_only_one_element_is_present()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("AssociatedInstances.ttl");
+
+            // when
+            IList<IPerson> friends = Entity.Friends;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(1));
+            friends.Should().Contain(new[] { new Entity(new UriId("http://magi/people/Karol")) });
+        }
+
+        [Test]
+        public void Mapping_loose_collection_of_entites_should_be_possible_if_only_are_no_elements_present()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("AssociatedInstances.ttl");
+
+            // when
+            var friends = Entity.Interests;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(0));
+        }
+
+        protected override IMappingsRepository SetupMappings()
+        {
+            return new TestMappingsRepository();
+        }
 	}
 }

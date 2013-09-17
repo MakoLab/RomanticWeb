@@ -13,14 +13,14 @@ namespace RomanticWeb.Tests.IntegrationTests
 	{
 		private TripleStore _store;
 
-		private IMappingsRepository _mappings;
+        private IMappingsRepository _mappings;
 
-		protected IEntityFactory EntityFactory { get; set; }
+        public IMappingsRepository Mappings
+        {
+            get { return _mappings; }
+        }
 
-		public IMappingsRepository Mappings
-		{
-			get { return _mappings; }
-		}
+		protected IEntityFactory EntityFactory { get; private set; }
 
 		[SetUp]
 		public void Setup()

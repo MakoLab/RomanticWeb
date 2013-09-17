@@ -30,7 +30,7 @@ namespace RomanticWeb.Mapping
 
 		public IPropertyMapping GetMapping()
 		{
-			return new PropertyMapping(_propertyInfo.Name, PredicateUri, GraphSelector);
+			return new PropertyMapping(_propertyInfo.Name, PredicateUri, GraphSelector, IsCollection);
 		}
 	}
 }

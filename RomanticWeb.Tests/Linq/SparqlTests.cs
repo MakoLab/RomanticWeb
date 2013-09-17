@@ -10,11 +10,11 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests.Linq
 {
-	using RomanticWeb.Mapping;
-	using RomanticWeb.Mapping.Model;
+    using RomanticWeb.Mapping;
+    using RomanticWeb.Mapping.Model;
 	using RomanticWeb.Ontologies;
 
-	[TestFixture]
+    [TestFixture]
 	public class SparqlTests
 	{
 		public interface IPerson:IEntity
@@ -64,8 +64,8 @@ namespace RomanticWeb.Tests.Linq
 			Assert.That(entities.Count,Is.EqualTo(1));
 			Assert.That(entities[0],Is.Not.Null);
 			Assert.That(entities[0],Is.InstanceOf<Entity>());
-			Assert.That(entities[0].AsDynamic.foaf.givenName,Is.EqualTo("Tomasz"));
-			Assert.That(entities[0].AsDynamic.foaf.familyName,Is.EqualTo("Pluskiewicz"));
+            Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
 		}
 
 		[Test]
@@ -78,8 +78,8 @@ namespace RomanticWeb.Tests.Linq
 			Assert.That(entities.Count,Is.EqualTo(1));
 			Assert.That(entities[0],Is.Not.Null);
 			Assert.That(entities[0],Is.InstanceOf<Entity>());
-			Assert.That(entities[0].AsDynamic.foaf.givenName,Is.EqualTo("Tomasz"));
-			Assert.That(entities[0].AsDynamic.foaf.familyName,Is.EqualTo("Pluskiewicz"));
+            Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
 		}
 
 		[Test]
@@ -91,10 +91,10 @@ namespace RomanticWeb.Tests.Linq
 						   select resources).FirstOrDefault();
 			Assert.That(entity,Is.Not.Null);
 			Assert.That(entity,Is.InstanceOf<Entity>());
-			Assert.That(entity.AsDynamic.foaf.givenName,Is.EqualTo("Karol"));
-			Assert.That(entity.AsDynamic.foaf.familyName,Is.EqualTo("Szczepański"));
+            Assert.That(entity.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
+            Assert.That(entity.AsDynamic().foaf.familyName, Is.EqualTo("Szczepański"));
 		}
-
+		
 		[Test]
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
@@ -106,13 +106,13 @@ namespace RomanticWeb.Tests.Linq
 			Entity tomasz=entities.Where(item => item.Id=="http://magi/people/Tomasz").FirstOrDefault();
 			Assert.That(tomasz,Is.Not.Null);
 			Assert.That(tomasz,Is.InstanceOf<Entity>());
-			Assert.That(tomasz.AsDynamic.foaf.givenName,Is.EqualTo("Tomasz"));
-			Assert.That(tomasz.AsDynamic.foaf.familyName,Is.EqualTo("Pluskiewicz"));
+            Assert.That(tomasz.AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
 			Entity karol=entities.Where(item => item.Id=="http://magi/people/Karol").FirstOrDefault();
 			Assert.That(karol,Is.Not.Null);
 			Assert.That(karol,Is.InstanceOf<Entity>());
-			Assert.That(karol.AsDynamic.foaf.givenName,Is.EqualTo("Karol"));
-			Assert.That(karol.AsDynamic.foaf.familyName,Is.EqualTo("Szczepański"));
+            Assert.That(karol.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
+			Assert.That(karol.AsDynamic().foaf.familyName,Is.EqualTo("Szczepański"));
 		}
 	}
 }

@@ -10,5 +10,7 @@ namespace RomanticWeb.Tests.Stubs
 		public IGraphSelectionStrategy GraphSelector { get; set; }
 		public bool UsesUnionGraph { get; set; }
 		public string Name { get; set; }
+
+        public bool IsCollection { get; set; }
 	}
 }

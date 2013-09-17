@@ -10,6 +10,9 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
+    using RomanticWeb.Mapping;
+    using RomanticWeb.Ontologies;
+
 	internal class EntityQueryExecutor:IQueryExecutor
 	{
 		#region Fields
@@ -19,28 +22,11 @@ namespace RomanticWeb.Linq
 		private EntitySparqlQueryModelTranslator _translator;
 		#endregion
 
-		#region Constructors
-		internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
-		{
-			if (entityFactory==null)
+        #region Constructors
+        internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
 			{
-				throw new ArgumentNullException("entityFactory");
-			}
-
-			if (mappingsRepository==null)
-			{
-				throw new ArgumentNullException("mappingsRepository");
-			}
-
-			if (ontologyProvider==null)
-			{
-				throw new ArgumentNullException("ontologyProvider");
-			}
-
 			_entityFactory=entityFactory;
-			_mappingRepository=mappingsRepository;
-			_ontologyProvider=ontologyProvider;
-			_translator=new EntitySparqlQueryModelTranslator(_entityFactory,_mappingRepository,_ontologyProvider);
+			_translator=new EntitySparqlQueryModelTranslator(mappings,ontologyProvider);
 		}
 		#endregion
 
@@ -56,7 +42,7 @@ namespace RomanticWeb.Linq
 			string commandText=_translator.CreateCommandText(queryModel);
 			if (commandText.Length>0)
 			{
-				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
+				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item => 
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText });
 			}

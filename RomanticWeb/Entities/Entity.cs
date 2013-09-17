@@ -36,7 +36,7 @@ namespace RomanticWeb
 
         public EntityId Id { get { return _entityId; } }
 
-        public dynamic AsDynamic { get { return _asDynamic; } }
+        public dynamic AsDynamic() { return _asDynamic; }
 
 		public override bool TryGetMember(GetMemberBinder binder,out object result)
 		{
@@ -72,16 +72,24 @@ namespace RomanticWeb
 			return (TInterface)_knownActLike[typeof(TInterface)];
 		}
 
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var entity=obj as IEntity;
+            if (entity == null) { return false; }
+            return Id.Equals(entity.Id);
+        }
+
 		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
 		{
-			var matchingPredicates=(from accessor in Values.OfType<OntologyAccessor>()
-							          from property in accessor.KnownProperties
-									where property.PropertyName==binder.Name
-							          select new
-							              {
-							                  accessor,
-							                  property
-							              }).ToList();
+		    var matchingPredicates=(from accessor in Values.OfType<OntologyAccessor>()
+		                            from property in accessor.KnownProperties
+		                            where property.PropertyName==binder.Name
+		                            select new { accessor,property }).ToList();
 
 			if (matchingPredicates.Count==1)
 			{

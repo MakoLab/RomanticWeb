@@ -74,7 +74,6 @@
     <Compile Include="Mapping\PropertyMap.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
-    <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
     <Compile Include="Linq\EntitySparqlQueryModelTranslator.cs" />
     <Compile Include="MetaData\OntologyMappingAttribute.cs" />
@@ -93,7 +92,6 @@
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
-    <Compile Include="Ontologies\RdfNodeEqualityComparer.cs" />
     <Compile Include="Ontologies\RdfTerm.cs" />
     <Compile Include="Ontologies\RdfTermExtensions.cs" />
     <Compile Include="OntologyAccessor.cs" />

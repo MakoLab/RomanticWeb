@@ -7,7 +7,11 @@ namespace RomanticWeb.TestEntities
 	{
 		string FirstName { get; }
 		string LastName { get; }
+
 		Uri Homepage { get; }
+
 		ICollection<string> Interests { get; }
+
+	    IList<IPerson> Friends { get; }
 	}
 }

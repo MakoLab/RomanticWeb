@@ -28,8 +28,18 @@ namespace RomanticWeb.DotNetRDF.TripleSources
 		}
 
 		public bool TryGetListElements(RdfNode rdfList,out IEnumerable<RdfNode> listElements)
-		{
-			throw new System.NotImplementedException();
+        {
+            IBlankNode listNode = _graph.GetBlankNode(rdfList.BlankNodeId);
+            IUriNode rdfFirst = _graph.CreateUriNode(UriFactory.Create(RdfSpecsHelper.RdfListFirst));
+
+            if (_graph.GetTriplesWithSubjectPredicate(listNode, rdfFirst).Any())
+            {
+                listElements = _graph.GetListItems(listNode).Select(n => n.WrapNode()).ToList();
+                return true;
+            }
+
+            listElements = null;
+            return false;
 		}
 
 		public IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string commandText)

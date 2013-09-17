@@ -12,7 +12,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
-	internal class EntitySparqlQueryModelTranslator
+    internal class EntitySparqlQueryModelTranslator
 	{
 		#region Fields
 		private static readonly string ConstructTemplate=
@@ -28,16 +28,16 @@ WHERE {{
 	}} FILTER (?s=?_s)
 }}";
 
-		private IMappingsRepository _mappings;
+        private IMappingsRepository _mappings;
 
-		private IOntologyProvider _ontologyProvider;
+	    private IOntologyProvider _ontologyProvider;
 		#endregion
 
 		#region Constructors
-		internal EntitySparqlQueryModelTranslator(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
+		internal EntitySparqlQueryModelTranslator(IMappingsRepository mappings,IOntologyProvider ontologyProvider)
 		{
-			_mappings=mappings;
-			_ontologyProvider=ontologyProvider;
+	        _mappings=mappings;
+	        _ontologyProvider=ontologyProvider;
 		}
 		#endregion
 
@@ -46,7 +46,7 @@ WHERE {{
 		{
 			if (queryModel.SelectClause==null)
 			{
-				throw new ArgumentOutOfRangeException("There is no select clause associated with query.");
+			    throw new ArgumentOutOfRangeException("There is no select clause associated with query.");
 			}
 
 			Dictionary<object,char> variableMap=new Dictionary<object,char>();
@@ -74,9 +74,9 @@ WHERE {{
 		{
 			string result=CreateCommandText(queryModel);
 			if (result.Length>0)
-			{
+            {
 				result=System.String.Format(SingleConstructTemplate,Environment.NewLine,result.Replace("\r",System.String.Empty).Replace("\n",System.Environment.NewLine+"\t\t").Replace("?s","?_s").Replace("CONSTRUCT { ?_s ?p ?o }","SELECT DISTINCT ?_s"));
-			}
+            }
 
 			return result;
 		}
@@ -89,11 +89,11 @@ WHERE {{
 			MethodInfo transformMethodInfo=GetType().GetMethod("Transform"+whereClause.Predicate.GetType().Name,BindingFlags.NonPublic|BindingFlags.Instance);
 			if (transformMethodInfo!=null)
 			{
-				result=(string)transformMethodInfo.Invoke(this,new object[] { whereClause.Predicate });
+			    result=(string)transformMethodInfo.Invoke(this,new object[] { whereClause.Predicate });
 			}
 			else
 			{
-				throw new InvalidOperationException("Unsupported where clause.");
+			    throw new InvalidOperationException("Unsupported where clause.");
 			}
 
 			return result;
@@ -111,16 +111,16 @@ WHERE {{
 				{
 					MethodCallExpression methodCall=(MethodCallExpression)current;
 					if ((methodCall.Method.Name=="get_Item")&&(methodCall.Arguments.Count==1)
-						&&(methodCall.Arguments[0] is ConstantExpression)
-						&&((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
-						   ||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
+					    &&(methodCall.Arguments[0] is ConstantExpression)
+					    &&((methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
+					       ||(methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
 					{
-						callStack.Push(methodCall);
-						current=methodCall.Object;
+					    callStack.Push(methodCall);
+					    current=methodCall.Object;
 					}
 					else
 					{
-						break;
+					    break;
 					}
 				}
 				else if ((current is UnaryExpression)&&(((UnaryExpression)current).NodeType==ExpressionType.Convert))
@@ -136,15 +136,15 @@ WHERE {{
 				}
 				else if (current is QuerySourceReferenceExpression)
 				{
-					break;
+				    break;
 				}
 				else
 				{
 					callStack.Clear();
 					break;
 				}
-			}
-			while (index>0);
+			} 
+            while (index>0);
 			return callStack;
 		}
 
@@ -174,7 +174,7 @@ WHERE {{
 
 			if (ontology!=null)
 			{
-				result=new Tuple<string,string>("?s","<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
+			    result=new Tuple<string,string>("?s","<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
 			}
 
 			return result;
@@ -192,14 +192,14 @@ WHERE {{
 			string result=string.Empty;
 			if (expression.NodeType==ExpressionType.Convert)
 			{
-				if (expression.Operand is MethodCallExpression)
-				{
-					Tuple<string,string> tuple=ConvertToPropertyAccessor(expression);
-					if (tuple!=null)
-					{
-						result=System.String.Format("{0} {1}",tuple.Item1,tuple.Item2);
-					}
-				}
+			    if (expression.Operand is MethodCallExpression)
+			    {
+			        Tuple<string,string> tuple=ConvertToPropertyAccessor(expression);
+			        if (tuple!=null)
+			        {
+			            result=System.String.Format("{0} {1}",tuple.Item1,tuple.Item2);
+			        }
+			    }
 			}
 			else
 			{
@@ -219,17 +219,17 @@ WHERE {{
 				UnaryExpression unary=(expression.Left as UnaryExpression)??(expression.Right as UnaryExpression);
 
 				if ((member!=null)&&(member.Member.Name=="Id")&&(typeof(IEntity).IsAssignableFrom(member.Member.DeclaringType))&&(constant!=null))
-				{
+			    {
 					result=System.String.Format("?s ?p ?o.{0}FILTER(?s=<{1}>)",Environment.NewLine,constant.Value.ToString());
-				}
+			    }			    
 				else if ((unary!=null)&&(constant!=null))
-				{
+                {
 					result=System.String.Format("{0} {1}",TransformMethodUnaryExpression(unary),TransformConstantExpression(constant));
-				}
-				else
-				{
+                }
+			    else
+			    {
 					ExceptionHelper.ThrowInvalidOperationException(expression);
-				}
+			    }
 			}
 			else
 			{
@@ -253,17 +253,17 @@ WHERE {{
 				IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_mappings,null);
 				if ((mapping!=null)&&(mapping.Type!=null))
 				{
-					Ontology ontology=
-						_ontologyProvider.Ontologies.Where(
-							item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
-					if (ontology!=null)
-					{
+				    Ontology ontology=
+				        _ontologyProvider.Ontologies.Where(
+				            item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+				    if (ontology!=null)
+				    {
 						result=System.String.Format("?s a <{0}>.",mapping.Type.Uri.AbsoluteUri);
-					}
-					else
-					{
+				    }
+				    else
+				    {
 						ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
-					}
+				    }
 				}
 				else
 				{

@@ -94,6 +94,7 @@
     <Compile Include="IntegrationTests\InMemoryTripleStoreBasicTests.cs" />
     <Compile Include="IntegrationTests\InMemoryTripleStoreTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
+    <Compile Include="Stubs\TestMappingsRepository.cs" />
     <Compile Include="Linq\SparqlTests.cs" />
     <Compile Include="PredicateAccessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

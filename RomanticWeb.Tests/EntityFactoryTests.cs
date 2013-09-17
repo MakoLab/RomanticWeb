@@ -2,9 +2,11 @@
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
-using RomanticWeb.Ontologies;
-using RomanticWeb.Tests.Stubs;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Ontologies;
+using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.Stubs;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests
@@ -41,7 +43,7 @@ namespace RomanticWeb.Tests
 			Assert.That(entity.Id, Is.EqualTo(new UriId("http://magi/people/Tomasz")));
 		}
 
-		[Test, ExpectedException(typeof (ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void Creating_new_Entity_should_throw_when_EntityId_is_null()
 		{
 			_entityFactory.Create((EntityId)null);
@@ -67,5 +69,30 @@ namespace RomanticWeb.Tests
 			// when
 			var accessor = entity.dcterms;
 		}
+
+        [Test]
+        public void Created_typed_entity_should_be_equal_to_Entity_with_same_Id()
+        {
+            // given
+            _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
+            var entity=_entityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz"));
+            var typed=new Entity(new UriId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.AreEqual(entity, typed);
+            Assert.AreEqual(entity.GetHashCode(), typed.GetHashCode());
+        }
+
+        [Test]
+        public void Typed_entity_should_expose_dynamic_ontology_members()
+        {
+            // given
+            _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
+            dynamic entity = this._entityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")).AsDynamic();
+
+            // then
+            Assert.That(entity.foaf, Is.Not.Null);
+            Assert.That(entity.foaf, Is.InstanceOf<OntologyAccessor>());
+        }
 	}
 }

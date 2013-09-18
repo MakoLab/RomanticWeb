@@ -14,51 +14,23 @@ namespace RomanticWeb
 			return result;
 		}
 
-		public static bool operator==([AllowNull] EntityId operandA,[AllowNull] string operandB)
+		/// <summary>
+		/// Checks if two Entity identifiers are equal
+		/// </summary>
+		public static bool operator==([AllowNull] EntityId left,[AllowNull] EntityId right)
 		{
-			EntityId _operandB=null;
-			if (operandB!=null)
-			{
-			    _operandB=EntityId.Create(operandB);
-			}
-
-			if (((Object.Equals(operandA,null))&&(Object.Equals(_operandB,null)))
-			    ||((!Object.Equals(operandA,null))&&(!Object.Equals(_operandB,null))&&(operandA.Equals(_operandB))))
-			{
-			    return true;
-			}
-
-			return false;
+			return Equals(left,right);
 		}
 
-		public static bool operator!=([AllowNull] EntityId operandA,[AllowNull] string operandB)
+		/// <summary>
+		/// Checks if two Entity identifiers are not equal
+		/// </summary>
+		public static bool operator!=([AllowNull] EntityId left,[AllowNull] EntityId right)
 		{
-			return !(operandA==operandB);
+			return !(left==right);
 		}
 
-		public static bool operator==([AllowNull] string operandA,[AllowNull] EntityId operandB)
-		{
-			EntityId _operandA=null;
-			if (operandA!=null)
-			{
-			    _operandA=EntityId.Create(operandA);
-			}
-
-			if (((Object.Equals(_operandA,null))&&(Object.Equals(operandB,null)))
-			    ||((!Object.Equals(_operandA,null))&&(!Object.Equals(operandB,null))&&(operandA.Equals(operandB))))
-			{
-			    return true;
-			}
-
-			return false;
-		}
-
-		public static bool operator!=([AllowNull] string operandA,[AllowNull] EntityId operandB)
-		{
-			return !(operandA==operandB);
-		}
-
-		public static explicit operator EntityId(string entityId)
+		public static implicit operator EntityId(string entityId)
 		{
 			EntityId result=null;
 			if (entityId!=null)

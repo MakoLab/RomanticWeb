@@ -46,14 +46,51 @@ namespace RomanticWeb.DotNetRDF.TripleSources
 
 		public ITripleStore GetNodesForQuery(SparqlQuery query)
 		{
-			ITripleStore result=null;
+			ITripleStore result=new TripleStore();
+			IGraph graph=null;
 			InMemoryDataset dataSet=new InMemoryDataset(_tripleStore);
 			ISparqlQueryProcessor processor=new LeviathanQueryProcessor(dataSet);
 			object results=processor.ProcessQuery(query);
 			if (results is IGraph)
 			{
-				result=new TripleStore();
-				result.Add((IGraph)results);
+				graph=(IGraph)results;
+			}
+			else if (results is SparqlResultSet)
+			{
+				graph=new Graph();
+				string subjectVariable=null;
+				string predicateVariable=null;
+				string objectVariable=null;
+
+				foreach (string variable in ((SparqlResultSet)results).Variables)
+				{
+					if (subjectVariable==null)
+					{
+						subjectVariable=variable;
+					}
+					else if (predicateVariable==null)
+					{
+						predicateVariable=variable;
+					}
+					else if (objectVariable==null)
+					{
+						objectVariable=variable;
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				if ((subjectVariable!=null)&&(predicateVariable!=null)&&(objectVariable!=null))
+				{
+					graph=new Graph(((SparqlResultSet)results).ToTripleCollection(graph,subjectVariable,predicateVariable,objectVariable));
+				}
+			}
+
+			if (graph!=null)
+			{
+				result.Add(graph);
 			}
 
 			return result;

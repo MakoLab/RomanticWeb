@@ -56,6 +56,8 @@
     <Compile Include="EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
+    <Compile Include="Linq\EntityQueryModelVisitor.cs" />
+    <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\Model\IMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
@@ -75,7 +77,6 @@
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
-    <Compile Include="Linq\EntitySparqlQueryModelTranslator.cs" />
     <Compile Include="MetaData\OntologyMappingAttribute.cs" />
     <Compile Include="MetaData\RdfObjectPropertyAttribute.cs" />
     <Compile Include="MetaData\RdfDatatypePropertyAttribute.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Ontologies\RdfNode.cs" />
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="StaticOntologyProvider.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="TripleSourceFactoryBase.cs" />
     <Compile Include="TypeCheckerAccessor.cs" />
     <Compile Include="Entities\UriId.cs" />

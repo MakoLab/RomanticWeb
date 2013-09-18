@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 
 namespace RomanticWeb.Linq
 {
@@ -22,11 +23,9 @@ namespace RomanticWeb.Linq
 			throw new InvalidCastException(System.String.Format("Expected '{0}' type, found '{1}'.",expectedType.FullName,foundType.FullName));
 		}
 
-		internal static void ThrowInvalidOperationException(Expression expression)
+		internal static void ThrowNotSupportedException(string expressionText)
 		{
-			string expressionType=expression.GetType().Name.Replace("Expression",System.String.Empty);
-			expressionType=PascalCaseSplitRegularExpression.Replace(expressionType,match => (match.Value.Length>3?match.Value:match.Value.ToLower())+" ");
-			throw new InvalidOperationException(System.String.Format("Unsupported {0} expression",expressionType));
+			new NotSupportedException(System.String.Format("Expression of type '{0}' is not supported.",expressionText));
 		}
 	}
 }

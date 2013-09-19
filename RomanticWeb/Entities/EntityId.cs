@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NullGuard;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	public abstract class EntityId
 	{

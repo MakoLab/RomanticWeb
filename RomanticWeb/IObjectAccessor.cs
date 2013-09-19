@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Ontologies;
+﻿using RomanticWeb.Entities;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {

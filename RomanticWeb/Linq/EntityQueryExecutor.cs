@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Remotion.Linq;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 

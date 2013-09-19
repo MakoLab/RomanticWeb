@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Entities;
 
 namespace RomanticWeb
 {

@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using System.Text.RegularExpressions;
 using NullGuard;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	/// <summary>
 	/// Represents na Entity's identifies
@@ -27,7 +27,7 @@ namespace RomanticWeb
 		/// </summary>
 		public UriId(Uri uri)
 		{
-			_uri=uri;
+			this._uri=uri;
 		}
 
 		/// <summary>MEF importing constructor.</summary>
@@ -44,7 +44,7 @@ namespace RomanticWeb
 		/// </summary>
 		public Uri Uri
 		{
-			get { return _uri; }
+			get { return this._uri; }
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace RomanticWeb
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return _uri.GetHashCode();
+			return this._uri.GetHashCode();
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace RomanticWeb
 		/// </summary>
 		public override bool Equals([AllowNull] object obj)
 		{
-			if (obj==null||GetType()!=obj.GetType())
+			if (obj==null||this.GetType()!=obj.GetType())
 			{
 				return false;
 			}
@@ -86,12 +86,12 @@ namespace RomanticWeb
 				return true;
 			}
 
-			return _uri==((UriId)obj)._uri;
+			return this._uri==((UriId)obj)._uri;
 		}
 
 		public override string ToString()
 		{
-			return Uri.ToString();
+			return this.Uri.ToString();
 		}
 
 		/// <summary>

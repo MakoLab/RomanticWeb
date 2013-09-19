@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 

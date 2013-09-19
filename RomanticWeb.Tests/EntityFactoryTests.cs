@@ -3,6 +3,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;

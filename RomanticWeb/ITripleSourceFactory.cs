@@ -1,4 +1,6 @@
-﻿namespace RomanticWeb
+﻿using RomanticWeb.Entities;
+
+namespace RomanticWeb
 {
     using RomanticWeb.Mapping.Model;
 

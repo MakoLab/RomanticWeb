@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using System.Text.RegularExpressions;
 using NullGuard;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	[Export(typeof(EntityId))]
 	public sealed class BlankId:EntityId
@@ -17,8 +17,8 @@ namespace RomanticWeb
 
 		public BlankId(string id,[AllowNull] Uri graphUri)
 		{
-			Id=id;
-			GraphUri=graphUri;
+			this.Id=id;
+			this.GraphUri=graphUri;
 		}
 
 		[ImportingConstructor]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RomanticWeb.Entities;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb

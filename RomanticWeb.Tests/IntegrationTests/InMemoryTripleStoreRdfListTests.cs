@@ -2,6 +2,7 @@
 using FluentAssertions;
 using ImpromptuInterface;
 using NUnit.Framework;
+using RomanticWeb.Entities;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {

@@ -2,6 +2,7 @@
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Entities;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests

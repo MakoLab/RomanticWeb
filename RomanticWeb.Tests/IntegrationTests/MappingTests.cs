@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;

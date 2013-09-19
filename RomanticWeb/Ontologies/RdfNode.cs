@@ -1,5 +1,6 @@
 ﻿using System;
 using NullGuard;
+using RomanticWeb.Entities;
 
 namespace RomanticWeb.Ontologies
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb

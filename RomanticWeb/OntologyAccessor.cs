@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.Linq;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
+using RomanticWeb.Entities;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb

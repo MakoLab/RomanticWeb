@@ -4,6 +4,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Entities;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using VDS.RDF;

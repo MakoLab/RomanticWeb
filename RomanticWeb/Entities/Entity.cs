@@ -6,7 +6,7 @@ using System.Linq;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	/// <summary>
 	/// An RDF entity, which can be used to dynamically access RDF triples
@@ -25,18 +25,18 @@ namespace RomanticWeb
 		/// <remarks>It will not be backed by <b>any</b> triples, when not created via factory</remarks>
 		public Entity(EntityId entityId)
 		{
-			_asDynamic=(dynamic)this;
-			_entityId=entityId;
+			this._asDynamic=(dynamic)this;
+			this._entityId=entityId;
 		}
 
 		internal Entity(EntityId entityId,EntityFactory entityFactory):this(entityId)
 		{
-			_entityFactory=entityFactory;
+			this._entityFactory=entityFactory;
 		}
 
-        public EntityId Id { get { return _entityId; } }
+        public EntityId Id { get { return this._entityId; } }
 
-        public dynamic AsDynamic() { return _asDynamic; }
+        public dynamic AsDynamic() { return this._asDynamic; }
 
 		public override bool TryGetMember(GetMemberBinder binder,out object result)
 		{
@@ -49,7 +49,7 @@ namespace RomanticWeb
 			}
 
 			// then look for properties in ontologies
-			if (TryGetPropertyFromOntologies(binder,out result))
+			if (this.TryGetPropertyFromOntologies(binder,out result))
 			{
 			    return true;
 			}
@@ -59,34 +59,34 @@ namespace RomanticWeb
 
 		public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
 		{
-			if (_entityFactory!=null)
+			if (this._entityFactory!=null)
 			{
-				return _entityFactory.EntityAs<TInterface>(this);
+				return this._entityFactory.EntityAs<TInterface>(this);
 			}
 
-			if (!_knownActLike.ContainsKey(typeof(TInterface)))
+			if (!this._knownActLike.ContainsKey(typeof(TInterface)))
 			{
-				_knownActLike[typeof(TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
+				this._knownActLike[typeof(TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
 			}
 
-			return (TInterface)_knownActLike[typeof(TInterface)];
+			return (TInterface)this._knownActLike[typeof(TInterface)];
 		}
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return this.Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
             var entity=obj as IEntity;
             if (entity == null) { return false; }
-            return Id.Equals(entity.Id);
+            return this.Id.Equals(entity.Id);
         }
 
 		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
 		{
-		    var matchingPredicates=(from accessor in Values.OfType<OntologyAccessor>()
+		    var matchingPredicates=(from accessor in this.Values.OfType<OntologyAccessor>()
 		                            from property in accessor.KnownProperties
 		                            where property.PropertyName==binder.Name
 		                            select new { accessor,property }).ToList();
@@ -94,7 +94,7 @@ namespace RomanticWeb
 			if (matchingPredicates.Count==1)
 			{
 				var singleMatch=matchingPredicates.Single();
-				result=((IObjectAccessor)singleMatch.accessor).GetObjects(Id,singleMatch.property);
+				result=((IObjectAccessor)singleMatch.accessor).GetObjects(this.Id,singleMatch.property);
 				return true;
 			}
 

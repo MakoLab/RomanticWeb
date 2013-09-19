@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Remotion.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
-    using RomanticWeb.Mapping;
-    using RomanticWeb.Ontologies;
-
+	/// <summary>Executes queries against underlying triple store.</summary>
 	internal class EntityQueryExecutor:IQueryExecutor
 	{
 		#region Fields
@@ -22,8 +18,12 @@ namespace RomanticWeb.Linq
 		#endregion
 
 		#region Constructors
-        internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider)
-			{
+		/// <summary>Creates an instance of the query executor aware of the entities queried.</summary>
+		/// <param name="entityFactory">Entity factory to be used when creating objects.</param>
+		/// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
+		/// <param name="ontologyProvider">Ontology provider with data scheme.</param>
+		internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
+		{
 			_entityFactory=entityFactory;
 			_mappingsRepository=mappingsRepository;
 			_ontologyProvider=ontologyProvider;
@@ -31,6 +31,10 @@ namespace RomanticWeb.Linq
 		#endregion
 
 		#region Public methods
+		/// <summary>Returns a resulting collection of a query.</summary>
+		/// <typeparam name="T">Type of elements to be returned.</typeparam>
+		/// <param name="queryModel">Query model to be parsed.</param>
+		/// <returns>Enumeration of resulting entities matching given query.</returns>
 		public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))
@@ -50,11 +54,20 @@ namespace RomanticWeb.Linq
 			return result;
 		}
 
+		/// <summary>Returns a scalar value beeing a result of a query.</summary>
+		/// <typeparam name="T">Type of element to be returned.</typeparam>
+		/// <param name="queryModel">Query model to be parsed.</param>
+		/// <returns>Single scalar value beeing result of a query.</returns>
 		public T ExecuteScalar<T>(QueryModel queryModel)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>Returns a single entity beeing a result of a query.</summary>
+		/// <typeparam name="T">Type of element to be returned.</typeparam>
+		/// <param name="queryModel">Query model to be parsed.</param>
+		/// <param name="returnDefaultWhenEmpty">Tells the executor to return a defalt value in case of an empty result.</param>
+		/// <returns>Single entity beeing result of a query.</returns>
 		public T ExecuteSingle<T>(QueryModel queryModel,bool returnDefaultWhenEmpty)
 		{
 			if ((!typeof(IEntity).IsAssignableFrom(typeof(T)))&&(typeof(T).IsValueType))

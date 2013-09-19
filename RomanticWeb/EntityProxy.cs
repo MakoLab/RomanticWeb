@@ -1,17 +1,20 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using RomanticWeb.Mapping.Model;
 
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb
 {
     internal class EntityProxy:DynamicObject,IEntity
-    {
-        private readonly TripleSourceFactoryBase _sourceFactory;
+	{
+		private readonly TripleSourceFactoryBase _sourceFactory;
         private readonly Entity _entity;
-        private readonly IMapping _mappings;
-        private readonly RdfNodeConverter _converter;
+		private readonly IMapping _mappings;
+		private readonly dynamic _asDymamic;
+		private readonly RdfNodeConverter _converter;
 
         public EntityProxy(TripleSourceFactoryBase source, Entity entity, IMapping mappings, RdfNodeConverter converter)
         {
@@ -19,12 +22,13 @@ namespace RomanticWeb
             _entity = entity;
             _mappings = mappings;
             _converter = converter;
+			_asDymamic=(dynamic)this;
         }
 
         public EntityId Id
         {
             get
-            {
+		{
                 return _entity.Id;
             }
         }
@@ -35,30 +39,30 @@ namespace RomanticWeb
             {
                 return _entity[member];
             }
-        }
+		}
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
+		{
             var property = _mappings.PropertyFor(binder.Name);
 
             ITripleSource source = _sourceFactory.CreateTripleSourceForProperty(_entity.Id, _mappings.PropertyFor(binder.Name));
             IList objectsForPredicate = _converter.Convert(source.GetObjectsForPredicate(_entity.Id, property.Uri), source).ToList();
 
             if ((objectsForPredicate.Count>1||property.IsCollection)&&objectsForPredicate.Cast<object>().All(o=>!(o is IList)))
-            {
+			{
                 result=objectsForPredicate;
-            }
-            else if (objectsForPredicate.Count==0)
-            {
-                result=null;
-            }
-            else
-            {
+			}
+			else if (objectsForPredicate.Count==0)
+			{
+			    result=null;
+			}
+			else
+			{
                 result=objectsForPredicate[0];
-            }
+			}
 
-            return true;
-        }
+			return true;
+		}
 
         public override bool Equals(object obj)
         {
@@ -87,5 +91,5 @@ namespace RomanticWeb
         {
             return _entity;
         }
-    }
+	}
 }

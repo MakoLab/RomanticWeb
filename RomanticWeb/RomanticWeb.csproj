@@ -57,6 +57,7 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
+    <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\Model\IMapping.cs" />

@@ -16,8 +16,10 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
+	/// <summary>Visits query expressions.</summary>
 	public class EntityQueryVisitor:ThrowingExpressionTreeVisitor
 	{
+		#region Fields
 		private List<QuerySourceReferenceExpression> _expressionSources;
 		private StringBuilder _commandText;
 		private IOntologyProvider _ontologyProvider;
@@ -25,7 +27,14 @@ namespace RomanticWeb.Linq
 		private int _bracketsStack=0;
 		private bool _suppressOperators=false;
 		private int _currentGraphPattern=0;
+		#endregion
 
+		#region Constructors
+		/// <summary>Creates an instance of the query visitor.</summary>
+		/// <param name="commandText">Command text string builder to be used to create query elements.</param>
+		/// <param name="expressionSources">Enumeration of expression sources acknowledged when parsing parent query models.</param>
+		/// <param name="ontologyProvider">Ontology providerholding the data scheme.</param>
+		/// <param name="mappingsRepository">Mappings repository used to resolve strongly typed properties and types.</param>
 		internal EntityQueryVisitor(StringBuilder commandText,List<QuerySourceReferenceExpression> expressionSources,IOntologyProvider ontologyProvider,IMappingsRepository mappingsRepository):base()
 		{
 			if (commandText==null)
@@ -53,7 +62,9 @@ namespace RomanticWeb.Linq
 			_expressionSources=expressionSources;
 			_commandText=commandText;
 		}
+		#endregion
 
+		#region Properties
 		private int CurrentGraphPattern
 		{
 			get
@@ -76,18 +87,28 @@ namespace RomanticWeb.Linq
 				_currentGraphPattern=(value>3?1:value);
 			}
 		}
+		#endregion
 
+		#region Protected methods
+		/// <summary>Creates a comman string from given expression.</summary>
+		/// <returns></returns>
 		protected string CreateCommadText()
 		{
 			return _commandText.ToString();
 		}
 
+		/// <summary>Visits a query source expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
 		{
 			_expressionSources.Add(expression);
 			return expression;
 		}
 
+		/// <summary>Visits a binary expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitBinaryExpression(BinaryExpression expression)
 		{
 			_suppressOperators=false;
@@ -157,6 +178,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits an unary expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitUnaryExpression(UnaryExpression expression)
 		{
 			if (expression.NodeType==ExpressionType.Convert)
@@ -181,6 +205,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a method call expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
 		{
 			if ((expression.Method.Name=="get_Item")&&(expression.Arguments.Count==1))
@@ -224,6 +251,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a member expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitMemberExpression(MemberExpression expression)
 		{
 			if ((expression.Member.Name=="Id")&&(typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType)))
@@ -246,6 +276,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a constant expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitConstantExpression(ConstantExpression expression)
 		{
 			string value;
@@ -312,6 +345,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a type binary expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitTypeBinaryExpression(TypeBinaryExpression expression)
 		{
 			if (expression.NodeType==ExpressionType.TypeIs)
@@ -351,6 +387,9 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a sub-query expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
 		{
 			string subCommandText=EntityQueryModelVisitor.CreateCommandText(expression.QueryModel,_expressionSources,_ontologyProvider,_mappingsRepository);
@@ -362,12 +401,17 @@ namespace RomanticWeb.Linq
 			return expression;
 		}
 
+		/// <summary>Visits a unhandled expression.</summary>
+		/// <param name="expression">Expression to be visited.</param>
+		/// <returns>Expression visited</returns>
 		protected override Exception CreateUnhandledItemException<T>(T unhandledItem,string visitMethod)
 		{
 			Expression expression=unhandledItem as Expression;
 			return new NotSupportedException(expression!=null?FormattingExpressionTreeVisitor.Format(expression):unhandledItem.ToString());
 		}
+		#endregion
 
+		#region Private methods
 		private void CloseBrackets()
 		{
 			while (_bracketsStack>0)
@@ -477,5 +521,6 @@ namespace RomanticWeb.Linq
 
 			return result;
 		}
+		#endregion
 	}
 }

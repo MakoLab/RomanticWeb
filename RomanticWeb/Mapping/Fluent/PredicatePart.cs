@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Fluent
 {
 	public class PredicatePart
 	{
@@ -13,7 +13,7 @@ namespace RomanticWeb.Mapping
 
 		public NamedGraphPart NamedGraph
 		{
-			get { return new NamedGraphPart(this, _propertyMap); }
+			get { return new NamedGraphPart(this, this._propertyMap); }
 		}
 
 		public PredicatePart Is(Uri uri)
@@ -21,5 +21,12 @@ namespace RomanticWeb.Mapping
 			_propertyMap.PredicateUri = uri;
 			return this;
 		}
+
+	    public PredicatePart Is(string prefix,string predicateName)
+	    {
+	        _propertyMap.NamespacePrefix=prefix;
+	        _propertyMap.PredicateName=predicateName;
+	        return this;
+	    }
 	}
 }

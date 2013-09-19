@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Fluent
 {
 	public class NamedGraphPart
 	{
@@ -9,8 +9,8 @@ namespace RomanticWeb.Mapping
 
 		public NamedGraphPart(PredicatePart predicatePart, PropertyMap propertyMap)
 		{
-			_predicatePart = predicatePart;
-			_propertyMap = propertyMap;
+			this._predicatePart = predicatePart;
+			this._propertyMap = propertyMap;
 		}
 
 		public PredicatePart SelectedBy<T>() where T : IGraphSelectionStrategy
@@ -20,8 +20,8 @@ namespace RomanticWeb.Mapping
 
 		public PredicatePart SelectedBy(Func<EntityId, Uri> createGraphUri)
 		{
-			_propertyMap.GraphSelector = new FuncGraphSelector(createGraphUri);
-			return _predicatePart;
+			this._propertyMap.GraphSelector = new FuncGraphSelector(createGraphUri);
+			return this._predicatePart;
 		}
 	}
 }

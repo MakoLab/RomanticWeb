@@ -10,9 +10,9 @@ namespace RomanticWeb.Mapping.Model
 			this.Properties = new List<IPropertyMapping>();
 		}
 
-		public ITypeMapping Type { get; private set; }
+		public ITypeMapping Type { get; internal set; }
 
-        public IList<IPropertyMapping> Properties { get; private set; }
+        internal IList<IPropertyMapping> Properties { get; set; }
 
         public IPropertyMapping PropertyFor(string propertyName)
         {

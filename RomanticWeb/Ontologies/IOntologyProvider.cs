@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RomanticWeb.Ontologies
 {
@@ -11,5 +12,7 @@ namespace RomanticWeb.Ontologies
 		/// Get ontologies' metadata
 		/// </summary>
 		IEnumerable<Ontology> Ontologies { get; }
+
+	    Uri ResolveUri(string prefix,string rdfTermName);
 	}
 }

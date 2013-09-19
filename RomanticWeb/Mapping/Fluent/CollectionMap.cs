@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Fluent
 {
 	public class CollectionMap : PropertyMap
 	{

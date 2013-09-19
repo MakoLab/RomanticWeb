@@ -23,7 +23,7 @@ namespace RomanticWeb.Linq
 		/// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
 		/// <param name="ontologyProvider">Ontology provider with data scheme.</param>
 		internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
-		{
+			{
 			_entityFactory=entityFactory;
 			_mappingsRepository=mappingsRepository;
 			_ontologyProvider=ontologyProvider;

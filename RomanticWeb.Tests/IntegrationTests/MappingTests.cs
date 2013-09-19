@@ -1,10 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-
 using FluentAssertions;
-
-using ImpromptuInterface;
-
 using NUnit.Framework;
 using RomanticWeb.Mapping;
 using RomanticWeb.TestEntities;
@@ -144,7 +139,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected override IMappingsRepository SetupMappings()
         {
-            return new TestMappingsRepository();
+            return new TestMappingsRepository(new TestOntologyProvider());
         }
 	}
 }

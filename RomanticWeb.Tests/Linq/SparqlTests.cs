@@ -68,13 +68,13 @@ namespace RomanticWeb.Tests.Linq
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_from_pointed_ontology_test()
 		{
 			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
-									 where (string)((OntologyAccessor)resources["foaf"])["givenName"]=="Tomasz"
-									 select resources).ToList();
+									where (string)((OntologyAccessor)resources["foaf"])["givenName"]=="Tomasz"
+									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(1));
 			Assert.That(entities[0],Is.Not.Null);
 			Assert.That(entities[0],Is.InstanceOf<IEntity>());
-			Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
-			Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
+            Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
 		}
 
 		[Test]
@@ -82,13 +82,13 @@ namespace RomanticWeb.Tests.Linq
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_test()
 		{
 			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
-									 where (string)resources["givenName"]=="Tomasz"
-									 select resources).ToList();
+									where (string)resources["givenName"]=="Tomasz"
+									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(1));
 			Assert.That(entities[0],Is.Not.Null);
 			Assert.That(entities[0],Is.InstanceOf<IEntity>());
-			Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
-			Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
+            Assert.That(entities[0].AsDynamic().foaf.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(entities[0].AsDynamic().foaf.familyName, Is.EqualTo("Pluskiewicz"));
 		}
 
 		[Test]
@@ -96,12 +96,12 @@ namespace RomanticWeb.Tests.Linq
 		public void Selecting_entities_by_providing_subject_identifier_condition_test()
 		{
 			IEntity entity=(from resources in _entityFactory.AsQueryable<IEntity>()
-							where resources.Id==(EntityId)"http://magi/people/Karol"
-							select resources).FirstOrDefault();
+						   where resources.Id==(EntityId)"http://magi/people/Karol"
+						   select resources).FirstOrDefault();
 			Assert.That(entity,Is.Not.Null);
 			Assert.That(entity,Is.InstanceOf<IEntity>());
-			Assert.That(entity.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
-			Assert.That(entity.AsDynamic().foaf.familyName, Is.EqualTo("Szczepański"));
+            Assert.That(entity.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
+            Assert.That(entity.AsDynamic().foaf.familyName, Is.EqualTo("Szczepański"));
 		}
 
 		[Test]
@@ -109,8 +109,8 @@ namespace RomanticWeb.Tests.Linq
 		public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
 		{
 			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
-									 where resources is IPerson
-									 select resources).ToList();
+									where resources is IPerson
+									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(3));
 			IEntity tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
 			Assert.That(tomasz,Is.Not.Null);
@@ -120,7 +120,7 @@ namespace RomanticWeb.Tests.Linq
 			IEntity karol=entities.Where(item => item.Id==(EntityId)"http://magi/people/Karol").FirstOrDefault();
 			Assert.That(karol,Is.Not.Null);
 			Assert.That(karol,Is.InstanceOf<Entity>());
-			Assert.That(karol.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
+            Assert.That(karol.AsDynamic().foaf.givenName, Is.EqualTo("Karol"));
 			Assert.That(karol.AsDynamic().foaf.familyName,Is.EqualTo("Szczepański"));
 		}
 
@@ -147,9 +147,9 @@ namespace RomanticWeb.Tests.Linq
 		{
 			IEntity entity=(from resources in _entityFactory.AsQueryable<IEntity>()
 							where ((IList<IEntity>)((OntologyAccessor)resources["foaf"])["knows"]).Any(item => item.Id==(EntityId)"http://magi/people/Tomasz")
-							select resources).FirstOrDefault();
+						   select resources).FirstOrDefault();
 			Assert.That(entity,Is.Not.Null);
-			Assert.That(entity,Is.InstanceOf<IEntity>());
+			Assert.That(entity,Is.InstanceOf<Entity>());
 			Assert.That(entity.AsDynamic().foaf.givenName,Is.EqualTo("Karol"));
 			Assert.That(entity.AsDynamic().foaf.familyName,Is.EqualTo("Szczepański"));
 		}

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Ontologies;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Fluent
 {
-    using System.Diagnostics.CodeAnalysis;
-
-    using RomanticWeb.Mapping.Model;
-
     public abstract class EntityMap<TEntity> : EntityMap
 	{
 		protected EntityMap()
@@ -19,7 +18,7 @@ namespace RomanticWeb.Mapping
 		{
 			var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
 
-			MappedProperties.Add(propertyMap);
+			this.MappedProperties.Add(propertyMap);
 
 			return propertyMap;
 		}
@@ -28,7 +27,7 @@ namespace RomanticWeb.Mapping
 		{
 			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
 
-			MappedProperties.Add(propertyMap);
+			this.MappedProperties.Add(propertyMap);
 
 			return propertyMap;
 		}
@@ -39,21 +38,21 @@ namespace RomanticWeb.Mapping
 	{
 		protected EntityMap(Type type)
 		{
-			EntityType = type;
-			MappedProperties = new List<PropertyMap>();
+			this.EntityType = type;
+			this.MappedProperties = new List<PropertyMap>();
 		}
 
 		internal Type EntityType { get; set; }
 
 		internal IList<PropertyMap> MappedProperties { get; private set; }
 
-		IMapping IMappingProvider.GetMapping()
+        IMapping IMappingProvider.GetMapping(IOntologyProvider prefixes)
 		{
 			var entityMapping = new EntityMapping();
 
-			foreach (var mappedProperty in MappedProperties)
+			foreach (var mappedProperty in this.MappedProperties)
 			{
-				entityMapping.Properties.Add(mappedProperty.GetMapping());
+				entityMapping.Properties.Add(mappedProperty.GetMapping(prefixes));
 			}
 
 			return entityMapping;

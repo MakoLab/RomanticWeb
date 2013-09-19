@@ -1,9 +1,10 @@
-﻿namespace RomanticWeb.Mapping
-{
-    using RomanticWeb.Mapping.Model;
+﻿using RomanticWeb.Mapping.Model;
+using RomanticWeb.Ontologies;
 
+namespace RomanticWeb.Mapping
+{
     public interface IMappingProvider
 	{
-		IMapping GetMapping();
+        IMapping GetMapping(IOntologyProvider prefixes);
 	}
 }

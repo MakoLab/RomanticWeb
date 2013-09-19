@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RomanticWeb.Ontologies
 {
-	internal sealed class DefaultOntologiesProvider : IOntologyProvider
+	internal sealed class DefaultOntologiesProvider : OntologyProviderBase
 	{
 		private readonly IList<Ontology> _ontologies;
 
@@ -12,7 +13,7 @@ namespace RomanticWeb.Ontologies
 			_ontologies = ontologyProvider.Ontologies.Union(DefaultOntologies).ToList();
 		}
 
-		public IEnumerable<Ontology> Ontologies
+		public override IEnumerable<Ontology> Ontologies
 		{
 			get { return _ontologies; }
 		}
@@ -26,5 +27,5 @@ namespace RomanticWeb.Ontologies
                     new ObjectProperty("type"));
             }
         }
-	}
+    }
 }

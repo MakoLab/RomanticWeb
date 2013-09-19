@@ -3,6 +3,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
@@ -11,8 +12,6 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
-    using RomanticWeb.Mapping;
-
     [TestFixture]
 	public class EntityFactoryTests
 	{
@@ -24,7 +23,7 @@ namespace RomanticWeb.Tests
 		[SetUp]
 		public void Setup()
 		{
-			_ontologyProvider = new StaticOntologyProvider();
+			_ontologyProvider = new TestOntologyProvider();
 			_store = new TripleStore();
 			_mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
 			var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);

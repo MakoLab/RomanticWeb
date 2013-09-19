@@ -1,14 +1,13 @@
 ﻿using Moq;
 using NUnit.Framework;
+using RomanticWeb.DotNetRDF;
+using RomanticWeb.Mapping;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
-using RomanticWeb.DotNetRDF;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    using RomanticWeb.Mapping;
-
     public class InMemoryTripleStoreTestsBase
 	{
 		private TripleStore _store;

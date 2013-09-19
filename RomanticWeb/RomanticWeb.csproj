@@ -60,6 +60,7 @@
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
+    <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
@@ -67,22 +68,23 @@
     <Compile Include="ITripleSource.cs" />
     <Compile Include="ITripleSourceFactory.cs" />
     <Compile Include="Mapping\Model\ITypeMapping.cs" />
-    <Compile Include="Mapping\CollectionMap.cs" />
-    <Compile Include="Mapping\EntityMap.cs" />
+    <Compile Include="Mapping\Fluent\CollectionMap.cs" />
+    <Compile Include="Mapping\Fluent\EntityMap.cs" />
     <Compile Include="Mapping\Model\EntityMapping.cs" />
     <Compile Include="Mapping\FuncGraphSelector.cs" />
     <Compile Include="Mapping\IMappingProvider.cs" />
-    <Compile Include="Mapping\NamedGraphPart.cs" />
-    <Compile Include="Mapping\PredicatePart.cs" />
-    <Compile Include="Mapping\PropertyMap.cs" />
+    <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
+    <Compile Include="Mapping\Fluent\PredicatePart.cs" />
+    <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
-    <Compile Include="MetaData\OntologyMappingAttribute.cs" />
-    <Compile Include="MetaData\RdfObjectPropertyAttribute.cs" />
-    <Compile Include="MetaData\RdfDatatypePropertyAttribute.cs" />
-    <Compile Include="MetaData\RdfPropertyAttribute.cs" />
-    <Compile Include="MetaData\RdfTypeAttribute.cs" />
+    <Compile Include="Mapping\Attributes\MappingAttribute.cs" />
+    <Compile Include="Mapping\Attributes\ObjectPropertyAttribute.cs" />
+    <Compile Include="Mapping\Attributes\DatatypePropertyAttribute.cs" />
+    <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
+    <Compile Include="Mapping\Attributes\RdfTypeAttribute.cs" />
+    <Compile Include="Mapping\Model\TypeMapping.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
+    <Compile Include="Ontologies\OntologyProviderBase.cs" />
     <Compile Include="Ontologies\RdfTerm.cs" />
     <Compile Include="Ontologies\RdfTermExtensions.cs" />
     <Compile Include="OntologyAccessor.cs" />
@@ -102,7 +105,6 @@
     <Compile Include="Ontologies\RdfClass.cs" />
     <Compile Include="Ontologies\RdfNode.cs" />
     <Compile Include="RdfNodeConverter.cs" />
-    <Compile Include="StaticOntologyProvider.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TripleSourceFactoryBase.cs" />
     <Compile Include="TypeCheckerAccessor.cs" />
@@ -127,6 +129,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MetaData\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

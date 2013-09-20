@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -209,7 +210,7 @@ namespace RomanticWeb.Ontologies
 				else if (IsBlank)
 				{
 					hashCode=_blankNodeId.GetHashCode();
-					hashCode=(hashCode*397)^_graphUri.GetHashCode();
+					hashCode=(hashCode*397)^(_graphUri!=null?_graphUri.GetHashCode():0);
 				}
 				else
 				{
@@ -239,7 +240,7 @@ namespace RomanticWeb.Ontologies
             if (IsBlank)
             {
                 var graphString = GraphUri == null ? "default" : string.Format("<{0}>", GraphUri);
-                return string.Format("_:{0} from graph {1}", BlankNodeId, graphString);
+                return string.Format("{0} from graph {1}", BlankNodeId, graphString);
             }
 
             throw new InvalidOperationException("Invalid node state");
@@ -247,7 +248,17 @@ namespace RomanticWeb.Ontologies
 
 		public EntityId ToEntityId()
 		{
-			return new UriId(Uri);
+            if (IsBlank)
+            {
+                return new BlankId(string.Format("{0}/{1}", BlankNodeId, GraphUri));
+            }
+
+            if (IsUri)
+            {
+                return new EntityId(Uri);
+            }
+
+            throw new InvalidOperationException("Cannot convert literal node to EntityId");
 		}
 
         private bool Equals(RdfNode other)

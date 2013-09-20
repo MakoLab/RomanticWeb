@@ -10,7 +10,7 @@ namespace RomanticWeb.Tests
 	[TestFixture]
 	public class ObjectAccessorTests
 	{
-		private readonly Entity _entity = new Entity(new UriId(Uri));
+		private readonly Entity _entity = new Entity(new EntityId(Uri));
 		private Mock<IRdfNodeConverter> _entityFactory;
 		private Ontology _ontology;
 		private Mock<ITripleSource> _graph;

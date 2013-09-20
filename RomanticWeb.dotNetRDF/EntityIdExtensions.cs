@@ -7,13 +7,12 @@ namespace RomanticWeb.DotNetRDF
 	{
 		public static INode ToNode(this EntityId entityId, INodeFactory factory)
 		{
-			var blank = entityId as BlankId;
-			if (blank != null)
+            if (entityId is BlankId)
 			{
-				return factory.CreateBlankNode(blank.Id);
+                return factory.CreateBlankNode(entityId.Uri.Authority);
 			}
 
-			return factory.CreateUriNode(((UriId)entityId).Uri);
+			return factory.CreateUriNode(entityId.Uri);
 		}
 	}
 }

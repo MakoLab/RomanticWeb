@@ -1,40 +1,34 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Text.RegularExpressions;
 using NullGuard;
 
 namespace RomanticWeb.Entities
 {
-	public abstract class EntityId
-	{
-		[ImportMany(typeof(EntityId))]
-		private static IList<EntityId> EntityIdTypes;
+	public class EntityId
+    {
+        private readonly Uri _uri;
 
-		static EntityId()
+		/// <summary>
+		/// Creates a new instance of <see cref="EntityId"/> from string
+		/// </summary>
+		public EntityId(string uri):this(new Uri(uri))
 		{
-			DirectoryCatalog catalog=new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory,"*.dll");
-			CompositionContainer container=new CompositionContainer(catalog);
-			CompositionBatch batch=new CompositionBatch();
-			EntityIdTypes=(IList<EntityId>)container.GetExportedValues<EntityId>();
 		}
 
-		/// <summary>Gets a regular expression matching given scheme of the IRI adress handled by given identifier implementation.</summary>
-		public abstract Regex MatchingScheme { get; }
-
-		public static EntityId Create(string entityId)
+		/// <summary>
+		/// Creates a new instance of <see cref="EntityId"/> from an Uniform Resource Identifies
+		/// </summary>
+        public EntityId(Uri uri)
 		{
-			EntityId entityIdType=EntityIdTypes.Where(item => item.MatchingScheme.IsMatch(entityId)).FirstOrDefault();
-			if (entityIdType==null)
-			{
-				throw new NotSupportedException(System.String.Format("Identifiers of type '{0}' are not supported.",entityId));
-			}
-
-			EntityId result=(EntityId)entityIdType.GetType().GetConstructor(new Type[] { typeof(string) }).Invoke(new object[] { entityId });
-			return result;
+			this._uri=uri;
 		}
+
+        /// <summary>
+        /// The underlying Uniform Resource Identifier
+        /// </summary>
+        public Uri Uri
+        {
+            get { return this._uri; }
+        }
 
 		/// <summary>
 		/// Checks if two Entity identifiers are equal
@@ -52,15 +46,54 @@ namespace RomanticWeb.Entities
 			return !(left==right);
 		}
 
-		public static implicit operator EntityId(string entityId)
-		{
-			EntityId result=null;
-			if (entityId!=null)
-			{
-			    result=EntityId.Create(entityId);
-			}
+        public static implicit operator EntityId(string entityId)
+        {
+            EntityId result = null;
+            if (entityId != null)
+            {
+                result = new EntityId(entityId);
+            }
 
-			return result;
-		}
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the hash code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return this._uri.GetHashCode();
+        }
+
+        /// <summary>
+        /// Checks if two Entity identifiers are equal
+        /// </summary>
+        public override bool Equals([AllowNull] object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return this._uri == ((EntityId)obj)._uri;
+        }
+
+        public override string ToString()
+        {
+            return this.Uri.ToString();
+        }
+
+        /// <summary>
+        /// Check for equality with <param name="other"></param>
+        /// </summary>
+        protected bool Equals([AllowNull] EntityId other)
+        {
+            return other != null && Equals(this._uri, other._uri);
+        }
 	}
 }

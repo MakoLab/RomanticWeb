@@ -15,7 +15,7 @@ namespace RomanticWeb.Entities
 	[DebuggerDisplay("Entity <{Id}>")]
 	public class Entity:ImpromptuDictionary,IEntity
 	{
-		private readonly EntityFactory _entityFactory;
+		private readonly EntityContext _entityContext;
 		private readonly EntityId _entityId;
 		private readonly IDictionary<Type,object> _knownActLike=new Dictionary<Type,object>();
 
@@ -29,9 +29,9 @@ namespace RomanticWeb.Entities
 			this._entityId=entityId;
 		}
 
-		internal Entity(EntityId entityId,EntityFactory entityFactory):this(entityId)
+		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId)
 		{
-			this._entityFactory=entityFactory;
+			this._entityContext=entityContext;
 		}
 
         public EntityId Id { get { return this._entityId; } }
@@ -59,9 +59,9 @@ namespace RomanticWeb.Entities
 
 		public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
 		{
-			if (this._entityFactory!=null)
+			if (this._entityContext!=null)
 			{
-				return this._entityFactory.EntityAs<TInterface>(this);
+				return this._entityContext.EntityAs<TInterface>(this);
 			}
 
 			if (!this._knownActLike.ContainsKey(typeof(TInterface)))

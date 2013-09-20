@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests
 		public void Creating_with_new_should_allow_setting_properties()
 		{
 			// given
-			var entity = new Entity(new UriId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
+            var entity = new Entity(new EntityId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
 			var testEntity = entity.AsEntity<ITestEntity>();
 
 			// when
@@ -25,7 +25,7 @@ namespace RomanticWeb.Tests
 		public void Entity_should_hold_separate_values_for_interfaces()
 		{
 			// given
-			var entity = new Entity(new UriId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
+			var entity = new Entity(new EntityId(string.Format("urn:uuid:{0}", Guid.NewGuid())));
 			var testEntity = entity.AsEntity<ITestEntity>();
 			testEntity.Name = "Tomasz";
 

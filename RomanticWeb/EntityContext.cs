@@ -10,10 +10,8 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    using RomanticWeb.Mapping;
-
 	/// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
-	public class EntityFactory:IEntityFactory
+	public class EntityContext:IEntityFactory
 	{
 		private readonly TripleSourceFactoryBase _sourceFactoryBase;
 
@@ -21,7 +19,7 @@ namespace RomanticWeb
 
 	    private readonly IOntologyProvider _ontologyProvider;
 
-		internal EntityFactory(IMappingsRepository mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
+		internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
 		{
 			_mappings=mappings;
 			_sourceFactoryBase=sourceFactoryBase;
@@ -41,16 +39,13 @@ namespace RomanticWeb
 		public Entity Create(EntityId entityId)
 		{
 			Entity entity=new Entity(entityId,this);
-			IDictionary<string,object> typeCheckerExpando=new ExpandoObject();
 
 			foreach (var ontology in _ontologyProvider.Ontologies)
 			{
 				var source=_sourceFactoryBase.CreateTriplesSourceForOntology();
 				entity[ontology.Prefix]=new OntologyAccessor(source,entityId,ontology,new RdfNodeConverter(this));
-				typeCheckerExpando[ontology.Prefix]=new TypeCheckerAccessor(entity,ontology);
 			}
 
-			entity["IsA"]=typeCheckerExpando;
 			return entity;
 		}
 
@@ -77,7 +72,7 @@ namespace RomanticWeb
 			IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> triples=tripleSource.GetNodesForQuery(sparqlConstruct);
 			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct())
 			{
-			    entities.Add(Create<T>(EntityId.Create(subject.ToString())));
+                entities.Add(Create<T>(subject.ToEntityId()));
 			}
 
 			return entities;

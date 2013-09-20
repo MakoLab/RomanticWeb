@@ -13,7 +13,7 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         protected IPerson Entity
         {
-            get { return EntityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")); }
+            get { return EntityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz")); }
         }
 
         private new TestMappingsRepository Mappings
@@ -80,11 +80,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(friends, Has.Count.EqualTo(5));
             friends.Should()
                    .ContainInOrder(
-                       new Entity(new UriId("http://magi/people/Karol")),
-                       new Entity(new UriId("http://magi/people/Gniewko")),
-                       new Entity(new UriId("http://magi/people/Monika")),
-                       new Entity(new UriId("http://magi/people/Dominik")),
-                       new Entity(new UriId("http://magi/people/Przemek")));
+                       new Entity(new EntityId("http://magi/people/Karol")),
+                       new Entity(new EntityId("http://magi/people/Gniewko")),
+                       new Entity(new EntityId("http://magi/people/Monika")),
+                       new Entity(new EntityId("http://magi/people/Dominik")),
+                       new Entity(new EntityId("http://magi/people/Przemek")));
         }
 
         [Test]
@@ -101,11 +101,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(friends, Has.Count.EqualTo(5));
             friends.Should().Contain(new[]
                                        {
-                                           new Entity(new UriId("http://magi/people/Karol")),
-                                           new Entity(new UriId("http://magi/people/Gniewko")),
-                                           new Entity(new UriId("http://magi/people/Monika")),
-                                           new Entity(new UriId("http://magi/people/Dominik")),
-                                           new Entity(new UriId("http://magi/people/Przemek"))
+                                           new Entity(new EntityId("http://magi/people/Karol")),
+                                           new Entity(new EntityId("http://magi/people/Gniewko")),
+                                           new Entity(new EntityId("http://magi/people/Monika")),
+                                           new Entity(new EntityId("http://magi/people/Dominik")),
+                                           new Entity(new EntityId("http://magi/people/Przemek"))
                                        });
         }
 
@@ -121,7 +121,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Assert.That(friends, Has.Count.EqualTo(1));
-            friends.Should().Contain(new[] { new Entity(new UriId("http://magi/people/Karol")) });
+            friends.Should().Contain(new[] { new Entity(new EntityId("http://magi/people/Karol")) });
         }
 
         [Test]

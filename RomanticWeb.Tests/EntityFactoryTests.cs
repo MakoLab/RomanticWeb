@@ -28,19 +28,19 @@ namespace RomanticWeb.Tests
 			_store = new TripleStore();
 			_mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
 			var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
-			_entityFactory = new EntityFactory(_mappings.Object, _ontologyProvider, tripleSourceFactory);
+			_entityFactory = new EntityContext(_mappings.Object, _ontologyProvider, tripleSourceFactory);
 		}
 
 		[Test]
 		public void Creating_new_Entity_should_create_an_instance_with_id()
 		{
 			// when
-			dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// when
 			Assert.That(entity, Is.Not.Null);
 			Assert.That(entity, Is.TypeOf<Entity>());
-			Assert.That(entity.Id, Is.EqualTo(new UriId("http://magi/people/Tomasz")));
+			Assert.That(entity.Id, Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
@@ -53,7 +53,7 @@ namespace RomanticWeb.Tests
 		public void Creating_new_Entity_should_add_getters_for_known_ontology_namespaces()
 		{
 			// when
-			dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
   
 			// then
 			Assert.That(entity.foaf, Is.Not.Null);
@@ -64,7 +64,7 @@ namespace RomanticWeb.Tests
 		public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces()
 		{
 			// given
-			dynamic entity = _entityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// when
 			var accessor = entity.dcterms;
@@ -75,8 +75,8 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-            var entity=_entityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz"));
-            var typed=new Entity(new UriId("http://magi/people/Tomasz"));
+            var entity=_entityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+            var typed=new Entity(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.AreEqual(entity, typed);
@@ -88,7 +88,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-            dynamic entity = this._entityFactory.Create<IPerson>(new UriId("http://magi/people/Tomasz")).AsDynamic();
+            dynamic entity = this._entityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz")).AsDynamic();
 
             // then
             Assert.That(entity.foaf, Is.Not.Null);

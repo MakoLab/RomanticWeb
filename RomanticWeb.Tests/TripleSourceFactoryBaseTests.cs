@@ -34,7 +34,7 @@ namespace RomanticWeb.Tests
 			var mapping = new Mock<IPropertyMapping>();
 
 			// when
-			_factory.CreateTripleSourceForProperty(new UriId("urn:some:identifier"), mapping.Object);
+			_factory.CreateTripleSourceForProperty(new EntityId("urn:some:identifier"), mapping.Object);
 
 			// then
 			Assert.That(_factory.TimesDefaultGraphRequested, Is.EqualTo(1));
@@ -52,7 +52,7 @@ namespace RomanticWeb.Tests
 			mapping.Setup(p => p.GraphSelector).Returns(_graphSelector.Object);
 
 			// when
-			_factory.CreateTripleSourceForProperty(new UriId("urn:some:identifier"), mapping.Object);
+			_factory.CreateTripleSourceForProperty(new EntityId("urn:some:identifier"), mapping.Object);
 
 			// then
 			Assert.That(_factory.TimesDefaultGraphRequested, Is.EqualTo(0));
@@ -69,7 +69,7 @@ namespace RomanticWeb.Tests
 			mapping.Setup(p => p.UsesUnionGraph).Returns(true);
 
 			// when
-			_factory.CreateTripleSourceForProperty(new UriId("urn:some:identifier"), mapping.Object);
+			_factory.CreateTripleSourceForProperty(new EntityId("urn:some:identifier"), mapping.Object);
 
 			// then
 			Assert.That(_factory.TimesDefaultGraphRequested, Is.EqualTo(0));

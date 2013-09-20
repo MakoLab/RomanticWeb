@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
     <Compile Include="Entities\BlankId.cs" />
-    <Compile Include="EntityFactory.cs" />
+    <Compile Include="EntityContext.cs" />
     <Compile Include="EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
@@ -107,8 +107,6 @@
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TripleSourceFactoryBase.cs" />
-    <Compile Include="TypeCheckerAccessor.cs" />
-    <Compile Include="Entities\UriId.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />
@@ -128,7 +126,6 @@
       <HintPath>..\packages\Remotion.Linq.1.15.2.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

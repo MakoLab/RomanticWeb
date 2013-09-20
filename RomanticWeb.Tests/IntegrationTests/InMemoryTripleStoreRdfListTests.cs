@@ -16,16 +16,16 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("RdfLists.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 			dynamic people = tomasz.knows;
 
 			// then
 			Assert.That(people.Count, Is.EqualTo(5));
-			Assert.That(people[0].Id.Equals(new UriId("http://magi/people/Karol")));
-			Assert.That(people[1].Id.Equals(new UriId("http://magi/people/Gniewko")));
-			Assert.That(people[2].Id.Equals(new UriId("http://magi/people/Monika")));
-			Assert.That(people[3].Id.Equals(new UriId("http://magi/people/Dominik")));
-			Assert.That(people[4].Id.Equals(new UriId("http://magi/people/Przemek")));
+			Assert.That(people[0].Id.Equals(new EntityId("http://magi/people/Karol")));
+			Assert.That(people[1].Id.Equals(new EntityId("http://magi/people/Gniewko")));
+			Assert.That(people[2].Id.Equals(new EntityId("http://magi/people/Monika")));
+			Assert.That(people[3].Id.Equals(new EntityId("http://magi/people/Dominik")));
+			Assert.That(people[4].Id.Equals(new EntityId("http://magi/people/Przemek")));
 		}
 
 		[Test]
@@ -35,7 +35,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("RdfLists.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 			dynamic people = tomasz.foaf.mbox;
 
 			// then
@@ -51,7 +51,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("RdfLists.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/test/array"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/test/array"));
 			var people = (IList)tomasz.math.matrix;
 
 			// then

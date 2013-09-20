@@ -13,7 +13,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));
@@ -28,7 +28,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.foaf.nick == null);
@@ -41,11 +41,11 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("AssociatedInstances.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.foaf.knows, Is.TypeOf<Entity>());
-			Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new UriId("http://magi/people/Karol")));
+			Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new EntityId("http://magi/people/Karol")));
 		}
 
 		[Test]
@@ -55,26 +55,11 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("AssociatedInstances.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 			dynamic karol = tomasz.foaf.knows;
 
 			// then
 			Assert.That(karol.foaf.givenName, Is.EqualTo("Karol"));
-		}
-
-		[Test]
-		public void Created_Entity_should_allow_checking_Rdf_type()
-		{
-			// given
-			LoadTestFile("TypedInstance.ttl");
-
-			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
-
-			// then
-			Assert.That(tomasz.IsA.foaf.Person, Is.True);
-			Assert.That(tomasz.IsA.foaf.Agent, Is.True);
-			Assert.That(tomasz.IsA.foaf.Document, Is.False);
 		}
 
 		[Test]
@@ -84,7 +69,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
@@ -97,24 +82,11 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			var exception = Assert.Throws<AmbiguousPropertyException>(() => { var nick = tomasz.nick; });
 			Assert.That(exception.Message, Contains.Substring("foaf:nick").And.ContainsSubstring("dummy:nick"));
-		}
-
-		[Test]
-		public void Should_not_throw_when_cheking_type_which_is_undefined()
-		{
-			// given
-			LoadTestFile("TypedInstance.ttl");
-
-			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
-
-			// then
-			Assert.That(tomasz.IsA.foaf.Group, Is.False);
 		}
 
 		[Test]
@@ -124,7 +96,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesInNamedGraphs.trig");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.knows != null);
@@ -141,7 +113,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("BlankNodes.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.knows != null);

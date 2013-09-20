@@ -22,7 +22,7 @@ namespace RomanticWeb
 			{
 				if (subject.IsUri)
 				{
-					yield return _entityFactory.Create(new UriId(subject.Uri));
+                    yield return _entityFactory.Create(subject.ToEntityId());
 				}
 				else if (subject.IsBlank)
 				{
@@ -33,7 +33,7 @@ namespace RomanticWeb
 					}
 					else
 					{
-						yield return _entityFactory.Create(new BlankId(subject.BlankNodeId, subject.GraphUri));
+						yield return _entityFactory.Create(subject.ToEntityId());
 					}
 				}
 				else

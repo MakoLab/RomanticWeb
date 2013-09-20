@@ -13,7 +13,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 			LoadTestFile("TriplesWithLiteralSubjects.ttl");
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new UriId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
 
 			// then
 			Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));

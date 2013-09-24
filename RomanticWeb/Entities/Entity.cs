@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -13,30 +14,62 @@ namespace RomanticWeb.Entities
 	/// </summary>
 	[NullGuard(ValidationFlags.OutValues)]
 	[DebuggerDisplay("Entity <{Id}>")]
-	public class Entity:ImpromptuDictionary,IEntity
+	public class Entity:DynamicObject,IEntity
 	{
 		private readonly EntityContext _entityContext;
-		private readonly EntityId _entityId;
+
+	    private readonly EntityId _entityId;
 		private readonly IDictionary<Type,object> _knownActLike=new Dictionary<Type,object>();
 
 		private readonly dynamic _asDynamic;
 
-		/// <summary>Creates a new instance of <see cref="Entity"/></summary>
+        private readonly IDictionary<string, OntologyAccessor> _ontologyAccessors;
+
+        private bool _isInitialized;
+
+	    /// <summary>Creates a new instance of <see cref="Entity"/></summary>
 		/// <remarks>It will not be backed by <b>any</b> triples, when not created via factory</remarks>
 		public Entity(EntityId entityId)
 		{
-			this._asDynamic=(dynamic)this;
-			this._entityId=entityId;
+			_asDynamic=this;
+			_entityId=entityId;
+            _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();
 		}
 
-		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId)
+		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId,entityContext,entityId is BlankId)
 		{
-			this._entityContext=entityContext;
 		}
 
-        public EntityId Id { get { return this._entityId; } }
+		internal Entity(EntityId entityId,EntityContext entityContext,bool isInitialized):this(entityId)
+		{
+		    _entityContext=entityContext;
+		    _isInitialized=isInitialized;
+		}
 
-        public static bool operator ==(Entity left, IEntity right)
+	    public EntityId Id { get { return _entityId; } }
+
+	    public object this[string member]
+	    {
+	        get
+	        {
+	            return _ontologyAccessors[member];
+	        }
+
+            internal set
+            {
+                var accessor=value as OntologyAccessor;
+                if (accessor!=null)
+                {
+                    _ontologyAccessors.Add(member,accessor);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("value", "Must be OntologyAccessor");
+                }
+            }
+	    }
+
+	    public static bool operator ==(Entity left, IEntity right)
         {
             return left.Equals(right);
         }
@@ -46,14 +79,14 @@ namespace RomanticWeb.Entities
             return !(left == right);
         }
 
-        public dynamic AsDynamic() { return this._asDynamic; }
+        public dynamic AsDynamic() { return _asDynamic; }
 
 		public override bool TryGetMember(GetMemberBinder binder,out object result)
 		{
 		    EnsureIsInitialized();
 
             // first look for ontology prefix
-			bool gettingMemberSucceeded=base.TryGetMember(binder,out result);
+			bool gettingMemberSucceeded=TryGetOntologyAccessor(binder,out result);
 
 			if (gettingMemberSucceeded)
 			{
@@ -61,7 +94,7 @@ namespace RomanticWeb.Entities
 			}
 
 			// then look for properties in ontologies
-			if (this.TryGetPropertyFromOntologies(binder,out result))
+			if (TryGetPropertyFromOntologies(binder,out result))
 			{
 			    return true;
 			}
@@ -71,42 +104,55 @@ namespace RomanticWeb.Entities
 
 	    public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
 		{
-			if (this._entityContext!=null)
+			if (_entityContext!=null)
 			{
-				return this._entityContext.EntityAs<TInterface>(this);
+				return _entityContext.EntityAs<TInterface>(this);
 			}
 
-			if (!this._knownActLike.ContainsKey(typeof(TInterface)))
+			if (!_knownActLike.ContainsKey(typeof(TInterface)))
 			{
-				this._knownActLike[typeof(TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
+				_knownActLike[typeof(TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
 			}
 
-			return (TInterface)this._knownActLike[typeof(TInterface)];
+			return (TInterface)_knownActLike[typeof(TInterface)];
 		}
 
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
             var entity=obj as IEntity;
             if (entity == null) { return false; }
-            return this.Id.Equals(entity.Id);
+            return Id.Equals(entity.Id);
         }
 
         internal void EnsureIsInitialized()
         {
-            if (_entityContext != null)
+            if (_entityContext != null&&!_isInitialized)
             {
                 _entityContext.InitializeEnitity(this);
+                _isInitialized=true;
             }
+        }
+
+        private bool TryGetOntologyAccessor(GetMemberBinder binder, out object result)
+        {
+            if (_ontologyAccessors.ContainsKey(binder.Name))
+            {
+                result = _ontologyAccessors[binder.Name];
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
 		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
 		{
-		    var matchingPredicates=(from accessor in this.Values.OfType<OntologyAccessor>()
+		    var matchingPredicates=(from accessor in _ontologyAccessors.Values
 		                            from property in accessor.KnownProperties
 		                            where property.PropertyName==binder.Name
 		                            select new { accessor,property }).ToList();
@@ -114,7 +160,7 @@ namespace RomanticWeb.Entities
 			if (matchingPredicates.Count==1)
 			{
 				var singleMatch=matchingPredicates.Single();
-				result=((IObjectAccessor)singleMatch.accessor).GetObjects(this.Id,singleMatch.property);
+				result=singleMatch.accessor.GetObjects(Id,singleMatch.property);
 				return true;
 			}
 

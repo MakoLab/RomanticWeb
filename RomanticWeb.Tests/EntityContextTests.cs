@@ -20,7 +20,7 @@ namespace RomanticWeb.Tests
         private IOntologyProvider _ontologyProvider;
         private Mock<IMappingsRepository> _mappings;
         private Mock<IEntityStore> _entityStore;
-        private Mock<ITripleStoreAdapter> _store;
+        private Mock<IEntitySource> _store;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
         {
@@ -44,7 +44,7 @@ namespace RomanticWeb.Tests
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
-            _store = new Mock<ITripleStoreAdapter>();
+            _store = new Mock<IEntitySource>();
             _entityFactory = new EntityContext(_mappings.Object, _ontologyProvider, _entityStore.Object, _store.Object);
         }
 

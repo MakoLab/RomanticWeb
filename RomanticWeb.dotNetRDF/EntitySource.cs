@@ -10,13 +10,13 @@ using VDS.RDF.Query.Datasets;
 
 namespace RomanticWeb.DotNetRDF
 {
-    public class TripleStoreAdapter:ITripleStoreAdapter
+    public class EntitySource:IEntitySource
     {
-        private readonly TripleStore _store;
+        private readonly ITripleStore _store;
 
         private readonly INamespaceMapper _namespaces;
 
-        public TripleStoreAdapter(TripleStore store)
+        public EntitySource(ITripleStore store)
         {
             _store=store;
             _namespaces = new NamespaceMapper(true);
@@ -35,15 +35,27 @@ namespace RomanticWeb.DotNetRDF
                                      .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             select.Prefixes.Import(_namespaces);
 
-            var processor = new LeviathanQueryProcessor(new InMemoryQuadDataset(_store, new Uri("http://app.magi/graphs")));
-            foreach (var result in (SparqlResultSet)processor.ProcessQuery(select.BuildQuery()))
+            foreach (var result in ExecuteEntityLoadQuery(select.BuildQuery()))
             {
                 RdfNode subject = result["s"].WrapNode();
                 RdfNode predicate = result["p"].WrapNode();
                 RdfNode @object=result["o"].WrapNode();
                 RdfNode graph=result.HasBoundValue("g")?result["g"].WrapNode():null;
-                store.AssertTriple(Tuple.Create(subject, predicate, @object, graph));
+                store.AssertTriple(entityId, graph, new Triple(subject, predicate, @object));
             }
+        }
+
+        private SparqlResultSet ExecuteEntityLoadQuery(SparqlQuery query)
+        {
+            var store=_store as IInMemoryQueryableStore;
+            if (store!=null)
+            {
+                var inMemoryQuadDataset=new InMemoryQuadDataset(store,new Uri("http://app.magi/graphs"));
+                var processor=new LeviathanQueryProcessor(inMemoryQuadDataset);
+                return (SparqlResultSet)processor.ProcessQuery(query);
+            }
+
+            return (SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString());
         }
     }
 }

@@ -12,7 +12,7 @@ namespace RomanticWeb
 	/// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
 	/// </summary>
 	[NullGuard(ValidationFlags.OutValues)]
-	public sealed class OntologyAccessor : ImpromptuDictionary, IObjectAccessor
+	public sealed class OntologyAccessor : ImpromptuDictionary
 	{
 		private readonly IEntityStore _tripleSource;
 		private readonly Entity _entity;
@@ -25,8 +25,7 @@ namespace RomanticWeb
 		/// <param name="tripleSource">underlying RDF source</param>
 		/// <param name="entity">the access Entity</param>
 		/// <param name="ontology">Ontolgy used to resolve predicate names</param>
-		/// <param name="entityFactory">factory used to produce associated Entities</param>
-        public OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, IRdfNodeConverter nodeConverter)
+		internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, IRdfNodeConverter nodeConverter)
 		{
 			_tripleSource = tripleSource;
 			_entity = entity;
@@ -53,12 +52,12 @@ namespace RomanticWeb
 				property = new Property(binder.Name).InOntology(_ontology);
 			}
 
-			result = ((IObjectAccessor)this).GetObjects(_entity.Id, property);
+			result = GetObjects(_entity.Id, property);
 
 			return true;
 		}
 
-		dynamic IObjectAccessor.GetObjects(EntityId entity, Property predicate)
+	    internal dynamic GetObjects(EntityId entity, Property predicate)
 		{
 			var objectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri).ToList();
 			var objects = _nodeConverter.Convert(objectValues, _tripleSource).ToList();

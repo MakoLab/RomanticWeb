@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -16,24 +15,22 @@ namespace RomanticWeb
 	{
 		private readonly IEntityStore _entityStore;
 
-	    private readonly ITripleStoreAdapter _tripleStore;
+	    private readonly IEntitySource _entitySource;
 
 	    private readonly IMappingsRepository _mappings;
 
 	    private readonly IOntologyProvider _ontologyProvider;
 
-	    private readonly IDictionary<EntityId,bool> _entitiesState=new ConcurrentDictionary<EntityId,bool>();
-
-        public EntityContext(IMappingsRepository mappings, IOntologyProvider ontologyProvider, ITripleStoreAdapter tripleStore)
+	    public EntityContext(IMappingsRepository mappings, IOntologyProvider ontologyProvider, IEntitySource tripleStore)
             : this(mappings, ontologyProvider, new EntityStore(), tripleStore)
 		{
 		}
 
-        internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,IEntityStore entityStore,ITripleStoreAdapter tripleStore)
+        internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,IEntityStore entityStore,IEntitySource entitySource)
         {
             _mappings = mappings;
             _entityStore=entityStore;
-            _tripleStore=tripleStore;
+            _entitySource=entitySource;
             _ontologyProvider = new DefaultOntologiesProvider(ontologyProvider);
         }
 
@@ -49,17 +46,12 @@ namespace RomanticWeb
 
 		public Entity Create(EntityId entityId)
 		{
-			Entity entity=new Entity(entityId,this);
+			var entity=new Entity(entityId,this);
 
 			foreach (var ontology in _ontologyProvider.Ontologies)
 			{
 				entity[ontology.Prefix]=new OntologyAccessor(_entityStore,entity,ontology,new RdfNodeConverter(this));
 			}
-
-            if (entityId is BlankId)
-            {
-                _entitiesState[entity.Id] = true;
-            }
 
 			return entity;
 		}
@@ -71,7 +63,7 @@ namespace RomanticWeb
 			    return (T)(IEntity)Create(entityId);
 			}
 		
-            return this.EntityAs<T>(this.Create(entityId));
+            return EntityAs<T>(Create(entityId));
 		}
 
 	    public IEnumerable<Entity> Create(string sparqlConstruct)
@@ -83,7 +75,7 @@ namespace RomanticWeb
 		{
 			IList<T> entities=new List<T>();
 
-            IEnumerable<Tuple<RdfNode, RdfNode, RdfNode>> triples = _tripleStore.GetNodesForQuery(sparqlConstruct);
+            IEnumerable<Tuple<RdfNode, RdfNode, RdfNode>> triples = _entitySource.GetNodesForQuery(sparqlConstruct);
 			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct())
 			{
                 entities.Add(Create<T>(subject.ToEntityId()));
@@ -92,18 +84,9 @@ namespace RomanticWeb
 			return entities;
 		}
 
-        public void InitializeEnitity(IEntity entity)
+	    internal void InitializeEnitity(IEntity entity)
         {
-            if (!_entitiesState.ContainsKey(entity.Id))
-            {
-                _entitiesState[entity.Id]=false;
-            }
-
-            if (_entitiesState[entity.Id]==false)
-            {
-                _tripleStore.LoadEntity(_entityStore,entity.Id);
-                _entitiesState[entity.Id]=true;
-            }
+            _entitySource.LoadEntity(_entityStore,entity.Id);
         }
 
 		internal T EntityAs<T>(Entity entity) where T : class,IEntity

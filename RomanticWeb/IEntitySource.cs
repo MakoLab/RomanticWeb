@@ -5,7 +5,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    public interface ITripleStoreAdapter
+    public interface IEntitySource
     {
         IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string sparqlConstruct);
 

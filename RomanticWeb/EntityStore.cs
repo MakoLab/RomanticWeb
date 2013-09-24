@@ -9,31 +9,37 @@ namespace RomanticWeb
 {
     public class EntityStore:IEntityStore
     {
-        private readonly ISet<Tuple<RdfNode,RdfNode,RdfNode,RdfNode>> _entityQuads;
+        private readonly IDictionary<EntityId,QuadCollection> _entityQuads; 
 
         public EntityStore()
         {
-            _entityQuads=new HashSet<Tuple<RdfNode,RdfNode,RdfNode,RdfNode>>();
+            _entityQuads=new ConcurrentDictionary<EntityId,QuadCollection>();
         }
 
-        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entity,Uri predicate)
+        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId,Uri predicate)
         {
-            return from quad in _entityQuads 
-                   where quad.Item2==RdfNode.ForUri(predicate)&&quad.Item1==RdfNode.ForUri(entity.Uri) 
-                   select quad.Item3;
+            return from triple in _entityQuads.SelectMany(e=>e.Value.Triples)
+                   where triple.Predicate==RdfNode.ForUri(predicate)
+                         && triple.Subject==RdfNode.ForUri(entityId.Uri)
+                   select triple.Object;
         }
 
-        public void AssertTriple(Tuple<RdfNode,RdfNode,RdfNode,RdfNode> entityTriple)
+        public bool EntityIsCollectionRoot(IEntity potentialListRoot)
         {
-            _entityQuads.Add(entityTriple);
+            return !(from propertyObjectPair in _entityQuads.SelectMany(e=>e.Value.Triples)
+                     where propertyObjectPair.Predicate == RdfNode.ForUri(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"))
+                     && propertyObjectPair.Object == RdfNode.ForUri(potentialListRoot.Id.Uri)
+                     select propertyObjectPair).Any();
         }
 
-        public bool TripleIsCollectionRoot(IEntity potentialListRoot)
+        public void AssertTriple(EntityId entityId,RdfNode graph,Triple triple)
         {
-            return !(from quad in _entityQuads
-                     where quad.Item2 == RdfNode.ForUri(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"))
-                     && quad.Item3 == RdfNode.ForUri(potentialListRoot.Id.Uri)
-                    select quad).Any();
+            if (!_entityQuads.ContainsKey(entityId))
+            {
+                _entityQuads[entityId]=new QuadCollection();
+            }
+
+            _entityQuads[entityId].AssertQuad(graph,triple);
         }
     }
 }

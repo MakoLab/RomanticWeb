@@ -58,7 +58,7 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
-    <Compile Include="ITripleStoreAdapter.cs" />
+    <Compile Include="IEntitySource.cs" />
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
@@ -93,7 +93,6 @@
     <Compile Include="Entities\EntityId.cs" />
     <Compile Include="IEntityFactory.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
-    <Compile Include="IObjectAccessor.cs" />
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
@@ -105,9 +104,11 @@
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\RdfClass.cs" />
     <Compile Include="Ontologies\RdfNode.cs" />
+    <Compile Include="QuadCollection.cs" />
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="EntityStore.cs" />
+    <Compile Include="Triple.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

@@ -19,7 +19,7 @@ namespace RomanticWeb
 
         public bool TryConvert(dynamic potentialList,out object actualList)
         {
-            if (potentialList.rdf.first != null && _tripleSource.TripleIsCollectionRoot(potentialList))
+            if (potentialList.rdf.first != null && _tripleSource.EntityIsCollectionRoot(potentialList))
             {
                 var list = new List<object>();
 

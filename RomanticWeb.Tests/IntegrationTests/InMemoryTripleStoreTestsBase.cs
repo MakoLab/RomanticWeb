@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		{
 			_store = new TripleStore();
 			_mappings = SetupMappings();
-            EntityFactory = new EntityContext(Mappings, new TestOntologyProvider(),new TripleStoreAdapter(_store));
+            EntityFactory = new EntityContext(Mappings, new TestOntologyProvider(),new EntitySource(_store));
 
 			ChildSetup();
 		}

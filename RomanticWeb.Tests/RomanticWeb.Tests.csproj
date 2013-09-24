@@ -91,10 +91,10 @@
     <Compile Include="EntityStoreTests.cs" />
     <Compile Include="EntityTests.cs" />
     <Compile Include="Helpers\TripleStoreExtensions.cs" />
-    <Compile Include="IntegrationTests\InMemoryTripleStoreDatatypeTests.cs" />
-    <Compile Include="IntegrationTests\InMemoryTripleStoreRdfListTests.cs" />
-    <Compile Include="IntegrationTests\InMemoryTripleStoreBasicTests.cs" />
-    <Compile Include="IntegrationTests\InMemoryTripleStoreTestsBase.cs" />
+    <Compile Include="IntegrationTests\DynamicTests.cs" />
+    <Compile Include="IntegrationTests\InMemoryDynamicTests.cs" />
+    <Compile Include="IntegrationTests\InMemoryMappingTests.cs" />
+    <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
     <Compile Include="RdfNodeTests.cs" />
     <Compile Include="Stubs\TestMappingsRepository.cs" />

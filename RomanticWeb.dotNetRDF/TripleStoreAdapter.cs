@@ -10,13 +10,13 @@ using VDS.RDF.Query.Datasets;
 
 namespace RomanticWeb.DotNetRDF
 {
-    public class EntitySource:IEntitySource
+    public class TripleStoreAdapter:IEntitySource
     {
         private readonly ITripleStore _store;
 
         private readonly INamespaceMapper _namespaces;
 
-        public EntitySource(ITripleStore store)
+        public TripleStoreAdapter(ITripleStore store)
         {
             _store=store;
             _namespaces = new NamespaceMapper(true);

@@ -10,7 +10,7 @@ using RomanticWeb.Tests.Stubs;
 namespace RomanticWeb.Tests.IntegrationTests
 {
     [TestFixture]
-	public class MappingTests : InMemoryTripleStoreTestsBase
+    public abstract class MappingTests : IntegrationTestsBase
     {
         protected IPerson Entity
         {
@@ -145,5 +145,5 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             return new TestMappingsRepository(new TestOntologyProvider());
         }
-	}
+    }
 }

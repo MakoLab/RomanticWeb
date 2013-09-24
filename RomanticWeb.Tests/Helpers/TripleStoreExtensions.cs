@@ -1,4 +1,5 @@
-﻿using VDS.RDF;
+﻿using System;
+using VDS.RDF;
 
 namespace RomanticWeb.Tests.Helpers
 {
@@ -13,6 +14,14 @@ namespace RomanticWeb.Tests.Helpers
         public static void LoadTestFile(this IGraph graph, string fileName)
         {
             graph.LoadFromEmbeddedResource(GetResourceName(fileName));
+        }
+
+        public static void LoadTestFile(this ITripleStore store, string fileName, Uri graphUri)
+        {
+            var graph=new Graph();
+            graph.BaseUri=graphUri;
+            graph.LoadTestFile(fileName);
+            store.Add(graph);
         }
 
         private static string GetResourceName(string fileName)

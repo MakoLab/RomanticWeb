@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Anotar.NLog;
 using ImpromptuInterface;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
@@ -28,6 +29,7 @@ namespace RomanticWeb
 
         internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,IEntityStore entityStore,IEntitySource entitySource)
         {
+            LogTo.Info("Creating entity context");
             _mappings = mappings;
             _entityStore=entityStore;
             _entitySource=entitySource;
@@ -45,7 +47,8 @@ namespace RomanticWeb
 		}
 
 		public Entity Create(EntityId entityId)
-		{
+        {
+            LogTo.Debug("Creating entity {0}", entityId);
 			var entity=new Entity(entityId,this);
 
 			foreach (var ontology in _ontologyProvider.Ontologies)
@@ -53,6 +56,7 @@ namespace RomanticWeb
 				entity[ontology.Prefix]=new OntologyAccessor(_entityStore,entity,ontology,new RdfNodeConverter(this));
 			}
 
+            LogTo.Debug("Entity {0} created", entityId);
 			return entity;
 		}
 
@@ -86,11 +90,13 @@ namespace RomanticWeb
 
 	    internal void InitializeEnitity(IEntity entity)
         {
+            LogTo.Debug("Initializing entity {0}", entity.Id);
             _entitySource.LoadEntity(_entityStore,entity.Id);
         }
 
 		internal T EntityAs<T>(Entity entity) where T : class,IEntity
-		{
+        {
+            LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
 			return new EntityProxy(_entityStore, entity, _mappings.MappingFor<T>(), new RdfNodeConverter(this)).ActLike<T>();
 		}
 	}

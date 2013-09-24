@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Anotar.NLog;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -48,7 +49,8 @@ namespace RomanticWeb
 			var property = KnownProperties.SingleOrDefault(p => p.PropertyName == binder.Name);
 
 			if (property == null)
-			{
+            {
+                LogTo.Debug("Predicate {0} not found. Creating one impliclty from name", binder.Name);
 				property = new Property(binder.Name).InOntology(_ontology);
 			}
 

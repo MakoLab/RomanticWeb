@@ -55,6 +55,10 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\packages\NUnitTestAdapter.WithFramework.0.96.0\lib\nunit.core.dll</HintPath>
       <Private>False</Private>
@@ -105,6 +109,12 @@
     <Compile Include="Stubs\TestPropertyMapping.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="TestGraphs\RdfLists\meta.ttl" />
     <EmbeddedResource Include="TestGraphs\RdfLists\tomasz.ttl" />

@@ -4,14 +4,9 @@ namespace RomanticWeb.Entities
 {
 	public sealed class BlankId:EntityId
 	{
-	    internal BlankId(string hashCode)
-            : base(CreateHashedUri(hashCode))
+	    internal BlankId(Uri blankNodeUri)
+            : base(blankNodeUri)
 		{
 		}
-
-	    private static Uri CreateHashedUri(string hashCode)
-	    {
-	        return new Uri("node://"+hashCode);
-	    }
 	}
 }

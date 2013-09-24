@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -15,8 +14,6 @@ namespace RomanticWeb.Ontologies
 		private readonly string _language;
 		private readonly Uri _dataType;
 		private readonly Uri _uri;
-		private readonly string _blankNodeId;
-		private readonly Uri _graphUri;
 
 		private RdfNode(Uri uri)
 		{
@@ -30,18 +27,12 @@ namespace RomanticWeb.Ontologies
 			_dataType = dataType;
 		}
 
-		private RdfNode(string blankNodeId, Uri graphUri)
-		{
-			_blankNodeId = blankNodeId;
-			_graphUri = graphUri;
-		}
-
 		/// <summary>
 		/// Gets the value indicating that the node is a URI
 		/// </summary>
 		public bool IsUri
 		{
-			get { return _uri != null; }
+			get { return _uri != null&&_uri.Scheme!="node"; }
 		}
 
 		/// <summary>
@@ -52,15 +43,18 @@ namespace RomanticWeb.Ontologies
 			get { return _literal != null; }
 		}
 
-		/// <summary>
-		/// Gets the value indicating that the node is a blank node
-		/// </summary>
-		public bool IsBlank
-		{
-			get { return _blankNodeId != null; }
-		}
+	    /// <summary>
+	    /// Gets the value indicating that the node is a blank node
+	    /// </summary>
+	    public bool IsBlank
+	    {
+	        get
+	        {
+                return _uri!=null&&_uri.Scheme == "node";
+	        }
+	    }
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the URI of a URI node
 		/// </summary>
 		/// <exception cref="InvalidOperationException">thrown when node is a literal</exception>
@@ -68,9 +62,9 @@ namespace RomanticWeb.Ontologies
 		{
 			get
 			{
-				if (IsLiteral || IsBlank)
+				if (IsLiteral)
 				{
-					throw new InvalidOperationException("Literal and blank nodes do not have a Uri");
+					throw new InvalidOperationException("Literal nodes do not have a Uri");
 				}
 
 				return _uri;
@@ -130,33 +124,6 @@ namespace RomanticWeb.Ontologies
 			}
 		}
 
-		[AllowNull]
-		public Uri GraphUri
-		{
-			get
-			{
-				if (!IsBlank)
-				{
-					throw new InvalidOperationException("Graph URI is currently only used with blank nodes");
-				}
-				
-				return _graphUri;
-			}
-		}
-
-		public string BlankNodeId
-		{
-			get
-			{
-				if (!IsBlank)
-				{
-					throw new InvalidOperationException("Only blank nodes have blank node identifiers");
-				} 
-				
-				return _blankNodeId;
-			}
-		}
-
 		/// <summary>
 		/// Factory method for creating URI nodes
 		/// </summary>
@@ -175,7 +142,7 @@ namespace RomanticWeb.Ontologies
 
 		public static RdfNode ForBlank(string blankNodeId, [AllowNull] Uri graphUri)
 		{
-			return new RdfNode(blankNodeId, graphUri);
+			return new RdfNode(new Uri(string.Format("node://{0}/{1}",blankNodeId, graphUri)));
         }
 
         public static bool operator ==(RdfNode left, RdfNode right)
@@ -207,11 +174,6 @@ namespace RomanticWeb.Ontologies
 					hashCode=(hashCode*397)^(_language!=null?_language.GetHashCode():0);
 					hashCode=(hashCode*397)^(_dataType!=null?_dataType.GetHashCode():0);
 				}
-				else if (IsBlank)
-				{
-					hashCode=_blankNodeId.GetHashCode();
-					hashCode=(hashCode*397)^(_graphUri!=null?_graphUri.GetHashCode():0);
-				}
 				else
 				{
 					hashCode=_uri.AbsoluteUri.GetHashCode();
@@ -232,15 +194,9 @@ namespace RomanticWeb.Ontologies
                 return Literal;
             }
 
-            if (IsUri)
+            if (IsUri||IsBlank)
             {
                 return Uri.ToString();
-            }
-
-            if (IsBlank)
-            {
-                var graphString = GraphUri == null ? "default" : string.Format("<{0}>", GraphUri);
-                return string.Format("{0} from graph {1}", BlankNodeId, graphString);
             }
 
             throw new InvalidOperationException("Invalid node state");
@@ -250,7 +206,7 @@ namespace RomanticWeb.Ontologies
 		{
             if (IsBlank)
             {
-                return new BlankId(string.Format("{0}/{1}", BlankNodeId, GraphUri));
+                return new BlankId(Uri);
             }
 
             if (IsUri)
@@ -268,13 +224,8 @@ namespace RomanticWeb.Ontologies
                 return string.Equals(_literal, other._literal) && string.Equals(_language, other._language) && Equals(_dataType, other._dataType);
             }
 
-            if (IsBlank)
-            {
-                return string.Equals(_blankNodeId, other._blankNodeId) && Equals(_graphUri, other._graphUri);
-            }
-
             // is Uri
-            return Equals(_uri, other._uri);
+            return Equals(_uri.AbsoluteUri, other._uri.AbsoluteUri);
         }
 	}
 }

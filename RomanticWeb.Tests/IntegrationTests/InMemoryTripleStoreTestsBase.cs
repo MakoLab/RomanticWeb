@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Mapping;
@@ -16,18 +17,20 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         public IMappingsRepository Mappings
         {
-            get { return _mappings; }
+            get
+            {
+                return _mappings;
+            }
         }
 
 		protected IEntityFactory EntityFactory { get; private set; }
 
-		[SetUp]
+        [SetUp]
 		public void Setup()
 		{
 			_store = new TripleStore();
 			_mappings = SetupMappings();
-			var tripleSourceFactory = new TripleStoreTripleSourceFactory(_store);
-            EntityFactory = new EntityContext(Mappings, new TestOntologyProvider(), tripleSourceFactory);
+            EntityFactory = new EntityContext(Mappings, new TestOntologyProvider(),new TripleStoreAdapter(_store));
 
 			ChildSetup();
 		}
@@ -51,9 +54,17 @@ namespace RomanticWeb.Tests.IntegrationTests
 		{
 		}
 
-		protected void LoadTestFile(string fileName)
+		protected void LoadTestFile(string fileName, Uri graphUri=null)
 		{
-			_store.LoadTestFile(fileName);
+            if (graphUri!=null)
+            {
+                var graph=new Graph();
+                graph.BaseUri=graphUri;
+                graph.LoadTestFile(fileName);
+                _store.Add(graph);
+            }
+
+		    _store.LoadTestFile(fileName);
 		}
 	}
 }

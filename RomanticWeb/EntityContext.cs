@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -13,20 +14,30 @@ namespace RomanticWeb
 	/// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
 	public class EntityContext:IEntityFactory
 	{
-		private readonly TripleSourceFactoryBase _sourceFactoryBase;
+		private readonly IEntityStore _entityStore;
 
-		private readonly IMappingsRepository _mappings;
+	    private readonly ITripleStoreAdapter _tripleStore;
+
+	    private readonly IMappingsRepository _mappings;
 
 	    private readonly IOntologyProvider _ontologyProvider;
 
-		internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,TripleSourceFactoryBase sourceFactoryBase)
+	    private readonly IDictionary<EntityId,bool> _entitiesState=new ConcurrentDictionary<EntityId,bool>();
+
+        public EntityContext(IMappingsRepository mappings, IOntologyProvider ontologyProvider, ITripleStoreAdapter tripleStore)
+            : this(mappings, ontologyProvider, new EntityStore(), tripleStore)
 		{
-			_mappings=mappings;
-			_sourceFactoryBase=sourceFactoryBase;
-			_ontologyProvider=new DefaultOntologiesProvider(ontologyProvider);
 		}
 
-		public IQueryable<Entity> AsQueryable()
+        internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,IEntityStore entityStore,ITripleStoreAdapter tripleStore)
+        {
+            _mappings = mappings;
+            _entityStore=entityStore;
+            _tripleStore=tripleStore;
+            _ontologyProvider = new DefaultOntologiesProvider(ontologyProvider);
+        }
+
+	    public IQueryable<Entity> AsQueryable()
 		{
 			return new EntityQueryable<Entity>(this,_mappings,_ontologyProvider);
 		}
@@ -42,9 +53,13 @@ namespace RomanticWeb
 
 			foreach (var ontology in _ontologyProvider.Ontologies)
 			{
-				var source=_sourceFactoryBase.CreateTriplesSourceForOntology();
-				entity[ontology.Prefix]=new OntologyAccessor(source,entityId,ontology,new RdfNodeConverter(this));
+				entity[ontology.Prefix]=new OntologyAccessor(_entityStore,entity,ontology,new RdfNodeConverter(this));
 			}
+
+            if (entityId is BlankId)
+            {
+                _entitiesState[entity.Id] = true;
+            }
 
 			return entity;
 		}
@@ -68,8 +83,7 @@ namespace RomanticWeb
 		{
 			IList<T> entities=new List<T>();
 
-			ITripleSource tripleSource=_sourceFactoryBase.CreateTriplesSourceForOntology();
-			IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> triples=tripleSource.GetNodesForQuery(sparqlConstruct);
+            IEnumerable<Tuple<RdfNode, RdfNode, RdfNode>> triples = _tripleStore.GetNodesForQuery(sparqlConstruct);
 			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct())
 			{
                 entities.Add(Create<T>(subject.ToEntityId()));
@@ -78,9 +92,23 @@ namespace RomanticWeb
 			return entities;
 		}
 
+        public void InitializeEnitity(IEntity entity)
+        {
+            if (!_entitiesState.ContainsKey(entity.Id))
+            {
+                _entitiesState[entity.Id]=false;
+            }
+
+            if (_entitiesState[entity.Id]==false)
+            {
+                _tripleStore.LoadEntity(_entityStore,entity.Id);
+                _entitiesState[entity.Id]=true;
+            }
+        }
+
 		internal T EntityAs<T>(Entity entity) where T : class,IEntity
 		{
-			return new EntityProxy(_sourceFactoryBase, entity, _mappings.MappingFor<T>(), new RdfNodeConverter(this)).ActLike<T>();
+			return new EntityProxy(_entityStore, entity, _mappings.MappingFor<T>(), new RdfNodeConverter(this)).ActLike<T>();
 		}
 	}
 }

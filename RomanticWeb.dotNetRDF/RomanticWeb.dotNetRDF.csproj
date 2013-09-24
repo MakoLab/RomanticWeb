@@ -52,16 +52,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TripleSourceFactory.cs" />
     <Compile Include="EntityIdExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TripleSources\InMemoryApiStrategy.cs" />
-    <Compile Include="TripleSources\IStoreQueryStrategy.cs" />
     <Compile Include="TripleSources\NodeExtensions.cs" />
-    <Compile Include="TripleSources\SingleGraphSource.cs" />
-    <Compile Include="TripleSources\SparqlQueryStrategy.cs" />
-    <Compile Include="TripleSources\TripleSourceBase.cs" />
-    <Compile Include="TripleSources\UnionGraphSource.cs" />
+    <Compile Include="TripleStoreAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
@@ -71,8 +65,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF">
-      <HintPath>..\packages\dotNetRDF.1.0.0.2533\lib\net40\dotNetRDF.dll</HintPath>
+    <Reference Include="dotNetRDF, Version=1.0.1.2533, Culture=neutral, PublicKeyToken=6055ffe4c97cc780, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\dotNetRDF.1.0.1-RC2\lib\net40\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>

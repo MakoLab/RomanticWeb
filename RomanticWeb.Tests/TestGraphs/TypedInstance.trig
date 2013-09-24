@@ -1,0 +1,12 @@
+﻿prefix people: <http://magi/people>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+<http://data.magi/people/Tomasz>
+{
+	people:Tomasz a foaf:Person, foaf:Agent .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+}

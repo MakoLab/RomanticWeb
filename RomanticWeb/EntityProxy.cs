@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb
 {
+    [NullGuard(ValidationFlags.OutValues)]
     public class EntityProxy:DynamicObject,IEntity
     {
-        private readonly TripleSourceFactoryBase _sourceFactory;
+        private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IMapping _mappings;
-		private readonly dynamic _asDymamic;
         private readonly RdfNodeConverter _converter;
 
-        public EntityProxy(TripleSourceFactoryBase source, Entity entity, IMapping mappings, RdfNodeConverter converter)
+        public EntityProxy(IEntityStore store, Entity entity, IMapping mappings, RdfNodeConverter converter)
         {
-            _sourceFactory = source;
+            _store = store;
             _entity = entity;
             _mappings = mappings;
             _converter = converter;
-			_asDymamic=(dynamic)this;
         }
 
         public EntityId Id
@@ -42,10 +42,11 @@ namespace RomanticWeb
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            _entity.EnsureIsInitialized();
+
             var property = _mappings.PropertyFor(binder.Name);
 
-            ITripleSource source = _sourceFactory.CreateTripleSourceForProperty(_entity.Id, _mappings.PropertyFor(binder.Name));
-            IList objectsForPredicate = _converter.Convert(source.GetObjectsForPredicate(_entity.Id, property.Uri), source).ToList();
+            IList objectsForPredicate = _converter.Convert(_store.GetObjectsForPredicate(_entity.Id,property.Uri), _store).ToList();
 
             if ((objectsForPredicate.Count>1||property.IsCollection)&&objectsForPredicate.Cast<object>().All(o=>!(o is IList)))
             {

@@ -14,8 +14,8 @@ namespace RomanticWeb
 	[NullGuard(ValidationFlags.OutValues)]
 	public sealed class OntologyAccessor : ImpromptuDictionary, IObjectAccessor
 	{
-		private readonly ITripleSource _tripleSource;
-		private readonly EntityId _entityId;
+		private readonly IEntityStore _tripleSource;
+		private readonly Entity _entity;
 		private readonly Ontology _ontology;
 		private readonly IRdfNodeConverter _nodeConverter;
 
@@ -26,10 +26,10 @@ namespace RomanticWeb
 		/// <param name="entity">the access Entity</param>
 		/// <param name="ontology">Ontolgy used to resolve predicate names</param>
 		/// <param name="entityFactory">factory used to produce associated Entities</param>
-		public OntologyAccessor(ITripleSource tripleSource, EntityId entityId, Ontology ontology, IRdfNodeConverter nodeConverter)
+        public OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, IRdfNodeConverter nodeConverter)
 		{
 			_tripleSource = tripleSource;
-			_entityId = entityId;
+			_entity = entity;
 			_ontology = ontology;
 			_nodeConverter = nodeConverter;
 		}
@@ -44,6 +44,8 @@ namespace RomanticWeb
 		/// </summary>
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
 		{
+            _entity.EnsureIsInitialized();
+
 			var property = KnownProperties.SingleOrDefault(p => p.PropertyName == binder.Name);
 
 			if (property == null)
@@ -51,27 +53,27 @@ namespace RomanticWeb
 				property = new Property(binder.Name).InOntology(_ontology);
 			}
 
-			result = ((IObjectAccessor)this).GetObjects(_entityId, property);
+			result = ((IObjectAccessor)this).GetObjects(_entity.Id, property);
 
 			return true;
 		}
 
 		dynamic IObjectAccessor.GetObjects(EntityId entity, Property predicate)
 		{
-			var subjectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri);
-			var subjects = _nodeConverter.Convert(subjectValues, _tripleSource).ToList();
+			var objectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri).ToList();
+			var objects = _nodeConverter.Convert(objectValues, _tripleSource).ToList();
 
-			if (subjects.Count == 1)
+			if (objects.Count == 1)
 			{
-				return subjects.Single();
+				return objects.Single();
 			}
 
-			if (subjects.Count == 0)
+			if (objects.Count == 0)
 			{
 				return null;
 			}
 
-			return subjects;
+			return objects;
 		}
 	}
 }

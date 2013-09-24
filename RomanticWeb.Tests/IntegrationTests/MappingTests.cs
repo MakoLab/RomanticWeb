@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
@@ -26,7 +27,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		{
 			// given
 			Mappings.Add(new DefaultGraphPersonMapping());
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
 			string firstName = Entity.FirstName;
@@ -56,7 +57,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		{
 			// given
 			Mappings.Add(new DefaultGraphPersonMapping());
-			LoadTestFile("LooseCollections.ttl");
+			LoadTestFile("LooseCollections.trig");
 
 			// when
 			var interests = Entity.Interests;
@@ -71,7 +72,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("RdfLists.ttl");
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
             var friends = Entity.Friends;
@@ -92,7 +95,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("LooseCollections.ttl");
+            LoadTestFile("LooseCollections.trig");
 
             // when
             var friends = Entity.Friends;
@@ -114,7 +117,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("AssociatedInstances.ttl");
+            LoadTestFile("AssociatedInstances.trig");
 
             // when
             IList<IPerson> friends = Entity.Friends;
@@ -129,7 +132,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("AssociatedInstances.ttl");
+            LoadTestFile("AssociatedInstances.trig");
 
             // when
             var friends = Entity.Interests;

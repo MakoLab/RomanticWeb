@@ -36,11 +36,23 @@ namespace RomanticWeb.Entities
 
         public EntityId Id { get { return this._entityId; } }
 
+        public static bool operator ==(Entity left, IEntity right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Entity left, IEntity right)
+        {
+            return !(left == right);
+        }
+
         public dynamic AsDynamic() { return this._asDynamic; }
 
 		public override bool TryGetMember(GetMemberBinder binder,out object result)
 		{
-			// first look for ontology prefix
+		    EnsureIsInitialized();
+
+            // first look for ontology prefix
 			bool gettingMemberSucceeded=base.TryGetMember(binder,out result);
 
 			if (gettingMemberSucceeded)
@@ -57,7 +69,7 @@ namespace RomanticWeb.Entities
 			return false;
 		}
 
-		public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
+	    public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
 		{
 			if (this._entityContext!=null)
 			{
@@ -82,6 +94,14 @@ namespace RomanticWeb.Entities
             var entity=obj as IEntity;
             if (entity == null) { return false; }
             return this.Id.Equals(entity.Id);
+        }
+
+        internal void EnsureIsInitialized()
+        {
+            if (_entityContext != null)
+            {
+                _entityContext.InitializeEnitity(this);
+            }
         }
 
 		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)

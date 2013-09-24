@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using RomanticWeb.Entities;
@@ -10,13 +11,15 @@ namespace RomanticWeb
 	{
 		private readonly IEntityFactory _entityFactory;
 
+	    private readonly Lazy<IEntity> _listNil;
+
 		public RdfNodeConverter(IEntityFactory entityFactory)
 		{
 			_entityFactory = entityFactory;
 		}
 
 		// todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
-		public IEnumerable<object> Convert(IEnumerable<RdfNode> subjects, ITripleSource tripleSource)
+		public IEnumerable<object> Convert(IEnumerable<RdfNode> subjects,IEntityStore tripleSource)
 		{
 			foreach (var subject in subjects)
 			{
@@ -26,15 +29,19 @@ namespace RomanticWeb
 				}
 				else if (subject.IsBlank)
 				{
-					IEnumerable<RdfNode> listElements;
-					if (tripleSource.TryGetListElements(subject, out listElements))
-					{
-						yield return Convert(listElements, tripleSource).ToList();
-					}
-					else
-					{
-						yield return _entityFactory.Create(subject.ToEntityId());
-					}
+				    dynamic potentialList=_entityFactory.Create(subject.ToEntityId()).AsDynamic();
+
+                    var blankNodeListConverter = new BlankNodeListConverter(tripleSource);
+
+				    object actualList;
+				    if (blankNodeListConverter.TryConvert(potentialList,out actualList))
+				    {
+				        yield return actualList;
+				    }
+                    else
+                    {
+                        yield return potentialList;
+                    }
 				}
 				else
 				{

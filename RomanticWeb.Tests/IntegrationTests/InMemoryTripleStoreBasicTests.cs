@@ -10,7 +10,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Creating_Entity_should_allow_accessing_existing_literal_properties()
 		{
 			// given
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -25,7 +25,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Creating_Entity_should_return_null_when_triple_doesnt_exist()
 		{
 			// given
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -38,7 +38,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Creating_Entity_should_allow_associated_Entity_subjects()
 		{
 			// given
-			LoadTestFile("AssociatedInstances.ttl");
+			LoadTestFile("AssociatedInstances.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -52,7 +52,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Associated_Entity_should_allow_fetching_its_properties()
 		{
 			// given
-			LoadTestFile("AssociatedInstances.ttl");
+			LoadTestFile("AssociatedInstances.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -66,7 +66,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Created_Entity_should_allow_using_unambiguous_predicates_without_prefix()
 		{
 			// given
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -79,7 +79,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Should_throw_when_accessing_ambiguous_property()
 		{
 			// given
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -90,7 +90,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		}
 
 		[Test]
-		public void Created_Entiy_should_retrieve_triples_from_Union_Graph()
+		public void Created_Entity_should_retrieve_triples_from_Union_Graph()
 		{
 			// given
 			LoadTestFile("TriplesInNamedGraphs.trig");
@@ -110,7 +110,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Should_read_blank_node_associated_Entities()
 		{
 			// given
-			LoadTestFile("BlankNodes.ttl");
+			LoadTestFile("BlankNodes.trig");
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));

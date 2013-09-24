@@ -10,7 +10,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Creating_Entity_should_allow_accessing_existing_literal_properties()
 		{
 			// given
-			LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
 			// when
             dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));

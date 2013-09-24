@@ -51,11 +51,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
+    <Compile Include="BlankNodeListConverter.cs" />
     <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="IEntityStore.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
+    <Compile Include="ITripleStoreAdapter.cs" />
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
@@ -65,8 +68,6 @@
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
     <Compile Include="IRdfNodeConverter.cs" />
-    <Compile Include="ITripleSource.cs" />
-    <Compile Include="ITripleSourceFactory.cs" />
     <Compile Include="Mapping\Model\ITypeMapping.cs" />
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="Ontologies\RdfNode.cs" />
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
-    <Compile Include="TripleSourceFactoryBase.cs" />
+    <Compile Include="EntityStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

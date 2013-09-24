@@ -37,7 +37,7 @@ namespace RomanticWeb.Tests.Linq
 		public void Setup()
 		{
 			_store=new TripleStore();
-			_store.LoadTestFile("TriplesWithLiteralSubjects.ttl");
+			_store.LoadTestFile("TriplesWithLiteralSubjects.trig");
 			_personTypeMappingMock=new Mock<ITypeMapping>(MockBehavior.Strict);
 			_personTypeMappingMock.SetupGet(typeMapping => typeMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/Person"));
 			_firstNamePropertyMappingMock=new Mock<IPropertyMapping>();
@@ -61,7 +61,7 @@ namespace RomanticWeb.Tests.Linq
 				new Ontology(
 					new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
 					new Property("type")) });
-			_entityFactory=new EntityContext(_mappingsRepositoryMock.Object,_ontologyProviderMock.Object,new TripleStoreTripleSourceFactory(_store));
+			_entityFactory=new EntityContext(_mappingsRepositoryMock.Object,_ontologyProviderMock.Object,new TripleStoreAdapter(_store));
 		}
 
 		[Test]

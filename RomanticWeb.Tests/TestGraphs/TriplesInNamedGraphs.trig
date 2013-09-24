@@ -11,3 +11,9 @@
 {
 	people:Tomasz foaf:knows people:Karol , people:Gniewko.
 }
+
+<http://app.magi/graphs>
+{
+	<personal://magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+	<friendsOf://magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+}

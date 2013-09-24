@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using FluentAssertions;
 using ImpromptuInterface;
 using NUnit.Framework;
@@ -12,8 +13,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 		[Test]
 		public void Should_read_rdf_lists_as_collection_of_Entities()
 		{
-			// given
-			LoadTestFile("RdfLists.ttl");
+            // given
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -31,8 +33,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 		[Test]
 		public void Should_read_rdf_lists_as_collection_of_literals()
 		{
-			// given
-			LoadTestFile("RdfLists.ttl");
+            // given
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
 			// when
 			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
@@ -48,17 +51,18 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Should_read_nested_rdf_lists_as_collection_of_lists()
 		{
 			// given
-			LoadTestFile("RdfLists.ttl");
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
 
 			// when
-			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/test/array"));
-			var people = (IList)tomasz.math.matrix;
+			dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/math/array"));
+			var numbers = (IList)tomasz.math.matrix;
 
 			// then
-			Assert.That(people != null);
-			Assert.That(people.Count, Is.EqualTo(2));
-			people[0].ActLike<IList>().Should().ContainInOrder(0, 1, 2);
-			people[1].ActLike<IList>().Should().ContainInOrder(3, 4, 5);
+			Assert.That(numbers != null);
+			Assert.That(numbers.Count, Is.EqualTo(2));
+			numbers[0].ActLike<IList>().Should().ContainInOrder(0, 1, 2);
+			numbers[1].ActLike<IList>().Should().ContainInOrder(3, 4, 5);
 		}
 	}
 }

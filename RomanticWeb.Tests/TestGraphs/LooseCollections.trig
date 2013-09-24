@@ -1,0 +1,14 @@
+﻿@prefix people: <http://magi/people/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://data.magi/people/Tomasz>
+{
+	people:Tomasz foaf:topic_interest "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" .
+
+	people:Tomasz foaf:knows people:Karol, people:Gniewko, people:Monika, people:Dominik, people:Przemek .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+}

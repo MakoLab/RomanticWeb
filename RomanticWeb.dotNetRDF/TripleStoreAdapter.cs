@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using RomanticWeb.DotNetRDF.TripleSources;
 using RomanticWeb.Entities;
-using RomanticWeb.Ontologies;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;
@@ -23,24 +21,24 @@ namespace RomanticWeb.DotNetRDF
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
 
-        public IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string sparqlConstruct)
+        public IEnumerable<Tuple<Node,Node,Node>> GetNodesForQuery(string sparqlConstruct)
         {
             throw new NotImplementedException();
         }
 
         public void LoadEntity(IEntityStore store,EntityId entityId)
         {
-            var select = QueryBuilder.Select("s", "p", "o", "g")
+            var select = QueryBuilder.Select("entity", "s", "p", "o", "g")
                                      .Graph("?g", g => g.Where(t => t.Subject("s").Predicate("p").Object("o")))
                                      .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             select.Prefixes.Import(_namespaces);
 
             foreach (var result in ExecuteEntityLoadQuery(select.BuildQuery()))
             {
-                RdfNode subject = result["s"].WrapNode();
-                RdfNode predicate = result["p"].WrapNode();
-                RdfNode @object=result["o"].WrapNode();
-                RdfNode graph=result.HasBoundValue("g")?result["g"].WrapNode():null;
+                Node subject = result["s"].WrapNode();
+                Node predicate = result["p"].WrapNode();
+                Node @object=result["o"].WrapNode();
+                Node graph=result.HasBoundValue("g")?result["g"].WrapNode():null;
                 store.AssertTriple(entityId, graph, new Triple(subject, predicate, @object));
             }
         }

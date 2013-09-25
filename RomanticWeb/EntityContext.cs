@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -79,8 +78,8 @@ namespace RomanticWeb
 		{
 			IList<T> entities=new List<T>();
 
-            IEnumerable<Tuple<RdfNode, RdfNode, RdfNode>> triples = _entitySource.GetNodesForQuery(sparqlConstruct);
-			foreach (RdfNode subject in triples.Select(triple => triple.Item1).Distinct())
+            IEnumerable<Tuple<Node, Node, Node>> triples = _entitySource.GetNodesForQuery(sparqlConstruct);
+			foreach (Node subject in triples.Select(triple => triple.Item1).Distinct())
 			{
                 entities.Add(Create<T>(subject.ToEntityId()));
 			}

@@ -5,7 +5,7 @@ namespace RomanticWeb.Ontologies
 	/// <summary>
 	/// A base classs for RDF properties
 	/// </summary>
-	public class Property : RdfTerm
+	public class Property : Term
 	{
 		/// <summary>
 		/// Creates a new Property
@@ -18,7 +18,7 @@ namespace RomanticWeb.Ontologies
         /// <summary>
         /// Gets the term name
         /// </summary>
-        /// <remarks>See remarks under <see cref="RdfTerm.TermName"/></remarks>
+        /// <remarks>See remarks under <see cref="Term.TermName"/></remarks>
         public string PropertyName { get { return TermName; } }
 
 		[ExcludeFromCodeCoverage]

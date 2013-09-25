@@ -54,7 +54,7 @@ namespace RomanticWeb.Tests.Linq
 			_ontologyProviderMock.SetupGet(provider => provider.Ontologies).Returns(
 				new Ontology[] { new Ontology(
 					new NamespaceSpecification("foaf","http://xmlns.com/foaf/0.1/"),
-					new RdfClass("Person"),
+					new Class("Person"),
 					new DatatypeProperty("givenName"),
 					new DatatypeProperty("familyName"),
 					new ObjectProperty("knows")),

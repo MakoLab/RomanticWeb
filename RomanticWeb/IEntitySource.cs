@@ -7,7 +7,7 @@ namespace RomanticWeb
 {
     public interface IEntitySource
     {
-        IEnumerable<Tuple<RdfNode,RdfNode,RdfNode>> GetNodesForQuery(string sparqlConstruct);
+        IEnumerable<Tuple<Node,Node,Node>> GetNodesForQuery(string sparqlConstruct);
 
         void LoadEntity(IEntityStore store,EntityId entityId);
     }

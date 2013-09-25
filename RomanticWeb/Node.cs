@@ -2,25 +2,25 @@
 using NullGuard;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb.Ontologies
+namespace RomanticWeb
 {
 	/// <summary>
 	/// Represents an RDF node (URI or literal)
 	/// </summary>
 	/// <remarks>Blank nodes are not supported currently</remarks>
-	public sealed class RdfNode
+	public sealed class Node
 	{
 		private readonly string _literal;
 		private readonly string _language;
 		private readonly Uri _dataType;
 		private readonly Uri _uri;
 
-		private RdfNode(Uri uri)
+		private Node(Uri uri)
 		{
 			_uri = uri;
 		}
 
-		private RdfNode(string literal, string language, Uri dataType)
+		private Node(string literal, string language, Uri dataType)
 		{
 			_literal = literal;
 			_language = language;
@@ -126,40 +126,48 @@ namespace RomanticWeb.Ontologies
 
 		/// <summary>
 		/// Factory method for creating URI nodes
-		/// </summary>
-		public static RdfNode ForUri(Uri uri)
+        /// </summary>
+        /// todo:make extension method?
+		public static Node ForUri(Uri uri)
 		{
-			return new RdfNode(uri);
+			return new Node(uri);
 		}
 
 		/// <summary>
 		/// Factory method for creating literal nodes
-		/// </summary>
-		public static RdfNode ForLiteral(string value, [AllowNull] string language, [AllowNull] Uri dataType)
+        /// </summary>
+        /// todo:make extension method?
+		public static Node ForLiteral(string value, [AllowNull] string language, [AllowNull] Uri dataType)
 		{
-			return new RdfNode(value, language, dataType);
+			return new Node(value, language, dataType);
 		}
 
-		public static RdfNode ForBlank(string blankNodeId, [AllowNull] Uri graphUri)
+        /// <summary>
+        /// Factory method for creating blank nodes
+        /// </summary>
+        /// todo:make extension method?
+		public static Node ForBlank(string blankNodeId, [AllowNull] Uri graphUri)
 		{
-			return new RdfNode(new Uri(string.Format("node://{0}/{1}",blankNodeId, graphUri)));
+			return new Node(new Uri(string.Format("node://{0}/{1}",blankNodeId, graphUri)));
         }
 
-        public static bool operator ==(RdfNode left, RdfNode right)
+#pragma warning disable 1591
+        public static bool operator ==(Node left, Node right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(RdfNode left, RdfNode right)
+        public static bool operator !=(Node left, Node right)
         {
             return !Equals(left, right);
         }
+#pragma warning restore 1591
 
-		public override bool Equals(object obj)
+        public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) { return false; } 
 			if (ReferenceEquals(this, obj)) { return true; }
-			return obj is RdfNode && Equals((RdfNode) obj);
+			return obj is Node && Equals((Node) obj);
 		}
 
 		public override int GetHashCode()
@@ -202,6 +210,10 @@ namespace RomanticWeb.Ontologies
             throw new InvalidOperationException("Invalid node state");
         }
 
+        /// <summary>
+        /// Creates an <see cref="EntityId"/> for a <see cref="Node"/>
+        /// </summary>
+        /// todo:make extension method?
 		public EntityId ToEntityId()
 		{
             if (IsBlank)
@@ -217,7 +229,7 @@ namespace RomanticWeb.Ontologies
             throw new InvalidOperationException("Cannot convert literal node to EntityId");
 		}
 
-        private bool Equals(RdfNode other)
+        private bool Equals(Node other)
         {
             if (IsLiteral)
             {

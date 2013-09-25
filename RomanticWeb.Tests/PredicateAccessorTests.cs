@@ -41,7 +41,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new RdfNode[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when
@@ -56,7 +56,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new RdfNode[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _entityFactory.Object);
 
             // when

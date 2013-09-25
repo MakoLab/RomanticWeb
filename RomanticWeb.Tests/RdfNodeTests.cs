@@ -11,8 +11,8 @@ namespace RomanticWeb.Tests
         public void Hash_URIs_should_not_be_equal()
         {
             // given
-            RdfNode uri1 = RdfNode.ForUri(new Uri("http://magi/text#uri1"));
-            RdfNode uri2 = RdfNode.ForUri(new Uri("http://magi/text#uri2"));
+            Node uri1 = Node.ForUri(new Uri("http://magi/text#uri1"));
+            Node uri2 = Node.ForUri(new Uri("http://magi/text#uri2"));
 
             // then
             Assert.That(uri1, Is.Not.EqualTo(uri2));

@@ -15,9 +15,9 @@ namespace RomanticWeb.Tests.Stubs
 			            new DatatypeProperty("familyName"),
 			            new DatatypeProperty("givenName"),
 			            new DatatypeProperty("nick"),
-			            new RdfClass("Person"),
-			            new RdfClass("Agent"),
-			            new RdfClass("Document"));
+			            new Class("Person"),
+			            new Class("Agent"),
+			            new Class("Document"));
 
 			    yield return new Ontology(new NamespaceSpecification("dummy","http://example.com"),new DatatypeProperty("nick"));
 

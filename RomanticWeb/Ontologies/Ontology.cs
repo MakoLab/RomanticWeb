@@ -18,12 +18,12 @@ namespace RomanticWeb.Ontologies
         /// Creates a new <see cref="Ontology"/> specification
         /// </summary>
         /// <param name="ns">Namespace prefix and base URI</param>
-        /// <param name="rdfTerms">A collection of RDF classes and properties</param>
-        public Ontology(NamespaceSpecification ns, params RdfTerm[] rdfTerms)
+        /// <param name="terms">A collection of RDF classes and properties</param>
+        public Ontology(NamespaceSpecification ns, params Term[] terms)
         {
-            Properties = rdfTerms.OfType<Property>().Select(p => p.InOntology(this)).ToList();
+            Properties = terms.OfType<Property>().Select(p => p.InOntology(this)).ToList();
             _namespace = ns;
-            Classes = rdfTerms.OfType<RdfClass>().Select(c => c.InOntology(this)).ToList();
+            Classes = terms.OfType<Class>().Select(c => c.InOntology(this)).ToList();
         }
 
         /// <summary>
@@ -44,8 +44,9 @@ namespace RomanticWeb.Ontologies
         /// <summary>
         /// Gets the ontology's classes
         /// </summary>
-        public IEnumerable<RdfClass> Classes { get; private set; }
+        public IEnumerable<Class> Classes { get; private set; }
 
+#pragma warning disable 1591
         public static bool operator ==([AllowNull] Ontology left, [AllowNull] Ontology right)
         {
             return Equals(left, right);
@@ -55,6 +56,7 @@ namespace RomanticWeb.Ontologies
         {
             return !Equals(left, right);
         }
+#pragma warning restore 1591
 
         public override bool Equals([AllowNull] object obj)
         {

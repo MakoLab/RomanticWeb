@@ -16,23 +16,23 @@ namespace RomanticWeb
             _entityQuads=new ConcurrentDictionary<EntityId,QuadCollection>();
         }
 
-        public IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId,Uri predicate)
+        public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate)
         {
             return from triple in _entityQuads.SelectMany(e=>e.Value.Triples)
-                   where triple.Predicate==RdfNode.ForUri(predicate)
-                         && triple.Subject==RdfNode.ForUri(entityId.Uri)
+                   where triple.Predicate==Node.ForUri(predicate)
+                         && triple.Subject==Node.ForUri(entityId.Uri)
                    select triple.Object;
         }
 
         public bool EntityIsCollectionRoot(IEntity potentialListRoot)
         {
             return !(from propertyObjectPair in _entityQuads.SelectMany(e=>e.Value.Triples)
-                     where propertyObjectPair.Predicate == RdfNode.ForUri(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"))
-                     && propertyObjectPair.Object == RdfNode.ForUri(potentialListRoot.Id.Uri)
+                     where propertyObjectPair.Predicate == Node.ForUri(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"))
+                     && propertyObjectPair.Object == Node.ForUri(potentialListRoot.Id.Uri)
                      select propertyObjectPair).Any();
         }
 
-        public void AssertTriple(EntityId entityId,RdfNode graph,Triple triple)
+        public void AssertTriple(EntityId entityId,Node graph,Triple triple)
         {
             if (!_entityQuads.ContainsKey(entityId))
             {

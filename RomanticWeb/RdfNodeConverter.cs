@@ -19,7 +19,7 @@ namespace RomanticWeb
 		}
 
 		// todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
-		public IEnumerable<object> Convert(IEnumerable<RdfNode> subjects,IEntityStore tripleSource)
+		public IEnumerable<object> Convert(IEnumerable<Node> subjects,IEntityStore tripleSource)
 		{
 			foreach (var subject in subjects)
 			{
@@ -59,7 +59,7 @@ namespace RomanticWeb
 		}
 
 		// todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
-		private bool TryConvert(RdfNode subject, out object value)
+		private bool TryConvert(Node subject, out object value)
 		{
 			if (subject.DataType != null)
 			{

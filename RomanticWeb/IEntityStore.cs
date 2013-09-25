@@ -7,10 +7,10 @@ namespace RomanticWeb
 {
     public interface IEntityStore
     {
-        IEnumerable<RdfNode> GetObjectsForPredicate(EntityId entityId,Uri predicate);
+        IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);
 
         bool EntityIsCollectionRoot(IEntity potentialList);
 
-        void AssertTriple(EntityId entityId,RdfNode graph,Triple triple);
+        void AssertTriple(EntityId entityId,Node graph,Triple triple);
     }
 }

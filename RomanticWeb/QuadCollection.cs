@@ -10,11 +10,11 @@ namespace RomanticWeb
 {
     internal class QuadCollection
     {
-        private readonly IDictionary<RdfNode,ISet<Triple>> _quads;
+        private readonly IDictionary<Node,ISet<Triple>> _quads;
 
         public QuadCollection()
         {
-            _quads=new ConcurrentDictionary<RdfNode,ISet<Triple>>();
+            _quads=new ConcurrentDictionary<Node,ISet<Triple>>();
         }
 
         public IEnumerable<Triple> Triples
@@ -25,7 +25,7 @@ namespace RomanticWeb
             }
         }
 
-        public void AssertQuad([AllowNull] RdfNode graph,Triple triple)
+        public void AssertQuad([AllowNull] Node graph,Triple triple)
         {
             if (!_quads.ContainsKey(graph))
             {

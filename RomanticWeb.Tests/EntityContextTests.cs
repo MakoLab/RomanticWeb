@@ -134,7 +134,7 @@ namespace RomanticWeb.Tests
         {
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
-                        .Returns(new RdfNode[0]);
+                        .Returns(new Node[0]);
             dynamic entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // when
@@ -153,7 +153,7 @@ namespace RomanticWeb.Tests
                           .Returns((string prop) => GetMapping(prop));
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>()))
-                        .Returns(new RdfNode[0]);
+                        .Returns(new Node[0]);
             var entity = _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when

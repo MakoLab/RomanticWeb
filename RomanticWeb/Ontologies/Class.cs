@@ -6,13 +6,13 @@ namespace RomanticWeb.Ontologies
 	/// Represents an RDF class
 	/// </summary>
 	[DebuggerDisplay("Class {Prefix}:{ClassName}")]
-	public class RdfClass : RdfTerm
+	public class Class : Term
 	{
 		/// <summary>
-		/// Creates a new instance of <see cref="RdfClass"/>
+		/// Creates a new instance of <see cref="Class"/>
 		/// </summary>
 		/// <param name="className"></param>
-		public RdfClass(string className)
+		public Class(string className)
 			: base(className)
 		{
 		}
@@ -20,7 +20,7 @@ namespace RomanticWeb.Ontologies
 		/// <summary>
 		/// Gets the class name
 		/// </summary>
-		/// <remarks>See remarks under <see cref="RdfTerm.TermName"/></remarks>
+		/// <remarks>See remarks under <see cref="Term.TermName"/></remarks>
 		public string ClassName { get { return TermName; } }
 	}
 }

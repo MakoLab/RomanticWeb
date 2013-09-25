@@ -1,23 +1,45 @@
-﻿using RomanticWeb.Ontologies;
+﻿using System;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Represents a triple (subject, predicate, object)
+    /// </summary>
     public sealed class Triple
     {
-        private readonly RdfNode _object;
+        private readonly Node _object;
 
-        private readonly RdfNode _subject;
+        private readonly Node _subject;
 
-        private readonly RdfNode _predicate;
+        private readonly Node _predicate;
 
-        public Triple(RdfNode s,RdfNode p,RdfNode o)
+        /// <summary>
+        /// Creates a new instance of <see cref="Triple"/>
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="p"></param>
+        /// <param name="o"></param>
+        public Triple(Node s,Node p,Node o)
         {
+            if (!p.IsUri)
+            {
+                throw new ArgumentOutOfRangeException("p","Predicate must be a URI");
+            }
+            
+            if (s.IsLiteral)
+            {
+                throw new ArgumentOutOfRangeException("s", "Subject must be a URI or blank node");
+            }
+
             _object=o;
             _subject=s;
             _predicate=p;
         }
 
-        public RdfNode Object
+        /// <summary>
+        /// Gets the triple's object
+        /// </summary>
+        public Node Object
         {
             get
             {
@@ -25,7 +47,10 @@ namespace RomanticWeb
             }
         }
 
-        public RdfNode Predicate
+        /// <summary>
+        /// Gets the triple's predicate
+        /// </summary>
+        public Node Predicate
         {
             get
             {
@@ -33,7 +58,10 @@ namespace RomanticWeb
             }
         }
 
-        public RdfNode Subject
+        /// <summary>
+        /// Gets the triple's subject
+        /// </summary>
+        public Node Subject
         {
             get
             {
@@ -41,6 +69,7 @@ namespace RomanticWeb
             }
         }
 
+#pragma warning disable 1591
         public static bool operator ==(Triple left, Triple right)
         {
             return Equals(left, right);
@@ -50,6 +79,7 @@ namespace RomanticWeb
         {
             return !Equals(left, right);
         }
+#pragma warning restore 1591
 
         public override bool Equals(object obj)
         {

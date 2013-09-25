@@ -2,9 +2,12 @@
 
 namespace RomanticWeb.Mapping.Fluent
 {
+    /// <summary>
+    /// A mapping definition for collection properties
+    /// </summary>
 	public class CollectionMap : PropertyMap
 	{
-		public CollectionMap(PropertyInfo propertyInfo)
+        internal CollectionMap(PropertyInfo propertyInfo)
 			: base(propertyInfo)
 		{
 		}

@@ -36,17 +36,20 @@ namespace RomanticWeb.Entities
             _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();
 		}
 
-		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId,entityContext,entityId is BlankId)
-		{
-		}
-
-		internal Entity(EntityId entityId,EntityContext entityContext,bool isInitialized):this(entityId)
+		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId)
 		{
 		    _entityContext=entityContext;
-		    _isInitialized=isInitialized;
 		}
 
 	    public EntityId Id { get { return _entityId; } }
+
+	    private bool IsInitialized
+	    {
+	        get
+	        {
+	            return (_entityId is BlankId)||_isInitialized;
+	        }
+	    }
 
 	    public object this[string member]
 	    {
@@ -69,15 +72,17 @@ namespace RomanticWeb.Entities
             }
 	    }
 
+#pragma warning disable 1591
 	    public static bool operator ==(Entity left, IEntity right)
         {
-            return left.Equals(right);
+            return Equals(left,right);
         }
 
         public static bool operator !=(Entity left, IEntity right)
         {
             return !(left == right);
         }
+#pragma warning restore 1591
 
         public dynamic AsDynamic() { return _asDynamic; }
 
@@ -131,7 +136,7 @@ namespace RomanticWeb.Entities
 
         internal void EnsureIsInitialized()
         {
-            if (_entityContext != null&&!_isInitialized)
+            if ((_entityContext != null)&&!IsInitialized)
             {
                 _entityContext.InitializeEnitity(this);
                 _isInitialized=true;

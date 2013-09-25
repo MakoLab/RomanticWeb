@@ -3,6 +3,9 @@ using NullGuard;
 
 namespace RomanticWeb.Entities
 {
+    /// <summary>
+    /// An Entity's identifier (URI or blank node)
+    /// </summary>
 	public class EntityId
     {
         private readonly Uri _uri;
@@ -19,7 +22,7 @@ namespace RomanticWeb.Entities
 		/// </summary>
         public EntityId(Uri uri)
 		{
-			this._uri=uri;
+			_uri=uri;
 		}
 
         /// <summary>
@@ -27,7 +30,7 @@ namespace RomanticWeb.Entities
         /// </summary>
         public Uri Uri
         {
-            get { return this._uri; }
+            get { return _uri; }
         }
 
 		/// <summary>
@@ -62,7 +65,7 @@ namespace RomanticWeb.Entities
         /// </summary>
         public override int GetHashCode()
         {
-            return this._uri.GetHashCode();
+            return _uri.GetHashCode();
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace RomanticWeb.Entities
         /// </summary>
         public override bool Equals([AllowNull] object obj)
         {
-            if (obj == null || this.GetType() != obj.GetType())
+            if (obj == null || GetType() != obj.GetType())
             {
                 return false;
             }
@@ -80,12 +83,12 @@ namespace RomanticWeb.Entities
                 return true;
             }
 
-            return this._uri == ((EntityId)obj)._uri;
+            return _uri == ((EntityId)obj)._uri;
         }
 
         public override string ToString()
         {
-            return this.Uri.ToString();
+            return Uri.ToString();
         }
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace RomanticWeb.Entities
         /// </summary>
         protected bool Equals([AllowNull] EntityId other)
         {
-            return other != null && Equals(this._uri, other._uri);
+            return other != null && Equals(_uri, other._uri);
         }
 	}
 }

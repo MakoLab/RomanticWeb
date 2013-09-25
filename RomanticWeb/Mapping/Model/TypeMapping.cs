@@ -6,7 +6,7 @@ namespace RomanticWeb.Mapping.Model
     {
         public TypeMapping(Uri uri)
         {
-            this.Uri=uri;
+            Uri=uri;
         }
 
         public Uri Uri { get; private set; }

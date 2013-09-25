@@ -1,5 +1,4 @@
 ﻿using System;
-
 using NullGuard;
 
 namespace RomanticWeb.Mapping.Model
@@ -18,9 +17,7 @@ namespace RomanticWeb.Mapping.Model
 
 		public IGraphSelectionStrategy GraphSelector { [return:AllowNull] get; private set; }
 
-		public bool UsesUnionGraph { get; private set; }
-
-		public string Name { get; private set; }
+        public string Name { get; private set; }
 
         public bool IsCollection { get; private set; }
 	}

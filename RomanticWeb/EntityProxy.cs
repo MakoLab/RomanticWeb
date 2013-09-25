@@ -13,14 +13,14 @@ namespace RomanticWeb
     {
         private readonly IEntityStore _store;
         private readonly Entity _entity;
-        private readonly IMapping _mappings;
+        private readonly IEntityMapping _entityMappings;
         private readonly RdfNodeConverter _converter;
 
-        public EntityProxy(IEntityStore store, Entity entity, IMapping mappings, RdfNodeConverter converter)
+        public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, RdfNodeConverter converter)
         {
             _store = store;
             _entity = entity;
-            _mappings = mappings;
+            _entityMappings = entityMappings;
             _converter = converter;
         }
 
@@ -44,7 +44,7 @@ namespace RomanticWeb
         {
             _entity.EnsureIsInitialized();
 
-            var property = _mappings.PropertyFor(binder.Name);
+            var property = _entityMappings.PropertyFor(binder.Name);
 
             IList objectsForPredicate = _converter.Convert(_store.GetObjectsForPredicate(_entity.Id,property.Uri), _store).ToList();
 

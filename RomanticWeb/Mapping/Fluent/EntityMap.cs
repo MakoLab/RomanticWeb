@@ -7,6 +7,9 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {
+    /// <summary>
+    /// Base class for fluently defining entity entityMappings
+    /// </summary>
     public abstract class EntityMap<TEntity> : EntityMap
 	{
 		protected EntityMap()
@@ -18,7 +21,7 @@ namespace RomanticWeb.Mapping.Fluent
 		{
 			var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
 
-			this.MappedProperties.Add(propertyMap);
+			MappedProperties.Add(propertyMap);
 
 			return propertyMap;
 		}
@@ -27,30 +30,33 @@ namespace RomanticWeb.Mapping.Fluent
 		{
 			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
 
-			this.MappedProperties.Add(propertyMap);
+			MappedProperties.Add(propertyMap);
 
 			return propertyMap;
 		}
 	}
 
+    /// <summary>
+    /// Base class for fluently defining entity entityMappings
+    /// </summary>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
     public abstract class EntityMap : IMappingProvider
 	{
 		protected EntityMap(Type type)
 		{
-			this.EntityType = type;
-			this.MappedProperties = new List<PropertyMap>();
+			EntityType = type;
+			MappedProperties = new List<PropertyMap>();
 		}
 
 		internal Type EntityType { get; set; }
 
 		internal IList<PropertyMap> MappedProperties { get; private set; }
 
-        IMapping IMappingProvider.GetMapping(IOntologyProvider prefixes)
+        IEntityMapping IMappingProvider.CreateMapping(IOntologyProvider prefixes)
 		{
 			var entityMapping = new EntityMapping();
 
-			foreach (var mappedProperty in this.MappedProperties)
+			foreach (var mappedProperty in MappedProperties)
 			{
 				entityMapping.Properties.Add(mappedProperty.GetMapping(prefixes));
 			}

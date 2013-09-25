@@ -50,7 +50,7 @@ namespace RomanticWeb
 
 			if (property == null)
             {
-                LogTo.Debug("Predicate {0} not found. Creating one impliclty from name", binder.Name);
+                LogTo.Debug("Predicate {0} not found in namespace {1}. Creating one impliclty from name", binder.Name, _ontology.BaseUri);
 				property = new Property(binder.Name).InOntology(_ontology);
 			}
 

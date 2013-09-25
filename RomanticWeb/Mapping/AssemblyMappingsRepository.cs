@@ -8,13 +8,16 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
+    /// <summary>
+    /// Mappings repository, which reads entityMapping attributes from assemblies
+    /// </summary>
     public sealed class AssemblyMappingsRepository : IMappingsRepository
     {
         #region Fields
 
         private readonly IOntologyProvider _ontologyProvider;
 
-        private readonly IDictionary<Type,IMapping> _mappings;
+        private readonly IDictionary<Type,IEntityMapping> _mappings;
         #endregion
 
         #region Constructors
@@ -30,7 +33,7 @@ namespace RomanticWeb.Mapping
 
         #region Public methods
 
-        public IMapping MappingFor<TEntity>()
+        public IEntityMapping MappingFor<TEntity>()
         {
             return _mappings[typeof(TEntity)];
         }
@@ -46,13 +49,13 @@ namespace RomanticWeb.Mapping
                    select mapping.GetMapping(property.Name, _ontologyProvider);
         }
 
-        private IEnumerable<Tuple<Type,IMapping>> BuildTypeMappings(Assembly assembly)
+        private IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(Assembly assembly)
 		{
             return from type in assembly.GetTypes()
                    from mapping in type.GetCustomAttributes(typeof(RdfTypeAttribute),true).Cast<RdfTypeAttribute>()
                    let typeMapping = mapping.GetMapping(_ontologyProvider)
                    let propertyMapping = BuildPropertyMappings(type).ToList()
-                   select new Tuple<Type,IMapping>(type,new EntityMapping { Type=typeMapping,Properties=propertyMapping });
+                   select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Type=typeMapping,Properties=propertyMapping });
 		}
 
         #endregion

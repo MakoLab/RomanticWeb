@@ -113,12 +113,12 @@ namespace RomanticWeb.Linq
 			else if ((fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&(fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
 			{
 				MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { fromClause.FromExpression.Type.GetGenericArguments()[0] });
-				IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-				if ((mapping!=null)&&(mapping.Type!=null))
+				IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
+				if ((entityMapping!=null)&&(entityMapping.Type!=null))
 				{
 					Ontology ontology=
 						_ontologyProvider.Ontologies.Where(
-							item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+							item => entityMapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
 					if (ontology!=null)
 					{
 						if (_whereClauseEndIndex==-1)
@@ -127,7 +127,7 @@ namespace RomanticWeb.Linq
 							_whereClauseEndIndex=_commandText.Length;
 						}
 
-						_commandText.AppendFormat("?s0 a <{0}>. ",mapping.Type.Uri.AbsoluteUri);
+						_commandText.AppendFormat("?s0 a <{0}>. ",entityMapping.Type.Uri.AbsoluteUri);
 					}
 				}
 			}

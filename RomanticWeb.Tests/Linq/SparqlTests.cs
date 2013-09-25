@@ -29,7 +29,7 @@ namespace RomanticWeb.Tests.Linq
 		private Mock<ITypeMapping> _personTypeMappingMock;
 		private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
 		private Mock<IPropertyMapping> _knowsPropertyMappingMock;
-		private Mock<IMapping> _personMappingMock;
+		private Mock<IEntityMapping> _personMappingMock;
 		private Mock<IMappingsRepository> _mappingsRepositoryMock;
 		private Mock<IOntologyProvider> _ontologyProviderMock;
 
@@ -44,7 +44,7 @@ namespace RomanticWeb.Tests.Linq
 			_firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/familyName"));
 			_knowsPropertyMappingMock=new Mock<IPropertyMapping>();
 			_knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/knows"));
-			_personMappingMock=new Mock<IMapping>(MockBehavior.Strict);
+			_personMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
 			_personMappingMock.SetupGet(mapping => mapping.Type).Returns(_personTypeMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("FamilyName")).Returns(_firstNamePropertyMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);

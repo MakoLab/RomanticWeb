@@ -3,15 +3,18 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Mapping.Fluent
 {
+    /// <summary>
+    /// Allows mapping a property to a named graph
+    /// </summary>
 	public class NamedGraphPart
 	{
 		private readonly PredicatePart _predicatePart;
 		private readonly PropertyMap _propertyMap;
 
-		public NamedGraphPart(PredicatePart predicatePart, PropertyMap propertyMap)
+        internal NamedGraphPart(PredicatePart predicatePart, PropertyMap propertyMap)
 		{
-			this._predicatePart = predicatePart;
-			this._propertyMap = propertyMap;
+			_predicatePart = predicatePart;
+			_propertyMap = propertyMap;
 		}
 
 		public PredicatePart SelectedBy<T>() where T : IGraphSelectionStrategy
@@ -19,10 +22,13 @@ namespace RomanticWeb.Mapping.Fluent
 			throw new NotImplementedException();
 		}
 
+        /// <summary>
+        /// Maps the property do a named graph selected by a given function
+        /// </summary>
 		public PredicatePart SelectedBy(Func<EntityId, Uri> createGraphUri)
 		{
-			this._propertyMap.GraphSelector = new FuncGraphSelector(createGraphUri);
-			return this._predicatePart;
+			_propertyMap.GraphSelector = new FuncGraphSelector(createGraphUri);
+			return _predicatePart;
 		}
 	}
 }

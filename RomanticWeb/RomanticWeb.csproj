@@ -64,7 +64,7 @@
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
-    <Compile Include="Mapping\Model\IMapping.cs" />
+    <Compile Include="Mapping\Model\IEntityMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
     <Compile Include="IRdfNodeConverter.cs" />

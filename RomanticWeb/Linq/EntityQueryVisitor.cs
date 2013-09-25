@@ -216,16 +216,16 @@ namespace RomanticWeb.Linq
 				if (expression.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
 				{
 					MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.Method.DeclaringType });
-					IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-					if ((mapping!=null)&&(mapping.Type!=null))
+					IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
+					if ((entityMapping!=null)&&(entityMapping.Type!=null))
 					{
 						Ontology ontology=
 							_ontologyProvider.Ontologies.Where(
-								item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+								item => entityMapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
 						if (ontology!=null)
 						{
 							CurrentGraphPattern++;
-							_commandText.AppendFormat("<{0}> ",mapping.Type.Uri.AbsoluteUri);
+							_commandText.AppendFormat("<{0}> ",entityMapping.Type.Uri.AbsoluteUri);
 						}
 						else
 						{
@@ -359,15 +359,15 @@ namespace RomanticWeb.Linq
 				}
 
 				MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.TypeOperand });
-				IMapping mapping=(IMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-				if ((mapping!=null)&&(mapping.Type!=null))
+				IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
+				if ((entityMapping!=null)&&(entityMapping.Type!=null))
 				{
 					Ontology ontology=
 						_ontologyProvider.Ontologies.Where(
-							item => mapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
+							item => entityMapping.Type.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
 					if (ontology!=null)
 					{
-						_commandText.AppendFormat("?s{0} a <{1}>",0,mapping.Type.Uri.AbsoluteUri);
+						_commandText.AppendFormat("?s{0} a <{1}>",0,entityMapping.Type.Uri.AbsoluteUri);
 						CurrentGraphPattern=3;
 					}
 					else

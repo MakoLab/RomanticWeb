@@ -148,7 +148,7 @@ namespace RomanticWeb.Tests
         public void Accessing_typed_entity_member_for_the_first_time_should_trigger_lazy_load()
         {
             // when
-            var mockingMapping = new Mock<IMapping>();
+            var mockingMapping = new Mock<IEntityMapping>();
             mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>()))
                           .Returns((string prop) => GetMapping(prop));
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
@@ -171,7 +171,6 @@ namespace RomanticWeb.Tests
                        {
                            Name=propertyName,
                            Uri=new Uri("http://unittest/"+propertyName),
-                           UsesUnionGraph=false,
                            IsCollection=false
                        };
         }

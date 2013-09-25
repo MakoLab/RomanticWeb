@@ -5,15 +5,21 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {
+    /// <summary>
+    /// A mapping definition for properties
+    /// </summary>
     public class PropertyMap
     {
 		private readonly PropertyInfo _propertyInfo;
 
-		public PropertyMap(PropertyInfo propertyInfo)
+        internal PropertyMap(PropertyInfo propertyInfo)
 		{
-			this._propertyInfo = propertyInfo;
+			_propertyInfo = propertyInfo;
 		}
 
+        /// <summary>
+        /// Gets a predicate map part
+        /// </summary>
 		public PredicatePart Predicate
 		{
 			get
@@ -35,7 +41,7 @@ namespace RomanticWeb.Mapping.Fluent
         internal IPropertyMapping GetMapping(IOntologyProvider ontologies)
         {
             Uri predicateUri = PredicateUri ?? ontologies.ResolveUri(NamespacePrefix,PredicateName);
-            return new PropertyMapping(this._propertyInfo.Name, predicateUri, this.GraphSelector, this.IsCollection);
+            return new PropertyMapping(_propertyInfo.Name, predicateUri, GraphSelector, IsCollection);
         }
     }
 }

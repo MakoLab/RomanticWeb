@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace RomanticWeb.Mapping.Model
 {
-    internal class EntityMapping : IMapping
+    internal class EntityMapping : IEntityMapping
 	{
 		public EntityMapping()
 		{
-			this.Properties = new List<IPropertyMapping>();
+			Properties = new List<IPropertyMapping>();
 		}
 
 		public ITypeMapping Type { get; internal set; }
@@ -16,7 +16,7 @@ namespace RomanticWeb.Mapping.Model
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            return this.Properties.Single(p => p.Name == propertyName);
+            return Properties.Single(p => p.Name == propertyName);
         }
 	}
 }

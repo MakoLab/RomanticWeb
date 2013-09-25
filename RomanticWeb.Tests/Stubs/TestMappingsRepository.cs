@@ -19,9 +19,9 @@ namespace RomanticWeb.Tests.Stubs
             this._entityMaps = entityMaps.ToList();
         }
 
-        public IMapping MappingFor<TEntity>()
+        public IEntityMapping MappingFor<TEntity>()
         {
-            return this._entityMaps.Where(map => map.EntityType == typeof(TEntity)).Cast<IMappingProvider>().First().GetMapping(_ontologies);
+            return this._entityMaps.Where(map => map.EntityType == typeof(TEntity)).Cast<IMappingProvider>().First().CreateMapping(_ontologies);
         }
 
         public void Add(EntityMap personMapping)

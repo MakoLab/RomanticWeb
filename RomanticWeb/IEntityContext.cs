@@ -5,7 +5,7 @@ using RomanticWeb.Entities;
 namespace RomanticWeb
 {
 	/// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
-	public interface IEntityFactory
+	public interface IEntityContext
 	{
 	    /// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>
 		/// <returns>A queryable collection of entities.</returns>

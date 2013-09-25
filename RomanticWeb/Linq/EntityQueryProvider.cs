@@ -20,22 +20,22 @@ namespace RomanticWeb.Linq
 	public class EntityQueryProvider<T>:QueryProviderBase where T:class,IEntity
 	{
 		#region Fields
-		private IEntityFactory _entityFactory;
+		private IEntityContext _entityContext;
 		private IMappingsRepository _mappingsRepository;
 		private IOntologyProvider _ontologyProvider;
 		#endregion
 
 		#region Constructors
 		/// <summary>Creates an instance of the query provider.</summary>
-		/// <param name="entityFactory">Entity factory to be used when creating objects.</param>
+		/// <param name="entityContext">Entity factory to be used when creating objects.</param>
 		/// <param name="mappingsRepository">Mappings repository used to resolve strongly tuped properties and types.</param>
 		/// <param name="ontologyProvider">Ontology provider that holds the data scheme.</param>
-		protected internal EntityQueryProvider(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider):
-			base(EntityQueryProvider<T>.CreateDefaultQueryParser(),new EntityQueryExecutor(entityFactory,mappingsRepository,ontologyProvider))
+		protected internal EntityQueryProvider(IEntityContext entityContext,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider):
+			base(EntityQueryProvider<T>.CreateDefaultQueryParser(),new EntityQueryExecutor(entityContext,mappingsRepository,ontologyProvider))
 		{
-			if (entityFactory==null)
+			if (entityContext==null)
 			{
-				throw new ArgumentNullException("entityFactory");
+				throw new ArgumentNullException("entityContext");
 			}
 
 			if (mappingsRepository==null)
@@ -53,7 +53,7 @@ namespace RomanticWeb.Linq
 				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(Entity),typeof(T));
 			}
 
-			_entityFactory=entityFactory;
+			_entityContext=entityContext;
 			_mappingsRepository=mappingsRepository;
 			_ontologyProvider=ontologyProvider;
 		}
@@ -67,13 +67,13 @@ namespace RomanticWeb.Linq
 		public override IQueryable<T> CreateQuery<T>(Expression expression)
 		{
 			Type genericQueryable=typeof(EntityQueryable<>).MakeGenericType(new Type[] { typeof(T) });
-			ConstructorInfo constructorInfo=genericQueryable.GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,new Type[] { typeof(IEntityFactory),typeof(IQueryProvider),typeof(Expression) },null);
+			ConstructorInfo constructorInfo=genericQueryable.GetConstructor(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance,null,new Type[] { typeof(IEntityContext),typeof(IQueryProvider),typeof(Expression) },null);
 			if (constructorInfo==null)
 			{
 				ExceptionHelper.ThrowGenericArgumentOutOfRangeException("T",typeof(Entity),typeof(T));
 			}
 
-			return (IQueryable<T>)constructorInfo.Invoke(new object[] { _entityFactory,this,expression });
+			return (IQueryable<T>)constructorInfo.Invoke(new object[] { _entityContext,this,expression });
 		}
 		#endregion
 

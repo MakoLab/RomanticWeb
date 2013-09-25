@@ -18,7 +18,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));
@@ -33,7 +33,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.nick == null);
@@ -46,7 +46,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("AssociatedInstances.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.knows, Is.TypeOf<Entity>());
@@ -60,7 +60,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("AssociatedInstances.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
             dynamic karol = tomasz.foaf.knows;
 
             // then
@@ -74,7 +74,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
@@ -87,7 +87,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             var exception = Assert.Throws<AmbiguousPropertyException>(() => { var nick = tomasz.nick; });
@@ -101,7 +101,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesInNamedGraphs.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.knows != null);
@@ -118,7 +118,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("BlankNodes.trig");
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.knows != null);
@@ -136,7 +136,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
             dynamic people = tomasz.knows;
 
             // then
@@ -156,7 +156,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
             dynamic people = tomasz.foaf.mbox;
 
             // then
@@ -173,7 +173,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
 
             // when
-            dynamic tomasz = EntityFactory.Create(new EntityId("http://magi/math/array"));
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/math/array"));
             var numbers = (IList)tomasz.math.matrix;
 
             // then

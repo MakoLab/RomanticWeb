@@ -9,13 +9,13 @@ namespace RomanticWeb
 {
 	public class RdfNodeConverter : IRdfNodeConverter
 	{
-		private readonly IEntityFactory _entityFactory;
+		private readonly IEntityContext _entityContext;
 
 	    private readonly Lazy<IEntity> _listNil;
 
-		public RdfNodeConverter(IEntityFactory entityFactory)
+		public RdfNodeConverter(IEntityContext entityContext)
 		{
-			_entityFactory = entityFactory;
+			_entityContext = entityContext;
 		}
 
 		// todo: refactor this functionality to a specialized class (multiple implementations stored in a lookup dictionary?)
@@ -25,11 +25,11 @@ namespace RomanticWeb
 			{
 				if (subject.IsUri)
 				{
-                    yield return _entityFactory.Create(subject.ToEntityId());
+                    yield return _entityContext.Create(subject.ToEntityId());
 				}
 				else if (subject.IsBlank)
 				{
-				    dynamic potentialList=_entityFactory.Create(subject.ToEntityId()).AsDynamic();
+				    dynamic potentialList=_entityContext.Create(subject.ToEntityId()).AsDynamic();
 
                     var blankNodeListConverter = new BlankNodeListConverter(tripleSource);
 

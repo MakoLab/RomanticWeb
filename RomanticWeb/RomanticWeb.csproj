@@ -91,7 +91,7 @@
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityId.cs" />
-    <Compile Include="IEntityFactory.cs" />
+    <Compile Include="IEntityContext.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />

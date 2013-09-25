@@ -16,7 +16,7 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class EntityContextTests
     {
-        private IEntityFactory _entityFactory;
+        private IEntityContext _entityContext;
         private IOntologyProvider _ontologyProvider;
         private Mock<IMappingsRepository> _mappings;
         private Mock<IEntityStore> _entityStore;
@@ -28,12 +28,12 @@ namespace RomanticWeb.Tests
             {
                 Setup();
 
-                yield return new Lazy<IEntity>(() => _entityFactory.Create(new EntityId("http://magi/people/Tomasz")));
+                yield return new Lazy<IEntity>(() => _entityContext.Create(new EntityId("http://magi/people/Tomasz")));
                 yield return new Lazy<IEntity>(
                     () =>
                     {
                         _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-                        return _entityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+                        return _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
                     });
             }
         }
@@ -45,7 +45,7 @@ namespace RomanticWeb.Tests
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
-            _entityFactory = new EntityContext(_mappings.Object, _ontologyProvider, _entityStore.Object, _store.Object);
+            _entityContext = new EntityContext(_mappings.Object, _ontologyProvider, _entityStore.Object, _store.Object);
         }
 
         [TearDown]
@@ -72,7 +72,7 @@ namespace RomanticWeb.Tests
         [Test, ExpectedException(typeof(ArgumentNullException))]
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
-            _entityFactory.Create((EntityId)null);
+            _entityContext.Create((EntityId)null);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-            var entity = _entityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
             var typed = new Entity(new EntityId("http://magi/people/Tomasz"));
 
             // then
@@ -135,7 +135,7 @@ namespace RomanticWeb.Tests
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
                         .Returns(new RdfNode[0]);
-            dynamic entity = _entityFactory.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var id = entity.foaf.givenName;
@@ -154,7 +154,7 @@ namespace RomanticWeb.Tests
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>()))
                         .Returns(new RdfNode[0]);
-            var entity = _entityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var name = entity.FirstName;

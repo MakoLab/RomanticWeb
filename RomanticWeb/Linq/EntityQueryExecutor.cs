@@ -13,19 +13,19 @@ namespace RomanticWeb.Linq
 	internal class EntityQueryExecutor:IQueryExecutor
 	{
 		#region Fields
-		private IEntityFactory _entityFactory;
+		private IEntityContext _entityContext;
 		private IMappingsRepository _mappingsRepository;
 		private IOntologyProvider _ontologyProvider;
 		#endregion
 
 		#region Constructors
 		/// <summary>Creates an instance of the query executor aware of the entities queried.</summary>
-		/// <param name="entityFactory">Entity factory to be used when creating objects.</param>
+		/// <param name="entityContext">Entity factory to be used when creating objects.</param>
 		/// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
 		/// <param name="ontologyProvider">Ontology provider with data scheme.</param>
-		internal EntityQueryExecutor(IEntityFactory entityFactory,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
+		internal EntityQueryExecutor(IEntityContext entityContext,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
 			{
-			_entityFactory=entityFactory;
+			_entityContext=entityContext;
 			_mappingsRepository=mappingsRepository;
 			_ontologyProvider=ontologyProvider;
 		}
@@ -47,9 +47,9 @@ namespace RomanticWeb.Linq
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
 			{
-				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
+				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
-				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText });
+				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText });
 			}
 
 			return result;
@@ -80,9 +80,9 @@ namespace RomanticWeb.Linq
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
 			{
-				MethodInfo createMethodInfo=_entityFactory.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
+				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
 					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
-				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityFactory,new object[] { commandText })).FirstOrDefault();
+				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText })).FirstOrDefault();
 			}
 
 			return result;

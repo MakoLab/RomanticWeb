@@ -12,7 +12,7 @@ using RomanticWeb.Ontologies;
 namespace RomanticWeb
 {
 	/// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
-	public class EntityContext:IEntityFactory
+	public class EntityContext:IEntityContext
 	{
 		private readonly IEntityStore _entityStore;
 

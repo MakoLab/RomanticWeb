@@ -24,7 +24,7 @@ namespace RomanticWeb.Tests.Linq
 			List<IPerson> Knows { get; }
 		}
 
-		private IEntityFactory _entityFactory;
+		private IEntityContext _entityContext;
 		private TripleStore _store;
 		private Mock<ITypeMapping> _personTypeMappingMock;
 		private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
@@ -61,14 +61,14 @@ namespace RomanticWeb.Tests.Linq
 				new Ontology(
 					new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
 					new Property("type")) });
-			_entityFactory=new EntityContext(_mappingsRepositoryMock.Object,_ontologyProviderMock.Object,new TripleStoreAdapter(_store));
+			_entityContext=new EntityContext(_mappingsRepositoryMock.Object,_ontologyProviderMock.Object,new TripleStoreAdapter(_store));
 		}
 
 		[Test]
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_from_pointed_ontology_test()
 		{
-			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
+			IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
 									where (string)((OntologyAccessor)resources["foaf"])["givenName"]=="Tomasz"
 									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(1));
@@ -82,7 +82,7 @@ namespace RomanticWeb.Tests.Linq
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_single_literal_predicate_value_condition_test()
 		{
-			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
+			IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
 									where (string)resources["givenName"]=="Tomasz"
 									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(1));
@@ -96,7 +96,7 @@ namespace RomanticWeb.Tests.Linq
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_subject_identifier_condition_test()
 		{
-			IEntity entity=(from resources in _entityFactory.AsQueryable<IEntity>()
+			IEntity entity=(from resources in _entityContext.AsQueryable<IEntity>()
 						   where resources.Id==(EntityId)"http://magi/people/Karol"
 						   select resources).FirstOrDefault();
 			Assert.That(entity,Is.Not.Null);
@@ -109,7 +109,7 @@ namespace RomanticWeb.Tests.Linq
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
 		{
-			IList<IEntity> entities=(from resources in _entityFactory.AsQueryable<IEntity>()
+			IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
 									where resources is IPerson
 									select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(3));
@@ -129,7 +129,7 @@ namespace RomanticWeb.Tests.Linq
 		[Repeat(5)]
 		public void Selecting_specific_type_entities_test()
 		{
-			IList<IPerson> entities=(from resources in _entityFactory.AsQueryable<IPerson>()
+			IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
 									 select resources).ToList();
 			Assert.That(entities.Count,Is.EqualTo(3));
 			IPerson tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
@@ -146,7 +146,7 @@ namespace RomanticWeb.Tests.Linq
 		[Repeat(5)]
 		public void Selecting_entities_by_providing_nested_predicate_value_condition_test()
 		{
-			IEntity entity=(from resources in _entityFactory.AsQueryable<IEntity>()
+			IEntity entity=(from resources in _entityContext.AsQueryable<IEntity>()
 							where ((IList<IEntity>)((OntologyAccessor)resources["foaf"])["knows"]).Any(item => item.Id==(EntityId)"http://magi/people/Tomasz")
 						   select resources).FirstOrDefault();
 			Assert.That(entity,Is.Not.Null);

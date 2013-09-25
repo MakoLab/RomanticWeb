@@ -18,13 +18,13 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected IEntityFactory EntityFactory { get; private set; }
+        protected IEntityContext EntityContext { get; private set; }
 
         [SetUp]
         public void Setup()
         {
             _mappings = SetupMappings();
-            EntityFactory = new EntityContext(Mappings, new TestOntologyProvider(), CreateEntitySource());
+            EntityContext = new EntityContext(Mappings, new TestOntologyProvider(), CreateEntitySource());
 
             ChildSetup();
         }

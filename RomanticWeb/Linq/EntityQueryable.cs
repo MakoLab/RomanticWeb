@@ -27,8 +27,8 @@ namespace RomanticWeb.Linq
 
 		/// <summary>Creates an instance of the queryable entity factory.</summary>
 		/// <param name="provider">Query provider to be used by this queryable instance.</param>
-		protected internal EntityQueryable(IEntityFactory entityFactory,IMappingsRepository mappings,IOntologyProvider ontologyProvider):base(
-			QueryParser.CreateDefault(),new EntityQueryExecutor(entityFactory,mappings,ontologyProvider))
+		protected internal EntityQueryable(IEntityContext entityContext,IMappingsRepository mappings,IOntologyProvider ontologyProvider):base(
+			QueryParser.CreateDefault(),new EntityQueryExecutor(entityContext,mappings,ontologyProvider))
 		{
 			if (!typeof(IEntity).IsAssignableFrom(typeof(T)))
 			{

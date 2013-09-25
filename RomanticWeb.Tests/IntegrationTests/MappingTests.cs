@@ -14,7 +14,7 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         protected IPerson Entity
         {
-            get { return EntityFactory.Create<IPerson>(new EntityId("http://magi/people/Tomasz")); }
+            get { return EntityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz")); }
         }
 
         private new TestMappingsRepository Mappings

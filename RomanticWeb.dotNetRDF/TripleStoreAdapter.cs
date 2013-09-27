@@ -28,7 +28,7 @@ namespace RomanticWeb.DotNetRDF
 
         public void LoadEntity(IEntityStore store,EntityId entityId)
         {
-            var select = QueryBuilder.Select("entity", "s", "p", "o", "g")
+            var select = QueryBuilder.Select("s", "p", "o", "g")
                                      .Graph("?g", g => g.Where(t => t.Subject("s").Predicate("p").Object("o")))
                                      .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             select.Prefixes.Import(_namespaces);
@@ -39,7 +39,7 @@ namespace RomanticWeb.DotNetRDF
                 Node predicate = result["p"].WrapNode();
                 Node @object=result["o"].WrapNode();
                 Node graph=result.HasBoundValue("g")?result["g"].WrapNode():null;
-                store.AssertTriple(entityId, graph, new Triple(subject, predicate, @object));
+                store.AssertTriple(new EntityTriple(entityId,subject,predicate,@object,graph));
             }
         }
 

@@ -11,6 +11,6 @@ namespace RomanticWeb
 
         bool EntityIsCollectionRoot(IEntity potentialList);
 
-        void AssertTriple(EntityId entityId,Node graph,Triple triple);
+        void AssertTriple(EntityTriple entityTriple);
     }
 }

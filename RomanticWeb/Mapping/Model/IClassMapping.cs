@@ -5,7 +5,7 @@ namespace RomanticWeb.Mapping.Model
     /// <summary>
     /// A RDF type mapping fr an Entity
     /// </summary>
-    public interface ITypeMapping
+    public interface IClassMapping
 	{
         /// <summary>
         /// Gets the Entity's RDF class URI

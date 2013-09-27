@@ -10,7 +10,7 @@ namespace RomanticWeb.Mapping.Model
 			Properties = new List<IPropertyMapping>();
 		}
 
-		public ITypeMapping Type { get; internal set; }
+		public IClassMapping Class { get; internal set; }
 
         internal IList<IPropertyMapping> Properties { get; set; }
 

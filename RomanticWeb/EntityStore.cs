@@ -9,37 +9,33 @@ namespace RomanticWeb
 {
     public class EntityStore:IEntityStore
     {
-        private readonly IDictionary<EntityId,QuadCollection> _entityQuads; 
+        private readonly ISet<EntityTriple> _entityQuads; 
 
         public EntityStore()
         {
-            _entityQuads=new ConcurrentDictionary<EntityId,QuadCollection>();
+            _entityQuads=new SortedSet<EntityTriple>();
         }
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate)
         {
-            return from triple in _entityQuads.SelectMany(e=>e.Value.Triples)
+            return from triple in _entityQuads
                    where triple.Predicate==Node.ForUri(predicate)
-                         && triple.Subject==Node.ForUri(entityId.Uri)
+                   && triple.Subject==Node.ForUri(entityId.Uri)
                    select triple.Object;
         }
 
         public bool EntityIsCollectionRoot(IEntity potentialListRoot)
         {
-            return !(from propertyObjectPair in _entityQuads.SelectMany(e=>e.Value.Triples)
+            // todo: check negative scenario for false positive
+            return !(from propertyObjectPair in _entityQuads
                      where propertyObjectPair.Predicate == Node.ForUri(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"))
                      && propertyObjectPair.Object == Node.ForUri(potentialListRoot.Id.Uri)
                      select propertyObjectPair).Any();
         }
 
-        public void AssertTriple(EntityId entityId,Node graph,Triple triple)
+        public void AssertTriple(EntityTriple entityTriple)
         {
-            if (!_entityQuads.ContainsKey(entityId))
-            {
-                _entityQuads[entityId]=new QuadCollection();
-            }
-
-            _entityQuads[entityId].AssertQuad(graph,triple);
+            _entityQuads.Add(entityTriple);
         }
     }
 }

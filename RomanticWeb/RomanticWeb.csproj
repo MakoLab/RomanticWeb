@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
     <Compile Include="BlankNodeListConverter.cs" />
+    <Compile Include="FluentCompare.cs" />
     <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="EntityProxy.cs" />
@@ -68,7 +69,7 @@
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
     <Compile Include="IRdfNodeConverter.cs" />
-    <Compile Include="Mapping\Model\ITypeMapping.cs" />
+    <Compile Include="Mapping\Model\IClassMapping.cs" />
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
     <Compile Include="Mapping\Model\EntityMapping.cs" />
@@ -82,8 +83,8 @@
     <Compile Include="Linq\EntityQueryable.cs" />
     <Compile Include="Mapping\Attributes\MappingAttribute.cs" />
     <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
-    <Compile Include="Mapping\Attributes\ClassTypeAttribute.cs" />
-    <Compile Include="Mapping\Model\TypeMapping.cs" />
+    <Compile Include="Mapping\Attributes\ClassAttribute.cs" />
+    <Compile Include="Mapping\Model\ClassMapping.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
@@ -102,11 +103,11 @@
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\Class.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="QuadCollection.cs" />
     <Compile Include="RdfNodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="EntityStore.cs" />
-    <Compile Include="Triple.cs" />
+    <Compile Include="EntityTriple.cs" />
+    <Compile Include="AbsoluteUriComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />

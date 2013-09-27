@@ -6,7 +6,7 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// An Entity's identifier (URI or blank node)
     /// </summary>
-	public class EntityId
+	public class EntityId:IComparable,IComparable<EntityId>
     {
         private readonly Uri _uri;
 
@@ -33,17 +33,12 @@ namespace RomanticWeb.Entities
             get { return _uri; }
         }
 
-		/// <summary>
-		/// Checks if two Entity identifiers are equal
-		/// </summary>
+#pragma warning disable 1591
 		public static bool operator==([AllowNull] EntityId left,[AllowNull] EntityId right)
 		{
 			return Equals(left,right);
 		}
 
-		/// <summary>
-		/// Checks if two Entity identifiers are not equal
-		/// </summary>
 		public static bool operator!=([AllowNull] EntityId left,[AllowNull] EntityId right)
 		{
 			return !(left==right);
@@ -59,6 +54,7 @@ namespace RomanticWeb.Entities
 
             return result;
         }
+#pragma warning restore 1591
 
         /// <summary>
         /// Gets the hash code
@@ -66,6 +62,16 @@ namespace RomanticWeb.Entities
         public override int GetHashCode()
         {
             return _uri.GetHashCode();
+        }
+
+        int IComparable.CompareTo(object obj)
+        {
+            return FluentCompare<EntityId>.Arguments(this,obj).By(id => id.Uri,new AbsoluteUriComparer()).End();
+        }
+
+        int IComparable<EntityId>.CompareTo(EntityId other)
+        {
+            return ((IComparable)this).CompareTo(other);
         }
 
         /// <summary>

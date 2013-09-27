@@ -9,7 +9,7 @@
         /// <summary>
         /// Gets the RDF type mapping
         /// </summary>
-		ITypeMapping Type { get; }
+		IClassMapping Class { get; }
 
         /// <summary>
         /// Gets the property mapping for a property by name

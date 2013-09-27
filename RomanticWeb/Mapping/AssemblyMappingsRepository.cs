@@ -52,10 +52,10 @@ namespace RomanticWeb.Mapping
         private IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(Assembly assembly)
 		{
             return from type in assembly.GetTypes()
-                   from mapping in type.GetCustomAttributes(typeof(ClassTypeAttribute),true).Cast<ClassTypeAttribute>()
+                   from mapping in type.GetCustomAttributes(typeof(ClassAttribute),true).Cast<ClassAttribute>()
                    let typeMapping = mapping.GetMapping(_ontologyProvider)
                    let propertyMapping = BuildPropertyMappings(type).ToList()
-                   select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Type=typeMapping,Properties=propertyMapping });
+                   select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=typeMapping,Properties=propertyMapping });
 		}
 
         #endregion

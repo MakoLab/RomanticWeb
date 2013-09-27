@@ -10,7 +10,17 @@ namespace RomanticWeb.DotNetRDF
 			var literal = node as ILiteralNode;
 			if (literal != null)
 			{
-				return Node.ForLiteral(literal.Value, literal.Language, literal.DataType);
+                if (literal.DataType!=null)
+                {
+                    return Node.ForLiteral(literal.Value,literal.DataType);
+                }
+                
+                if (literal.Language!=null)
+                {
+                    return Node.ForLiteral(literal.Value,literal.Language);
+                }
+
+				return Node.ForLiteral(literal.Value);
 			}
 
 			var uriNode = node as IUriNode;

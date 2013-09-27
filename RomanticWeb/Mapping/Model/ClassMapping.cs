@@ -2,9 +2,9 @@
 
 namespace RomanticWeb.Mapping.Model
 {
-    internal class TypeMapping:ITypeMapping
+    internal class ClassMapping:IClassMapping
     {
-        public TypeMapping(Uri uri)
+        public ClassMapping(Uri uri)
         {
             Uri=uri;
         }

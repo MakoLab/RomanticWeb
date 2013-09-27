@@ -8,7 +8,7 @@ namespace RomanticWeb
 	/// Represents an RDF node (URI or literal)
 	/// </summary>
 	/// <remarks>Blank nodes are not supported currently</remarks>
-	public sealed class Node
+	public sealed class Node:IComparable,IComparable<Node>
 	{
 		private readonly string _literal;
 		private readonly string _language;
@@ -22,6 +22,11 @@ namespace RomanticWeb
 
 		private Node(string literal, string language, Uri dataType)
 		{
+            if (language!=null&&dataType!=null)
+            {
+                throw new InvalidOperationException("Literal node cannot have both laguage and data type");
+            }
+
 			_literal = literal;
 			_language = language;
 			_dataType = dataType;
@@ -133,14 +138,20 @@ namespace RomanticWeb
 			return new Node(uri);
 		}
 
-		/// <summary>
-		/// Factory method for creating literal nodes
-        /// </summary>
-        /// todo:make extension method?
-		public static Node ForLiteral(string value, [AllowNull] string language, [AllowNull] Uri dataType)
-		{
-			return new Node(value, language, dataType);
-		}
+        public static Node ForLiteral(string literal)
+        {
+            return new Node(literal, null, null);
+        }
+
+        public static Node ForLiteral(string literal, Uri datatype)
+        {
+            return new Node(literal,null,datatype);
+        }
+
+        public static Node ForLiteral(string literal, string language)
+        {
+            return new Node(literal,language,null);
+        }
 
         /// <summary>
         /// Factory method for creating blank nodes
@@ -191,7 +202,38 @@ namespace RomanticWeb
 			}
 		}
 
-        /// <summary>
+	    int IComparable.CompareTo(object obj)
+	    {
+	        return ((IComparable<Node>)this).CompareTo(obj as Node);
+	    }
+
+        int IComparable<Node>.CompareTo(Node other)
+        {
+            var compare = FluentCompare<Node>.Arguments(this, other);
+
+            if ((IsUri||IsBlank))
+            {
+                if ((other.IsUri||other.IsBlank))
+                {
+                    return compare.By(n => n.Uri.AbsoluteUri).End();
+                }
+
+                // Literal node is always less then URI and blanks
+                return 1;
+            }
+
+            if (other.IsLiteral)
+            {
+                return compare.By(n => n.Literal,StringComparer.Ordinal)
+                              .By(n => n.DataType,new AbsoluteUriComparer())
+                              .By(n => n.Language,StringComparer.OrdinalIgnoreCase).End();
+            }
+
+            // Literal node is always less then URI and blanks
+            return -1;
+        }
+
+	    /// <summary>
         /// Gets the string representation of a node
         /// </summary>
         /// <returns>Literal value or URI for literal and URI nodes respectively</returns>
@@ -237,7 +279,7 @@ namespace RomanticWeb
             }
 
             // is Uri
-            return Equals(_uri.AbsoluteUri, other._uri.AbsoluteUri);
+            return Uri.Compare(_uri, other._uri,UriComponents.AbsoluteUri,UriFormat.UriEscaped,StringComparison.Ordinal)==0;
         }
 	}
 }

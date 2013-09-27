@@ -8,14 +8,14 @@ namespace RomanticWeb.Mapping.Attributes
     /// Maps a type to an RDF class
     /// </summary>
 	[AttributeUsage(AttributeTargets.Interface|AttributeTargets.Class|AttributeTargets.Struct)]
-	public sealed class ClassTypeAttribute:MappingAttribute
+	public sealed class ClassAttribute:MappingAttribute
 	{
 		#region Fields
 		private readonly string _className;
 		#endregion
 
 		#region Constructors
-		public ClassTypeAttribute(string prefix,string className):base(prefix)
+		public ClassAttribute(string prefix,string className):base(prefix)
 		{
 			_className=className;
 		}
@@ -25,9 +25,9 @@ namespace RomanticWeb.Mapping.Attributes
 		public string ClassName { get { return _className; } }
 		#endregion
 
-	    internal ITypeMapping GetMapping(IOntologyProvider prefixes)
+	    internal IClassMapping GetMapping(IOntologyProvider prefixes)
 	    {
-	        return new TypeMapping(prefixes.ResolveUri(Prefix,ClassName));
+	        return new ClassMapping(prefixes.ResolveUri(Prefix,ClassName));
 	    }
 	}
 }

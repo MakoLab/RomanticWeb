@@ -26,7 +26,7 @@ namespace RomanticWeb.Tests.Linq
 
 		private IEntityContext _entityContext;
 		private TripleStore _store;
-		private Mock<ITypeMapping> _personTypeMappingMock;
+		private Mock<IClassMapping> _personTypeMappingMock;
 		private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
 		private Mock<IPropertyMapping> _knowsPropertyMappingMock;
 		private Mock<IEntityMapping> _personMappingMock;
@@ -38,14 +38,14 @@ namespace RomanticWeb.Tests.Linq
 		{
 			_store=new TripleStore();
 			_store.LoadTestFile("TriplesWithLiteralSubjects.trig");
-			_personTypeMappingMock=new Mock<ITypeMapping>(MockBehavior.Strict);
+			_personTypeMappingMock=new Mock<IClassMapping>(MockBehavior.Strict);
 			_personTypeMappingMock.SetupGet(typeMapping => typeMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/Person"));
 			_firstNamePropertyMappingMock=new Mock<IPropertyMapping>();
 			_firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/familyName"));
 			_knowsPropertyMappingMock=new Mock<IPropertyMapping>();
 			_knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/knows"));
 			_personMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
-			_personMappingMock.SetupGet(mapping => mapping.Type).Returns(_personTypeMappingMock.Object);
+			_personMappingMock.SetupGet(mapping => mapping.Class).Returns(_personTypeMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("FamilyName")).Returns(_firstNamePropertyMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);
 			_mappingsRepositoryMock=new Mock<IMappingsRepository>(MockBehavior.Strict);

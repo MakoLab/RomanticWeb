@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Based on idea from http://www.make-awesome.com/2010/06/easier-complex-icomparable-implementations/
+    /// </summary>
     internal class FluentCompare<T>
         where T : class
     {

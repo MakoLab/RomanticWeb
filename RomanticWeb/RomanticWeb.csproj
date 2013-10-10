@@ -52,14 +52,24 @@
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
     <Compile Include="BlankNodeListConverter.cs" />
+    <Compile Include="Calculation.cs" />
+    <Compile Include="Converters\BooleanConverter.cs" />
+    <Compile Include="Converters\DateTimeConverter.cs" />
+    <Compile Include="Converters\DecimalConverter.cs" />
+    <Compile Include="Converters\DoubleConverter.cs" />
+    <Compile Include="Converters\DurationConverter.cs" />
+    <Compile Include="Converters\IntegerConverter.cs" />
+    <Compile Include="Converters\XsdConverterBase.cs" />
     <Compile Include="FluentCompare.cs" />
     <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="IBlankNodeConverter.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
     <Compile Include="IEntitySource.cs" />
+    <Compile Include="INodeProcessor.cs" />
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
@@ -68,7 +78,7 @@
     <Compile Include="Mapping\Model\IEntityMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
-    <Compile Include="IRdfNodeConverter.cs" />
+    <Compile Include="ILiteralNodeConverter.cs" />
     <Compile Include="Mapping\Model\IClassMapping.cs" />
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
@@ -103,11 +113,12 @@
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\Class.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="RdfNodeConverter.cs" />
+    <Compile Include="NodeProcessor.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="EntityStore.cs" />
     <Compile Include="EntityTriple.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
+    <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />
@@ -134,6 +145,8 @@
       <HintPath>..\packages\Remotion.Linq.1.15.2.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

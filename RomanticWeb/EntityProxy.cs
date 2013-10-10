@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
@@ -14,14 +13,14 @@ namespace RomanticWeb
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMappings;
-        private readonly RdfNodeConverter _converter;
+        private readonly INodeProcessor _processor;
 
-        public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, RdfNodeConverter converter)
+        internal EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeProcessor processor)
         {
             _store = store;
             _entity = entity;
             _entityMappings = entityMappings;
-            _converter = converter;
+            _processor = processor;
         }
 
         public EntityId Id
@@ -46,7 +45,8 @@ namespace RomanticWeb
 
             var property = _entityMappings.PropertyFor(binder.Name);
 
-            IList objectsForPredicate = _converter.Convert(_store.GetObjectsForPredicate(_entity.Id,property.Uri), _store).ToList();
+            var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
+            IList objectsForPredicate = _processor.ProcessNodes(property.Uri,objects).ToList();
 
             if ((objectsForPredicate.Count>1||property.IsCollection)&&objectsForPredicate.Cast<object>().All(o=>!(o is IList)))
             {

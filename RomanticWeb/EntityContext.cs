@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -19,30 +22,57 @@ namespace RomanticWeb
 
 	    private readonly IMappingsRepository _mappings;
 
-	    private readonly IOntologyProvider _ontologyProvider;
+	    private IOntologyProvider _ontologyProvider;
 
-	    public EntityContext(IMappingsRepository mappings, IOntologyProvider ontologyProvider, IEntitySource tripleStore)
-            : this(mappings, ontologyProvider, new EntityStore(), tripleStore)
+	    public EntityContext(IMappingsRepository mappings, IEntitySource tripleStore)
+            : this(mappings, new EntityStore(), tripleStore)
 		{
 		}
 
-        internal EntityContext(IMappingsRepository mappings,IOntologyProvider ontologyProvider,IEntityStore entityStore,IEntitySource entitySource)
+        internal EntityContext(IMappingsRepository mappings,IEntityStore entityStore,IEntitySource entitySource)
         {
             LogTo.Info("Creating entity context");
             _mappings = mappings;
             _entityStore=entityStore;
             _entitySource=entitySource;
-            _ontologyProvider = new DefaultOntologiesProvider(ontologyProvider);
+            OntologyProvider = new DefaultOntologiesProvider();
+            NodeProcessor=new NodeProcessor(this,entityStore);
+
+            var assemblyCatalog=new AssemblyCatalog(GetType().Assembly);
+            var container=new CompositionContainer(assemblyCatalog,CompositionOptions.IsThreadSafe);
+            container.ComposeParts(NodeProcessor);
         }
+
+        public IOntologyProvider OntologyProvider
+        {
+            get
+            {
+                return _ontologyProvider;
+            }
+
+            set
+            {
+                if (value is DefaultOntologiesProvider)
+                {
+                    _ontologyProvider=value;
+                }
+                else
+                {
+                    _ontologyProvider=new DefaultOntologiesProvider(value);
+                }
+            }
+        }
+
+        public INodeProcessor NodeProcessor { get; set; }
 
 	    public IQueryable<Entity> AsQueryable()
 		{
-			return new EntityQueryable<Entity>(this,_mappings,_ontologyProvider);
+            return new EntityQueryable<Entity>(this, _mappings, OntologyProvider);
 		}
 
 		public IQueryable<T> AsQueryable<T>() where T:class,IEntity
 		{
-			return new EntityQueryable<T>(this,_mappings,_ontologyProvider);
+            return new EntityQueryable<T>(this, _mappings, OntologyProvider);
 		}
 
 		public Entity Create(EntityId entityId)
@@ -52,10 +82,9 @@ namespace RomanticWeb
 
 			foreach (var ontology in _ontologyProvider.Ontologies)
 			{
-				entity[ontology.Prefix]=new OntologyAccessor(_entityStore,entity,ontology,new RdfNodeConverter(this));
+			    entity[ontology.Prefix]=new OntologyAccessor(_entityStore,entity,ontology,NodeProcessor);
 			}
 
-            LogTo.Debug("Entity {0} created", entityId);
 			return entity;
 		}
 
@@ -96,7 +125,7 @@ namespace RomanticWeb
 		internal T EntityAs<T>(Entity entity) where T : class,IEntity
         {
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
-			return new EntityProxy(_entityStore, entity, _mappings.MappingFor<T>(), new RdfNodeConverter(this)).ActLike<T>();
-		}
+		    return new EntityProxy(_entityStore,entity,_mappings.MappingFor<T>(),NodeProcessor).ActLike<T>();
+        }
 	}
 }

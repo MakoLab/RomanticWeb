@@ -24,7 +24,10 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setup()
         {
             _mappings = SetupMappings();
-            EntityContext = new EntityContext(Mappings, new TestOntologyProvider(), CreateEntitySource());
+            EntityContext=new EntityContext(Mappings,CreateEntitySource())
+                              {
+                                  OntologyProvider=new TestOntologyProvider()
+                              };
 
             ChildSetup();
         }

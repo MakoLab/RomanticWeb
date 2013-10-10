@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace RomanticWeb.Ontologies
@@ -7,6 +6,10 @@ namespace RomanticWeb.Ontologies
 	internal sealed class DefaultOntologiesProvider : OntologyProviderBase
 	{
 		private readonly IList<Ontology> _ontologies;
+
+        public DefaultOntologiesProvider()
+        {
+        }
 
 		public DefaultOntologiesProvider(IOntologyProvider ontologyProvider)
 		{

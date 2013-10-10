@@ -61,7 +61,10 @@ namespace RomanticWeb.Tests.Linq
 				new Ontology(
 					new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
 					new Property("type")) });
-			_entityContext=new EntityContext(_mappingsRepositoryMock.Object,_ontologyProviderMock.Object,new TripleStoreAdapter(_store));
+			_entityContext=new EntityContext(_mappingsRepositoryMock.Object,new TripleStoreAdapter(_store))
+			                   {
+                                   OntologyProvider = _ontologyProviderMock.Object
+			                   };
 		}
 
 		[Test]

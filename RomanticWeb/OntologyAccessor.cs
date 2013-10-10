@@ -13,12 +13,12 @@ namespace RomanticWeb
 	/// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
 	/// </summary>
 	[NullGuard(ValidationFlags.OutValues)]
-	public sealed class OntologyAccessor : ImpromptuDictionary
+	internal sealed class OntologyAccessor : DynamicObject
 	{
 		private readonly IEntityStore _tripleSource;
 		private readonly Entity _entity;
 		private readonly Ontology _ontology;
-		private readonly IRdfNodeConverter _nodeConverter;
+		private readonly INodeProcessor _nodeProcessor;
 
 		/// <summary>
 		/// Creates a new instance of <see cref="OntologyAccessor"/>
@@ -26,12 +26,12 @@ namespace RomanticWeb
 		/// <param name="tripleSource">underlying RDF source</param>
 		/// <param name="entity">the access Entity</param>
 		/// <param name="ontology">Ontolgy used to resolve predicate names</param>
-		internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, IRdfNodeConverter nodeConverter)
+		internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, INodeProcessor nodeProcessor)
 		{
 			_tripleSource = tripleSource;
 			_entity = entity;
 			_ontology = ontology;
-			_nodeConverter = nodeConverter;
+			_nodeProcessor = nodeProcessor;
 		}
 
 		internal IEnumerable<Property> KnownProperties
@@ -50,7 +50,6 @@ namespace RomanticWeb
 
 			if (property == null)
             {
-                LogTo.Debug("Predicate {0} not found in namespace {1}. Creating one impliclty from name", binder.Name, _ontology.BaseUri);
 				property = new Property(binder.Name).InOntology(_ontology);
 			}
 
@@ -61,8 +60,8 @@ namespace RomanticWeb
 
 	    internal dynamic GetObjects(EntityId entity, Property predicate)
 		{
-			var objectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri).ToList();
-			var objects = _nodeConverter.Convert(objectValues, _tripleSource).ToList();
+			var objectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri);
+			var objects = _nodeProcessor.ProcessNodes(predicate.Uri,objectValues).ToList();
 
 			if (objects.Count == 1)
 			{

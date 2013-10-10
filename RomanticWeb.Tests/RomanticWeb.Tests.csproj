@@ -90,16 +90,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BooleanConverterTests.cs" />
+    <Compile Include="Converters\DateTimeConverterTests.cs" />
+    <Compile Include="Converters\DecimalConverterTests.cs" />
+    <Compile Include="Converters\DoubleConverterTests.cs" />
+    <Compile Include="Converters\DurationConverterTests.cs" />
+    <Compile Include="Converters\IntegerConverterTests.cs" />
+    <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="EntityContextTests.cs" />
     <Compile Include="EntityIdTests.cs" />
     <Compile Include="EntityStoreTests.cs" />
     <Compile Include="EntityTests.cs" />
+    <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\TripleStoreExtensions.cs" />
     <Compile Include="IntegrationTests\DynamicTests.cs" />
     <Compile Include="IntegrationTests\InMemoryDynamicTests.cs" />
     <Compile Include="IntegrationTests\InMemoryMappingTests.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
+    <Compile Include="NodeProcessorTests.cs" />
     <Compile Include="NodeTests.cs" />
     <Compile Include="RdfNodeTests.cs" />
     <Compile Include="Stubs\TestMappingsRepository.cs" />

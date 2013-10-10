@@ -4,7 +4,6 @@ using FluentAssertions;
 using ImpromptuInterface;
 using NUnit.Framework;
 using RomanticWeb.Entities;
-using RomanticWeb.Tests.Helpers;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -179,8 +178,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(numbers != null);
             Assert.That(numbers.Count, Is.EqualTo(2));
-            numbers[0].ActLike<IList>().Should().ContainInOrder(0, 1, 2);
-            numbers[1].ActLike<IList>().Should().ContainInOrder(3, 4, 5);
+            numbers[0].ActLike<IList>().Should().ContainInOrder(0L, 1L, 2L);
+            numbers[1].ActLike<IList>().Should().ContainInOrder(3L, 4L, 5L);
         }
 	}
 }

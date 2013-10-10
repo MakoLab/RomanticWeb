@@ -45,7 +45,10 @@ namespace RomanticWeb.Tests
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
-            _entityContext = new EntityContext(_mappings.Object, _ontologyProvider, _entityStore.Object, _store.Object);
+            _entityContext = new EntityContext(_mappings.Object, _entityStore.Object, _store.Object)
+                                 {
+                                     OntologyProvider=_ontologyProvider
+                                 };
         }
 
         [TearDown]

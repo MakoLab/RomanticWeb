@@ -17,18 +17,18 @@ namespace RomanticWeb
 	        _store=store;
 	        _entityContext=entityContext;
             Converters=new List<ILiteralNodeConverter>();
-            BlankNodeConverters=new List<IComplexTypeConverter>();
+            ComplexTypeConverters=new List<IComplexTypeConverter>();
 	    }
         
         [ImportMany]
         public IEnumerable<ILiteralNodeConverter> Converters { get; internal set; }
 
         [ImportMany]
-        public IEnumerable<IComplexTypeConverter> BlankNodeConverters { get; internal set; }
+        public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
 	    public IEnumerable<object> ProcessNodes(Uri predicate,IEnumerable<Node> objects)
 		{
-			foreach (var objectNode in objects)
+			foreach (var objectNode in objects.ToList())
 			{
 			    if (objectNode.IsLiteral)
 			    {
@@ -61,7 +61,7 @@ namespace RomanticWeb
 	    {
 	        var entity=_entityContext.Create(objectNode.ToEntityId());
 
-	        var converter=BlankNodeConverters.FirstOrDefault(c => c.CanConvert(entity,_store));
+	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store));
 
 	        if (converter!=null)
 	        {

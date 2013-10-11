@@ -50,7 +50,9 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateOperation.cs" />
     <Compile Include="AmbiguousPropertyException.cs" />
+    <Compile Include="DynamicPropertyAggregate.cs" />
     <Compile Include="RdfListConverter.cs" />
     <Compile Include="Calculation.cs" />
     <Compile Include="Converters\BooleanConverter.cs" />

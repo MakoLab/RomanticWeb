@@ -21,7 +21,7 @@ namespace RomanticWeb
             dynamic potentialList=blankNode.AsDynamic();
 
             // todo: consider removing EntityIsCollectionRoot
-            return potentialList.rdf.first!=null&&entityStore.EntityIsCollectionRoot(potentialList);
+            return potentialList.rdf.Has_first&&entityStore.EntityIsCollectionRoot(potentialList);
         }
 
         public object Convert(IEntity blankNode, IEntityStore entityStore)
@@ -30,14 +30,17 @@ namespace RomanticWeb
             dynamic potentialList = blankNode.AsDynamic();
             var list = new List<object>();
 
-            dynamic currentElement = potentialList.rdf.first;
+            dynamic currentElement = potentialList.rdf.SingleOrDefault_first;
             dynamic currentListNode = potentialList;
 
             while (currentListNode != _listNil)
             {
                 list.Add(currentElement);
-                currentListNode = currentListNode.rdf.rest;
-                currentElement = currentListNode.rdf.first;
+                currentListNode = currentListNode.rdf.SingleOrDefault_rest;
+                if (currentListNode!=null)
+                {
+                    currentElement = currentListNode.rdf.SingleOrDefault_first;
+                }
             }
 
             return list;

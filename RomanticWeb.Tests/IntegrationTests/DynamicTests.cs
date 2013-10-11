@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using FluentAssertions;
-using ImpromptuInterface;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 
@@ -20,13 +19,13 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.foaf.givenName, Is.EqualTo("Tomasz"));
-            Assert.That(tomasz.foaf.familyName, Is.EqualTo("Pluskiewicz"));
-            Assert.That(tomasz.foaf.nick == null);
+            Assert.That(tomasz.foaf.first_givenName, Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.foaf.first_familyName, Is.EqualTo("Pluskiewicz"));
+            Assert.That(tomasz.foaf.has_nick,Is.False);
         }
 
         [Test]
-        public void Creating_Entity_should_return_null_when_triple_doesnt_exist()
+        public void Creating_Entity_should_return_empty_collection_when_triple_doesnt_exist()
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
@@ -35,7 +34,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.foaf.nick == null);
+            Assert.That(tomasz.foaf.nick, Is.Empty);
         }
 
         [Test]
@@ -48,8 +47,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.foaf.knows, Is.TypeOf<Entity>());
-            Assert.That(tomasz.foaf.knows.Id, Is.EqualTo(new EntityId("http://magi/people/Karol")));
+            var entity=tomasz.foaf.first_knows;
+            Assert.That(entity, Is.TypeOf<Entity>());
+            Assert.That(entity.Id, Is.EqualTo(new EntityId("http://magi/people/Karol")));
         }
 
         [Test]
@@ -60,10 +60,10 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
-            dynamic karol = tomasz.foaf.knows;
+            dynamic karol = tomasz.foaf.single_knows;
 
             // then
-            Assert.That(karol.foaf.givenName, Is.EqualTo("Karol"));
+            Assert.That(karol.foaf.single_givenName, Is.EqualTo("Karol"));
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.givenName[0], Is.EqualTo("Tomasz"));
         }
 
         [Test]
@@ -106,8 +106,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(tomasz.knows != null);
             Assert.That(tomasz.knows.Count, Is.EqualTo(2));
             Assert.That(tomasz.knows[0], Is.InstanceOf<Entity>());
-            Assert.That(tomasz.givenName != null);
-            Assert.That(tomasz.givenName, Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.single_givenName != null);
+            Assert.That(tomasz.single_givenName, Is.EqualTo("Tomasz"));
         }
 
         [Test]
@@ -120,11 +120,12 @@ namespace RomanticWeb.Tests.IntegrationTests
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(tomasz.knows != null);
-            Assert.That(tomasz.knows, Is.InstanceOf<Entity>());
-            Assert.That(tomasz.knows.Id, Is.InstanceOf<BlankId>());
-            Assert.That(tomasz.knows.givenName != null);
-            Assert.That(tomasz.knows.givenName, Is.EqualTo("Karol"));
+            var entity=tomasz.single_knows;
+            Assert.That(entity != null);
+            Assert.That(entity, Is.InstanceOf<Entity>());
+            Assert.That(entity.Id, Is.InstanceOf<BlankId>());
+            Assert.That(entity.single_givenName != null);
+            Assert.That(entity.single_givenName, Is.EqualTo("Karol"));
         }
 
         [Test]
@@ -165,7 +166,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_read_nested_rdf_lists_as_collection_of_lists()
+        public void Should_allow_reading_nested_rdf_lists_as_collection_of_lists()
         {
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
@@ -173,13 +174,13 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/math/array"));
-            var numbers = (IList)tomasz.math.matrix;
+            dynamic numbers = tomasz.math.Original_matrix[0];
 
             // then
             Assert.That(numbers != null);
             Assert.That(numbers.Count, Is.EqualTo(2));
-            numbers[0].ActLike<IList>().Should().ContainInOrder(0L, 1L, 2L);
-            numbers[1].ActLike<IList>().Should().ContainInOrder(3L, 4L, 5L);
+            ((IList)numbers[0]).Should().ContainInOrder(0L, 1L, 2L);
+            ((IList)numbers[1]).Should().ContainInOrder(3L, 4L, 5L);
         }
 
         [Test]

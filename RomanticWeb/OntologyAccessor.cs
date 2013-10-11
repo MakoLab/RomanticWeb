@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using ImpromptuInterface.Dynamic;
@@ -19,24 +20,28 @@ namespace RomanticWeb
 		private readonly Entity _entity;
 		private readonly Ontology _ontology;
 		private readonly INodeProcessor _nodeProcessor;
+	    private readonly Dictionary<AggregateOperation,Func<IEnumerable<object>,object>> _selectorFunctions;
 
-		/// <summary>
-		/// Creates a new instance of <see cref="OntologyAccessor"/>
-		/// </summary>
-		/// <param name="tripleSource">underlying RDF source</param>
-		/// <param name="entity">the access Entity</param>
-		/// <param name="ontology">Ontolgy used to resolve predicate names</param>
-		internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, INodeProcessor nodeProcessor)
+	    /// <summary>
+	    /// Creates a new instance of <see cref="OntologyAccessor"/>
+	    /// </summary>
+	    internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, INodeProcessor nodeProcessor)
 		{
 			_tripleSource = tripleSource;
 			_entity = entity;
 			_ontology = ontology;
 			_nodeProcessor = nodeProcessor;
-		}
 
-		internal IEnumerable<Property> KnownProperties
-		{
-			get { return _ontology.Properties; }
+            // todo: extract as MEF exports for extension?
+            _selectorFunctions = new Dictionary<AggregateOperation, Func<IEnumerable<object>, object>>
+                                   {
+                                       { AggregateOperation.Single, Enumerable.Single },
+                                       { AggregateOperation.SingleOrDefault, Enumerable.SingleOrDefault },
+                                       { AggregateOperation.First, Enumerable.First },
+                                       { AggregateOperation.FirstOrDefault, Enumerable.FirstOrDefault },
+                                       { AggregateOperation.Has, e=> e.Any() },
+                                       { AggregateOperation.Flatten, FlattenResults }
+                                   };
 		}
 
 		/// <summary>
@@ -46,34 +51,68 @@ namespace RomanticWeb
 		{
             _entity.EnsureIsInitialized();
 
-			var property = KnownProperties.SingleOrDefault(p => p.PropertyName == binder.Name);
+		    var propertySpec=new DynamicPropertyAggregate(binder.Name);
 
-			if (property == null)
+		    if (!propertySpec.IsValid)
+		    {
+		        result=null;
+		        return false;
+		    }
+
+		    var property=_ontology.Properties.SingleOrDefault(p => p.PropertyName==propertySpec.Name);
+
+		    if (property==null)
+		    {
+		        property=new Property(propertySpec.Name).InOntology(_ontology);
+		    }
+
+		    result=GetObjects(_entity.Id,property,propertySpec);
+		    return true;
+		}
+
+        internal Property GetProperty(string binderName)
+        {
+            var spec=new DynamicPropertyAggregate(binderName);
+            return (from prop in _ontology.Properties
+                    where prop.PropertyName == spec.Name
+                    select prop).SingleOrDefault();
+        }
+
+	    internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
+	    {
+	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri);
+	        var objects=_nodeProcessor.ProcessNodes(property.Uri,objectValues);
+
+            if (_selectorFunctions.ContainsKey(aggregate.Aggregation))
             {
-				property = new Property(binder.Name).InOntology(_ontology);
-			}
+                var aggregated=_selectorFunctions[aggregate.Aggregation](objects);
+                if (aggregated is IEnumerable<object>)
+                {
+                    return ((IEnumerable<object>)aggregated).ToList();
+                }
 
-			result = GetObjects(_entity.Id, property);
+                return aggregated;
+            }
 
-			return true;
-		}
+	        return objects.ToList();
+	    }
 
-	    internal dynamic GetObjects(EntityId entity, Property predicate)
-		{
-			var objectValues = _tripleSource.GetObjectsForPredicate(entity, predicate.Uri);
-			var objects = _nodeProcessor.ProcessNodes(predicate.Uri,objectValues).ToList();
-
-			if (objects.Count == 1)
-			{
-				return objects.Single();
-			}
-
-			if (objects.Count == 0)
-			{
-				return null;
-			}
-
-			return objects;
-		}
+        private IEnumerable<object> FlattenResults(IEnumerable<object> arg)
+        {
+            foreach (var o in arg)
+            {
+                if (o is IEnumerable<object>)
+                {
+                    foreach (var result in FlattenResults((IEnumerable<object>)o))
+                    {
+                        yield return result;
+                    }
+                }
+                else
+                {
+                    yield return o;
+                }
+            }
+        }
 	}
 }

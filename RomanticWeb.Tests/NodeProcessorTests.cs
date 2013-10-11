@@ -115,7 +115,7 @@ namespace RomanticWeb.Tests
             return new NodeProcessor(_entityContext.Object,_entityStore.Object)
                        {
                            Converters=converters.OfType<ILiteralNodeConverter>(),
-                           BlankNodeConverters=converters.OfType<IComplexTypeConverter>()
+                           ComplexTypeConverters=converters.OfType<IComplexTypeConverter>()
                        };
         }
     }

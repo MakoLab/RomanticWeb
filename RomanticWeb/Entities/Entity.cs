@@ -158,15 +158,15 @@ namespace RomanticWeb.Entities
 		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
 		{
 		    var matchingPredicates=(from accessor in _ontologyAccessors.Values
-		                            from property in accessor.KnownProperties
-		                            where property.PropertyName==binder.Name
+		                            let property = accessor.GetProperty(binder.Name)
+		                            where property!=null
 		                            select new { accessor,property }).ToList();
 
 			if (matchingPredicates.Count==1)
 			{
 				var singleMatch=matchingPredicates.Single();
-				result=singleMatch.accessor.GetObjects(Id,singleMatch.property);
-				return true;
+				result=singleMatch.accessor.GetObjects(Id,singleMatch.property,new DynamicPropertyAggregate(binder.Name));
+                return result!=null;
 			}
 
 			if (matchingPredicates.Count==0)

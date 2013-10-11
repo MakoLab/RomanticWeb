@@ -14,9 +14,15 @@ namespace RomanticWeb.Ontologies
     {
         private readonly NamespaceSpecification _namespace;
 
-        /// <summary>
-        /// Creates a new <see cref="Ontology"/> specification
-        /// </summary>
+		/// <summary>Creates a new <see cref="Ontology"/> specification.</summary>
+		/// <param name="prefix">Prefix of the ontology's base Uri.</param>
+		/// <param name="baseUri">Ontology base Uri.</param>
+		/// <param name="terms">A collection of RDF classes and properties</param>
+		public Ontology(string prefix,string baseUri,params Term[] terms):this(new NamespaceSpecification(prefix,baseUri),terms)
+		{
+		}
+
+		/// <summary>Creates a new <see cref="Ontology"/> specification.</summary>
         /// <param name="ns">Namespace prefix and base URI</param>
         /// <param name="terms">A collection of RDF classes and properties</param>
         public Ontology(NamespaceSpecification ns, params Term[] terms)
@@ -49,30 +55,30 @@ namespace RomanticWeb.Ontologies
 #pragma warning disable 1591
         public static bool operator ==([AllowNull] Ontology left, [AllowNull] Ontology right)
         {
-            return Equals(left, right);
+			return Equals(left,right);
         }
 
-        public static bool operator !=([AllowNull] Ontology left, [AllowNull] Ontology right)
+		public static bool operator!=([AllowNull] Ontology left,[AllowNull] Ontology right)
         {
-            return !Equals(left, right);
+			return !Equals(left,right);
         }
 #pragma warning restore 1591
 
         public override bool Equals([AllowNull] object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
-            if (ReferenceEquals(this, obj)) { return true; }
-            return obj is Ontology && Equals((Ontology)obj);
+			if (ReferenceEquals(null,obj)) { return false; }
+			if (ReferenceEquals(this,obj)) { return true; }
+			return obj is Ontology&&Equals((Ontology)obj);
         }
 
         public override int GetHashCode()
         {
-            return (_namespace != null ? _namespace.GetHashCode() : 0);
+			return (_namespace!=null?_namespace.GetHashCode():0);
         }
 
         private bool Equals([AllowNull] Ontology other)
         {
-            return Equals(_namespace, other._namespace);
+			return Equals(_namespace,other._namespace);
         }
     }
 }

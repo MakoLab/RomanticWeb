@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
@@ -21,7 +22,7 @@ namespace RomanticWeb.Mapping
         #endregion
 
         #region Constructors
-        internal AssemblyMappingsRepository(IOntologyProvider ontologyProvider)
+        public AssemblyMappingsRepository(IOntologyProvider ontologyProvider)
         {
             _ontologyProvider=ontologyProvider;
             _mappings=AppDomain.CurrentDomain.GetAssemblies()
@@ -32,10 +33,10 @@ namespace RomanticWeb.Mapping
         #endregion
 
         #region Public methods
-
+        [return:AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
-            return _mappings[typeof(TEntity)];
+             return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
         }
 
         #endregion
@@ -50,13 +51,13 @@ namespace RomanticWeb.Mapping
         }
 
         private IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(Assembly assembly)
-		{
+        {
             return from type in assembly.GetTypes()
                    from mapping in type.GetCustomAttributes(typeof(ClassAttribute),true).Cast<ClassAttribute>()
                    let typeMapping = mapping.GetMapping(_ontologyProvider)
                    let propertyMapping = BuildPropertyMappings(type).ToList()
                    select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=typeMapping,Properties=propertyMapping });
-		}
+        }
 
         #endregion
     }

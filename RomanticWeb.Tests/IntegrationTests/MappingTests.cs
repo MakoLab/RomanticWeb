@@ -141,6 +141,44 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(friends, Has.Count.EqualTo(0));
         }
 
+        [Test]
+        public void Mapping_blank_node_rdf_collection_of_entities_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+
+            // when
+            var friends = Entity.Friends;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(5));
+            friends.Should()
+                   .ContainInOrder(
+                       new Entity(new EntityId("http://magi/people/Karol")),
+                       new Entity(new EntityId("http://magi/people/Gniewko")),
+                       new Entity(new EntityId("http://magi/people/Monika")),
+                       new Entity(new EntityId("http://magi/people/Dominik")),
+                       new Entity(new EntityId("http://magi/people/Przemek")));
+        }
+
+        [Test]
+        public void Mapping_URI_node_rdf_collection_of_entities_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+
+            // when
+            var friends = Entity.NickNames;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(2));
+            friends.Should().Contain("Tomek", "Tomasz");
+        }
+
         protected override IMappingsRepository SetupMappings()
         {
             return new TestMappingsRepository(new TestOntologyProvider());

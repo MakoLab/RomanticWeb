@@ -1,0 +1,20 @@
+﻿using NUnit.Framework;
+using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
+
+namespace RomanticWeb.Tests.Mapping
+{
+    [TestFixture]
+    public class EntityMappingTests
+    {
+        [Test]
+        public void Should_throw_if_property_is_unmapped()
+        {
+            // given
+            var mapping = new EntityMapping();
+
+            // then
+            Assert.Throws<MappingException>(() => mapping.PropertyFor("SomeProperty"));
+        } 
+    }
+}

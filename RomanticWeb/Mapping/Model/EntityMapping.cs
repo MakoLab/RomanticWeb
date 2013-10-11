@@ -16,7 +16,14 @@ namespace RomanticWeb.Mapping.Model
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            return Properties.Single(p => p.Name == propertyName);
+            var propertyMapping=Properties.SingleOrDefault(p => p.Name==propertyName);
+
+            if (propertyMapping==null)
+            {
+                throw new MappingException(string.Format("No mapping found for property {0}",propertyName));
+            }
+
+            return propertyMapping;
         }
 	}
 }

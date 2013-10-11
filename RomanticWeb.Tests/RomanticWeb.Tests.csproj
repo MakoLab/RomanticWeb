@@ -108,6 +108,7 @@
     <Compile Include="IntegrationTests\InMemoryMappingTests.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
+    <Compile Include="Mapping\EntityMappingTests.cs" />
     <Compile Include="NodeProcessorTests.cs" />
     <Compile Include="NodeTests.cs" />
     <Compile Include="RdfNodeTests.cs" />

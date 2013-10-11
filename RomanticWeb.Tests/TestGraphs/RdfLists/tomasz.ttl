@@ -8,6 +8,6 @@ people:Tomasz foaf:knows ( people:Karol people:Gniewko people:Monika people:Domi
 
 people:Tomasz foaf:mbox ( "tomasz.pluskiewicz@makolab.net" "tomasz.pluskiewicz@makolab.pl" ) .
 
-people:Tomasz foaf:givenName temp:nicks1 .
+people:Tomasz foaf:nick temp:nicks1 .
 temp:nicks1 rdf:first "Tomasz" ; rdf:rest temp:nicks2 .
 temp:nicks2 rdf:first "Tomek" ; rdf:rest rdf:nil .

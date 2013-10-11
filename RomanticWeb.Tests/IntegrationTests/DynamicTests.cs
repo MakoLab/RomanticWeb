@@ -192,12 +192,12 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
-            dynamic people = tomasz.foaf.givenName;
+            dynamic nicks = tomasz.foaf.nick;
 
             // then
-            Assert.That(people.Count, Is.EqualTo(2));
-            Assert.That(people[0], Is.EqualTo("Tomasz"));
-            Assert.That(people[1], Is.EqualTo("Tomek"));
+            Assert.That(nicks.Count, Is.EqualTo(2));
+            Assert.That(nicks[0], Is.EqualTo("Tomasz"));
+            Assert.That(nicks[1], Is.EqualTo("Tomek"));
         }
 	}
 }

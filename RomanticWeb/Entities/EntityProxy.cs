@@ -74,7 +74,7 @@ namespace RomanticWeb.Entities
 
         public override int GetHashCode()
         {
-            return this._entity.GetHashCode();
+            return _entity.GetHashCode();
         }
 
         public override string ToString()

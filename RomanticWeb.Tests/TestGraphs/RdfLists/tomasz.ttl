@@ -1,7 +1,13 @@
-﻿@prefix people: <http://magi/people/> .
+﻿@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix people: <http://magi/people/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix math: <http://example/maths/> .
+@prefix temp: <http://example/temp/> .
 
 people:Tomasz foaf:knows ( people:Karol people:Gniewko people:Monika people:Dominik people:Przemek ) .
 
 people:Tomasz foaf:mbox ( "tomasz.pluskiewicz@makolab.net" "tomasz.pluskiewicz@makolab.pl" ) .
+
+people:Tomasz foaf:givenName temp:nicks1 .
+temp:nicks1 rdf:first "Tomasz" ; rdf:rest temp:nicks2 .
+temp:nicks2 rdf:first "Tomek" ; rdf:rest rdf:nil .

@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmbiguousPropertyException.cs" />
-    <Compile Include="BlankNodeListConverter.cs" />
+    <Compile Include="RdfListConverter.cs" />
     <Compile Include="Calculation.cs" />
     <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
@@ -65,7 +65,7 @@
     <Compile Include="EntityContext.cs" />
     <Compile Include="EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="IBlankNodeConverter.cs" />
+    <Compile Include="IComplexTypeConverter.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="IGraphSelectionStrategy.cs" />
     <Compile Include="IEntitySource.cs" />

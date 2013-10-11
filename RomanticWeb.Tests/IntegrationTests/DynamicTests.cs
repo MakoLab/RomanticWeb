@@ -181,5 +181,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             numbers[0].ActLike<IList>().Should().ContainInOrder(0L, 1L, 2L);
             numbers[1].ActLike<IList>().Should().ContainInOrder(3L, 4L, 5L);
         }
+
+        [Test]
+        public void Should_read_rdf_lists_which_dont_use_blank_nodes()
+        {
+            // given
+            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
+            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+
+            // when
+            dynamic tomasz = EntityContext.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic people = tomasz.foaf.givenName;
+
+            // then
+            Assert.That(people.Count, Is.EqualTo(2));
+            Assert.That(people[0], Is.EqualTo("Tomasz"));
+            Assert.That(people[1], Is.EqualTo("Tomek"));
+        }
 	}
 }

@@ -3,7 +3,7 @@
 namespace RomanticWeb
 {
     // todo: maybe pass minimal blank node neighbourhood instead of IEnitytStore
-    public interface IBlankNodeConverter
+    public interface IComplexTypeConverter
     {
         object Convert(IEntity objectNode, IEntityStore entityStore);
 

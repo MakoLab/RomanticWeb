@@ -1,6 +1,7 @@
 ﻿using System;
+using RomanticWeb.Model;
 
-namespace RomanticWeb
+namespace RomanticWeb.Converters
 {
 	public interface ILiteralNodeConverter
 	{

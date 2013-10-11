@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Xml;
+using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters

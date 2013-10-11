@@ -2,10 +2,10 @@
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
-using RomanticWeb.Entities;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
     [NullGuard(ValidationFlags.OutValues)]
     public class EntityProxy:DynamicObject,IEntity

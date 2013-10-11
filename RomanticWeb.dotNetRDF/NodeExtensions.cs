@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Model;
 using VDS.RDF;
 
 namespace RomanticWeb.DotNetRDF

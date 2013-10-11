@@ -6,9 +6,11 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
+using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb

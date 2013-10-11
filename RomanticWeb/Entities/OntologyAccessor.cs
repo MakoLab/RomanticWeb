@@ -4,10 +4,10 @@ using System.Dynamic;
 using System.Linq;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
-using RomanticWeb.Entities;
+using RomanticWeb.Converters;
 using RomanticWeb.Ontologies;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	/// <summary>
 	/// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix

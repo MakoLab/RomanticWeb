@@ -2,7 +2,9 @@
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Model;
 using RomanticWeb.Tests.Helpers;
 
 namespace RomanticWeb.Tests

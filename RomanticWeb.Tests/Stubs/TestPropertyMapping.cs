@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Tests.Stubs
 {

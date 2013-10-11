@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Tests
 {

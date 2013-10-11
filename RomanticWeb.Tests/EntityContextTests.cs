@@ -6,6 +6,7 @@ using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;

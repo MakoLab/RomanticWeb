@@ -2,7 +2,7 @@
 using NullGuard;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb
+namespace RomanticWeb.Model
 {
 	/// <summary>
 	/// Represents an RDF node (URI or literal)

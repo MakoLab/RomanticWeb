@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using RomanticWeb.Model;
 
-namespace RomanticWeb
+namespace RomanticWeb.Converters
 {
     public interface INodeProcessor
     {

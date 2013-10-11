@@ -1,7 +1,7 @@
 ﻿using System;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb
+namespace RomanticWeb.Mapping
 {
     /// <summary>
     /// Defines method for selecting named graph URI based on <see cref="EntityId"/> 

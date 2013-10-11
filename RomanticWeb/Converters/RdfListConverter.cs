@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using NullGuard;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb
+namespace RomanticWeb.Converters
 {
     [Export(typeof(IComplexTypeConverter))]
     [NullGuard(ValidationFlags.OutValues)]

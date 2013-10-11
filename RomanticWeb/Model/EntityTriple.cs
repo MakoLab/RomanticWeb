@@ -2,7 +2,7 @@
 using NullGuard;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb
+namespace RomanticWeb.Model
 {
     /// <summary>
     /// Represents a triple (subject, predicate, object)

@@ -1,4 +1,4 @@
-﻿namespace RomanticWeb
+﻿namespace RomanticWeb.Entities
 {
     internal enum AggregateOperation
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using RomanticWeb.Converters;
+using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Converters

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RomanticWeb.Entities;
+using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;

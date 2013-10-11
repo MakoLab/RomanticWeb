@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Converters

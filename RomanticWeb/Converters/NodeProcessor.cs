@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using RomanticWeb.Model;
 
-namespace RomanticWeb
+namespace RomanticWeb.Converters
 {
     // todo: consider renaming 
 	internal class NodeProcessor:INodeProcessor

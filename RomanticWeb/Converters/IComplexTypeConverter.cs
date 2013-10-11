@@ -1,6 +1,6 @@
 ﻿using RomanticWeb.Entities;
 
-namespace RomanticWeb
+namespace RomanticWeb.Converters
 {
     // todo: maybe pass minimal blank node neighbourhood instead of IEnitytStore
     public interface IComplexTypeConverter

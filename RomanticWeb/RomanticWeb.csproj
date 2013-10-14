@@ -71,7 +71,6 @@
     <Compile Include="Entities\ResultAggregations\ResultAggregationStrategyAtribute.cs" />
     <Compile Include="Entities\ResultAggregations\ResultFlatteningAggregation.cs" />
     <Compile Include="Entities\ResultAggregations\SingleOrDefaultAggregation.cs" />
-    <Compile Include="Entities\ResultAggregations\SingleOrDefaultNonCollectionAggregation.cs" />
     <Compile Include="Entities\ResultAggregations\SingleResultAggregation.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />

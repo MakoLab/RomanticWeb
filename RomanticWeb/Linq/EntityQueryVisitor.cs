@@ -604,7 +604,7 @@ namespace RomanticWeb.Linq
 
             if (ontology!=null)
             {
-                //AlignQuerySourceIndex(querySource);
+                // AlignQuerySourceIndex(querySource);
                 result=new Tuple<string,string>(_expressionSources.Where(item => item.Key==querySource).Select(item => item.Value).First(),"<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
             }
 

@@ -20,14 +20,11 @@ namespace RomanticWeb
 		private readonly IEntityStore _entityStore;
 	    private readonly IEntitySource _entitySource;
 	    private readonly IMappingsRepository _mappings;
-        private CompoundOntologyProvider _ontologyProvider;
 
         // todo: move catalog an container to a global location initiated at startup
         private readonly AssemblyCatalog _assemblyCatalog;
-
         private readonly CompositionContainer _container;
-
-	    private IOntologyProvider _ontologyProvider;
+        private CompoundOntologyProvider _ontologyProvider;
 
 	    public EntityContext(IMappingsRepository mappings, IEntitySource tripleStore)
             : this(mappings, new EntityStore(), tripleStore)
@@ -44,7 +41,7 @@ namespace RomanticWeb
             _mappings=mappings;
             _entityStore=entityStore;
             _entitySource=entitySource;
-            OntologyProvider = new DefaultOntologiesProvider();
+            _ontologyProvider = new CompoundOntologyProvider();
             NodeConverter=new NodeConverter(this,entityStore);
 
             _assemblyCatalog=new AssemblyCatalog(GetType().Assembly);
@@ -52,23 +49,23 @@ namespace RomanticWeb
             _container.ComposeParts(NodeConverter);
         }
 
-        public IOntologyProvider OntologyProvider
-        {
-            get
-            {
-                return _ontologyProvider;
-            }
+	    public IOntologyProvider OntologyProvider
+	    {
+	        get
+	        {
+	            return _ontologyProvider;
+	        }
 
-            set
-            {
-                if (value!=null)
-                {
-                    _ontologyProvider.OntologyProviders.Add(value);
-                }
-                }
-            }
+	        set
+	        {
+	            if (value!=null)
+	            {
+	                _ontologyProvider.OntologyProviders.Add(value);
+	            }
+	        }
+	    }
 
-        public INodeConverter NodeConverter { get; set; }
+	    public INodeConverter NodeConverter { get; set; }
 
         public void AddOntologyProvider(IOntologyProvider ontologyProvider)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
@@ -37,9 +36,17 @@ namespace RomanticWeb.Entities
 		}
 
         [ImportMany(typeof(IResultAggregationStrategy))]
-        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; private set; } 
+        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; private set; }
 
-		/// <summary>
+	    public Ontology Ontology
+	    {
+	        get
+	        {
+	            return _ontology;
+	        }
+	    }
+
+	    /// <summary>
 		/// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
 		/// </summary>
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
@@ -54,11 +61,11 @@ namespace RomanticWeb.Entities
 		        return false;
 		    }
 
-		    var property=_ontology.Properties.SingleOrDefault(p => p.PropertyName==propertySpec.Name);
+		    var property=Ontology.Properties.SingleOrDefault(p => p.PropertyName==propertySpec.Name);
 
 		    if (property==null)
 		    {
-		        property=new Property(propertySpec.Name).InOntology(_ontology);
+		        property=new Property(propertySpec.Name).InOntology(Ontology);
 		    }
 
 		    result=GetObjects(_entity.Id,property,propertySpec);
@@ -68,7 +75,7 @@ namespace RomanticWeb.Entities
         internal Property GetProperty(string binderName)
         {
             var spec=new DynamicPropertyAggregate(binderName);
-            return (from prop in _ontology.Properties
+            return (from prop in Ontology.Properties
                     where prop.PropertyName == spec.Name
                     select prop).SingleOrDefault();
         }

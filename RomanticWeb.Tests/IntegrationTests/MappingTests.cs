@@ -196,7 +196,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("Collections.trig");
 
             // then
-            Assert.Throws<CardinalityException>(() => { var hp = Entity.FirstName; });
+            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.FirstName; });
+            Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
+            Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(2));
         }
 
         [Test]
@@ -207,7 +209,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             // todo: change the exception thrown
-            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
+            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.Homepage; });
+            Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
+            Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(3));
         }
 
         [Test]

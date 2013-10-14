@@ -43,7 +43,7 @@ namespace RomanticWeb.Tests
             _entityContext.Setup(ctx => ctx.Create(It.IsAny<EntityId>())).Returns((EntityId id) => new Entity(id));
 
             // when
-            converter.ProcessNodes(predicate,objects).ToList();
+            converter.ConvertNodes(predicate,objects).ToList();
 
             // then
             _entityContext.Verify(ctx=>ctx.Create(It.IsAny<EntityId>()),Times.Exactly(10));
@@ -59,7 +59,7 @@ namespace RomanticWeb.Tests
             _entityContext.Setup(ctx => ctx.Create(It.IsAny<EntityId>())).Returns((EntityId id) => new Entity(id));
 
             // when
-            converter.ProcessNodes(predicate, objects).ToList();
+            converter.ConvertNodes(predicate, objects).ToList();
 
             // then
             _entityContext.Verify(ctx => ctx.Create(It.IsAny<EntityId>()), Times.Exactly(10));
@@ -80,7 +80,7 @@ namespace RomanticWeb.Tests
                                .GetNodes();
 
             // when
-            var list = processor.ProcessNodes(predicate, objects).ToList();
+            var list = processor.ConvertNodes(predicate, objects).ToList();
 
             // then
             Assert.That(list, Has.Count.EqualTo(1));
@@ -104,7 +104,7 @@ namespace RomanticWeb.Tests
                                .GetNodes();
 
             // when
-            var list = processor.ProcessNodes(predicate, objects).ToList();
+            var list = processor.ConvertNodes(predicate, objects).ToList();
 
             // then
             Assert.That(list, Has.Count.EqualTo(1));
@@ -112,9 +112,9 @@ namespace RomanticWeb.Tests
             intConverter.VerifyAll();
         }
 
-        private NodeProcessor CreateProcessor(params object[] converters)
+        private NodeConverter CreateProcessor(params object[] converters)
         {
-            return new NodeProcessor(_entityContext.Object,_entityStore.Object)
+            return new NodeConverter(_entityContext.Object,_entityStore.Object)
                        {
                            Converters=converters.OfType<ILiteralNodeConverter>(),
                            ComplexTypeConverters=converters.OfType<IComplexTypeConverter>()

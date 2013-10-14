@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RomanticWeb
+namespace RomanticWeb.Entities
 {
 	public class AmbiguousPropertyException : Exception
     {

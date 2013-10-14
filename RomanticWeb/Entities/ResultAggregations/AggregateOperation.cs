@@ -1,6 +1,6 @@
-﻿namespace RomanticWeb.Entities
+﻿namespace RomanticWeb.Entities.ResultAggregations
 {
-    internal enum AggregateOperation
+    public enum AggregateOperation
     {
         Original,
         Flatten,

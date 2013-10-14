@@ -179,6 +179,48 @@ namespace RomanticWeb.Tests.IntegrationTests
             friends.Should().Contain("Tomek", "Tomasz");
         }
 
+        [Test]
+        public void Should_throw_if_a_property_returns_an_rdf_collection()
+        {
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("Collections.trig");
+
+            // then
+            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
+        }
+
+        [Test]
+        public void Should_throw_if_a_property_returns_multiple_values()
+        {
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("Collections.trig");
+
+            // then
+            Assert.Throws<CardinalityException>(() => { var hp = Entity.FirstName; });
+        }
+
+        [Test]
+        public void Should_throw_if_a_collection_is_backed_by_a_list_and_a_direct_relation()
+        {
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("MixedCollections.trig");
+
+            // then
+            // todo: change the exception thrown
+            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
+        }
+
+        [Test]
+        public void Should_throw_if_a_collection_is_backed_by_two_lists()
+        {
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("MixedCollections.trig");
+
+            // then
+            // todo: change the exception thrown
+            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
+        }
+
         protected override IMappingsRepository SetupMappings()
         {
             return new TestMappingsRepository(new TestOntologyProvider());

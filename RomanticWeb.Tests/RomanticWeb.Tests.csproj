@@ -130,6 +130,8 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="TestGraphs\RdfLists\meta.ttl" />
     <EmbeddedResource Include="TestGraphs\RdfLists\tomasz.ttl" />
+    <EmbeddedResource Include="TestGraphs\Collections.trig" />
+    <EmbeddedResource Include="TestGraphs\MixedCollections.trig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RomanticWeb.TestEntities\RomanticWeb.TestEntities.csproj">

@@ -1,5 +1,6 @@
 ﻿using System;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb
 {

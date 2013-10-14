@@ -1,0 +1,27 @@
+﻿@prefix people: <http://magi/people/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://data.magi/people/Tomasz>
+{
+	people:Tomasz foaf:homePage _:b1 .
+	_:b1 rdf:first "http://pluskiewicz.pl" ;
+		 rdf:rest _:b2 .
+	_:b2 rdf:first "http://t-code.pl" ;
+		 rdf:rest rdf:nil .
+
+	people:Tomasz foaf:homePage "http://pluskiewicz.com" .
+	
+	people:Tomasz foaf:givenName _:c1 .
+	_:c1 rdf:first "Tomasz" ;
+		 rdf:rest rdf:nil .
+		 
+	people:Tomasz foaf:givenName _:d1 .
+	_:d1 rdf:first "Tomek" ;
+		 rdf:rest rdf:nil .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+}

@@ -13,7 +13,7 @@ namespace RomanticWeb.Tests
     public class ObjectAccessorTests
     {
         private readonly Entity _entity = new Entity(new EntityId(Uri));
-        private Mock<INodeProcessor> _nodeProcessor;
+        private Mock<INodeConverter> _nodeProcessor;
         private Ontology _ontology;
         private Mock<IEntityStore> _graph;
         private const string Uri = "urn:test:identity";
@@ -28,7 +28,7 @@ namespace RomanticWeb.Tests
         public void Setup()
         {
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _nodeProcessor = new Mock<INodeProcessor>();
+            _nodeProcessor = new Mock<INodeConverter>();
         }
 
         [TearDown]

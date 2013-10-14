@@ -1,27 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Converters;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities
 {
     [NullGuard(ValidationFlags.OutValues)]
-    public class EntityProxy:DynamicObject,IEntity
+    internal class EntityProxy:DynamicObject,IEntity
     {
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMappings;
-        private readonly INodeProcessor _processor;
+        private readonly INodeConverter _converter;
 
-        internal EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeProcessor processor)
+        internal EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
         {
             _store = store;
             _entity = entity;
             _entityMappings = entityMappings;
-            _processor = processor;
+            _converter = converter;
+            ResultAggregations = new Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>[0];
         }
+
+        [ImportMany(typeof(IResultAggregationStrategy))]
+        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; private set; } 
 
         public EntityId Id
         {
@@ -43,23 +51,16 @@ namespace RomanticWeb.Entities
         {
             _entity.EnsureIsInitialized();
 
-            var property = _entityMappings.PropertyFor(binder.Name);
+            var property=_entityMappings.PropertyFor(binder.Name);
 
             var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
-            IList objectsForPredicate = _processor.ProcessNodes(property.Uri,objects).ToList();
+            var objectsForPredicate=_converter.ConvertNodes(property.Uri,objects);
 
-            if ((objectsForPredicate.Count>1||property.IsCollection)&&objectsForPredicate.Cast<object>().All(o=>!(o is IList)))
-            {
-                result=objectsForPredicate;
-            }
-            else if (objectsForPredicate.Count==0)
-            {
-                result=null;
-            }
-            else
-            {
-                result=objectsForPredicate[0];
-            }
+            var operation=property.IsCollection?AggregateOperation.Flatten:AggregateOperation.SingleOrDefault;
+            var aggregation=(from agg in ResultAggregations 
+                             where agg.Metadata.Operation==operation 
+                             select agg).SingleOrDefault();
+            result=aggregation.Value.Aggregate(objectsForPredicate);
 
             return true;
         }

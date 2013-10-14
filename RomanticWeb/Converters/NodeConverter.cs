@@ -7,13 +7,13 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     // todo: consider renaming 
-	internal class NodeProcessor:INodeProcessor
+	internal class NodeConverter:INodeConverter
 	{
 	    private readonly IEntityContext _entityContext;
 
 	    private readonly IEntityStore _store;
 
-	    public NodeProcessor(IEntityContext entityContext,IEntityStore store)
+	    public NodeConverter(IEntityContext entityContext,IEntityStore store)
 	    {
 	        _store=store;
 	        _entityContext=entityContext;
@@ -27,7 +27,7 @@ namespace RomanticWeb.Converters
         [ImportMany]
         public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
-	    public IEnumerable<object> ProcessNodes(Uri predicate,IEnumerable<Node> objects)
+	    public IEnumerable<object> ConvertNodes(Uri predicate,IEnumerable<Node> objects)
 		{
 			foreach (var objectNode in objects.ToList())
 			{

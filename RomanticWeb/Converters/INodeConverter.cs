@@ -4,8 +4,8 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
-    public interface INodeProcessor
+    public interface INodeConverter
     {
-        IEnumerable<object> ProcessNodes(Uri predicate,IEnumerable<Node> objects);
+        IEnumerable<object> ConvertNodes(Uri predicate,IEnumerable<Node> objects);
     }
 }

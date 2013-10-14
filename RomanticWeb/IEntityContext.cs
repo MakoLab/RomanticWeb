@@ -26,23 +26,23 @@ namespace RomanticWeb
         /// <summary>Creates a new entity.</summary>
         /// <param name="entityId">Entity identifier</param>
         /// <returns>Instance of an entity wih given identifier or null.</returns>
-        Entity Create(EntityId entityId);
+        Entity Load(EntityId entityId);
 
         /// <summary>Creates a new typed entity.</summary>
         /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
         /// <param name="entityId">Entity identifier</param>
         /// <returns>Typed instance of an entity wih given identifier or null.</returns>
-        T Create<T>(EntityId entityId) where T:class,IEntity;
+        T Load<T>(EntityId entityId) where T:class,IEntity;
 
-        /// <summary>Create an enumerable collection of entities beeing a result of a SPARQL construct query.</summary>
+        /// <summary>Load an enumerable collection of entities beeing a result of a SPARQL construct query.</summary>
         /// <param name="sparqlConstruct">SPARQL construct query.</param>
         /// <returns>An enumerable collection of entities beeing a result of a SPARQL construct query</returns>
-        IEnumerable<Entity> Create(string sparqlConstruct);
+        IEnumerable<Entity> Load(string sparqlConstruct);
 
-        /// <summary>Create an enumerable collection of typed entities beeing a result of a SPARQL construct query.</summary>
+        /// <summary>Load an enumerable collection of typed entities beeing a result of a SPARQL construct query.</summary>
         /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
         /// <param name="sparqlConstruct">SPARQL construct query.</param>
         /// <returns>An enumerable collection of typed entities beeing a result of a SPARQL construct query</returns>
-        IEnumerable<T> Create<T>(string sparqlConstruct) where T:class,IEntity;
+        IEnumerable<T> Load<T>(string sparqlConstruct) where T:class,IEntity;
     }
 }

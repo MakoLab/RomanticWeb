@@ -60,7 +60,7 @@ namespace RomanticWeb.Converters
 
 	    private object ConvertEntity(Node objectNode)
 	    {
-	        var entity=_entityContext.Create(objectNode.ToEntityId());
+	        var entity=_entityContext.Load(objectNode.ToEntityId());
 
 	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store));
 

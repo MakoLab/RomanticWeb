@@ -1841,7 +1841,7 @@
           <xs:element name="instanceName" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="counterHelp" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="counterType" minOccurs="0" maxOccurs="1" type="System.Diagnostics.PerformanceCounterType" />
-          <xs:element name="autoCreate" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="autoLoad" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="categoryName" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="counterName" minOccurs="0" maxOccurs="1" type="xs:string" />
         </xs:choice>
@@ -1865,7 +1865,7 @@
             <xs:documentation>Performance counter type.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="autoCreate" type="xs:boolean">
+        <xs:attribute name="autoLoad" type="xs:boolean">
           <xs:annotation>
             <xs:documentation>Indicates whether performance counter should be automatically created.</xs:documentation>
           </xs:annotation>

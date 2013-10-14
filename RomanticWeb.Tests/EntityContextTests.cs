@@ -29,12 +29,12 @@ namespace RomanticWeb.Tests
             {
                 Setup();
 
-                yield return new Lazy<IEntity>(() => _entityContext.Create(new EntityId("http://magi/people/Tomasz")));
+                yield return new Lazy<IEntity>(() => _entityContext.Load(new EntityId("http://magi/people/Tomasz")));
                 yield return new Lazy<IEntity>(
                     () =>
                     {
                         _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-                        return _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+                        return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
                     });
             }
         }
@@ -76,7 +76,7 @@ namespace RomanticWeb.Tests
         [Test, ExpectedException(typeof(ArgumentNullException))]
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
-            _entityContext.Create((EntityId)null);
+            _entityContext.Load((EntityId)null);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
-            var entity = _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
             var typed = new Entity(new EntityId("http://magi/people/Tomasz"));
 
             // then
@@ -139,7 +139,7 @@ namespace RomanticWeb.Tests
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            dynamic entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityContext.Load(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var id = entity.foaf.givenName;
@@ -158,7 +158,7 @@ namespace RomanticWeb.Tests
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            var entity = _entityContext.Create<IPerson>(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var name = entity.FirstName;

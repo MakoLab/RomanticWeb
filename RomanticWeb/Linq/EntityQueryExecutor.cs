@@ -48,7 +48,7 @@ namespace RomanticWeb.Linq
 			if (commandText.Length>0)
 			{
 				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
-					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
+					(item.Name=="Load")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText });
 			}
 
@@ -81,7 +81,7 @@ namespace RomanticWeb.Linq
 			if (commandText.Length>0)
 			{
 				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
-					(item.Name=="Create")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
+					(item.Name=="Load")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
 				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText })).FirstOrDefault();
 			}
 

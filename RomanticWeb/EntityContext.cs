@@ -82,7 +82,7 @@ namespace RomanticWeb
             return new EntityQueryable<T>(this,_mappings,OntologyProvider);
 		}
 
-		public Entity Create(EntityId entityId)
+		public Entity Load(EntityId entityId)
         {
             LogTo.Debug("Creating entity {0}",entityId);
 			var entity=new Entity(entityId,this);
@@ -97,29 +97,29 @@ namespace RomanticWeb
 			return entity;
 		}
 
-		public T Create<T>(EntityId entityId) where T:class,IEntity
+		public T Load<T>(EntityId entityId) where T:class,IEntity
 		{
 		    if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
 			{
-			    return (T)(IEntity)Create(entityId);
+			    return (T)(IEntity)Load(entityId);
 			}
 		
-            return EntityAs<T>(Create(entityId));
+            return EntityAs<T>(Load(entityId));
 		}
 
-	    public IEnumerable<Entity> Create(string sparqlConstruct)
+	    public IEnumerable<Entity> Load(string sparqlConstruct)
 		{
-			return Create<Entity>(sparqlConstruct);
+			return Load<Entity>(sparqlConstruct);
 		}
 
-		public IEnumerable<T> Create<T>(string sparqlConstruct) where T:class,IEntity
+		public IEnumerable<T> Load<T>(string sparqlConstruct) where T:class,IEntity
 		{
 			IList<T> entities=new List<T>();
 
             IEnumerable<Tuple<Node,Node,Node>> triples=_entitySource.GetNodesForQuery(sparqlConstruct);
 			foreach (Node subject in triples.Select(triple => triple.Item1).Distinct())
 			{
-                entities.Add(Create<T>(subject.ToEntityId()));
+                entities.Add(Load<T>(subject.ToEntityId()));
 			}
 
 			return entities;

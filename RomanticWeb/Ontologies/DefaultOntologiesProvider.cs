@@ -11,24 +11,29 @@ namespace RomanticWeb.Ontologies
     public enum BuiltInOntologies:uint
     {
         /// <summary>Points to an RDF ontology.</summary>
-        RDF=0x00000001
+        RDF=0x00000001,
+
+        /// <summary>Points to an RDF Schema ontology.</summary>
+        RDFS=0x00000002
     }
 
+    /// <summary>Provides default, built in ontologies.</summary>
     public sealed class DefaultOntologiesProvider:OntologyProviderBase
     {
         private IList<Ontology> _ontologies;
         private IList<BuiltInOntologies> _includedOntologies;
 
-        /// <summary>Creates a default ontology provider with no built in ontologies.</summary>
+        /// <summary>Creates a default ontology provider with all built in ontologies.</summary>
         public DefaultOntologiesProvider():base()
         {
             _ontologies=new List<Ontology>();
             _includedOntologies=new List<BuiltInOntologies>();
+            Include(BuiltInOntologies.RDF|BuiltInOntologies.RDFS);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
-        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):this(ontologyProvider,BuiltInOntologies.RDF)
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS)
         {
         }
 
@@ -49,6 +54,7 @@ namespace RomanticWeb.Ontologies
             Include(ontologies);
         }
 
+        /// <summary>Get ontologies' metadata.</summary>
         public override IEnumerable<Ontology> Ontologies { get { return _ontologies; } }
 
         /// <summary>Adds another built in ontology into this provider instance.</summary>
@@ -59,12 +65,12 @@ namespace RomanticWeb.Ontologies
             foreach (BuiltInOntologies ontology in Enum.GetValues(typeof(BuiltInOntologies)))
             {
                 if (((ontologies&ontology)==ontology)&&(!_includedOntologies.Contains(ontology)))
-        {
+                {
                     Ontology ontologyInstance=OntologyFactory.Create(
-                        Assembly.GetExecutingAssembly().GetManifestResourceStream(System.String.Format("{0}.RDF.owl",typeof(DefaultOntologiesProvider).Namespace)),
+                        Assembly.GetExecutingAssembly().GetManifestResourceStream(System.String.Format("{0}.{1}.owl",typeof(DefaultOntologiesProvider).Namespace,ontology.ToString())),
                         "text/xml+owl");
                     if (ontologyInstance!=null)
-            {
+                    {
                         _includedOntologies.Add(ontology);
                         _ontologies.Add(ontologyInstance);
                     }

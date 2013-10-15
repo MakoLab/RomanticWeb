@@ -7,21 +7,32 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestMappingsRepository : IMappingsRepository
+    public class TestMappingsRepository:IMappingsRepository
     {
-        private readonly IOntologyProvider _ontologies;
-
+        private IOntologyProvider _ontologies;
         private readonly List<EntityMap> _entityMaps;
+
+        IOntologyProvider IMappingsRepository.OntologyProvider
+        {
+            get
+            {
+                return _ontologies;
+            }
+            set
+            {
+                _ontologies=value;
+            }
+        }
 
         public TestMappingsRepository(IOntologyProvider ontologies,params EntityMap[] entityMaps)
         {
             _ontologies=ontologies;
-            this._entityMaps = entityMaps.ToList();
+            this._entityMaps=entityMaps.ToList();
         }
 
         public IEntityMapping MappingFor<TEntity>()
         {
-            return this._entityMaps.Where(map => map.EntityType == typeof(TEntity)).Cast<IMappingProvider>().First().CreateMapping(_ontologies);
+            return this._entityMaps.Where(map => map.EntityType==typeof(TEntity)).Cast<IMappingProvider>().First().CreateMapping(_ontologies);
         }
 
         public void Add(EntityMap personMapping)

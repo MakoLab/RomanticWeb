@@ -9,54 +9,62 @@ using NullGuard;
 
 namespace RomanticWeb.Entities
 {
-	/// <summary>
-	/// An RDF entity, which can be used to dynamically access RDF triples
-	/// </summary>
-	[NullGuard(ValidationFlags.OutValues)]
-	[DebuggerDisplay("Entity <{Id}>")]
-	public class Entity:DynamicObject,IEntity
-	{
-		private readonly EntityContext _entityContext;
-
-	    private readonly EntityId _entityId;
-		private readonly IDictionary<Type,object> _knownActLike=new Dictionary<Type,object>();
-
-		private readonly dynamic _asDynamic;
-
+    /// <summary>An RDF entity, which can be used to dynamically access RDF triples.</summary>
+    [NullGuard(ValidationFlags.OutValues)]
+    [DebuggerDisplay("Entity <{Id}>")]
+    public class Entity:DynamicObject,IEntity
+    {
+        #region Fields
+        private readonly EntityContext _entityContext;
+        private readonly EntityId _entityId;
+        private readonly IDictionary<Type,object> _knownActLike=new Dictionary<Type,object>();
+        private readonly dynamic _asDynamic;
         private readonly IDictionary<string, OntologyAccessor> _ontologyAccessors;
-
         private bool _isInitialized;
+        #endregion
 
-	    /// <summary>Creates a new instance of <see cref="Entity"/></summary>
-		/// <remarks>It will not be backed by <b>any</b> triples, when not created via factory</remarks>
-		public Entity(EntityId entityId)
-		{
-			_asDynamic=this;
-			_entityId=entityId;
+        #region Constructors
+        /// <summary>Creates a new instance of <see cref="Entity"/>.</summary>
+        /// <param name="entityId">IRI of the entity.</param>
+        /// <remarks>It will not be backed by <b>any</b> triples, when not created via factory.</remarks>
+        public Entity(EntityId entityId)
+        {
+            _asDynamic=this;
+            _entityId=entityId;
             _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();
-		}
+        }
 
-		internal Entity(EntityId entityId,EntityContext entityContext):this(entityId)
-		{
-		    _entityContext=entityContext;
-		}
+        /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
+        /// <param name="entityId">IRI of the entity.</param>
+        /// <param name="entityContext">Entity context to be attached to this entity.</param>
+        internal Entity(EntityId entityId,EntityContext entityContext):this(entityId)
+        {
+            _entityContext=entityContext;
+        }
+        #endregion
 
-	    public EntityId Id { get { return _entityId; } }
+        #region Properties
+        /// <summary>Gets an IRI of this entity.</summary>
+        public EntityId Id { get { return _entityId; } }
 
-	    private bool IsInitialized
-	    {
-	        get
-	        {
-	            return (_entityId is BlankId)||_isInitialized;
-	        }
-	    }
+        /// <summary>Determines if the entity was initialized.</summary>
+        private bool IsInitialized
+        {
+            get
+            {
+                return (_entityId is BlankId)||_isInitialized;
+            }
+        }
 
-	    public object this[string member]
-	    {
-	        get
-	        {
-	            return _ontologyAccessors[member];
-	        }
+        /// <summary>Gets or sets ontology based members.</summary>
+        /// <param name="member">Ontology based member.</param>
+        /// <returns>Ontology based member.</returns>
+        public object this[string member]
+        {
+            get
+            {
+                return _ontologyAccessors[member];
+            }
 
             internal set
             {
@@ -67,73 +75,98 @@ namespace RomanticWeb.Entities
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("value", "Must be OntologyAccessor");
+                    throw new ArgumentOutOfRangeException("value","Must be OntologyAccessor");
                 }
             }
-	    }
+        }
+        #endregion
 
-#pragma warning disable 1591
-	    public static bool operator ==(Entity left, IEntity right)
+        #region Operators
+        /// <summary>Checks for equality between two entities.</summary>
+        /// <param name="left">Left operand of the check.</param>
+        /// <param name="right">Right operand of the check.</param>
+        /// <returns><b>True</b> if entities has equal IRI's, otherwise <b>false</b>.</returns>
+        public static bool operator ==(Entity left,IEntity right)
         {
             return Equals(left,right);
         }
 
-        public static bool operator !=(Entity left, IEntity right)
+        /// <summary>Checks for inequality between two entities.</summary>
+        /// <param name="left">Left operand of the check.</param>
+        /// <param name="right">Right operand of the check.</param>
+        /// <returns><b>False</b> if entities has equal IRI's, otherwise <b>true</b>.</returns>
+        public static bool operator!=(Entity left,IEntity right)
         {
             return !(left == right);
         }
-#pragma warning restore 1591
+        #endregion
 
+        #region Public methods
+        /// <summary>Converts this entity as an dynamic object.</summary>
+        /// <returns>Dynamic object beeing same entity.</returns>
         public dynamic AsDynamic() { return _asDynamic; }
 
-		public override bool TryGetMember(GetMemberBinder binder,out object result)
-		{
-		    EnsureIsInitialized();
+        /// <summary>Tries to resolve a dynamic member.</summary>
+        /// <param name="binder">Binder context with details on which member is going to be resolved.</param>
+        /// <param name="result">Result of the member resolution.</param>
+        /// <returns><b>True</b> if the member was resolved sucessfuly, otherwise <b>false</b>.</returns>
+        public override bool TryGetMember(GetMemberBinder binder,out object result)
+        {
+            EnsureIsInitialized();
+            bool gettingMemberSucceeded=TryGetOntologyAccessor(binder,out result);
+            if (gettingMemberSucceeded)
+            {
+                return true;
+            }
 
-            // first look for ontology prefix
-			bool gettingMemberSucceeded=TryGetOntologyAccessor(binder,out result);
+            if (TryGetPropertyFromOntologies(binder,out result))
+            {
+                return true;
+            }
 
-			if (gettingMemberSucceeded)
-			{
-			    return true;
-			}
+            return false;
+        }
 
-			// then look for properties in ontologies
-			if (TryGetPropertyFromOntologies(binder,out result))
-			{
-			    return true;
-			}
+        /// <summary>Transforms given entity into a strongly typed interface.</summary>
+        /// <typeparam name="TInterface">Strongly typed interface to be transformed into.</typeparam>
+        /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
+        public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
+        {
+            if (_entityContext!=null)
+            {
+                return _entityContext.EntityAs<TInterface>(this);
+            }
 
-			return false;
-		}
+            if (!_knownActLike.ContainsKey(typeof(TInterface)))
+            {
+                _knownActLike[typeof(TInterface)]=new ImpromptuDictionary().ActLike<TInterface>();
+            }
 
-	    public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
-		{
-			if (_entityContext!=null)
-			{
-				return _entityContext.EntityAs<TInterface>(this);
-			}
+            return (TInterface)_knownActLike[typeof(TInterface)];
+        }
 
-			if (!_knownActLike.ContainsKey(typeof(TInterface)))
-			{
-				_knownActLike[typeof(TInterface)] = new ImpromptuDictionary().ActLike<TInterface>();
-			}
-
-			return (TInterface)_knownActLike[typeof(TInterface)];
-		}
-
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>Type: <see cref="System.Int32" />
+        /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
         }
 
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj"></param>
+        /// <returns>Type: <see cref="System.Boolean" />
+        /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals(object obj)
         {
             var entity=obj as IEntity;
             if (entity == null) { return false; }
             return Id.Equals(entity.Id);
         }
+        #endregion
 
+        #region Non-public methods
+        /// <summary>Ensures the entity is initialized and filled with data.</summary>
         internal void EnsureIsInitialized()
         {
             if ((_entityContext != null)&&!IsInitialized)
@@ -155,28 +188,29 @@ namespace RomanticWeb.Entities
             return false;
         }
 
-		private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
-		{
-		    var matchingPredicates=(from accessor in _ontologyAccessors.Values
-		                            let property = accessor.GetProperty(binder.Name)
-		                            where property!=null
-		                            select new { accessor,property }).ToList();
+        private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
+        {
+            var matchingPredicates=(from accessor in _ontologyAccessors.Values
+                                    let property = accessor.GetProperty(binder.Name)
+                                    where property!=null
+                                    select new { accessor,property }).ToList();
 
-			if (matchingPredicates.Count==1)
-			{
-				var singleMatch=matchingPredicates.Single();
-				result=singleMatch.accessor.GetObjects(Id,singleMatch.property,new DynamicPropertyAggregate(binder.Name));
+            if (matchingPredicates.Count==1)
+            {
+                var singleMatch=matchingPredicates.Single();
+                result=singleMatch.accessor.GetObjects(Id,singleMatch.property,new DynamicPropertyAggregate(binder.Name));
                 return result!=null;
-			}
+            }
 
-			if (matchingPredicates.Count==0)
-			{
-				result=null;
-				return false;
-			}
+            if (matchingPredicates.Count==0)
+            {
+                result=null;
+                return false;
+            }
 
-			var matchedPropertiesQNames=matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
-			throw new AmbiguousPropertyException(binder.Name,matchedPropertiesQNames);
-		}
-	}
+            var matchedPropertiesQNames=matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
+            throw new AmbiguousPropertyException(binder.Name,matchedPropertiesQNames);
+        }
+        #endregion
+    }
 }

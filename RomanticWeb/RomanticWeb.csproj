@@ -82,6 +82,7 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Converters\IComplexTypeConverter.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -147,6 +148,7 @@
   <ItemGroup>
     <None Include="Fody.targets" />
     <EmbeddedResource Include="Ontologies\RDF.owl" />
+    <EmbeddedResource Include="Ontologies\RDFS.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

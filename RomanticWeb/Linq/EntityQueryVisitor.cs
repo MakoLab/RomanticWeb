@@ -392,7 +392,8 @@ namespace RomanticWeb.Linq
         }
 
         /// <summary>Visits a unhandled expression.</summary>
-        /// <param name="expression">Expression to be visited.</param>
+        /// <param name="unhandledItem">Expression beeing unhandled.</param>
+        /// <param name="visitMethod">Visitor method.</param>
         /// <returns>Expression visited</returns>
         protected override Exception CreateUnhandledItemException<T>(T unhandledItem,string visitMethod)
         {

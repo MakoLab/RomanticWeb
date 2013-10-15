@@ -10,6 +10,7 @@ using RomanticWeb.Ontologies;
 
 namespace Magi.Data
 {
+    /// <summary>Provides a centralized access to ontology provider factories.</summary>
     public class OntologyFactory
     {
         private static IEnumerable<IOntologyFactory> OntologyFactories;
@@ -19,6 +20,10 @@ namespace Magi.Data
             OntologyFactories=ContainerFactory.GetInstancesImplementing<IOntologyFactory>();
         }
 
+        /// <summary>Creates an ontology from given file path.</summary>
+        /// <param name="path">File path containing a serialized ontology data.</param>
+        /// <remarks>This method assumes that path can be converted to an URI, thus it is possible to pass both local file system and remote files.</remarks>
+        /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(string path)
         {
             if (path==null)
@@ -34,6 +39,9 @@ namespace Magi.Data
             return Create(responseStream,contentType);
         }
 
+        /// <summary>Creates an ontology from given stream.</summary>
+        /// <param name="fileStream">Stream containing a serialized ontology data.</param>
+        /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(Stream fileStream)
         {
             if (fileStream==null)
@@ -45,6 +53,10 @@ namespace Magi.Data
             return Create(fileStream,contentType);
         }
 
+        /// <summary>Creates an ontology from given stream.</summary>
+        /// <param name="fileStream">Stream containing a serialized ontology data.</param>
+        /// <param name="contentType">Explicitely passed content type of the data stored in the given stream.</param>
+        /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(Stream fileStream,string contentType)
         {
             if (fileStream==null)

@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
     public interface IEntityStore
     {
-        IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);
+        IEnumerable<EntityTriple> Quads { get; }
 
-        bool EntityIsCollectionRoot(IEntity potentialList);
+        IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);
 
         void AssertTriple(EntityTriple entityTriple);
     }

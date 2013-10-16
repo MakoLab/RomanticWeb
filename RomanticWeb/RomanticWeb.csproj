@@ -75,6 +75,7 @@
     <Compile Include="Entities\ResultAggregations\SingleResultAggregation.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />
+    <Compile Include="EntityStoreExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
     <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />
     <Compile Include="Entities\BlankId.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="EntityStore.cs" />
     <Compile Include="Model\EntityTriple.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
+    <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>
   <ItemGroup>

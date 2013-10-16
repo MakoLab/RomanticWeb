@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using NullGuard;
 using RomanticWeb.Entities;
 
 namespace RomanticWeb.Converters
@@ -17,10 +16,7 @@ namespace RomanticWeb.Converters
 
         public bool CanConvert(IEntity blankNode,IEntityStore entityStore)
         {
-            dynamic potentialList=blankNode.AsDynamic();
-
-            // todo: consider removing EntityIsCollectionRoot
-            return potentialList.rdf.Has_first&&entityStore.EntityIsCollectionRoot(potentialList);
+            return (blankNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(blankNode));
         }
 
         public object Convert(IEntity blankNode, IEntityStore entityStore)

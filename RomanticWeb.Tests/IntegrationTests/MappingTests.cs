@@ -208,7 +208,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            // todo: change the exception thrown
             var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.Homepage; });
             Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
             Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(3));
@@ -221,7 +220,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            // todo: change the exception thrown
             Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
         }
 

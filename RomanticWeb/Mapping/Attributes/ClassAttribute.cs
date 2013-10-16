@@ -33,14 +33,13 @@ namespace RomanticWeb.Mapping.Attributes
         /// <returns>Class mapping or null.</returns>
         internal IClassMapping GetMapping(IOntologyProvider ontology)
         {
-            ClassMapping result=null;
             Uri uri=ontology.ResolveUri(Prefix,ClassName);
             if (uri!=null)
             {
-                result=new ClassMapping(uri);
+                return new ClassMapping(uri);
             }
 
-            return result;
+            throw new MappingException(string.Format("Cannot resolve class {0}:{1}",Prefix,ClassName));
         }
         #endregion
     }

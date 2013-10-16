@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
+using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities.ResultAggregations;
@@ -19,7 +19,7 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMappings;
         private readonly INodeConverter _converter;
 
-        internal EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
+        public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
         {
             _store = store;
             _entity = entity;
@@ -56,10 +56,14 @@ namespace RomanticWeb.Entities
             var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
             var objectsForPredicate=_converter.ConvertNodes(property.Uri,objects);
 
+            LogTo.Debug("Reading property {0}", property.Uri);
+
             var operation=property.IsCollection?AggregateOperation.Flatten:AggregateOperation.SingleOrDefault;
             var aggregation=(from agg in ResultAggregations 
                              where agg.Metadata.Operation==operation 
                              select agg).SingleOrDefault();
+
+            LogTo.Debug("Performing operation {0} on result nodes", operation);
             result=aggregation.Value.Aggregate(objectsForPredicate);
 
             return true;

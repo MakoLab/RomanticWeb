@@ -44,6 +44,31 @@ namespace RomanticWeb.DotNetRDF
             }
         }
 
+        public bool EntityExist(EntityId entityId)
+        {
+            var ask=QueryBuilder.Ask()
+                                .Graph(
+                                    "?g",
+                                    g => g.Where(t => t.Subject("s").Predicate("p").Object(entityId.Uri))
+                                          .Union(u => u.Where(t=>t.Subject(entityId.Uri).Predicate("p").Object("o"))));
+            ask.Prefixes.Import(_namespaces);
+
+            return ExecuteAsk(ask.BuildQuery());
+        }
+
+        private bool ExecuteAsk(SparqlQuery query)
+        {
+            var store = _store as IInMemoryQueryableStore;
+            if (store != null)
+            {
+                var inMemoryQuadDataset = new InMemoryQuadDataset(store, new Uri("http://app.magi/graphs"));
+                var processor = new LeviathanQueryProcessor(inMemoryQuadDataset);
+                return ((SparqlResultSet)processor.ProcessQuery(query)).Result;
+            }
+
+            return ((SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString())).Result;
+        }
+
         private SparqlResultSet ExecuteEntityLoadQuery(SparqlQuery query)
         {
             var store=_store as IInMemoryQueryableStore;

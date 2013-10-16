@@ -227,7 +227,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected override IMappingsRepository SetupMappings()
         {
-            return new TestMappingsRepository(new TestOntologyProvider());
+            return new TestMappingsRepository();
         }
     }
 }

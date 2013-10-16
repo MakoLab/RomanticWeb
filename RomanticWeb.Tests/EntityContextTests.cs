@@ -10,7 +10,6 @@ using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
-using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
@@ -29,10 +28,15 @@ namespace RomanticWeb.Tests
             {
                 Setup();
 
-                yield return new Lazy<IEntity>(() => _entityContext.Load(new EntityId("http://magi/people/Tomasz")));
+                yield return new Lazy<IEntity>(() =>
+                    {
+                        _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
+                        return _entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+                    });
                 yield return new Lazy<IEntity>(
                     () =>
                     {
+                        _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
                         return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
                     });
@@ -44,6 +48,7 @@ namespace RomanticWeb.Tests
         {
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
+            _mappings.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
             _entityContext = new EntityContext(_mappings.Object, _entityStore.Object, _store.Object)
@@ -108,6 +113,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping());
+            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
             var typed = new Entity(new EntityId("http://magi/people/Tomasz"));
 
@@ -139,6 +145,7 @@ namespace RomanticWeb.Tests
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
+            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             dynamic entity = _entityContext.Load(new EntityId("http://magi/people/Tomasz"));
 
             // when
@@ -158,6 +165,7 @@ namespace RomanticWeb.Tests
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
+            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
@@ -167,6 +175,64 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+        }
+
+        [Test]
+        public void Loading_entity_twice_should_initialize_only_once()
+        {
+            // given
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
+            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
+            var entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            var name=entity.AsDynamic().foaf.givenName;
+            entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+
+            // when
+            var page = entity.AsDynamic().foaf.homePage;
+
+            // then
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+        }
+
+        [Test]
+        public void New_entity_should_not_trigger_initialization()
+        {
+            // given
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
+            var entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
+
+            // when
+            var page = entity.AsDynamic().foaf.homePage;
+
+            // then
+            Assert.That(page,Is.Empty);
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), It.IsAny<EntityId>()), Times.Never);
+        }
+
+        [Test]
+        public void Load_should_return_null_if_entity_doesnt_exist()
+        {
+            // given
+            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(false);
+
+            // when
+            var entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+
+            // then
+            Assert.That(entity,Is.Null);
+        }
+
+        [Test]
+        public void Should_be_possible_to_load_entity_without_checking_for_existence()
+        {
+            // when
+            var entity = _entityContext.Load(new EntityId("http://magi/people/Tomasz"),false);
+
+            // then
+            Assert.That(entity,Is.Not.Null);
+            _store.Verify(s => s.EntityExist(It.IsAny<EntityId>()),Times.Never);
         }
 
         private static IPropertyMapping GetMapping(string propertyName)

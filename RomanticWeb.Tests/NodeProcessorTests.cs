@@ -40,13 +40,13 @@ namespace RomanticWeb.Tests
             var converter=CreateProcessor();
             var predicate=new Uri("urn:some:predicate");
             var objects = Nodes.Create(10).Uris().GetNodes();
-            _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>())).Returns((EntityId id) => new Entity(id));
+            _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>(),false)).Returns((EntityId id,bool b) => new Entity(id));
 
             // when
             converter.ConvertNodes(predicate,objects).ToList();
 
             // then
-            _entityContext.Verify(ctx=>ctx.Load(It.IsAny<EntityId>()),Times.Exactly(10));
+            _entityContext.Verify(ctx => ctx.Load(It.IsAny<EntityId>(), false), Times.Exactly(10));
         }
 
         [Test]
@@ -56,13 +56,13 @@ namespace RomanticWeb.Tests
             var converter = CreateProcessor();
             var predicate = new Uri("urn:some:predicate");
             var objects = Nodes.Create(10).Blanks().GetNodes();
-            _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>())).Returns((EntityId id) => new Entity(id));
+            _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>(), false)).Returns((EntityId id,bool b) => new Entity(id));
 
             // when
             converter.ConvertNodes(predicate, objects).ToList();
 
             // then
-            _entityContext.Verify(ctx => ctx.Load(It.IsAny<EntityId>()), Times.Exactly(10));
+            _entityContext.Verify(ctx => ctx.Load(It.IsAny<EntityId>(), false), Times.Exactly(10));
         }
 
         [Test]

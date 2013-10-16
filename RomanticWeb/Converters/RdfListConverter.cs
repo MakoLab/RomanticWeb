@@ -6,7 +6,6 @@ using RomanticWeb.Entities;
 namespace RomanticWeb.Converters
 {
     [Export(typeof(IComplexTypeConverter))]
-    [NullGuard(ValidationFlags.OutValues)]
     public class RdfListConverter:IComplexTypeConverter
     {
         private readonly Entity _listNil;

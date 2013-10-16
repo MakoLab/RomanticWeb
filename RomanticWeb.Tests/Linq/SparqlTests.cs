@@ -49,6 +49,7 @@ namespace RomanticWeb.Tests.Linq
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("FamilyName")).Returns(_firstNamePropertyMappingMock.Object);
 			_personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);
 			_mappingsRepositoryMock=new Mock<IMappingsRepository>(MockBehavior.Strict);
+		    _mappingsRepositoryMock.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
 			_mappingsRepositoryMock.Setup(repository => repository.MappingFor<IPerson>()).Returns(_personMappingMock.Object);
 			_ontologyProviderMock=new Mock<IOntologyProvider>(MockBehavior.Strict);
 			_ontologyProviderMock.SetupGet(provider => provider.Ontologies).Returns(

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -11,5 +10,7 @@ namespace RomanticWeb
         IEnumerable<Tuple<Node,Node,Node>> GetNodesForQuery(string sparqlConstruct);
 
         void LoadEntity(IEntityStore store,EntityId entityId);
+
+        bool EntityExist(EntityId entityId);
     }
 }

@@ -14,17 +14,12 @@ namespace RomanticWeb.Ontologies
         #endregion
 
         #region Constructors
-        /// <summary>Default parameterles constructor.</summary>
-        protected internal CompoundOntologyProvider():base()
+        /// <summary>Default constructor.</summary>
+        protected internal CompoundOntologyProvider(params IOntologyProvider[] ontologyProviders)
         {
-            ObservableCollection<IOntologyProvider> ontologyProviders=new ObservableCollection<IOntologyProvider>(BuildOntologyProviders());
-            ontologyProviders.CollectionChanged+=OnOntologyProvidersColletionChanged;
-            _ontologyProviders=ontologyProviders;
+            _ontologyProviders=new List<IOntologyProvider>(ontologyProviders);
         }
-        #endregion
 
-        #region Events
-        internal event NotifyCollectionChangedEventHandler CollectionChanged;
         #endregion
 
         #region Properties
@@ -43,13 +38,6 @@ namespace RomanticWeb.Ontologies
             return new IOntologyProvider[0];
         }
 
-        private void OnOntologyProvidersColletionChanged(object sender,NotifyCollectionChangedEventArgs e)
-        {
-            if (CollectionChanged!=null)
-            {
-                CollectionChanged(this,e);
-            }
-        }
         #endregion
     }
 }

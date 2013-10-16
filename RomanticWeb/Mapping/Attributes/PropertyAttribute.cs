@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
@@ -39,14 +38,13 @@ namespace RomanticWeb.Mapping.Attributes
         #region Internal methods
         internal IPropertyMapping GetMapping(string propertyName,IOntologyProvider ontology)
         {
-            PropertyMapping result=null;
             Uri uri=ontology.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
                 return new PropertyMapping(propertyName,uri,null,false);
             }
 
-            return result;
+            throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, propertyName));
         }
         #endregion
     }

@@ -90,7 +90,7 @@ namespace RomanticWeb.Entities
                              select agg).SingleOrDefault();
 
             if (aggregation!=null)
-                {
+            {
                 return aggregation.Value.Aggregate(objects);
             }
 

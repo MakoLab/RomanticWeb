@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
+using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -24,9 +25,10 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setup()
         {
             _mappings = SetupMappings();
+            var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider(),new TestOntologyProvider());
             EntityContext=new EntityContext(Mappings,CreateEntitySource())
                               {
-                                  OntologyProvider=new TestOntologyProvider()
+                                  OntologyProvider=ontologyProvider
                               };
 
             ChildSetup();
@@ -44,7 +46,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected virtual IMappingsRepository SetupMappings()
         {
-            return new Mock<IMappingsRepository>(MockBehavior.Strict).Object;
+            var mock=new Mock<IMappingsRepository>();
+            mock.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
+            return mock.Object;
         }
 
         protected virtual void ChildSetup()

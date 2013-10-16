@@ -10,15 +10,15 @@ namespace RomanticWeb.Entities.ResultAggregations
 
         public object Aggregate(IEnumerable<object> objects)
         {
-            var objectList=objects as IList<object>??objects.ToList();
+            var objectList = objects as IList<object> ?? objects.ToList();
+            var listFlattened = (IEnumerable<object>)_flatten.Aggregate(objectList);
             try
             {
-                var aggregate=(IEnumerable<object>)_flatten.Aggregate(objectList);
-                return aggregate.SingleOrDefault();
+                return listFlattened.SingleOrDefault();
             }
             catch (System.InvalidOperationException)
             {
-                throw new CardinalityException(1, objectList.Count);
+                throw new CardinalityException(1, listFlattened.Count());
             }
         }
     }

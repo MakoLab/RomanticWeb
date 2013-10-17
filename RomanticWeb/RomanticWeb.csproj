@@ -112,6 +112,7 @@
     <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
     <Compile Include="Mapping\Fluent\PredicatePart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
+    <Compile Include="Mapping\Model\NullGraphSelector.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />

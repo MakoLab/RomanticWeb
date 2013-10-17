@@ -10,12 +10,12 @@ namespace RomanticWeb.Mapping.Model
             IsCollection=isCollection;
             Name=name;
             Uri=uri;
-            GraphSelector=graphSelector;
+            GraphSelector=graphSelector??new NullGraphSelector();
         }
 
         public Uri Uri { get; private set; }
 
-		public IGraphSelectionStrategy GraphSelector { [return:AllowNull] get; private set; }
+		public IGraphSelectionStrategy GraphSelector { get; private set; }
 
         public string Name { get; private set; }
 

@@ -35,5 +35,10 @@ namespace RomanticWeb
         {
             _entityQuads.Add(entityTriple);
         }
+
+        public void RetractTriple(EntityTriple entityTriple)
+        {
+            _entityQuads.Remove(entityTriple);
+        }
     }
 }

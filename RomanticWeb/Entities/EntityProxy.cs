@@ -8,6 +8,7 @@ using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
@@ -53,18 +54,48 @@ namespace RomanticWeb.Entities
 
             var property=_entityMappings.PropertyFor(binder.Name);
 
+            LogTo.Debug("Reading property {0}", property.Uri);
+
             var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
             var objectsForPredicate=_converter.ConvertNodes(property.Uri,objects);
-
-            LogTo.Debug("Reading property {0}", property.Uri);
 
             var operation=property.IsCollection?AggregateOperation.Flatten:AggregateOperation.SingleOrDefault;
             var aggregation=(from agg in ResultAggregations 
                              where agg.Metadata.Operation==operation 
-                             select agg).SingleOrDefault();
+                             select agg).Single();
 
             LogTo.Debug("Performing operation {0} on result nodes", operation);
             result=aggregation.Value.Aggregate(objectsForPredicate);
+
+            return true;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            _entity.EnsureIsInitialized();
+
+            var property = _entityMappings.PropertyFor(binder.Name);
+
+            LogTo.Debug("Setting property {0}", property.Uri);
+
+            var quadsRemoved=from quad in _store.Quads 
+                             where quad.EntityId==_entity.Id
+                             && quad.Predicate==Node.ForUri(property.Uri)
+                             && quad.Subject==Node.ForUri(_entity.Id.Uri)
+                             select quad;
+
+            var graphUri=property.GraphSelector.SelectGraph(_entity.Id);
+            if (graphUri!=null)
+            {
+                quadsRemoved=quadsRemoved.Where(quad => quad.Graph==Node.ForUri(graphUri));
+            }
+
+            foreach (var entityTriple in quadsRemoved.ToList())
+            {
+                _store.RetractTriple(entityTriple);
+            }
+
+            _store.AssertTriple(new EntityTriple(_entity.Id, Node.ForUri(_entity.Id.Uri), Node.ForUri(property.Uri), Node.ForLiteral(value.ToString())));
 
             return true;
         }

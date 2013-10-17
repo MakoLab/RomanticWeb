@@ -1,5 +1,6 @@
 using System;
 using NullGuard;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
@@ -104,5 +105,5 @@ namespace RomanticWeb.Entities
         {
             return other != null && Equals(_uri, other._uri);
         }
-	}
+    }
 }

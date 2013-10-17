@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
+using Anotar.NLog;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
 using RomanticWeb.Converters;
@@ -81,7 +82,8 @@ namespace RomanticWeb.Entities
         }
 
 	    internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
-	    {
+        {
+            LogTo.Debug("Reading property {0}", property.Uri);
 	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri);
 	        var objects=_nodeConverter.ConvertNodes(property.Uri,objectValues);
 
@@ -91,6 +93,7 @@ namespace RomanticWeb.Entities
 
             if (aggregation!=null)
             {
+                LogTo.Debug("Performing operation {0} on result nodes", aggregate.Aggregation);
                 return aggregation.Value.Aggregate(objects);
             }
 

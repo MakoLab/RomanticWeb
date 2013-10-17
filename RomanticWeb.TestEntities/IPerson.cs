@@ -6,11 +6,11 @@ namespace RomanticWeb.TestEntities
 {
 	public interface IPerson : IEntity
 	{
-		string FirstName { get; }
+		string FirstName { get; set; }
 
-		string LastName { get; }
+	    string LastName { get; set; }
 
-		Uri Homepage { get; }
+	    Uri Homepage { get; }
 
         ICollection<string> Interests { get; }
         

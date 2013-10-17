@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -140,6 +141,11 @@ namespace RomanticWeb.Model
                 hashCode = (hashCode * 397) ^ _predicate.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} {3}",Subject,Predicate,Object,Graph);
         }
 
         int IComparable<EntityTriple>.CompareTo(EntityTriple other)

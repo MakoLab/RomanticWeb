@@ -223,9 +223,46 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
         }
 
+        [Test]
+        public void Setting_property_should_be_possible_in_default_graph()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("TriplesWithLiteralSubjects.trig");
+
+            // when
+            Entity.FirstName="Michał";
+
+            // then
+            Assert.That(Entity.FirstName, Is.EqualTo("Michał"));
+            Assert.That(EntityStore.Quads, Has.Count.EqualTo(3));
+        }
+
+        [Test]
+        public void Setting_property_should_be_possible_in_named_graph()
+        {
+            // given
+            Mappings.Add(new NamedGraphsPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+
+            // when
+            Entity.FirstName = "Dominik";
+            Entity.LastName = "Kuziński";
+
+            // then
+            Assert.That(Entity.FirstName, Is.EqualTo("Dominik"));
+            Assert.That(Entity.LastName, Is.EqualTo("Kuziński"));
+            Assert.That(EntityStore.Quads, Has.Count.EqualTo(4), "Actual triples were: {0}", SerializeStore());
+        }
+
         protected override IMappingsRepository SetupMappings()
         {
             return new TestMappingsRepository();
+        }
+
+        private string SerializeStore()
+        {
+            return String.Join(Environment.NewLine,EntityStore.Quads);
         }
     }
 }

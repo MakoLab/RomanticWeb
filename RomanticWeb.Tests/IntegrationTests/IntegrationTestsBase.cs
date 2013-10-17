@@ -11,6 +11,8 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         private IMappingsRepository _mappings;
 
+        private EntityStore _entityStore;
+
         public IMappingsRepository Mappings
         {
             get
@@ -21,12 +23,21 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected IEntityContext EntityContext { get; private set; }
 
+        protected EntityStore EntityStore
+        {
+            get
+            {
+                return _entityStore;
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
             _mappings = SetupMappings();
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider(),new TestOntologyProvider());
-            EntityContext=new EntityContext(Mappings,CreateEntitySource())
+            _entityStore=new EntityStore();
+            EntityContext=new EntityContext(Mappings,EntityStore,CreateEntitySource())
                               {
                                   OntologyProvider=ontologyProvider
                               };

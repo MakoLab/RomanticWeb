@@ -12,5 +12,7 @@ namespace RomanticWeb
         IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);
 
         void AssertTriple(EntityTriple entityTriple);
+
+        void RetractTriple(EntityTriple entityTriple);
     }
 }

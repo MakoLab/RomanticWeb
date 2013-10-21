@@ -12,6 +12,7 @@ namespace RomanticWeb.Mapping.Attributes
         private readonly string _propertyName;
         private Uri[] _range=new Uri[0];
         private int _cardinality=Int32.MaxValue;
+
         #endregion
 
         #region Constructors
@@ -20,8 +21,10 @@ namespace RomanticWeb.Mapping.Attributes
         /// <param name="propertyName">Predicate name.</param>
         public PropertyAttribute(string prefix,string propertyName):base(prefix)
         {
+            IsCollection=false;
             _propertyName=propertyName;
         }
+
         #endregion
 
         #region Properties
@@ -32,7 +35,10 @@ namespace RomanticWeb.Mapping.Attributes
         public Uri[] Range { get { return _range; } set { _range=(value!=null?value:new Uri[0]); } }
 
         /// <summary>Gets or sets cardinality of the predicate.</summary>
-        public int Cardinality { get { return _cardinality; } set { _cardinality=value; } }
+        public int Cardinality { get { return _cardinality; } set { _cardinality = value; } }
+
+        public bool IsCollection { get; set; }
+
         #endregion
 
         #region Internal methods
@@ -41,11 +47,12 @@ namespace RomanticWeb.Mapping.Attributes
             Uri uri=ontology.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
-                return new PropertyMapping(propertyName,uri,null,false);
+                return new PropertyMapping(propertyName, uri, null, IsCollection);
             }
 
-            throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, propertyName));
+            throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));
         }
+
         #endregion
     }
 }

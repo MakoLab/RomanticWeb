@@ -6,9 +6,8 @@ using System.Net;
 using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.IO;
 using RomanticWeb.Net;
-using RomanticWeb.Ontologies;
 
-namespace Magi.Data
+namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a centralized access to ontology provider factories.</summary>
     public class OntologyFactory

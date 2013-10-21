@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Magi.Data;
 
 namespace RomanticWeb.Ontologies
 {
@@ -11,10 +10,10 @@ namespace RomanticWeb.Ontologies
     public enum BuiltInOntologies:uint
     {
         /// <summary>Points to an RDF ontology.</summary>
-        RDF=0x00000001,
+        RDF=1,
 
         /// <summary>Points to an RDF Schema ontology.</summary>
-        RDFS=0x00000002
+        RDFS=1<<1
     }
 
     /// <summary>Provides default, built in ontologies.</summary>

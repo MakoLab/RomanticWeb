@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using RomanticWeb.Ontologies;
+﻿using System.IO;
 
-namespace Magi.Data
+namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a base interface for ontology factories.</summary>
     public interface IOntologyFactory

@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using RomanticWeb.Ontologies;
 
-namespace Magi.Data
+namespace RomanticWeb.Ontologies
 {
     /// <summary>Converts an OWL based ontology written with XML syntax into an object representation.</summary>
     public class OwlOntologyFactory:IOntologyFactory

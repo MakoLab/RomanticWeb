@@ -8,6 +8,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Converters
 {
+    [TestFixture]
     public class DurationConverterTests : XsdConverterTestsBase<DurationConverter>
     {
         protected override IEnumerable<Uri> SupportedXsdTypes
@@ -29,6 +30,7 @@ namespace RomanticWeb.Tests.Converters
             }
         } 
 
+        [Test]
         [TestCaseSource("TimeSpanValues")]
         public void Should_convert_values(string literal,TimeSpan expected)
         {

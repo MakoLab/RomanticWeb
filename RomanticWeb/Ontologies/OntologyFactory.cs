@@ -25,11 +25,6 @@ namespace RomanticWeb.Ontologies
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(string path)
         {
-            if (path==null)
-            {
-                throw new ArgumentNullException("path");
-            }
-
             Uri uriPath=new Uri(path);
             WebRequest request=WebRequest.Create(uriPath);
             WebResponse response=request.GetResponse();
@@ -58,16 +53,6 @@ namespace RomanticWeb.Ontologies
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(Stream fileStream,string contentType)
         {
-            if (fileStream==null)
-            {
-                throw new ArgumentNullException("fileStream");
-            }
-
-            if (contentType==null)
-            {
-                throw new ArgumentNullException("contentType");
-            }
-
             IOntologyFactory ontologyFactory=OntologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType==contentType)).FirstOrDefault();
             if (ontologyFactory==null)
             {

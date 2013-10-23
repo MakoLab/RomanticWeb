@@ -7,11 +7,11 @@ namespace RomanticWeb.Converters
     [Export(typeof(IComplexTypeConverter))]
     public class RdfListConverter:IComplexTypeConverter
     {
-        private readonly Entity _listNil;
+        private readonly EntityId _listNilId;
 
         public RdfListConverter()
         {
-            _listNil = new Entity(new EntityId("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"));
+            _listNilId=new EntityId("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
         }
 
         public bool CanConvert(IEntity blankNode,IEntityStore entityStore)
@@ -19,22 +19,22 @@ namespace RomanticWeb.Converters
             return (blankNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(blankNode));
         }
 
-        public object Convert(IEntity blankNode, IEntityStore entityStore)
+        public object Convert(IEntity blankNode,IEntityStore entityStore)
         {
             // todo: consider removing dynamic typing
-            dynamic potentialList = blankNode.AsDynamic();
-            var list = new List<object>();
+            dynamic potentialList=blankNode.AsDynamic();
+            var list=new List<object>();
 
-            dynamic currentElement = potentialList.rdf.SingleOrDefault_first;
-            dynamic currentListNode = potentialList;
+            dynamic currentElement=potentialList.rdf.SingleOrDefault_first;
+            dynamic currentListNode=potentialList;
 
-            while (currentListNode != _listNil)
+            while (currentListNode.Id!=_listNilId)
             {
                 list.Add(currentElement);
-                currentListNode = currentListNode.rdf.SingleOrDefault_rest;
+                currentListNode=currentListNode.rdf.SingleOrDefault_rest;
                 if (currentListNode!=null)
                 {
-                    currentElement = currentListNode.rdf.SingleOrDefault_first;
+                    currentElement=currentListNode.rdf.SingleOrDefault_first;
                 }
             }
 

@@ -30,3 +30,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: InternalsVisibleTo("RomanticWeb.Tests")]
 [assembly: InternalsVisibleTo("Magi.Casper.Web.Tests")]
+[assembly: InternalsVisibleTo("Magi.Casper.Web.Pages.Tests")]

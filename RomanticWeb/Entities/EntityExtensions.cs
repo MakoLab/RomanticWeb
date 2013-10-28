@@ -61,7 +61,7 @@ namespace RomanticWeb.Entities
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
             IEnumerable result=(IEnumerable)entity.AsDynamic().rdf.type;
-            return (result!=null?result.Cast<EntityId>().ToArray():new EntityId[0]);
+            return (result!=null?result.Cast<Entity>().Select(item => item.Id).ToArray():new EntityId[0]);
         }
     }
 }

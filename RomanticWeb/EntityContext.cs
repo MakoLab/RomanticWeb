@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
@@ -22,9 +20,9 @@ namespace RomanticWeb
     public class EntityContext:IEntityContext
     {
         #region Fields
-        // todo: move catalog an container to a global location initiated at startup
-        private readonly AssemblyCatalog _assemblyCatalog;
-        private readonly CompositionContainer _container;
+
+        private readonly IEntityContextFactory _factory;
+
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
@@ -33,36 +31,38 @@ namespace RomanticWeb
         #endregion
 
         #region Constructors
-        /// <summary>Creates an instance of an entity context with given entity source.</summary>
-        /// <param name="entitySource">Phisical entity data source.</param>
-        public EntityContext(IEntitySource entitySource):this(new CompoundMappingsRepository(),new EntityStore(),entitySource)
-        {
-        }
 
         /// <summary>Creates an instance of an entity context with given mappings and entity source.</summary>
+        /// <param name="factory">Factory, which created this entity context</param>
         /// <param name="mappings">Information defining strongly typed interface mappings.</param>
-        /// <param name="entitySource">Phisical entity data source.</param>
-        public EntityContext(IMappingsRepository mappings,IEntitySource entitySource):this(mappings,new EntityStore(),entitySource)
+        /// <param name="entitySource">Physical entity data source.</param>
+        [Obsolete]
+        internal EntityContext(IEntityContextFactory factory,IMappingsRepository mappings,IEntitySource entitySource)
+            :this(factory,mappings,new DefaultOntologiesProvider(),new EntityStore(),entitySource)
         {
         }
 
         /// <summary>Creates an instance of an entity context with given mappings and entity source.</summary>
+        /// <param name="factory">Factory, which created this entity context</param>
         /// <param name="mappings">Information defining strongly typed interface mappings.</param>
         /// <param name="entityStore">Entity store to be used internally.</param>
-        /// <param name="entitySource">Phisical entity data source.</param>
-        internal EntityContext(IMappingsRepository mappings,IEntityStore entityStore,IEntitySource entitySource)
+        /// <param name="entitySource">Physical entity data source.</param>
+        internal EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            IOntologyProvider ontologyProvider, 
+            IEntityStore entityStore, 
+            IEntitySource entitySource)
         {
             LogTo.Info("Creating entity context");
+            _factory=factory;
             _entityStore=entityStore;
             _entitySource=entitySource;
             _nodeConverter=new NodeConverter(this,entityStore);
             _mappings=mappings;
-            _ontologyProvider=new DefaultOntologiesProvider();
+            OntologyProvider=ontologyProvider;
             Cache = new DictionaryCache();
-
-            _assemblyCatalog=new AssemblyCatalog(GetType().Assembly);
-            _container=new CompositionContainer(_assemblyCatalog,CompositionOptions.IsThreadSafe);
-            _container.ComposeParts(NodeConverter);
+            factory.SatisfyImports(_nodeConverter);
         }
         #endregion
 
@@ -75,7 +75,7 @@ namespace RomanticWeb
                 return _ontologyProvider;
             }
 
-            protected internal set
+            private set
             {
                 _ontologyProvider=value;
                 _mappings.RebuildMappings(value);
@@ -84,12 +84,13 @@ namespace RomanticWeb
 
         public ICache Cache { get; set; }
 
-        /// <summary>Gets or sets a node converter used by this entit context to transform RDF statements into strongly typed objects and values.</summary>
+        /// <summary>Gets or sets a node converter used by this entity context to transform RDF statements into strongly typed objects and values.</summary>
         public INodeConverter NodeConverter
         {
             get { return _nodeConverter; }
             set { _nodeConverter=value; }
         }
+
         #endregion
 
         #region Public methods
@@ -204,7 +205,7 @@ namespace RomanticWeb
         {
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
             var proxy=new EntityProxy(_entityStore,entity,_mappings.MappingFor<T>(),NodeConverter);
-            _container.ComposeParts(proxy);
+            _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();
         }
 
@@ -215,7 +216,7 @@ namespace RomanticWeb
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
                 var ontologyAccessor = new OntologyAccessor(_entityStore, entity, ontology, NodeConverter);
-                _container.ComposeParts(ontologyAccessor);
+                _factory.SatisfyImports(ontologyAccessor);
                 entity[ontology.Prefix] = ontologyAccessor;
             }
 

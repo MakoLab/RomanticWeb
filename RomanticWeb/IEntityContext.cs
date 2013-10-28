@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Entities;
@@ -8,6 +9,7 @@ namespace RomanticWeb
     /// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
     /// todo: less method overloads
     /// todo: drop generic constraints
+    /// todo: IDisposable?
     public interface IEntityContext
     {
         /// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>

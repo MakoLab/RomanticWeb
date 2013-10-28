@@ -163,18 +163,18 @@ namespace RomanticWeb.Model
         }
 
 #pragma warning disable 1591
-        public static bool operator ==(Node left, Node right)
+        public static bool operator ==([AllowNull]Node left, [AllowNull]Node right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Node left, Node right)
+        public static bool operator !=([AllowNull]Node left, [AllowNull]Node right)
         {
             return !Equals(left, right);
         }
 #pragma warning restore 1591
 
-        public override bool Equals(object obj)
+        public override bool Equals([AllowNull]object obj)
 		{
 			if (ReferenceEquals(null, obj)) { return false; } 
 			if (ReferenceEquals(this, obj)) { return true; }

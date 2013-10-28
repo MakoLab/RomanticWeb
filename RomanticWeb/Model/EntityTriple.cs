@@ -189,6 +189,16 @@ namespace RomanticWeb.Model
             ////return result;
         }
 
+        internal EntityTriple InGraph([AllowNull]Uri graphUri)
+        {
+            if (graphUri != null)
+            {
+                return new EntityTriple(EntityId, Subject, Predicate, Object, Node.ForUri(graphUri));
+            }
+
+            return this;
+        }
+
         private bool Equals(EntityTriple other)
         {
             return _object.Equals(other._object) && _subject.Equals(other._subject) && _predicate.Equals(other._predicate) && Equals(_graph,other.Graph)&&_entityId.Equals(other.EntityId);

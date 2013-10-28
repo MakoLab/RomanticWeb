@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
@@ -12,20 +10,15 @@ namespace RomanticWeb.Mapping
     public sealed class CompoundMappingsRepository:IMappingsRepository
     {
         #region Fields
-        private IList<IMappingsRepository> _mappingsRepositories;
+        private readonly IList<IMappingsRepository> _mappingsRepositories;
         #endregion
 
         #region Constructors
-        /// <summary>Default parameterles constrctor.</summary>
-        public CompoundMappingsRepository()
+        /// <summary>Combine the given <paramref name="repositories"/> into a single <see cref="CompoundMappingsRepository"/></summary>
+        public CompoundMappingsRepository(IEnumerable<IMappingsRepository> repositories)
         {
-            ObservableCollection<IMappingsRepository> mappingsRepositories=new ObservableCollection<IMappingsRepository>();
-            _mappingsRepositories=mappingsRepositories;
+            _mappingsRepositories=new List<IMappingsRepository>(repositories);
         }
-        #endregion
-
-        #region Events
-        internal event NotifyCollectionChangedEventHandler CollectionChanged;
         #endregion
 
         #region Properties

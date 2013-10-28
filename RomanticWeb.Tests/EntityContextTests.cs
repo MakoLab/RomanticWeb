@@ -21,6 +21,7 @@ namespace RomanticWeb.Tests
         private Mock<IMappingsRepository> _mappings;
         private Mock<IEntityStore> _entityStore;
         private Mock<IEntitySource> _store;
+        private Mock<IEntityContextFactory> _factory;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
         {
@@ -46,15 +47,14 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
+            _factory=new Mock<IEntityContextFactory>();
+            _factory.Setup(f => f.SatisfyImports(It.IsAny<EntityProxy>()));
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _mappings.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
-            _entityContext = new EntityContext(_mappings.Object, _entityStore.Object, _store.Object)
-                                 {
-                                     OntologyProvider=_ontologyProvider
-                                 };
+            _entityContext=new EntityContext(_factory.Object,_mappings.Object,_ontologyProvider,_entityStore.Object,_store.Object);
         }
 
         [TearDown]

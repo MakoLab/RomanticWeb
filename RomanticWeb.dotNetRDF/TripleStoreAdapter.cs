@@ -15,7 +15,7 @@ namespace RomanticWeb.DotNetRDF
 
         private readonly INamespaceMapper _namespaces;
 
-        private Uri _defaultMetaGraphUri=new Uri("http://app.magi/graphs");
+        private Uri _metaGraphUri=new Uri("http://app.magi/graphs");
 
         public TripleStoreAdapter(ITripleStore store)
         {
@@ -24,16 +24,16 @@ namespace RomanticWeb.DotNetRDF
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
 
-        public Uri DefaultMetaGraphUri
+        public Uri MetaGraphUri
         {
             get
             {
-                return _defaultMetaGraphUri;
+                return _metaGraphUri;
             }
 
             set
             {
-                _defaultMetaGraphUri=value;
+                _metaGraphUri=value;
             }
         }
 
@@ -76,7 +76,7 @@ namespace RomanticWeb.DotNetRDF
             var store = _store as IInMemoryQueryableStore;
             if (store != null)
             {
-                var inMemoryQuadDataset=new InMemoryQuadDataset(store,DefaultMetaGraphUri);
+                var inMemoryQuadDataset=new InMemoryQuadDataset(store,MetaGraphUri);
                 var processor = new LeviathanQueryProcessor(inMemoryQuadDataset);
                 return ((SparqlResultSet)processor.ProcessQuery(query)).Result;
             }
@@ -89,7 +89,7 @@ namespace RomanticWeb.DotNetRDF
             var store=_store as IInMemoryQueryableStore;
             if (store!=null)
             {
-                var inMemoryQuadDataset=new InMemoryQuadDataset(store,DefaultMetaGraphUri);
+                var inMemoryQuadDataset=new InMemoryQuadDataset(store,MetaGraphUri);
                 var processor=new LeviathanQueryProcessor(inMemoryQuadDataset);
                 return (SparqlResultSet)processor.ProcessQuery(query);
             }

@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RomanticWeb.Ontologies
@@ -14,10 +11,14 @@ namespace RomanticWeb.Ontologies
         #endregion
 
         #region Constructors
-        /// <summary>Default constructor.</summary>
-        protected internal CompoundOntologyProvider(params IOntologyProvider[] ontologyProviders)
+
+        internal CompoundOntologyProvider(params IOntologyProvider[] ontologyProviders)
         {
-            _ontologyProviders=new List<IOntologyProvider>(ontologyProviders);
+            _ontologyProviders = new List<IOntologyProvider>(ontologyProviders);
+        }
+
+        internal CompoundOntologyProvider(IEnumerable<IOntologyProvider> ontologyProviders):this(ontologyProviders.ToArray())
+        {
         }
 
         #endregion

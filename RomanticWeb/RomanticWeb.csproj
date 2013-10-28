@@ -75,6 +75,7 @@
     <Compile Include="Entities\ResultAggregations\SingleResultAggregation.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />
+    <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityStoreExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
     <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Converters\IComplexTypeConverter.cs" />
     <Compile Include="ICache.cs" />
+    <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />

@@ -13,6 +13,10 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         private EntityStore _entityStore;
 
+        private IEntityContextFactory _factory;
+
+        private IEntityContext _entityContext;
+
         public IMappingsRepository Mappings
         {
             get
@@ -21,7 +25,18 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected IEntityContext EntityContext { get; private set; }
+        protected IEntityContext EntityContext
+        {
+            get
+            {
+                if(_entityContext==null)
+                {
+                    _entityContext= _factory.Create();
+                }
+
+                return _entityContext;
+            }
+        }
 
         protected EntityStore EntityStore
         {
@@ -35,13 +50,13 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setup()
         {
             _mappings = SetupMappings();
-            var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider(),new TestOntologyProvider());
-            _entityStore=new EntityStore();
-            EntityContext=new EntityContext(Mappings,EntityStore,CreateEntitySource())
-                              {
-                                  OntologyProvider=ontologyProvider
-                              };
+            _entityStore = new EntityStore();
 
+            _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
+                                                 .WithOntology(new DefaultOntologiesProvider())
+                                                 .WithOntology(new TestOntologyProvider())
+                                                 .WithMappings(_mappings)
+                                                 .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
 
@@ -49,6 +64,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Teardown()
         {
             ChildTeardown();
+            _entityContext=null;
         }
 
         protected virtual void ChildTeardown()
@@ -57,7 +73,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected virtual IMappingsRepository SetupMappings()
         {
-            var mock=new Mock<IMappingsRepository>();
+            var mock = new Mock<IMappingsRepository>();
             mock.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
             return mock.Object;
         }

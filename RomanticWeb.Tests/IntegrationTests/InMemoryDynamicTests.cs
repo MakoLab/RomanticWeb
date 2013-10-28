@@ -11,20 +11,37 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         private TripleStore _store;
 
+        protected TripleStore Store
+        {
+            get
+            {
+                if (_store==null)
+                {
+                    _store=new TripleStore();
+                }
+
+                return _store;
+            }
+        }
+
         protected override void LoadTestFile(string fileName)
         {
-            _store.LoadTestFile(fileName);
+            Store.LoadTestFile(fileName);
         }
 
         protected override void LoadTestFile(string fileName,Uri graphUri)
         {
-            _store.LoadTestFile(fileName,graphUri);
+            Store.LoadTestFile(fileName,graphUri);
         }
 
         protected override IEntitySource CreateEntitySource()
         {
-            _store=new TripleStore();
-            return new TripleStoreAdapter(_store);
+            return new TripleStoreAdapter(Store);
+        }
+
+        protected override void ChildTeardown()
+        {
+            _store = null;
         }
     }
 }

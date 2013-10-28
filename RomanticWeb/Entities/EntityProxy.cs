@@ -15,6 +15,8 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     internal class EntityProxy:DynamicObject,IEntity
     {
+        private static readonly IResultAggregationStrategy FallbackAggregation = new SingleOrDefaultAggregation();
+
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMappings;
@@ -30,7 +32,7 @@ namespace RomanticWeb.Entities
         }
 
         [ImportMany(typeof(IResultAggregationStrategy))]
-        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; private set; } 
+        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; internal set; } 
 
         public EntityId Id
         {
@@ -62,10 +64,12 @@ namespace RomanticWeb.Entities
             var operation=property.IsCollection?AggregateOperation.Flatten:AggregateOperation.SingleOrDefault;
             var aggregation=(from agg in ResultAggregations 
                              where agg.Metadata.Operation==operation 
-                             select agg).Single();
+                             select agg.Value).SingleOrDefault();
 
-            LogTo.Debug("Performing operation {0} on result nodes", operation);
-            result=aggregation.Value.Aggregate(objectsForPredicate);
+            aggregation=aggregation??FallbackAggregation;
+
+            LogTo.Debug("Performing operation {0} on result nodes",operation);
+            result=aggregation.Aggregate(objectsForPredicate);
 
             return true;
         }
@@ -78,10 +82,12 @@ namespace RomanticWeb.Entities
 
             LogTo.Debug("Setting property {0}", property.Uri);
 
+            var entityId=Node.ForUri(_entity.Id.Uri);
+            var propertyUri=Node.ForUri(property.Uri);
             var quadsRemoved=from quad in _store.Quads 
                              where quad.EntityId==_entity.Id
-                             && quad.Predicate==Node.ForUri(property.Uri)
-                             && quad.Subject==Node.ForUri(_entity.Id.Uri)
+                             && quad.Predicate==propertyUri
+                             && quad.Subject==entityId
                              select quad;
 
             var graphUri=property.GraphSelector.SelectGraph(_entity.Id);
@@ -95,7 +101,8 @@ namespace RomanticWeb.Entities
                 _store.RetractTriple(entityTriple);
             }
 
-            _store.AssertTriple(new EntityTriple(_entity.Id, Node.ForUri(_entity.Id.Uri), Node.ForUri(property.Uri), Node.ForLiteral(value.ToString())));
+            var newValue=Node.ForLiteral(value.ToString());
+            _store.AssertTriple(new EntityTriple(_entity.Id, entityId, propertyUri, newValue).InGraph(graphUri));
 
             return true;
         }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
 
@@ -253,6 +255,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(Entity.FirstName, Is.EqualTo("Dominik"));
             Assert.That(Entity.LastName, Is.EqualTo("Kuziński"));
             Assert.That(EntityStore.Quads, Has.Count.EqualTo(4), "Actual triples were: {0}", SerializeStore());
+            var quads=EntityStore.Quads.Where(q => q.Graph==Node.ForUri(new Uri("personal://magi/people/Tomasz")));
+            Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
         }
 
         protected override IMappingsRepository SetupMappings()

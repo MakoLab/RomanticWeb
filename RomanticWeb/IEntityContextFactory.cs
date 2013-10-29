@@ -6,7 +6,7 @@ namespace RomanticWeb
 {
     public interface IEntityContextFactory
     {
-        IEntityContext Create();
+        IEntityContext CreateContext();
 
         IEntityContextFactory WithEntitySource(Func<IEntitySource> entitySource);
 

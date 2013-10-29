@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -89,6 +87,14 @@ namespace RomanticWeb
         {
             get { return _nodeConverter; }
             set { _nodeConverter=value; }
+        }
+
+        public IEntityStore Store
+        {
+            get
+            {
+                return _entityStore;
+            }
         }
 
         #endregion
@@ -194,7 +200,7 @@ namespace RomanticWeb
         internal void InitializeEnitity(IEntity entity)
         {
             LogTo.Debug("Initializing entity {0}",entity.Id);
-            _entitySource.LoadEntity(_entityStore,entity.Id);
+            _entitySource.LoadEntity(Store,entity.Id);
         }
 
         /// <summary>Transforms given entity into a strongly typed interface.</summary>
@@ -204,7 +210,7 @@ namespace RomanticWeb
         internal T EntityAs<T>(Entity entity) where T:class,IEntity
         {
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
-            var proxy=new EntityProxy(_entityStore,entity,_mappings.MappingFor<T>(),NodeConverter);
+            var proxy=new EntityProxy(Store,entity,_mappings.MappingFor<T>(),NodeConverter);
             _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();
         }
@@ -215,7 +221,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                var ontologyAccessor = new OntologyAccessor(_entityStore, entity, ontology, NodeConverter);
+                var ontologyAccessor = new OntologyAccessor(Store, entity, ontology, NodeConverter);
                 _factory.SatisfyImports(ontologyAccessor);
                 entity[ontology.Prefix] = ontologyAccessor;
             }

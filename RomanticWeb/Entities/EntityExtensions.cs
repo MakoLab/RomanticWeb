@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
@@ -13,10 +14,7 @@ namespace RomanticWeb.Entities
         public static dynamic AsDynamic(this IEntity entity)
         {
             dynamic result=null;
-            if (entity is IActLikeProxy)
-            {
-                entity=((IActLikeProxy)entity).Original;
-            }
+            entity=UnwrapProxy(entity);
 
             if (entity is Entity)
             {
@@ -38,10 +36,7 @@ namespace RomanticWeb.Entities
         public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface:class,IEntity
         {
             TInterface result=null;
-            if (entity is IActLikeProxy)
-            {
-                entity=((IActLikeProxy)entity).Original;
-            }
+            entity = UnwrapProxy(entity);
 
             if (entity is Entity)
             {
@@ -62,6 +57,47 @@ namespace RomanticWeb.Entities
         {
             IEnumerable result=(IEnumerable)entity.AsDynamic().rdf.type;
             return (result!=null?result.Cast<Entity>().Select(item => item.Id).ToArray():new EntityId[0]);
+        }
+
+        public static void ForceInitialize(this IEntity entity)
+        {
+            entity = UnwrapProxy(entity);
+
+            if (entity is Entity)
+            {
+                ((Entity)entity).EnsureIsInitialized();
+            }
+            else if (entity is EntityProxy)
+            {
+                ((EntityProxy)entity).AsDynamic().EnsureIsInitialized();
+            }
+        }
+
+        public static IEntityContext GetContext(this IEntity entity)
+        {
+            entity = UnwrapProxy(entity);
+
+            if (entity is Entity)
+            {
+                return ((Entity)entity).EntityContext;
+            }
+            
+            if (entity is EntityProxy)
+            {
+                return ((EntityProxy)entity).AsDynamic().EntityContext;
+            }
+
+            throw new ArgumentException("Unexpected type of IEntity","entity");
+        }
+
+        private static IEntity UnwrapProxy(IEntity entity)
+        {
+            if (entity is IActLikeProxy)
+            {
+                return ((IActLikeProxy)entity).Original;
+            }
+
+            return entity;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace RomanticWeb
             _container = new CompositionContainer(catalog, true);
         }
 
-        public IEntityContext Create()
+        public IEntityContext CreateContext()
         {
             var entitySourceFactory=_container.GetExportedValue<Func<IEntitySource>>();
             var mappings = new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());

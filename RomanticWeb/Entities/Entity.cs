@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
-using ImpromptuInterface.Dynamic;
 using NullGuard;
 
 namespace RomanticWeb.Entities
@@ -46,6 +45,14 @@ namespace RomanticWeb.Entities
         #region Properties
         /// <summary>Gets an IRI of this entity.</summary>
         public EntityId Id { get { return _entityId; } }
+
+        internal EntityContext EntityContext
+        {
+            get
+            {
+                return _entityContext;
+            }
+        }
 
         /// <summary>Determines if the entity was initialized.</summary>
         private bool IsInitialized
@@ -132,7 +139,7 @@ namespace RomanticWeb.Entities
         /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
         public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
         {
-            return _entityContext.EntityAs<TInterface>(this);
+            return EntityContext.EntityAs<TInterface>(this);
         }
 
         /// <summary>Serves as the default hash function. </summary>
@@ -159,9 +166,9 @@ namespace RomanticWeb.Entities
         /// <summary>Ensures the entity is initialized and filled with data.</summary>
         internal void EnsureIsInitialized()
         {
-            if ((_entityContext!=null)&&!IsInitialized)
+            if ((EntityContext!=null)&&!IsInitialized)
             {
-                _entityContext.InitializeEnitity(this);
+                EntityContext.InitializeEnitity(this);
                 _isInitialized=true;
             }
         }

@@ -9,6 +9,9 @@ using VDS.RDF.Query.Datasets;
 
 namespace RomanticWeb.DotNetRDF
 {
+    /// <summary>
+    /// An implementation of <see cref="IEntitySource"/>, which reads triples from a VDS.RDF.ITripleStore
+    /// </summary>
     public class TripleStoreAdapter:IEntitySource
     {
         private readonly ITripleStore _store;
@@ -17,6 +20,10 @@ namespace RomanticWeb.DotNetRDF
 
         private Uri _metaGraphUri=new Uri("http://app.magi/graphs");
 
+        /// <summary>
+        /// Creates a new instance of <see cref="TripleStoreAdapter"/>
+        /// </summary>
+        /// <param name="store">the underlying triple store</param>
         public TripleStoreAdapter(ITripleStore store)
         {
             _store=store;
@@ -24,6 +31,9 @@ namespace RomanticWeb.DotNetRDF
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
 
+        /// <summary>
+        /// Uri of the meta graph, which contains information about Entities' named graphs
+        /// </summary>
         public Uri MetaGraphUri
         {
             get

@@ -73,6 +73,7 @@ namespace RomanticWeb.Entities
             }
         }
 
+        // todo: maybe this should be reconsidered
         public static IEntityContext GetContext(this IEntity entity)
         {
             entity = UnwrapProxy(entity);
@@ -87,7 +88,7 @@ namespace RomanticWeb.Entities
                 return ((EntityProxy)entity).AsDynamic().EntityContext;
             }
 
-            throw new ArgumentException("Unexpected type of IEntity","entity");
+            return ((dynamic)entity).EntityContext;
         }
 
         private static IEntity UnwrapProxy(IEntity entity)

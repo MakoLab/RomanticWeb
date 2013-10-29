@@ -6,12 +6,18 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
+    /// </summary>
     public class EntityContextFactory : IEntityContextFactory
     {
         private readonly CompositionContainer _container;
 
         private Func<IEntityStore> _entityStoreFactory=()=>new EntityStore(); 
 
+        /// <summary>
+        /// Creates a new instance of <see cref="EntityContextFactory"/>
+        /// </summary>
         public EntityContextFactory()
         {
             var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory);

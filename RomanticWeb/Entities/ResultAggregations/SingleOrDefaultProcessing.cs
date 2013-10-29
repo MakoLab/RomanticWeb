@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(AggregateOperation.SingleOrDefault)]
-    internal class SingleOrDefaultAggregation : IResultAggregationStrategy
+    [ResultAggregationStrategy(ProcessingOperation.SingleOrDefault)]
+    internal class SingleOrDefaultProcessing : IResultProcessingStrategy
     {
-        private readonly ResultFlatteningAggregation _flatten=new ResultFlatteningAggregation();
+        private readonly ResultFlatteningProcessing _flatten=new ResultFlatteningProcessing();
 
-        public object Aggregate(IEnumerable<object> objects)
+        public object Process(IEnumerable<object> objects)
         {
             var objectList = objects as IList<object> ?? objects.ToList();
-            var listFlattened = (IEnumerable<object>)_flatten.Aggregate(objectList);
+            var listFlattened = (IEnumerable<object>)_flatten.Process(objectList);
             try
             {
                 return listFlattened.SingleOrDefault();

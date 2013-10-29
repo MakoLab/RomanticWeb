@@ -14,18 +14,17 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    /// <summary>Base class for factories, which produce <see cref="Entity"/> instances.</summary>
     public class EntityContext:IEntityContext
     {
         #region Fields
 
         private readonly IEntityContextFactory _factory;
-
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
         private IOntologyProvider _ontologyProvider;
         private INodeConverter _nodeConverter;
+
         #endregion
 
         #region Constructors
@@ -40,11 +39,6 @@ namespace RomanticWeb
         {
         }
 
-        /// <summary>Creates an instance of an entity context with given mappings and entity source.</summary>
-        /// <param name="factory">Factory, which created this entity context</param>
-        /// <param name="mappings">Information defining strongly typed interface mappings.</param>
-        /// <param name="entityStore">Entity store to be used internally.</param>
-        /// <param name="entitySource">Physical entity data source.</param>
         internal EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
@@ -58,27 +52,13 @@ namespace RomanticWeb
             _entitySource=entitySource;
             _nodeConverter=new NodeConverter(this,entityStore);
             _mappings=mappings;
-            OntologyProvider=ontologyProvider;
+            _ontologyProvider=ontologyProvider;
             Cache = new DictionaryCache();
             factory.SatisfyImports(_nodeConverter);
         }
         #endregion
 
         #region Properties
-        /// <summary>Gets or sets an ontology provider associated with this entity context.</summary>
-        public IOntologyProvider OntologyProvider
-        {
-            get
-            {
-                return _ontologyProvider;
-            }
-
-            private set
-            {
-                _ontologyProvider=value;
-                _mappings.RebuildMappings(value);
-            }
-        }
 
         public ICache Cache { get; set; }
 
@@ -104,7 +84,7 @@ namespace RomanticWeb
         /// <returns>A LINQ querable data source.</returns>
         public IQueryable<Entity> AsQueryable()
         {
-            return new EntityQueryable<Entity>(this,_mappings,OntologyProvider);
+            return new EntityQueryable<Entity>(this,_mappings,_ontologyProvider);
         }
 
         /// <summary>Converts this context into a LINQ queryable data source of entities of given type.</summary>
@@ -112,7 +92,7 @@ namespace RomanticWeb
         /// <returns>A LIQN queryable data source of entities of given type.</returns>
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
-            return new EntityQueryable<T>(this,_mappings,OntologyProvider);
+            return new EntityQueryable<T>(this,_mappings,_ontologyProvider);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>

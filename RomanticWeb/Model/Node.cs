@@ -132,22 +132,30 @@ namespace RomanticWeb.Model
 		/// <summary>
 		/// Factory method for creating URI nodes
         /// </summary>
-        /// todo:make extension method?
 		public static Node ForUri(Uri uri)
 		{
 			return new Node(uri);
 		}
 
+        /// <summary>
+        /// Factory method for creating simple literal nodes
+        /// </summary>
         public static Node ForLiteral(string literal)
         {
             return new Node(literal, null, null);
         }
 
+        /// <summary>
+        /// Factory method for creating typed literal nodes
+        /// </summary>
         public static Node ForLiteral(string literal, Uri datatype)
         {
             return new Node(literal,null,datatype);
         }
 
+        /// <summary>
+        /// Factory method for creating literal nodes with language tag
+        /// </summary>
         public static Node ForLiteral(string literal, string language)
         {
             return new Node(literal,language,null);
@@ -174,6 +182,9 @@ namespace RomanticWeb.Model
         }
 #pragma warning restore 1591
 
+        /// <summary>
+        /// Determines whether the specified System.Object is equal to the current node.
+        /// </summary>
         public override bool Equals([AllowNull]object obj)
 		{
 			if (ReferenceEquals(null, obj)) { return false; } 
@@ -181,6 +192,9 @@ namespace RomanticWeb.Model
 			return obj is Node && Equals((Node) obj);
 		}
 
+        /// <summary>
+        /// Gets hash code for the node
+        /// </summary>
 		public override int GetHashCode()
 		{
 			unchecked

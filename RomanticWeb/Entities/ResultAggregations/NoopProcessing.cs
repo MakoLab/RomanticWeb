@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(AggregateOperation.Original)]
-    internal class NoopAggregation:IResultAggregationStrategy
+    [ResultAggregationStrategy(ProcessingOperation.Original)]
+    internal class NoopProcessing:IResultProcessingStrategy
     {
-        public object Aggregate(IEnumerable<object> objects)
+        public object Process(IEnumerable<object> objects)
         {
             return objects.ToList();
         }

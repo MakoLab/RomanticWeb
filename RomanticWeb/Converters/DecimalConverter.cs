@@ -7,9 +7,15 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Converter for xsd:decimal
+    /// </summary>
     [Export(typeof(ILiteralNodeConverter))]
     public class DecimalConverter : XsdConverterBase
     {
+        /// <summary>
+        /// Gets Uri of xsd:decimal
+        /// </summary>
         protected override IEnumerable<Uri> SupportedTypes
         {
             get
@@ -18,6 +24,9 @@ namespace RomanticWeb.Converters
             }
         }
         
+        /// <summary>
+        /// Converts xsd:decimal to <see cref="decimal"/>
+        /// </summary>
         public override object Convert(Node objectNode)
         {
             return XmlConvert.ToDecimal(objectNode.Literal);

@@ -6,9 +6,15 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Converts XSD numeric types to numbers
+    /// </summary>
     [Export(typeof(ILiteralNodeConverter))]
     public class IntegerConverter:XsdConverterBase
     {
+        /// <summary>
+        /// Gets xsd integral numeric datatypes
+        /// </summary>
         protected override IEnumerable<Uri> SupportedTypes
         {
             get

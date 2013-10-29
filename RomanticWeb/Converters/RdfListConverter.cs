@@ -4,19 +4,25 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Converts a RDF list to a collection
+    /// </summary>
     [Export(typeof(IComplexTypeConverter))]
     public class RdfListConverter:IComplexTypeConverter
     {
         private readonly EntityId _listNilId;
 
+        /// <summary>
+        /// Create a new instance of <see cref="RdfListConverter"/>
+        /// </summary>
         public RdfListConverter()
         {
             _listNilId=new EntityId("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
         }
 
-        public bool CanConvert(IEntity blankNode,IEntityStore entityStore)
+        public bool CanConvert(IEntity objectNode,IEntityStore entityStore)
         {
-            return (blankNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(blankNode));
+            return (objectNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(objectNode));
         }
 
         public object Convert(IEntity blankNode,IEntityStore entityStore)

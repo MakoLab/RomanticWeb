@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(AggregateOperation.Flatten)]
-    internal class ResultFlatteningAggregation:IResultAggregationStrategy
+    [ResultAggregationStrategy(ProcessingOperation.Flatten)]
+    internal class ResultFlatteningProcessing:IResultProcessingStrategy
     {
-        public object Aggregate(IEnumerable<object> objects)
+        public object Process(IEnumerable<object> objects)
         {
             return FlattenResults(objects).ToList();
         }

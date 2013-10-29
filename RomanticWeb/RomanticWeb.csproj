@@ -51,9 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DictionaryCache.cs" />
-    <Compile Include="Entities\ResultAggregations\AnyResultCheckAggregation.cs" />
+    <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />
-    <Compile Include="Entities\ResultAggregations\AggregateOperation.cs" />
+    <Compile Include="Entities\ResultAggregations\ProcessingOperation.cs" />
     <Compile Include="Entities\AmbiguousPropertyException.cs" />
     <Compile Include="DynamicPropertyAggregate.cs" />
     <Compile Include="Converters\RdfListConverter.cs" />
@@ -64,15 +64,15 @@
     <Compile Include="Converters\DurationConverter.cs" />
     <Compile Include="Converters\IntegerConverter.cs" />
     <Compile Include="Converters\XsdConverterBase.cs" />
-    <Compile Include="Entities\ResultAggregations\FirstOrDefaultAggregation.cs" />
-    <Compile Include="Entities\ResultAggregations\FirstResultAggregation.cs" />
+    <Compile Include="Entities\ResultAggregations\FirstOrDefaultProcessing.cs" />
+    <Compile Include="Entities\ResultAggregations\FirstResultProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\IResultAggregationStrategyMetadata.cs" />
-    <Compile Include="Entities\ResultAggregations\IResultAggregationStrategy.cs" />
-    <Compile Include="Entities\ResultAggregations\NoopAggregation.cs" />
+    <Compile Include="Entities\ResultAggregations\IResultProcessingStrategy.cs" />
+    <Compile Include="Entities\ResultAggregations\NoopProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\ResultAggregationStrategyAtribute.cs" />
-    <Compile Include="Entities\ResultAggregations\ResultFlatteningAggregation.cs" />
-    <Compile Include="Entities\ResultAggregations\SingleOrDefaultAggregation.cs" />
-    <Compile Include="Entities\ResultAggregations\SingleResultAggregation.cs" />
+    <Compile Include="Entities\ResultAggregations\ResultFlatteningProcessing.cs" />
+    <Compile Include="Entities\ResultAggregations\SingleOrDefaultProcessing.cs" />
+    <Compile Include="Entities\ResultAggregations\SingleResultProcessing.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />
     <Compile Include="EntityContextFactory.cs" />

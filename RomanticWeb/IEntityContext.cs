@@ -12,6 +12,9 @@ namespace RomanticWeb
     /// todo: IDisposable?
     public interface IEntityContext
     {
+        /// <summary>
+        /// Gets the underlying in-memory store
+        /// </summary>
         IEntityStore Store { get; }
 
         /// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>

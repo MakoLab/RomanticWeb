@@ -6,7 +6,7 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb
 {
-    public class EntityStore:IEntityStore
+    internal class EntityStore:IEntityStore
     {
         private readonly ISet<EntityTriple> _entityQuads; 
 

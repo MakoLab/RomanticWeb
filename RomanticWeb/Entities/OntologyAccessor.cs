@@ -33,12 +33,12 @@ namespace RomanticWeb.Entities
 			_entity = entity;
 			_ontology = ontology;
 			_nodeConverter = nodeConverter;
-	        ResultAggregations=new Lazy<IResultAggregationStrategy,IResultAggregationStrategyMetadata>[0];
+	        ResultAggregations=new Lazy<IResultProcessingStrategy,IResultProcessingStrategyMetadata>[0];
 		}
 
-        [ImportMany(typeof(IResultAggregationStrategy))]
-        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; private set; }
-
+        /// <summary>
+        /// Gets the underlying <see cref="Ontologies.Ontology"/>
+        /// </summary>
 	    public Ontology Ontology
 	    {
 	        get
@@ -46,6 +46,9 @@ namespace RomanticWeb.Entities
 	            return _ontology;
 	        }
 	    }
+
+        [ImportMany(typeof(IResultProcessingStrategy))]
+        internal IEnumerable<Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>> ResultAggregations { get; private set; }
 
 	    /// <summary>
 		/// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
@@ -94,7 +97,7 @@ namespace RomanticWeb.Entities
             if (aggregation!=null)
             {
                 LogTo.Debug("Performing operation {0} on result nodes", aggregate.Aggregation);
-                return aggregation.Value.Aggregate(objects);
+                return aggregation.Value.Process(objects);
             }
 
 	        return objects.ToList();

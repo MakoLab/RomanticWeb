@@ -7,9 +7,15 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Converts xsd:duration to <see cref="TimeSpan"/>
+    /// </summary>
     [Export(typeof(ILiteralNodeConverter))]
     public class DurationConverter:XsdConverterBase
     {
+        /// <summary>
+        /// Gets Uri of xsd:duration
+        /// </summary>
         protected override IEnumerable<Uri> SupportedTypes
         {
             get

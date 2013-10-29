@@ -7,12 +7,12 @@ namespace RomanticWeb.Entities.ResultAggregations
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     internal class ResultAggregationStrategy : ExportAttribute
     {
-        public ResultAggregationStrategy(AggregateOperation operation)
-            : base(typeof(IResultAggregationStrategy))
+        public ResultAggregationStrategy(ProcessingOperation operation)
+            : base(typeof(IResultProcessingStrategy))
         {
             Operation=operation;
         }
 
-        public AggregateOperation Operation { get; private set; }
+        public ProcessingOperation Operation { get; private set; }
     }
 }

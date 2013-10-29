@@ -12,6 +12,9 @@ namespace RomanticWeb.Mapping.Fluent
 		{
 		}
 
+        /// <summary>
+        /// Returns true
+        /// </summary>
 		protected internal override bool IsCollection
 		{
 			get { return true; }

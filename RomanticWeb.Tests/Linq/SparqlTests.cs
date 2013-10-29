@@ -68,10 +68,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_entities_by_providing_single_literal_predicate_value_condition_from_pointed_ontology_test()
         {
-            Assert.Inconclusive();
             IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                     where (string)((OntologyAccessor)resources["foaf"])["givenName"]=="Tomasz"
                                     select resources).ToList();
@@ -83,10 +83,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_entities_by_providing_single_literal_predicate_value_condition_test()
         {
-            Assert.Inconclusive();
             IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                     where (string)resources["givenName"]=="Tomasz"
                                     select resources).ToList();
@@ -98,10 +98,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_entities_by_providing_subject_identifier_condition_test()
         {
-            Assert.Inconclusive();
             IEntity entity=(from resources in _entityContext.AsQueryable<IEntity>()
                            where resources.Id==(EntityId)"http://magi/people/Karol"
                            select resources).FirstOrDefault();
@@ -112,10 +112,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
         {
-            Assert.Inconclusive();
             IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                     where resources is IPerson
                                     select resources).ToList();
@@ -133,10 +133,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_specific_type_entities_test()
         {
-            Assert.Inconclusive();
             IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
                                      select resources).ToList();
             Assert.That(entities.Count,Is.EqualTo(3));
@@ -151,10 +151,10 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [Ignore]
         [Repeat(5)]
         public void Selecting_entities_by_providing_nested_predicate_value_condition_test()
         {
-            Assert.Inconclusive();
             IEntity entity=(from resources in _entityContext.AsQueryable<IEntity>()
                             where ((IList<IEntity>)((OntologyAccessor)resources["foaf"])["knows"]).Any(item => item.Id==(EntityId)"http://magi/people/Tomasz")
                            select resources).FirstOrDefault();

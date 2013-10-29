@@ -7,6 +7,9 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Convert CSD floatign point numbers to doubles
+    /// </summary>
     [Export(typeof(ILiteralNodeConverter))]
     public class DoubleConverter:XsdConverterBase
     {

@@ -10,7 +10,7 @@ namespace RomanticWeb
     public interface IEntityContextFactory
     {
         /// <summary>
-        /// Creates a new <see cref="IEntityContext"/>
+        /// Creates a new instance of entity context
         /// </summary>
         IEntityContext CreateContext();
 

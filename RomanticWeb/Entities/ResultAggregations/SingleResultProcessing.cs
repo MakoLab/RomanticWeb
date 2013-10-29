@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(AggregateOperation.Single)]
-    internal class SingleResultAggregation : IResultAggregationStrategy
+    [ResultAggregationStrategy(ProcessingOperation.Single)]
+    internal class SingleResultProcessing : IResultProcessingStrategy
     {
-        public object Aggregate(IEnumerable<object> objects)
+        public object Process(IEnumerable<object> objects)
         {
             return objects.Single();
         }

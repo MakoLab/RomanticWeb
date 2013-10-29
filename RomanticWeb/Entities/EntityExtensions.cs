@@ -59,6 +59,9 @@ namespace RomanticWeb.Entities
             return (result!=null?result.Cast<Entity>().Select(item => item.Id).ToArray():new EntityId[0]);
         }
 
+        /// <summary>
+        /// Forces lazy initialization of <paramref name="entity"/>
+        /// </summary>
         public static void ForceInitialize(this IEntity entity)
         {
             entity = UnwrapProxy(entity);

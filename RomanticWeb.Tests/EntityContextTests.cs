@@ -51,7 +51,6 @@ namespace RomanticWeb.Tests
             _factory.Setup(f => f.SatisfyImports(It.IsAny<EntityProxy>()));
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
-            _mappings.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
             _entityContext=new EntityContext(_factory.Object,_mappings.Object,_ontologyProvider,_entityStore.Object,_store.Object);

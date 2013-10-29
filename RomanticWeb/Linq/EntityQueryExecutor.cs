@@ -67,7 +67,7 @@ namespace RomanticWeb.Linq
 		/// <summary>Returns a single entity beeing a result of a query.</summary>
 		/// <typeparam name="T">Type of element to be returned.</typeparam>
 		/// <param name="queryModel">Query model to be parsed.</param>
-		/// <param name="returnDefaultWhenEmpty">Tells the executor to return a defalt value in case of an empty result.</param>
+		/// <param name="returnDefaultWhenEmpty">Tells the executor to return a default value in case of an empty result.</param>
 		/// <returns>Single entity beeing result of a query.</returns>
 		public T ExecuteSingle<T>(QueryModel queryModel,bool returnDefaultWhenEmpty)
 		{

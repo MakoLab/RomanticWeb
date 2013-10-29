@@ -6,7 +6,7 @@ namespace RomanticWeb
 {
     internal class DynamicPropertyAggregate
     {
-        private AggregateOperation _aggregation=AggregateOperation.Flatten;
+        private ProcessingOperation _aggregation=ProcessingOperation.Flatten;
 
         public DynamicPropertyAggregate(string propertyName)
         {
@@ -19,7 +19,7 @@ namespace RomanticWeb
             }
             else if (tokens.Length==2)
             {
-                AggregateOperation aggregationOption;
+                ProcessingOperation aggregationOption;
                 if (Enum.TryParse(tokens[0],true,out aggregationOption))
                 {
                     Aggregation=aggregationOption;
@@ -30,7 +30,7 @@ namespace RomanticWeb
             }
         }
 
-        public AggregateOperation Aggregation
+        public ProcessingOperation Aggregation
         {
             get
             {

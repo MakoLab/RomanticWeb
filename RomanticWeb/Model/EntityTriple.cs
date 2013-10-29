@@ -121,7 +121,6 @@ namespace RomanticWeb.Model
         {
             return !Equals(left, right);
         }
-#pragma warning restore 1591
 
         public override bool Equals(object obj)
         {
@@ -163,31 +162,8 @@ namespace RomanticWeb.Model
                 .By(t => t.Predicate)
                 .By(t => t.Object)
                 .End();
-
-            ////int result = EntityId.CompareTo(other);
-
-            ////if (result==0)
-            ////{
-            ////    result=Graph.CompareTo(other.Graph);
-
-            ////    if (result==0)
-            ////    {
-            ////        result=Subject.CompareTo(other.Subject);
-
-            ////        if (result==0)
-            ////        {
-            ////            result=Predicate.CompareTo(other.Predicate);
-
-            ////            if (result==0)
-            ////            {
-            ////                return Object.CompareTo(other.Object);
-            ////            }
-            ////        }
-            ////    }
-            ////}
-
-            ////return result;
         }
+#pragma warning restore
 
         internal EntityTriple InGraph([AllowNull]Uri graphUri)
         {

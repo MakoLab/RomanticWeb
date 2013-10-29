@@ -38,7 +38,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected EntityStore EntityStore
+        protected IEntityStore EntityStore
         {
             get
             {

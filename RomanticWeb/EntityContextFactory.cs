@@ -24,12 +24,16 @@ namespace RomanticWeb
             _container = new CompositionContainer(catalog, true);
         }
 
+        /// <summary>
+        /// Creates a new instance of entity context
+        /// </summary>
         public IEntityContext CreateContext()
         {
             var entitySourceFactory=_container.GetExportedValue<Func<IEntitySource>>();
             var mappings = new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());
             var ontologies = new CompoundOntologyProvider(_container.GetExportedValues<IOntologyProvider>());
 
+            mappings.RebuildMappings(ontologies);
             return new EntityContext(this,mappings,ontologies,_entityStoreFactory(),entitySourceFactory());
         }
 

@@ -15,7 +15,7 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     internal class EntityProxy:DynamicObject,IEntity
     {
-        private static readonly IResultAggregationStrategy FallbackAggregation = new SingleOrDefaultAggregation();
+        private static readonly IResultProcessingStrategy FallbackProcessing = new SingleOrDefaultProcessing();
 
         private readonly IEntityStore _store;
         private readonly Entity _entity;
@@ -28,11 +28,11 @@ namespace RomanticWeb.Entities
             _entity = entity;
             _entityMappings = entityMappings;
             _converter = converter;
-            ResultAggregations = new Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>[0];
+            ResultAggregations = new Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>[0];
         }
 
-        [ImportMany(typeof(IResultAggregationStrategy))]
-        public IEnumerable<Lazy<IResultAggregationStrategy, IResultAggregationStrategyMetadata>> ResultAggregations { get; internal set; } 
+        [ImportMany(typeof(IResultProcessingStrategy))]
+        public IEnumerable<Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>> ResultAggregations { get; internal set; } 
 
         public EntityId Id
         {
@@ -61,15 +61,15 @@ namespace RomanticWeb.Entities
             var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
             var objectsForPredicate=_converter.ConvertNodes(property.Uri,objects);
 
-            var operation=property.IsCollection?AggregateOperation.Flatten:AggregateOperation.SingleOrDefault;
+            var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;
             var aggregation=(from agg in ResultAggregations 
                              where agg.Metadata.Operation==operation 
                              select agg.Value).SingleOrDefault();
 
-            aggregation=aggregation??FallbackAggregation;
+            aggregation=aggregation??FallbackProcessing;
 
             LogTo.Debug("Performing operation {0} on result nodes",operation);
-            result=aggregation.Aggregate(objectsForPredicate);
+            result=aggregation.Process(objectsForPredicate);
 
             return true;
         }

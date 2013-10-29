@@ -80,7 +80,6 @@ namespace RomanticWeb.Ontologies
         {
             return !Equals(left, right);
         }
-#pragma warning restore 1591
 
         public override bool Equals([AllowNull] object obj)
 		{
@@ -105,5 +104,6 @@ namespace RomanticWeb.Ontologies
         {
             return Equals(Uri, other.Uri) && Equals(Ontology, other.Ontology) && string.Equals(TermName, other.TermName);
         }
+#pragma warning restore 1591
 	}
 }

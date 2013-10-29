@@ -52,6 +52,9 @@ namespace RomanticWeb.DotNetRDF
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>
+        /// </summary>
         public void LoadEntity(IEntityStore store,EntityId entityId)
         {
             var select = QueryBuilder.Select("s", "p", "o", "g")

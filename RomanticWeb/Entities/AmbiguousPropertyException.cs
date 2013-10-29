@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace RomanticWeb.Entities
 {
+    /// <summary>
+    /// Represents an error, which occur when multiple properties are found for a predicate
+    /// </summary>
 	public class AmbiguousPropertyException : Exception
     {
         private const string MultipleMatchingPropertiesFormat = "Multiple properties found for {0}. Possible matches are: {1}";

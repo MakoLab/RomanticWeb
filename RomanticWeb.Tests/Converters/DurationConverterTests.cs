@@ -24,27 +24,19 @@ namespace RomanticWeb.Tests.Converters
             get
             {
                 return new object[]
-                           {
-                               new object[] { "PT1H30M",new TimeSpan(-1,30,0) }
-                           };
+                {
+                    new object[] { "PT1H30M",new Duration(1,30,0,0) },
+                    new object[] { "-PT1H30M",new Duration(-1,30,0,0) }
+                };
             }
         } 
 
         [Test]
         [TestCaseSource("TimeSpanValues")]
-        public void Should_convert_values(string literal,TimeSpan expected)
+        public void Should_convert_values(string literal,Duration expected)
         {
-            Assert.Inconclusive();
-
-            // when
-            var timeSpan=Converter.Convert(Node.ForLiteral(literal));
-
-            // then
-            Assert.That(timeSpan,Is.EqualTo(expected));
+            var duration=Converter.Convert(Node.ForLiteral(literal));
+            Assert.That(duration,Is.EqualTo(expected));
         }
     }
-
-    ////public class TimeConverterTests:XsdConverterTestsBase<TimeConverter>
-    ////{
-    ////}
 }

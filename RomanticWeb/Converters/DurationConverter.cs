@@ -26,7 +26,7 @@ namespace RomanticWeb.Converters
 
         public override object Convert(Node objectNode)
         {
-            return XmlConvert.ToTimeSpan(objectNode.Literal);
+            return Duration.Parse(objectNode.Literal);
         }
     }
 }

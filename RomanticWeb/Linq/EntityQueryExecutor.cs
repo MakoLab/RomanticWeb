@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Remotion.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -46,10 +45,10 @@ namespace RomanticWeb.Linq
 			IEnumerable<T> result=new T[0];
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
-			{
-				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
-					(item.Name=="Load")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
-				result=(IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText });
+            {
+                var createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
+                                           .MakeGenericMethod(new[] { typeof(T) });
+				result=(IEnumerable<T>)createMethodInfo.Invoke(_entityContext,new object[] { commandText });
 			}
 
 			return result;
@@ -80,9 +79,9 @@ namespace RomanticWeb.Linq
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
 			{
-				MethodInfo createMethodInfo=_entityContext.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance).Where(item =>
-					(item.Name=="Load")&&(item.GetGenericArguments().Length==1)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(string))).FirstOrDefault();
-				result=((IEnumerable<T>)createMethodInfo.MakeGenericMethod(new Type[] { typeof(T) }).Invoke(_entityContext,new object[] { commandText })).FirstOrDefault();
+                var createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
+                                           .MakeGenericMethod(new[] { typeof(T) });
+				result=((IEnumerable<T>)createMethodInfo.Invoke(_entityContext,new object[] { commandText })).FirstOrDefault();
 			}
 
 			return result;

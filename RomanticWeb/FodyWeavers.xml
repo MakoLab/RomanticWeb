@@ -3,4 +3,5 @@
   <MethodCache />
   <NullGuard />
   <Anotar.NLog />
+  <InfoOf />
 </Weavers>

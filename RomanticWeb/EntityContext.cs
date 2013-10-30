@@ -149,14 +149,6 @@ namespace RomanticWeb
             return Create(entityId,true);
         }
 
-        /// <summary>Loads multiple entities beeing a result of a SPARQL CONSTRUCT query.</summary>
-        /// <param name="sparqlConstruct">SPARQL CONSTRUCT query to be used as a source of new entities.</param>
-        /// <returns>Enumeration of entities loaded from the passed query.</returns>
-        public IEnumerable<Entity> Load(string sparqlConstruct)
-        {
-            return Load<Entity>(sparqlConstruct);
-        }
-
         /// <summary>Loads multiple strongly typedentities beeing a result of a SPARQL CONSTRUCT query.</summary>
         /// <param name="sparqlConstruct">SPARQL CONSTRUCT query to be used as a source of new entities.</param>
         /// <returns>Enumeration of strongly typed entities loaded from the passed query.</returns>

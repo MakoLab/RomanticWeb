@@ -48,11 +48,6 @@ namespace RomanticWeb
         /// <param name="entityId">Entity identifier</param>
         Entity Create(EntityId entityId);
 
-        /// <summary>Load an enumerable collection of entities beeing a result of a SPARQL construct query.</summary>
-        /// <param name="sparqlConstruct">SPARQL construct query.</param>
-        /// <returns>An enumerable collection of entities beeing a result of a SPARQL construct query</returns>
-        IEnumerable<Entity> Load(string sparqlConstruct);
-
         /// <summary>Load an enumerable collection of typed entities beeing a result of a SPARQL construct query.</summary>
         /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
         /// <param name="sparqlConstruct">SPARQL construct query.</param>

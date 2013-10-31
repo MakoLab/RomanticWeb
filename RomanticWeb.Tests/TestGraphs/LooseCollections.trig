@@ -8,7 +8,37 @@
 	people:Tomasz foaf:knows people:Karol, people:Gniewko, people:Monika, people:Dominik, people:Przemek .
 }
 
+<http://data.magi/people/Karol>
+{
+	people:Karol foaf:givenName "Karol".
+}
+
+<http://data.magi/people/Gniewko>
+{
+	people:Gniewko foaf:givenName "Gniewko".
+}
+
+<http://data.magi/people/Monika>
+{
+	people:Monika foaf:givenName "Monika".
+}
+
+<http://data.magi/people/Dominik>
+{
+	people:Dominik foaf:givenName "Dominik".
+}
+
+<http://data.magi/people/Przemek>
+{
+	people:Przemek foaf:givenName "Przemek".
+}
+
 <http://app.magi/graphs>
 {
 	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+	<http://data.magi/people/Karol> foaf:primaryTopic people:Karol.
+	<http://data.magi/people/Gniewko> foaf:primaryTopic people:Gniewko.
+	<http://data.magi/people/Monika> foaf:primaryTopic people:Monika.
+	<http://data.magi/people/Dominik> foaf:primaryTopic people:Dominik.
+	<http://data.magi/people/Przemek> foaf:primaryTopic people:Przemek.
 }

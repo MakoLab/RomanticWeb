@@ -42,7 +42,7 @@ namespace RomanticWeb.Mapping
         {
             return from property in type.GetProperties()
                    from mapping in property.GetCustomAttributes(typeof(PropertyAttribute),true).Cast<PropertyAttribute>()
-                   let propertyMapping = mapping.GetMapping(property.Name,ontologyProvider)
+                   let propertyMapping = mapping.GetMapping(property.PropertyType,property.Name,ontologyProvider)
                    select propertyMapping;
         }
 

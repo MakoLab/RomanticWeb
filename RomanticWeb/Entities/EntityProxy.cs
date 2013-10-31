@@ -59,7 +59,7 @@ namespace RomanticWeb.Entities
             LogTo.Debug("Reading property {0}", property.Uri);
 
             var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
-            var objectsForPredicate=_converter.ConvertNodes(property.Uri,objects);
+            var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
             var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;
             var aggregation=(from agg in ResultAggregations 

@@ -41,7 +41,7 @@ namespace RomanticWeb.Mapping.Fluent
         internal IPropertyMapping GetMapping(IOntologyProvider ontologies)
         {
             Uri predicateUri = PredicateUri ?? ontologies.ResolveUri(NamespacePrefix,PredicateName);
-            return new PropertyMapping(_propertyInfo.Name, predicateUri, GraphSelector, IsCollection);
+            return new PropertyMapping(_propertyInfo.PropertyType,_propertyInfo.Name, predicateUri, GraphSelector, IsCollection);
         }
     }
 }

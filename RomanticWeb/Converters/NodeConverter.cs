@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
-    // todo: consider renaming 
-	internal class NodeConverter:INodeConverter
+	internal sealed class NodeConverter:INodeConverter
 	{
 	    private readonly IEntityContext _entityContext;
 
@@ -27,7 +28,7 @@ namespace RomanticWeb.Converters
         [ImportMany]
         public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
-	    public IEnumerable<object> ConvertNodes(Uri predicate,IEnumerable<Node> objects)
+	    public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,IPropertyMapping predicate)
 		{
 			foreach (var objectNode in objects.ToList())
 			{
@@ -37,10 +38,38 @@ namespace RomanticWeb.Converters
 			    }
 			    else
 			    {
-			        yield return ConvertEntity(objectNode);
+			        yield return ConvertEntity(objectNode,predicate);
 			    }
 			}
 		}
+
+	    public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects)
+	    {
+	        return ConvertNodes(objects,null);
+	    }
+
+        private static bool PredicateIsEntityOrCollectionThereof(IPropertyMapping predicate,out Type entityType)
+        {
+            entityType=null;
+            if (predicate==null)
+            {
+                return false;
+            }
+
+            if (typeof(IEntity).IsAssignableFrom(predicate.ReturnType))
+            {
+                entityType = predicate.ReturnType;
+                return true;
+            }
+            
+            if (typeof(IEnumerable<IEntity>).IsAssignableFrom(predicate.ReturnType))
+            {
+                entityType=predicate.ReturnType.GenericTypeArguments.Single();
+                return true;
+            }
+
+            return false;
+        }
 
 	    private object ConvertLiteral(Node objectNode)
 	    {
@@ -58,7 +87,7 @@ namespace RomanticWeb.Converters
 	        return objectNode.Literal;
 	    }
 
-	    private object ConvertEntity(Node objectNode)
+	    private object ConvertEntity(Node objectNode,IPropertyMapping predicate)
 	    {
 	        var entity=_entityContext.Load(objectNode.ToEntityId(),false);
 
@@ -68,6 +97,15 @@ namespace RomanticWeb.Converters
 	        {
 	            return converter.Convert(entity,_store);
 	        }
+
+	        Type entityType;
+            if (PredicateIsEntityOrCollectionThereof(predicate, out entityType))
+            {
+                var wrapEntity = Info.OfMethod("RomanticWeb", "RomanticWeb.Entities.Entity", "AsEntity")
+                                     .MakeGenericMethod(entityType);
+
+                return wrapEntity.Invoke(entity,null);
+            }
 	        
             return entity;
 	    }

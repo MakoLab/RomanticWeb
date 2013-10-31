@@ -26,5 +26,10 @@ namespace RomanticWeb.Mapping.Model
         /// Gets a value indicating if the property is a collection
         /// </summary>
         bool IsCollection { get; }
+
+        /// <summary>
+        /// Gets the property's return type
+        /// </summary>
+        Type ReturnType { get; }
 	}
 }

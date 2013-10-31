@@ -115,6 +115,22 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Mapped_collection_of_entites_should_allow_accessing_members()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("LooseCollections.trig");
+
+            // when
+            var friends = Entity.Friends;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(5));
+            friends.Select(friend => friend.FirstName)
+                   .Should().Contain(new[] { "Karol","Gniewko","Monika","Dominik","Przemek" });
+        }
+
+        [Test]
         public void Mapping_loose_collection_of_entites_should_be_possible_if_only_one_element_is_present()
         {
             // given
@@ -257,6 +273,21 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(EntityStore.Quads, Has.Count.EqualTo(4), "Actual triples were: {0}", SerializeStore());
             var quads=EntityStore.Quads.Where(q => q.Graph==Node.ForUri(new Uri("personal://magi/people/Tomasz")));
             Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
+        }
+
+        [Test]
+        public void Should_allow_chaining_typed_entities()
+        {
+            // given
+            Mappings.Add(new NamedGraphsPersonMapping());
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            var karol=Entity.Friend;
+
+            // then
+            Assert.That(karol, Is.InstanceOf<IPerson>());
+            Assert.That(karol.FirstName, Is.EqualTo("Karol"));
         }
 
         protected override IMappingsRepository SetupMappings()

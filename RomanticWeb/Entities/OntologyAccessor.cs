@@ -16,7 +16,7 @@ namespace RomanticWeb.Entities
 	/// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
 	/// </summary>
 	/// todo: make a DynamicObject
-	[NullGuard(ValidationFlags.OutValues)]
+    [NullGuard(ValidationFlags.OutValues)]
     public sealed class OntologyAccessor:ImpromptuDictionary
 	{
 		private readonly IEntityStore _tripleSource;
@@ -88,7 +88,7 @@ namespace RomanticWeb.Entities
         {
             LogTo.Debug("Reading property {0}", property.Uri);
 	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri);
-	        var objects=_nodeConverter.ConvertNodes(property.Uri,objectValues);
+	        var objects=_nodeConverter.ConvertNodes(objectValues);
 
 	        var aggregation=(from agg in ResultAggregations
                              where agg.Metadata.Operation == aggregate.Aggregation

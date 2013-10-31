@@ -17,6 +17,8 @@ namespace RomanticWeb.TestEntities
 
             this.Property(p => p.Homepage).Predicate.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"))
                                      .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "interestsOf")));
+
+            this.Property(p => p.Friend).Predicate.Is("foaf","knows");
         }
     }
 }

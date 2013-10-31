@@ -14,7 +14,6 @@ namespace RomanticWeb.Tests
     {
         private Mock<IEntityContext> _entityContext;
         private Mock<IEntityStore> _tripleSource;
-
         private Mock<IEntityStore> _entityStore;
 
         [SetUp]
@@ -38,12 +37,11 @@ namespace RomanticWeb.Tests
         {
             // given
             var converter=CreateProcessor();
-            var predicate=new Uri("urn:some:predicate");
             var objects = Nodes.Create(10).Uris().GetNodes();
             _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>(),false)).Returns((EntityId id,bool b) => new Entity(id));
 
             // when
-            converter.ConvertNodes(predicate,objects).ToList();
+            converter.ConvertNodes(objects,null).ToList();
 
             // then
             _entityContext.Verify(ctx => ctx.Load(It.IsAny<EntityId>(), false), Times.Exactly(10));
@@ -54,12 +52,11 @@ namespace RomanticWeb.Tests
         {
             // given
             var converter = CreateProcessor();
-            var predicate = new Uri("urn:some:predicate");
             var objects = Nodes.Create(10).Blanks().GetNodes();
             _entityContext.Setup(ctx => ctx.Load(It.IsAny<EntityId>(), false)).Returns((EntityId id,bool b) => new Entity(id));
 
             // when
-            converter.ConvertNodes(predicate, objects).ToList();
+            converter.ConvertNodes(objects,null).ToList();
 
             // then
             _entityContext.Verify(ctx => ctx.Load(It.IsAny<EntityId>(), false), Times.Exactly(10));
@@ -72,7 +69,6 @@ namespace RomanticWeb.Tests
             var intConverter = new Mock<ILiteralNodeConverter>(MockBehavior.Strict);
             intConverter.Setup(c => c.CanConvert(new Uri("http://www.w3.org/2001/XMLSchema#int"))).Returns(false);
             var processor = CreateProcessor(intConverter.Object);
-            var predicate = new Uri("urn:some:predicate");
             var objects = Nodes.Create(1)
                                .Literals()
                                .WithDatatype(new Uri("http://www.w3.org/2001/XMLSchema#token"))
@@ -80,7 +76,7 @@ namespace RomanticWeb.Tests
                                .GetNodes();
 
             // when
-            var list = processor.ConvertNodes(predicate, objects).ToList();
+            var list = processor.ConvertNodes(objects,null).ToList();
 
             // then
             Assert.That(list, Has.Count.EqualTo(1));
@@ -97,14 +93,13 @@ namespace RomanticWeb.Tests
             intConverter.Setup(c => c.Convert(It.IsAny<Node>())).Returns(5);
             intConverter.Setup(c => c.CanConvert(new Uri("http://www.w3.org/2001/XMLSchema#int"))).Returns(true);
             var processor = CreateProcessor(intConverter.Object);
-            var predicate = new Uri("urn:some:predicate");
             var objects = Nodes.Create(1)
                                .Literals()
                                .WithDatatype(new Uri("http://www.w3.org/2001/XMLSchema#int"))
                                .GetNodes();
 
             // when
-            var list = processor.ConvertNodes(predicate, objects).ToList();
+            var list = processor.ConvertNodes(objects,null).ToList();
 
             // then
             Assert.That(list, Has.Count.EqualTo(1));

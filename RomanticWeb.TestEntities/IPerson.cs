@@ -17,5 +17,7 @@ namespace RomanticWeb.TestEntities
         ICollection<string> NickNames { get; }
 
 	    IList<IPerson> Friends { get; }
+
+        IPerson Friend { get; }
 	}
 }

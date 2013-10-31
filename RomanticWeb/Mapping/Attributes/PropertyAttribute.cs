@@ -42,12 +42,12 @@ namespace RomanticWeb.Mapping.Attributes
         #endregion
 
         #region Internal methods
-        internal IPropertyMapping GetMapping(string propertyName,IOntologyProvider ontology)
+        internal IPropertyMapping GetMapping(Type propertyType,string propertyName,IOntologyProvider ontology)
         {
             Uri uri=ontology.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
-                return new PropertyMapping(propertyName, uri, null, IsCollection);
+                return new PropertyMapping(propertyType,propertyName,uri,null,IsCollection);
             }
 
             throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));

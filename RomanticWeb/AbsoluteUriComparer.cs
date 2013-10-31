@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RomanticWeb
 {
-    internal class AbsoluteUriComparer:IComparer<Uri>,IEqualityComparer<Uri>
+    internal sealed class AbsoluteUriComparer:IComparer<Uri>,IEqualityComparer<Uri>
     {
         public int Compare(Uri x,Uri y)
         {

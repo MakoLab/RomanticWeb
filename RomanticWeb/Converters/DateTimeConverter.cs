@@ -8,7 +8,7 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>
-    /// Converts xsd:dat and xsd:datetime to <see cref="DateTime"/>
+    /// Converts xsd:date and xsd:datetime to <see cref="DateTime"/>
     /// </summary>
     [Export(typeof(ILiteralNodeConverter))]
     public class DateTimeConverter:XsdConverterBase

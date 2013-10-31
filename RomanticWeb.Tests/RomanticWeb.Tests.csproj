@@ -98,7 +98,6 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="EntityContextTests.cs" />
     <Compile Include="EntityIdTests.cs" />
-    <Compile Include="EntityStoreTests.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\TripleStoreExtensions.cs" />
     <Compile Include="IntegrationTests\DynamicTests.cs" />

@@ -42,10 +42,15 @@ namespace RomanticWeb.Tests.Converters
                 yield return Tuple.Create(Xsd.Short,typeof(short));
                 yield return Tuple.Create(Xsd.Float,typeof(float));
                 yield return Tuple.Create(Xsd.Integer,typeof(long));
+                yield return Tuple.Create(Xsd.Boolean,typeof(bool));
+                yield return Tuple.Create(Xsd.Date,typeof(DateTime));
+                yield return Tuple.Create(Xsd.Time,typeof(DateTime));
                 yield return Tuple.Create(Xsd.Double,typeof(double));
                 yield return Tuple.Create(Xsd.Decimal,typeof(decimal));
                 yield return Tuple.Create(Xsd.UnsignedInt,typeof(uint));
                 yield return Tuple.Create(Xsd.UnsignedByte,typeof(byte));
+                yield return Tuple.Create(Xsd.Duration,typeof(Duration));
+                yield return Tuple.Create(Xsd.DateTime,typeof(DateTime));
                 yield return Tuple.Create(Xsd.UnsignedLong,typeof(ulong));
                 yield return Tuple.Create(Xsd.UnsignedShort,typeof(ushort));
                 yield return Tuple.Create(Xsd.NegativeInteger,typeof(long));

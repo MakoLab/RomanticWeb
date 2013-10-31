@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.SingleOrDefault)]
+    [ResultProcessingStrategy(ProcessingOperation.SingleOrDefault)]
     internal class SingleOrDefaultProcessing : IResultProcessingStrategy
     {
         private readonly ResultFlatteningProcessing _flatten=new ResultFlatteningProcessing();

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.Flatten)]
+    [ResultProcessingStrategy(ProcessingOperation.Flatten)]
     internal class ResultFlatteningProcessing:IResultProcessingStrategy
     {
         public object Process(IEnumerable<object> objects)

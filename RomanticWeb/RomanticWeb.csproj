@@ -67,10 +67,10 @@
     <Compile Include="Converters\XsdConverterBase.cs" />
     <Compile Include="Entities\ResultAggregations\FirstOrDefaultProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\FirstResultProcessing.cs" />
-    <Compile Include="Entities\ResultAggregations\IResultAggregationStrategyMetadata.cs" />
+    <Compile Include="Entities\ResultAggregations\IResultProcessingStrategyMetadata.cs" />
     <Compile Include="Entities\ResultAggregations\IResultProcessingStrategy.cs" />
     <Compile Include="Entities\ResultAggregations\NoopProcessing.cs" />
-    <Compile Include="Entities\ResultAggregations\ResultAggregationStrategyAtribute.cs" />
+    <Compile Include="Entities\ResultAggregations\ResultProcessingStrategyAttribute.cs" />
     <Compile Include="Entities\ResultAggregations\ResultFlatteningProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\SingleOrDefaultProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\SingleResultProcessing.cs" />

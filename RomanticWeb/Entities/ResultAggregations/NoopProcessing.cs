@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.Original)]
+    [ResultProcessingStrategy(ProcessingOperation.Original)]
     internal class NoopProcessing:IResultProcessingStrategy
     {
         public object Process(IEnumerable<object> objects)

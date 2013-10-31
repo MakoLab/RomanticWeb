@@ -5,9 +5,9 @@ namespace RomanticWeb.Entities.ResultAggregations
 {
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    internal class ResultAggregationStrategy : ExportAttribute
+    internal class ResultProcessingStrategyAttribute : ExportAttribute
     {
-        public ResultAggregationStrategy(ProcessingOperation operation)
+        public ResultProcessingStrategyAttribute(ProcessingOperation operation)
             : base(typeof(IResultProcessingStrategy))
         {
             Operation=operation;

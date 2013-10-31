@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.Has)]
+    [ResultProcessingStrategy(ProcessingOperation.Has)]
     internal class AnyResultCheckProcessing : IResultProcessingStrategy
     {
         public object Process(IEnumerable<object> objects)

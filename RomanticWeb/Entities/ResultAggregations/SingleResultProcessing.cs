@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.Single)]
+    [ResultProcessingStrategy(ProcessingOperation.Single)]
     internal class SingleResultProcessing : IResultProcessingStrategy
     {
         public object Process(IEnumerable<object> objects)

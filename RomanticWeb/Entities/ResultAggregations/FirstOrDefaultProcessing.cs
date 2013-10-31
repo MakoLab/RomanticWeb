@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultAggregationStrategy(ProcessingOperation.FirstOrDefault)]
+    [ResultProcessingStrategy(ProcessingOperation.FirstOrDefault)]
     internal class FirstOrDefaultProcessing : IResultProcessingStrategy
     {
         public object Process(IEnumerable<object> objects)

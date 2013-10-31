@@ -12,9 +12,9 @@ namespace RomanticWeb.Linq
 	internal class EntityQueryExecutor:IQueryExecutor
 	{
 		#region Fields
-		private IEntityContext _entityContext;
-		private IMappingsRepository _mappingsRepository;
-		private IOntologyProvider _ontologyProvider;
+		private readonly IEntityContext _entityContext;
+		private readonly IMappingsRepository _mappingsRepository;
+		private readonly IOntologyProvider _ontologyProvider;
 		#endregion
 
 		#region Constructors

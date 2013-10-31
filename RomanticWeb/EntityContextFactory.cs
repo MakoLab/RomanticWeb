@@ -20,7 +20,7 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory()
         {
-            var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory);
+            var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
             _container = new CompositionContainer(catalog, true);
         }
 

@@ -24,6 +24,10 @@ namespace RomanticWeb.Entities
             {
                 result=((EntityProxy)entity).AsDynamic();
             }
+            else if (entity is IActLikeProxy)
+            {
+                result=((IActLikeProxy)entity).Original;
+            }
             else
             {
                 result=(dynamic)entity;
@@ -36,7 +40,7 @@ namespace RomanticWeb.Entities
         public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface:class,IEntity
         {
             TInterface result=null;
-            entity = UnwrapProxy(entity);
+            entity=UnwrapProxy(entity);
 
             if (entity is Entity)
             {
@@ -64,7 +68,7 @@ namespace RomanticWeb.Entities
         /// </summary>
         public static void ForceInitialize(this IEntity entity)
         {
-            entity = UnwrapProxy(entity);
+            entity=UnwrapProxy(entity);
 
             if (entity is Entity)
             {
@@ -79,13 +83,13 @@ namespace RomanticWeb.Entities
         // todo: maybe this should be reconsidered
         public static IEntityContext GetContext(this IEntity entity)
         {
-            entity = UnwrapProxy(entity);
+            entity=UnwrapProxy(entity);
 
             if (entity is Entity)
             {
                 return ((Entity)entity).EntityContext;
             }
-            
+
             if (entity is EntityProxy)
             {
                 return ((EntityProxy)entity).AsDynamic().EntityContext;
@@ -96,7 +100,7 @@ namespace RomanticWeb.Entities
 
         private static IEntity UnwrapProxy(IEntity entity)
         {
-            if (entity is IActLikeProxy)
+            if ((entity is IActLikeProxy)&&(((IActLikeProxy)entity).Original is IEntity))
             {
                 return ((IActLikeProxy)entity).Original;
             }

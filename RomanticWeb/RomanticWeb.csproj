@@ -50,6 +50,7 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />

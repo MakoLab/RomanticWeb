@@ -20,6 +20,7 @@ namespace RomanticWeb.Converters
         {
             get
             {
+                yield return Xsd.Time;
                 yield return Xsd.DateTime;
                 yield return Xsd.Date;
             }

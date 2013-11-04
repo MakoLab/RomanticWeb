@@ -16,7 +16,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.first_givenName, Is.EqualTo("Tomasz"));
@@ -31,7 +31,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.foaf.nick, Is.Empty);
@@ -44,7 +44,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("AssociatedInstances.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             var entity=tomasz.foaf.first_knows;
@@ -59,7 +59,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("AssociatedInstances.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             dynamic karol = tomasz.foaf.single_knows;
 
             // then
@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.givenName[0], Is.EqualTo("Tomasz"));
@@ -86,7 +86,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             var exception = Assert.Throws<AmbiguousPropertyException>(() => { var nick = tomasz.nick; });
@@ -100,7 +100,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesInNamedGraphs.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(tomasz.knows != null);
@@ -117,7 +117,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("BlankNodes.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             var entity=tomasz.single_knows;
@@ -136,7 +136,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             dynamic people = tomasz.knows;
 
             // then
@@ -156,7 +156,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             dynamic people = tomasz.foaf.mbox;
 
             // then
@@ -174,7 +174,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/math/array"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
             dynamic numbers = tomasz.math.Original_matrix[0];
 
             // then
@@ -192,7 +192,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
 
             // when
-            dynamic tomasz = EntityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             dynamic nicks = tomasz.foaf.nick;
 
             // then

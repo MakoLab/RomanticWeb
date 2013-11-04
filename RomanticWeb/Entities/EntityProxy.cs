@@ -80,29 +80,13 @@ namespace RomanticWeb.Entities
 
             var property = _entityMappings.PropertyFor(binder.Name);
 
-            LogTo.Debug("Setting property {0}", property.Uri);
+            LogTo.Trace("Setting property {0}", property.Uri);
 
-            var entityId=Node.ForUri(_entity.Id.Uri);
-            var propertyUri=Node.ForUri(property.Uri);
-            var quadsRemoved=from quad in _store.Quads 
-                             where quad.EntityId==_entity.Id
-                             && quad.Predicate==propertyUri
-                             && quad.Subject==entityId
-                             select quad;
+            var propertyUri = Node.ForUri(property.Uri);
+            var newValue = Node.ForLiteral(value.ToString());
+            var graphUri = property.GraphSelector.SelectGraph(_entity.Id);
 
-            var graphUri=property.GraphSelector.SelectGraph(_entity.Id);
-            if (graphUri!=null)
-            {
-                quadsRemoved=quadsRemoved.Where(quad => quad.Graph==Node.ForUri(graphUri));
-            }
-
-            foreach (var entityTriple in quadsRemoved.ToList())
-            {
-                _store.RetractTriple(entityTriple);
-            }
-
-            var newValue=Node.ForLiteral(value.ToString());
-            _store.AssertTriple(new EntityTriple(_entity.Id, entityId, propertyUri, newValue).InGraph(graphUri));
+            _store.ReplacePredicateValue(_entity.Id,propertyUri,newValue,graphUri);
 
             return true;
         }

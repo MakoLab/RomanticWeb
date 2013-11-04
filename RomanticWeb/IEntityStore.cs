@@ -23,11 +23,8 @@ namespace RomanticWeb
         /// <summary>
         /// Adds a triple to the store
         /// </summary>
-        void AssertTriple(EntityTriple entityTriple);
+        void AssertEntity(EntityId entityId, IEnumerable<EntityTriple> entityTriples);
 
-        /// <summary>
-        /// Removes a triple from the store
-        /// </summary>
-        void RetractTriple(EntityTriple entityTriple);
+        void ReplacePredicateValue(EntityId id,Node propertyUri,Node valueNode,Uri graphUri);
     }
 }

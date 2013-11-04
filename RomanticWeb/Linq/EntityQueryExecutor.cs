@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Remotion.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -23,7 +24,7 @@ namespace RomanticWeb.Linq
 		/// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
 		/// <param name="ontologyProvider">Ontology provider with data scheme.</param>
 		internal EntityQueryExecutor(IEntityContext entityContext,IMappingsRepository mappingsRepository,IOntologyProvider ontologyProvider)
-			{
+		{
 			_entityContext=entityContext;
 			_mappingsRepository=mappingsRepository;
 			_ontologyProvider=ontologyProvider;
@@ -46,9 +47,10 @@ namespace RomanticWeb.Linq
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
             {
-                var createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
-                                           .MakeGenericMethod(new[] { typeof(T) });
-				result=(IEnumerable<T>)createMethodInfo.Invoke(_entityContext,new object[] { commandText });
+                MethodInfo createMethodInfo=null;
+                ////createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
+                ////                     .MakeGenericMethod(new[] { typeof(T) });
+                result=(IEnumerable<T>)createMethodInfo.Invoke(_entityContext,new object[] { commandText });
 			}
 
 			return result;
@@ -78,9 +80,10 @@ namespace RomanticWeb.Linq
 			T result=default(T);
 			string commandText=EntityQueryModelVisitor.CreateCommandText(queryModel,_ontologyProvider,_mappingsRepository);
 			if (commandText.Length>0)
-			{
-                var createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
-                                           .MakeGenericMethod(new[] { typeof(T) });
+            {
+                MethodInfo createMethodInfo = null;
+                ////createMethodInfo = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "String")
+                ////                     .MakeGenericMethod(new[] { typeof(T) });
 				result=((IEnumerable<T>)createMethodInfo.Invoke(_entityContext,new object[] { commandText })).FirstOrDefault();
 			}
 

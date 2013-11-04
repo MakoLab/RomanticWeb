@@ -17,7 +17,7 @@
 
 <http://data.magi/people/Karol>
 {
-	<people/Karol>	a foaf:Person;
+	<people/Karol>	a foaf:Agent;
 					foaf:givenName "Karol" ;
 					foaf:familyName "Szczepański" ;
 					foaf:knows <people/Tomasz> ;

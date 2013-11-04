@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace System
+﻿namespace System
 {
     /// <summary>Contains useful extension methods for AppDomain class.</summary>
     public static class AppDomainExtensions
@@ -15,7 +9,9 @@ namespace System
         /// <returns>Primary place where assemblies for given application domain are stored.</returns>
         public static string GetPrimaryAssemblyPath(this AppDomain appDomain)
         {
-            return appDomain.RelativeSearchPath??appDomain.BaseDirectory;
+            return string.IsNullOrWhiteSpace(appDomain.RelativeSearchPath)
+                       ?appDomain.BaseDirectory
+                       :appDomain.RelativeSearchPath;
         }
     }
 }

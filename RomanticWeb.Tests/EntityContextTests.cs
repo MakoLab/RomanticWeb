@@ -32,7 +32,7 @@ namespace RomanticWeb.Tests
                 yield return new Lazy<IEntity>(() =>
                     {
                         _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-                        return _entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+                        return _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
                     });
                 yield return new Lazy<IEntity>(
                     () =>
@@ -80,7 +80,7 @@ namespace RomanticWeb.Tests
         [Test, ExpectedException(typeof(ArgumentNullException))]
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
-            _entityContext.Load((EntityId)null);
+            _entityContext.Load<IEntity>((EntityId)null);
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace RomanticWeb.Tests
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            dynamic entity = _entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var id = entity.foaf.givenName;
@@ -183,9 +183,9 @@ namespace RomanticWeb.Tests
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            var entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             var name=entity.AsDynamic().foaf.givenName;
-            entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var page = entity.AsDynamic().foaf.homePage;
@@ -217,7 +217,7 @@ namespace RomanticWeb.Tests
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(false);
 
             // when
-            var entity=_entityContext.Load(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(entity,Is.Null);
@@ -227,7 +227,7 @@ namespace RomanticWeb.Tests
         public void Should_be_possible_to_load_entity_without_checking_for_existence()
         {
             // when
-            var entity = _entityContext.Load(new EntityId("http://magi/people/Tomasz"),false);
+            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"), false);
 
             // then
             Assert.That(entity,Is.Not.Null);

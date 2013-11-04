@@ -89,7 +89,7 @@ namespace RomanticWeb.Converters
 
 	    private object ConvertEntity(Node objectNode,IPropertyMapping predicate)
 	    {
-	        var entity=_entityContext.Load(objectNode.ToEntityId(),false);
+	        var entity=_entityContext.Load<IEntity>(objectNode.ToEntityId(),false);
 
 	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store));
 

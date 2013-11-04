@@ -19,5 +19,7 @@ namespace RomanticWeb.TestEntities
 	    IList<IPerson> Friends { get; }
 
         IPerson Friend { get; }
+
+        IEntity Entity { get; }
 	}
 }

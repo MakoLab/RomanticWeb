@@ -89,6 +89,10 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="Linq\Queryable.cs" />
+    <Compile Include="Linq\QueryExecutor.cs" />
+    <Compile Include="Linq\QueryModelVisitor.cs" />
+    <Compile Include="Linq\SparqlQuery.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />

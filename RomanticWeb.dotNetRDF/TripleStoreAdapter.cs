@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;
 using VDS.RDF.Query.Datasets;
+using SparqlQuery = RomanticWeb.Linq.SparqlQuery;
 
 namespace RomanticWeb.DotNetRDF
 {
@@ -47,29 +49,25 @@ namespace RomanticWeb.DotNetRDF
             }
         }
 
-        public IEnumerable<Tuple<Node,Node,Node>> GetNodesForQuery(string sparqlConstruct)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>
         /// </summary>
         public void LoadEntity(IEntityStore store,EntityId entityId)
         {
-            var select = QueryBuilder.Select("s", "p", "o", "g")
+            // todo: maybe this should return EntityTriples instead and they should be asserted in EntityContext?
+            var sparql = QueryBuilder.Select("s", "p", "o", "g")
                                      .Graph("?g", g => g.Where(t => t.Subject("s").Predicate("p").Object("o")))
                                      .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
-            select.Prefixes.Import(_namespaces);
+            sparql.Prefixes.Import(_namespaces);
 
-            foreach (var result in ExecuteEntityLoadQuery(select.BuildQuery()))
-            {
-                Node subject = result["s"].WrapNode();
-                Node predicate = result["p"].WrapNode();
-                Node @object=result["o"].WrapNode();
-                Node graph=result.HasBoundValue("g")?result["g"].WrapNode():null;
-                store.AssertTriple(new EntityTriple(entityId,subject,predicate,@object,graph));
-            }
+            var triples=from result in ExecuteEntityLoadQuery(sparql.BuildQuery())
+                        let subject = result["s"].WrapNode()
+                        let predicate = result["p"].WrapNode()
+                        let @object = result["o"].WrapNode()
+                        let graph = result.HasBoundValue("g")?result["g"].WrapNode():null
+                        select new EntityTriple(entityId,subject,predicate,@object,graph);
+
+            store.AssertEntity(entityId,triples);
         }
 
         public bool EntityExist(EntityId entityId)
@@ -84,7 +82,12 @@ namespace RomanticWeb.DotNetRDF
             return ExecuteAsk(ask.BuildQuery());
         }
 
-        private bool ExecuteAsk(SparqlQuery query)
+        public IEnumerable<EntityTriple> ExecuteEntityQuery(SparqlQuery sparqlQuery)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool ExecuteAsk(VDS.RDF.Query.SparqlQuery query)
         {
             var store = _store as IInMemoryQueryableStore;
             if (store != null)
@@ -97,7 +100,7 @@ namespace RomanticWeb.DotNetRDF
             return ((SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString())).Result;
         }
 
-        private SparqlResultSet ExecuteEntityLoadQuery(SparqlQuery query)
+        private SparqlResultSet ExecuteEntityLoadQuery(VDS.RDF.Query.SparqlQuery query)
         {
             var store=_store as IInMemoryQueryableStore;
             if (store!=null)

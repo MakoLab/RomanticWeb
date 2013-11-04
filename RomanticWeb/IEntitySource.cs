@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RomanticWeb.Entities;
+using RomanticWeb.Linq;
 using RomanticWeb.Model;
 
 namespace RomanticWeb
@@ -10,9 +10,6 @@ namespace RomanticWeb
     /// </summary>
     public interface IEntitySource
     {
-        [Obsolete]
-        IEnumerable<Tuple<Node,Node,Node>> GetNodesForQuery(string sparqlConstruct);
-
         /// <summary>
         /// Loads an entity into the given <see cref="IEntityStore"/>
         /// </summary>
@@ -22,5 +19,7 @@ namespace RomanticWeb
         /// Checks if an Entity with a given Id exists
         /// </summary>
         bool EntityExist(EntityId entityId);
+
+        IEnumerable<EntityTriple> ExecuteEntityQuery(SparqlQuery sparqlQuery);
     }
 }

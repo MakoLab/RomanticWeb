@@ -22,8 +22,8 @@ namespace RomanticWeb
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
-        private IOntologyProvider _ontologyProvider;
-        private INodeConverter _nodeConverter;
+        private readonly IOntologyProvider _ontologyProvider;
+        private readonly INodeConverter _nodeConverter;
 
         #endregion
 
@@ -61,13 +61,6 @@ namespace RomanticWeb
         #region Properties
 
         public ICache Cache { get; set; }
-
-        /// <summary>Gets or sets a node converter used by this entity context to transform RDF statements into strongly typed objects and values.</summary>
-        public INodeConverter NodeConverter
-        {
-            get { return _nodeConverter; }
-            set { _nodeConverter=value; }
-        }
 
         public IEntityStore Store
         {
@@ -149,21 +142,6 @@ namespace RomanticWeb
             return Create(entityId,true);
         }
 
-        /// <summary>Loads multiple strongly typedentities beeing a result of a SPARQL CONSTRUCT query.</summary>
-        /// <param name="sparqlConstruct">SPARQL CONSTRUCT query to be used as a source of new entities.</param>
-        /// <returns>Enumeration of strongly typed entities loaded from the passed query.</returns>
-        public IEnumerable<T> Load<T>(string sparqlConstruct) where T:class,IEntity
-        {
-            IList<T> entities=new List<T>();
-
-            IEnumerable<Tuple<Node,Node,Node>> triples=_entitySource.GetNodesForQuery(sparqlConstruct);
-            foreach (Node subject in triples.Select(triple => triple.Item1).Distinct())
-            {
-                entities.Add(Load<T>(subject.ToEntityId(),false));
-            }
-
-            return entities;
-        }
         #endregion
 
         #region Non-public methods
@@ -182,7 +160,7 @@ namespace RomanticWeb
         internal T EntityAs<T>(Entity entity) where T:class,IEntity
         {
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
-            var proxy=new EntityProxy(Store,entity,_mappings.MappingFor<T>(),NodeConverter);
+            var proxy=new EntityProxy(Store,entity,_mappings.MappingFor<T>(),_nodeConverter);
             _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();
         }
@@ -193,7 +171,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _ontologyProvider.Ontologies)
             {
-                var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,NodeConverter);
+                var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter);
                 _factory.SatisfyImports(ontologyAccessor);
                 entity[ontology.Prefix] = ontologyAccessor;
             }

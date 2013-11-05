@@ -26,7 +26,6 @@ namespace RomanticWeb.Entities
         {
             if (store == null) { throw new ArgumentNullException("store"); }
             if (entity == null) { throw new ArgumentNullException("entity"); }
-            if (entityMappings == null) { throw new ArgumentNullException("entityMappings"); }
             if (converter == null) { throw new ArgumentNullException("converter"); }
 
             _store = store;
@@ -57,6 +56,13 @@ namespace RomanticWeb.Entities
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
+            if (_entityMappings==null)
+            {
+                // no mapping probably means that this is IEntity
+                result=null;
+                return false;
+            }
+
             _entity.EnsureIsInitialized();
 
             var property=_entityMappings.PropertyFor(binder.Name);

@@ -42,12 +42,11 @@ namespace RomanticWeb.Mapping.Fluent
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
     public abstract class EntityMap
     {
-        private readonly ClassMap _class;
+        private ClassMap _class;
 
         protected EntityMap(Type type)
 		{
 			EntityType = type;
-            _class=new ClassMap();
 			MappedProperties = new List<PropertyMap>();
 		}
 
@@ -59,16 +58,18 @@ namespace RomanticWeb.Mapping.Fluent
         {
             get
             {
-                return _class;
+                return _class??(_class=new ClassMap());
             }
         }
 
         internal EntityMapping CreateMapping(IOntologyProvider prefixes)
 		{
-			var entityMapping = new EntityMapping
-			                        {
-			                            Class=Class.GetMapping(prefixes)
-			                        };
+			var entityMapping = new EntityMapping();
+
+            if (_class!=null)
+            {
+                entityMapping.Class=_class.GetMapping(prefixes);
+            }
 
             foreach (var mappedProperty in MappedProperties)
 			{

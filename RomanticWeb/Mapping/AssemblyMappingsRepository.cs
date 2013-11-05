@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
@@ -30,15 +31,10 @@ namespace RomanticWeb.Mapping
 
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
+        [return: AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
-            var entityType=typeof(TEntity);
-            if (_mappings.ContainsKey(entityType))
-            {
-                return _mappings[entityType];
-            }
-            
-            throw new MappingException(string.Format("No mapping found for type '{0}'",entityType));
+            return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
         }
 
         public void RebuildMappings(IOntologyProvider ontologyProvider)

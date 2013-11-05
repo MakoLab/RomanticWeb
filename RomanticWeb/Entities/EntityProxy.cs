@@ -24,6 +24,11 @@ namespace RomanticWeb.Entities
 
         public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
         {
+            if (store == null) { throw new ArgumentNullException("store"); }
+            if (entity == null) { throw new ArgumentNullException("entity"); }
+            if (entityMappings == null) { throw new ArgumentNullException("entityMappings"); }
+            if (converter == null) { throw new ArgumentNullException("converter"); }
+
             _store = store;
             _entity = entity;
             _entityMappings = entityMappings;

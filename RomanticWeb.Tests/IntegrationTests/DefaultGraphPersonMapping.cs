@@ -1,7 +1,8 @@
 ﻿using System;
 using RomanticWeb.Mapping.Fluent;
+using RomanticWeb.TestEntities;
 
-namespace RomanticWeb.TestEntities
+namespace RomanticWeb.Tests.IntegrationTests
 {
 	public class DefaultGraphPersonMapping : EntityMap<IPerson>
 	{

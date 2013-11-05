@@ -40,11 +40,14 @@ namespace RomanticWeb.Mapping.Fluent
     /// Base class for fluently defining entity entityMappings
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
-    public abstract class EntityMap : IMappingProvider
-	{
-		protected EntityMap(Type type)
+    public abstract class EntityMap
+    {
+        private readonly ClassMap _class;
+
+        protected EntityMap(Type type)
 		{
 			EntityType = type;
+            _class=new ClassMap();
 			MappedProperties = new List<PropertyMap>();
 		}
 
@@ -52,11 +55,22 @@ namespace RomanticWeb.Mapping.Fluent
 
 		internal IList<PropertyMap> MappedProperties { get; private set; }
 
-        IEntityMapping IMappingProvider.CreateMapping(IOntologyProvider prefixes)
-		{
-			var entityMapping = new EntityMapping();
+        protected ClassMap Class
+        {
+            get
+            {
+                return _class;
+            }
+        }
 
-			foreach (var mappedProperty in MappedProperties)
+        internal EntityMapping CreateMapping(IOntologyProvider prefixes)
+		{
+			var entityMapping = new EntityMapping
+			                        {
+			                            Class=Class.GetMapping(prefixes)
+			                        };
+
+            foreach (var mappedProperty in MappedProperties)
 			{
 				entityMapping.Properties.Add(mappedProperty.GetMapping(prefixes));
 			}

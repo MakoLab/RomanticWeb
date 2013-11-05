@@ -12,6 +12,9 @@ namespace RomanticWeb.Mapping
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
         IEntityMapping MappingFor<TEntity>();
 
+        /// <summary>
+        /// Builds mappings and resolves all URIs against a given ontology provider
+        /// </summary>
         void RebuildMappings(IOntologyProvider ontologyProvider);
     }
 }

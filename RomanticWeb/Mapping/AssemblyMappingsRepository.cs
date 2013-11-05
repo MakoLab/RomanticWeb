@@ -1,61 +1,60 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using NullGuard;
-using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
     /// <summary>
-    /// Mappings repository, which reads entityMapping attributes from assemblies
+    /// Base class for implementations of <see cref="IMappingsRepository"/>, which scan an <see cref="Assembly"/>
     /// </summary>
-    public sealed class AssemblyMappingsRepository:IMappingsRepository
+    public abstract class AssemblyMappingsRepository:IMappingsRepository
     {
-        #region Fields
-        private IDictionary<Type,IEntityMapping> _mappings;
-        #endregion
+        private readonly Assembly _assembly;
 
-        #region Public methods
+        private IDictionary<Type,IEntityMapping> _mappings;
+
+        protected AssemblyMappingsRepository(Assembly assembly)
+        {
+            _assembly=assembly;
+        }
+
+        protected Assembly Assembly
+        {
+            get
+            {
+                return _assembly;
+            }
+        }
+
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
-        [return: AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
-            return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
+            var entityType=typeof(TEntity);
+            if (_mappings.ContainsKey(entityType))
+            {
+                return _mappings[entityType];
+            }
+            
+            throw new MappingException(string.Format("No mapping found for type '{0}'",entityType));
         }
 
         public void RebuildMappings(IOntologyProvider ontologyProvider)
         {
-            _mappings = AppDomain.CurrentDomain
-                                 .GetAssemblies()
-                                 .SelectMany(assembly=>BuildTypeMappings(assembly,ontologyProvider))
-                                 .ToDictionary(item => item.Item1, item => item.Item2);
+            _mappings = new Dictionary<Type, IEntityMapping>();
+            foreach (var mapping in BuildTypeMappings(ontologyProvider))
+            {
+                if (_mappings.ContainsKey(mapping.Item1))
+                {
+                    throw new MappingException(string.Format("Duplicate mapping for type {0}",mapping.Item1));
+                }
+
+                _mappings.Add(mapping.Item1, mapping.Item2);
+            }
         }
 
-        #endregion
-
-        #region Private methods
-        private static IEnumerable<IPropertyMapping> BuildPropertyMappings(Type type,IOntologyProvider ontologyProvider)
-        {
-            return from property in type.GetProperties()
-                   from mapping in property.GetCustomAttributes(typeof(PropertyAttribute),true).Cast<PropertyAttribute>()
-                   let propertyMapping = mapping.GetMapping(property.PropertyType,property.Name,ontologyProvider)
-                   select propertyMapping;
-        }
-
-        private static IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(Assembly assembly,IOntologyProvider ontologyProvider)
-        {
-            return from type in assembly.GetTypes() 
-                   from mapping in type.GetCustomAttributes(typeof(ClassAttribute),true).Cast<ClassAttribute>() 
-                   let classMapping = mapping.GetMapping(ontologyProvider) 
-                   let propertyMappings = BuildPropertyMappings(type,ontologyProvider).ToList() 
-                   where (classMapping!=null)&&(propertyMappings.Count>0) 
-                   select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=classMapping,Properties=propertyMappings });
-        }
-
-        #endregion
+        protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(IOntologyProvider ontologyProvider);
     }
 }

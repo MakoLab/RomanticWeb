@@ -93,7 +93,10 @@
     <Compile Include="Linq\QueryExecutor.cs" />
     <Compile Include="Linq\QueryModelVisitor.cs" />
     <Compile Include="Linq\SparqlQuery.cs" />
+    <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
+    <Compile Include="Mapping\FluentMappingsRepository.cs" />
+    <Compile Include="Mapping\Fluent\ClassMap.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -105,7 +108,7 @@
     <Compile Include="Linq\EntityQueryProvider.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
-    <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
+    <Compile Include="Mapping\AttributeMappingsRepository.cs" />
     <Compile Include="Mapping\MappingException.cs" />
     <Compile Include="Mapping\Model\IEntityMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
@@ -116,7 +119,6 @@
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
     <Compile Include="Mapping\Model\EntityMapping.cs" />
     <Compile Include="Mapping\FuncGraphSelector.cs" />
-    <Compile Include="Mapping\IMappingProvider.cs" />
     <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
     <Compile Include="Mapping\Fluent\PredicatePart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />

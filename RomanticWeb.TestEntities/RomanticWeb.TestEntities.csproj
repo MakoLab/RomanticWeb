@@ -43,9 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultGraphPersonMapping.cs" />
+    <Compile Include="Animals\AnimalMap.cs" />
+    <Compile Include="Animals\CarnivoreMap.cs" />
+    <Compile Include="Animals\HerbivoreMap.cs" />
+    <Compile Include="Animals\IAnimal.cs" />
+    <Compile Include="Animals\ICarnivore.cs" />
+    <Compile Include="Animals\IHerbivore.cs" />
+    <Compile Include="Animals\IOmnivore.cs" />
+    <Compile Include="Animals\IPlant.cs" />
+    <Compile Include="Animals\OmnivoreMap.cs" />
+    <Compile Include="Animals\PlantMap.cs" />
     <Compile Include="IPerson.cs" />
-    <Compile Include="NamedGraphsPersonMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

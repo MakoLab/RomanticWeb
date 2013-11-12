@@ -142,6 +142,17 @@ namespace RomanticWeb
             return Create(entityId,true);
         }
 
+        public void Commit()
+        {
+            var changes=_entityStore.Changes;
+            _entitySource.ApplyChanges(changes);
+        }
+
+        void IDisposable.Dispose()
+        {
+            // todo: implement
+        }
+
         #endregion
 
         #region Non-public methods

@@ -87,6 +87,38 @@ namespace RomanticWeb.DotNetRDF
             throw new NotImplementedException();
         }
 
+        public void ApplyChanges(DatasetChanges datasetChanges)
+        {
+            foreach (var triple in datasetChanges.TriplesRemoved)
+            {
+                var graph = GetGraph(triple.Graph);
+                graph.Retract(
+                    triple.Subject.UnWrapNode(graph),
+                    triple.Predicate.UnWrapNode(graph),
+                    triple.Object.UnWrapNode(graph));
+            }
+
+            foreach (var triple in datasetChanges.TriplesAdded)
+            {
+                var graph=GetGraph(triple.Graph);
+                graph.Assert(
+                    triple.Subject.UnWrapNode(graph),
+                    triple.Predicate.UnWrapNode(graph),
+                    triple.Object.UnWrapNode(graph));
+            }
+        }
+
+        private IGraph GetGraph(Node graphNode)
+        {
+            var graphUri=graphNode.UnWrapGraphUri();
+            if (!_store.HasGraph(graphUri))
+            {
+                _store.Add(new Graph { BaseUri=graphUri });
+            }
+
+            return _store[graphUri];
+        }
+
         private bool ExecuteAsk(VDS.RDF.Query.SparqlQuery query)
         {
             var store = _store as IInMemoryQueryableStore;

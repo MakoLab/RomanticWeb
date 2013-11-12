@@ -234,6 +234,20 @@ namespace RomanticWeb.Tests
             _store.Verify(s => s.EntityExist(It.IsAny<EntityId>()),Times.Never);
         }
 
+        [Test]
+        public void Should_apply_changes_to_underlying_store_when_committing()
+        {
+            // given
+            var aChangeset=new DatasetChanges();
+            _entityStore.Setup(store => store.Changes).Returns(aChangeset);
+            
+            // when
+            _entityContext.Commit();
+
+            // then
+            _store.Verify(store=>store.ApplyChanges(aChangeset), Times.Once);
+        }
+
         private static IPropertyMapping GetMapping(string propertyName)
         {
             return new TestPropertyMapping

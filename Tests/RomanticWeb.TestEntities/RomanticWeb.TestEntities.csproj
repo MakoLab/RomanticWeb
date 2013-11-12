@@ -57,7 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RomanticWeb\RomanticWeb.csproj">
+    <ProjectReference Include="..\..\RomanticWeb\RomanticWeb.csproj">
       <Project>{0EE621E3-4A27-44B5-AEA9-04B43E730D46}</Project>
       <Name>RomanticWeb</Name>
     </ProjectReference>

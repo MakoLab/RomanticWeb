@@ -116,5 +116,18 @@ namespace RomanticWeb.Tests
             Assert.That(left.CompareTo(right), Is.EqualTo(String.Compare(Value, OtherValue, StringComparison.Ordinal)));
             Assert.That(right.CompareTo(left), Is.EqualTo(String.Compare(OtherValue, Value, StringComparison.Ordinal)));
         }
+
+        [Test]
+        public void Should_thrown_when_creating_from_relative_Uri()
+        {
+            // given
+            var relative=new Uri("/some/path", UriKind.Relative);
+
+            // when
+            var exception=Assert.Throws<ArgumentOutOfRangeException>(() => Node.ForUri(relative));
+
+            // then
+            Assert.That(exception.ParamName, Is.EqualTo("uri"));
+        }
     }
 }

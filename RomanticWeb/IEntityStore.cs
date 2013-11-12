@@ -16,6 +16,11 @@ namespace RomanticWeb
         IEnumerable<EntityTriple> Quads { get; }
 
         /// <summary>
+        /// Gets all changes made to the triple store
+        /// </summary>
+        DatasetChanges Changes { get; }
+
+        /// <summary>
         /// Gets all objects for predicate for a given entity
         /// </summary>
         IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);

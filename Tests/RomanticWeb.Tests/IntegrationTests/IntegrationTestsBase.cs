@@ -29,7 +29,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             get
             {
-                if(_entityContext==null)
+                if (_entityContext==null)
                 {
                     _entityContext= _factory.CreateContext();
                 }

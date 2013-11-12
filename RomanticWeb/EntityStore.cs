@@ -9,11 +9,17 @@ namespace RomanticWeb
 {
     internal class EntityStore:IEntityStore
     {
-        private readonly ISet<EntityTriple> _entityQuads; 
+        private readonly ISet<EntityTriple> _entityQuads;
+
+        private readonly ISet<EntityTriple> _removedTriples;
+
+        private readonly ISet<EntityTriple> _addedTriples; 
 
         public EntityStore()
         {
             _entityQuads=new SortedSet<EntityTriple>();
+            _removedTriples=new HashSet<EntityTriple>();
+            _addedTriples=new HashSet<EntityTriple>();
         }
 
         public IEnumerable<EntityTriple> Quads
@@ -22,7 +28,15 @@ namespace RomanticWeb
             {
                 return _entityQuads;
             }
-        } 
+        }
+
+        public DatasetChanges Changes
+        {
+            get
+            {
+                return new DatasetChanges(_addedTriples,_removedTriples);
+            }
+        }
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate)
         {
@@ -68,9 +82,12 @@ namespace RomanticWeb
             foreach (var entityTriple in quadsRemoved.ToList())
             {
                 _entityQuads.Remove(entityTriple);
+                _removedTriples.Add(entityTriple);
             }
 
-            _entityQuads.Add(new EntityTriple(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri));
+            var triple=new EntityTriple(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
+            _entityQuads.Add(triple);
+            _addedTriples.Add(triple);
         }
     }
 }

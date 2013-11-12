@@ -1,12 +1,11 @@
+using System;
 using System.Linq;
 using RomanticWeb.Entities;
 
 namespace RomanticWeb
 {
     /// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
-    /// todo: less method overloads
-    /// todo: IDisposable?
-    public interface IEntityContext
+    public interface IEntityContext:IDisposable
     {
         /// <summary>
         /// Gets the underlying in-memory store
@@ -37,5 +36,10 @@ namespace RomanticWeb
         /// <summary>Creates a new entity.</summary>
         /// <param name="entityId">Entity identifier</param>
         Entity Create(EntityId entityId);
+
+        /// <summary>
+        /// Saves all changes to the underlying store
+        /// </summary>
+        void Commit();
     }
 }

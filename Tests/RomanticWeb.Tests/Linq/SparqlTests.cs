@@ -18,12 +18,6 @@ namespace RomanticWeb.Tests.Linq
     [TestFixture]
     public class SparqlTests
     {
-        public interface IPerson:IEntity
-        {
-            string FamilyName { get; }
-            List<IPerson> Knows { get; }
-        }
-
         private IEntityContext _entityContext;
         private TripleStore _store;
         private Mock<IClassMapping> _personTypeMappingMock;
@@ -32,8 +26,15 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityMapping> _personMappingMock;
         private Mock<IMappingsRepository> _mappingsRepositoryMock;
         private Mock<IOntologyProvider> _ontologyProviderMock;
-        private Mock<IEntityContextFactory>  _factory;
-        
+        private Mock<IEntityContextFactory> _factory;
+
+        public interface IPerson : IEntity
+        {
+            string FamilyName { get; }
+
+            List<IPerson> Knows { get; }
+        }
+
         [SetUp]
         public void Setup()
         {

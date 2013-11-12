@@ -134,6 +134,11 @@ namespace RomanticWeb.Model
         /// </summary>
 		public static Node ForUri(Uri uri)
 		{
+            if (!uri.IsAbsoluteUri)
+            {
+                throw new ArgumentOutOfRangeException("uri","Node URI must be absolute!");
+            }
+
 			return new Node(uri);
 		}
 

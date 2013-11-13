@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -13,7 +14,9 @@ namespace RomanticWeb
     {
         private readonly CompositionContainer _container;
 
-        private Func<IEntityStore> _entityStoreFactory=()=>new EntityStore(); 
+        private Func<IEntityStore> _entityStoreFactory=()=>new EntityStore();
+
+        private IGraphSelectionStrategy _defaultGraphSelector=new DefaultGraphSelector();
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
@@ -32,9 +35,10 @@ namespace RomanticWeb
             var entitySourceFactory=_container.GetExportedValue<Func<IEntitySource>>();
             var mappings=new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());
             var ontologies = new CompoundOntologyProvider(_container.GetExportedValues<IOntologyProvider>());
+            var mappingContext=new MappingContext(ontologies,_defaultGraphSelector);
 
-            mappings.RebuildMappings(ontologies);
-            return new EntityContext(this,mappings,ontologies,_entityStoreFactory(),entitySourceFactory());
+            mappings.RebuildMappings(mappingContext);
+            return new EntityContext(this, mappings, mappingContext, _entityStoreFactory(), entitySourceFactory());
         }
 
         public IEntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
@@ -63,6 +67,12 @@ namespace RomanticWeb
         public IEntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
         {
             _entityStoreFactory=entityStoreFactory;
+            return this;
+        }
+
+        public IEntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector)
+        {
+            _defaultGraphSelector=graphSelector;
             return this;
         }
     }

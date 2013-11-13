@@ -47,6 +47,10 @@ namespace RomanticWeb.Entities
             {
                 result=((EntityProxy)entity).AsEntity<TInterface>();
             }
+            else
+            {
+                result=entity.AsDynamic().ActLike<TInterface>();
+            }
 
             return result;
         }

@@ -23,5 +23,7 @@ namespace RomanticWeb
         IEntityContextFactory WithMappings(IMappingsRepository mappingsRepository);
 
         IEntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory);
+
+        IEntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector);
     }
 }

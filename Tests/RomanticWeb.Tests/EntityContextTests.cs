@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ImpromptuInterface;
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
@@ -11,7 +10,6 @@ using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
-using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests
 {
@@ -55,7 +53,8 @@ namespace RomanticWeb.Tests
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
-            _entityContext=new EntityContext(_factory.Object,_mappings.Object,_ontologyProvider,_entityStore.Object,_store.Object);
+            var mappingContext=new MappingContext(_ontologyProvider,new Mock<IGraphSelectionStrategy>().Object);
+            _entityContext=new EntityContext(_factory.Object,_mappings.Object,mappingContext,_entityStore.Object,_store.Object);
         }
 
         [TearDown]

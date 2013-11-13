@@ -9,7 +9,6 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -21,27 +20,17 @@ namespace RomanticWeb
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
-        private readonly IOntologyProvider _ontologyProvider;
+        private readonly MappingContext _mappingContext;
         private readonly INodeConverter _nodeConverter;
 
         #endregion
 
         #region Constructors
 
-        /// <summary>Creates an instance of an entity context with given mappings and entity source.</summary>
-        /// <param name="factory">Factory, which created this entity context</param>
-        /// <param name="mappings">Information defining strongly typed interface mappings.</param>
-        /// <param name="entitySource">Physical entity data source.</param>
-        [Obsolete]
-        internal EntityContext(IEntityContextFactory factory,IMappingsRepository mappings,IEntitySource entitySource)
-            :this(factory,mappings,new DefaultOntologiesProvider(),new EntityStore(),entitySource)
-        {
-        }
-
         internal EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            IOntologyProvider ontologyProvider, 
+            MappingContext mappingContext, 
             IEntityStore entityStore, 
             IEntitySource entitySource)
         {
@@ -51,7 +40,7 @@ namespace RomanticWeb
             _entitySource=entitySource;
             _nodeConverter=new NodeConverter(this,entityStore);
             _mappings=mappings;
-            _ontologyProvider=ontologyProvider;
+            _mappingContext = mappingContext;
             Cache = new DictionaryCache();
             factory.SatisfyImports(_nodeConverter);
         }
@@ -84,7 +73,7 @@ namespace RomanticWeb
         /// <returns>A LINQ querable data source.</returns>
         public IQueryable<Entity> AsQueryable()
         {
-            return new EntityQueryable<Entity>(this,_mappings,_ontologyProvider);
+            return new EntityQueryable<Entity>(this, _mappings, _mappingContext.OntologyProvider);
         }
 
         /// <summary>Converts this context into a LINQ queryable data source of entities of given type.</summary>
@@ -92,7 +81,7 @@ namespace RomanticWeb
         /// <returns>A LIQN queryable data source of entities of given type.</returns>
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
-            return new EntityQueryable<T>(this,_mappings,_ontologyProvider);
+            return new EntityQueryable<T>(this, _mappings, _mappingContext.OntologyProvider);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
@@ -199,7 +188,7 @@ namespace RomanticWeb
         {
             var entity=new Entity(entityId,this,entityExists);
 
-            foreach (var ontology in _ontologyProvider.Ontologies)
+            foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
             {
                 var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter);
                 _factory.SatisfyImports(ontologyAccessor);
@@ -216,7 +205,7 @@ namespace RomanticWeb
         private ITypedEntity AsTypedEntity(Entity entity, IClassMapping classMapping)
         {
             var map = new TypeEntityMap(classMapping.GraphSelector.SelectGraph(entity.Id));
-            return EntityAs<ITypedEntity>(entity,map.CreateMapping(_ontologyProvider));
+            return EntityAs<ITypedEntity>(entity, map.CreateMapping(_mappingContext));
         }
 
         private T EntityAs<T>(Entity entity, IEntityMapping mapping) where T : class,IEntity

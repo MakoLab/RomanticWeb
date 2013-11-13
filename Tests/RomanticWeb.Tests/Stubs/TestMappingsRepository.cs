@@ -3,14 +3,14 @@ using System.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {
     public class TestMappingsRepository:IMappingsRepository
     {
         private readonly List<EntityMap> _entityMaps;
-        private IOntologyProvider _ontologies;
+
+        private MappingContext _mappingContext;
 
         public TestMappingsRepository(params EntityMap[] entityMaps)
         {
@@ -26,12 +26,12 @@ namespace RomanticWeb.Tests.Stubs
                 throw new MappingException(string.Format("Mapping not found for type {0}",typeof(TEntity)));
             }
 
-            return entityMap.CreateMapping(_ontologies);
+            return entityMap.CreateMapping(_mappingContext);
         }
 
-        public void RebuildMappings(IOntologyProvider ontologyProvider)
+        public void RebuildMappings(MappingContext mappingContext)
         {
-            _ontologies=ontologyProvider;
+            _mappingContext=mappingContext;
         }
 
         public void Add(EntityMap personMapping)

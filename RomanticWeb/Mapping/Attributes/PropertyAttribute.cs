@@ -1,6 +1,5 @@
 ﻿using System;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -22,6 +21,7 @@ namespace RomanticWeb.Mapping.Attributes
         public PropertyAttribute(string prefix,string propertyName):base(prefix)
         {
             IsCollection=false;
+            StorageStrategy=StorageStrategyOption.Simple;
             _propertyName=propertyName;
         }
 
@@ -39,15 +39,22 @@ namespace RomanticWeb.Mapping.Attributes
 
         public bool IsCollection { get; set; }
 
+        public StorageStrategyOption StorageStrategy { get; set; }
+
         #endregion
 
         #region Internal methods
-        internal IPropertyMapping GetMapping(Type propertyType,string propertyName,IOntologyProvider ontology)
+        internal IPropertyMapping GetMapping(Type propertyType,string propertyName,MappingContext mappingContext)
         {
-            Uri uri=ontology.ResolveUri(Prefix,PropertyName);
+            Uri uri=mappingContext.OntologyProvider.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
-                return new PropertyMapping(propertyType,propertyName,uri,null);
+                if (IsCollection)
+                {
+                    return new CollectionMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector,StorageStrategy);    
+                }
+
+                return new PropertyMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector);
             }
 
             throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));

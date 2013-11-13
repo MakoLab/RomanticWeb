@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
@@ -22,17 +21,17 @@ namespace RomanticWeb.Mapping
 
         #region Private methods
 
-        protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(IOntologyProvider ontologyProvider)
+        protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             return from type in Assembly.GetTypes() 
                    from mapping in type.GetCustomAttributes(typeof(ClassAttribute),true).Cast<ClassAttribute>() 
-                   let classMapping = mapping.GetMapping(ontologyProvider) 
-                   let propertyMappings = BuildPropertyMappings(type,ontologyProvider).ToList() 
+                   let classMapping = mapping.GetMapping(mappingContext) 
+                   let propertyMappings = BuildPropertyMappings(type,mappingContext).ToList() 
                    where (classMapping!=null)&&(propertyMappings.Count>0) 
                    select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=classMapping,Properties=propertyMappings });
         }
 
-        private static IEnumerable<IPropertyMapping> BuildPropertyMappings(Type type, IOntologyProvider ontologyProvider)
+        private static IEnumerable<IPropertyMapping> BuildPropertyMappings(Type type, MappingContext ontologyProvider)
         {
             var inheritedProperties = from inherited in type.GetInterfaces()
                                       from property in inherited.GetProperties()

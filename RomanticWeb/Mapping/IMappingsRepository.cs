@@ -1,5 +1,4 @@
 ﻿using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
@@ -15,6 +14,6 @@ namespace RomanticWeb.Mapping
         /// <summary>
         /// Builds mappings and resolves all URIs against a given ontology provider
         /// </summary>
-        void RebuildMappings(IOntologyProvider ontologyProvider);
+        void RebuildMappings(MappingContext mappingContext);
     }
 }

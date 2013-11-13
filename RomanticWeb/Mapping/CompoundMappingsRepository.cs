@@ -2,7 +2,6 @@
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
@@ -36,11 +35,11 @@ namespace RomanticWeb.Mapping
             return mappingsForType.SingleOrDefault(m => m!=null);
         }
 
-        public void RebuildMappings(IOntologyProvider ontologyProvider)
+        public void RebuildMappings(MappingContext mappingContext)
         {
             foreach (var mappingsRepository in _mappingsRepositories)
             {
-                mappingsRepository.RebuildMappings(ontologyProvider);
+                mappingsRepository.RebuildMappings(mappingContext);
             }
         }
 

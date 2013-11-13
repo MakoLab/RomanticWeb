@@ -1,6 +1,5 @@
 ﻿using System;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -28,15 +27,15 @@ namespace RomanticWeb.Mapping.Attributes
         #endregion
 
         #region Internal methods
-        /// <summary>Creates a class mapping using given ontology.</summary>
-        /// <param name="ontology">Ontology to be used to resolve the prefix.</param>
+        /// <summary>Creates a class mapping using given mappingContext.</summary>
+        /// <param name="mappingContext">Ontology to be used to resolve the prefix.</param>
         /// <returns>Class mapping or null.</returns>
-        internal IClassMapping GetMapping(IOntologyProvider ontology)
+        internal IClassMapping GetMapping(MappingContext mappingContext)
         {
-            Uri uri=ontology.ResolveUri(Prefix,ClassName);
+            Uri uri=mappingContext.OntologyProvider.ResolveUri(Prefix,ClassName);
             if (uri!=null)
             {
-                return new ClassMapping(uri,new DefaultGraphSelector());
+                return new ClassMapping(uri,mappingContext.DefaultGraphSelector);
             }
 
             throw new MappingException(string.Format("Cannot resolve class {0}:{1}",Prefix,ClassName));

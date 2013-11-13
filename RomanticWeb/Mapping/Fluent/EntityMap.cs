@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {
@@ -62,18 +61,18 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        internal EntityMapping CreateMapping(IOntologyProvider prefixes)
+        internal EntityMapping CreateMapping(MappingContext mappingContext)
 		{
 			var entityMapping = new EntityMapping();
 
             if (_class!=null)
             {
-                entityMapping.Class=_class.GetMapping(prefixes);
+                entityMapping.Class=_class.GetMapping(mappingContext);
             }
 
             foreach (var mappedProperty in MappedProperties)
 			{
-				entityMapping.Properties.Add(mappedProperty.GetMapping(prefixes));
+				entityMapping.Properties.Add(mappedProperty.GetMapping(mappingContext));
 			}
 
 			return entityMapping;

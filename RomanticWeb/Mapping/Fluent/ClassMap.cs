@@ -29,11 +29,11 @@ namespace RomanticWeb.Mapping.Fluent
             return this;
         }
 
-        internal IClassMapping GetMapping(IOntologyProvider prefixes)
+        internal IClassMapping GetMapping(MappingContext mappingContext)
         {
             return new ClassMapping(
-                prefixes.ResolveUri(NamespacePrefix,ClassName),
-                ((INamedGraphSelectingMap)this).GraphSelector);
+                mappingContext.OntologyProvider.ResolveUri(NamespacePrefix,ClassName),
+                ((INamedGraphSelectingMap)this).GraphSelector ?? mappingContext.DefaultGraphSelector);
         }
  }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
@@ -20,12 +19,12 @@ namespace RomanticWeb.Mapping
         {
         }
 
-        protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(IOntologyProvider ontologyProvider)
+        protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             var maps=(from type in Assembly.GetTypes()
                       where typeof(EntityMap).IsAssignableFrom(type)
                       let map = (EntityMap)Activator.CreateInstance(type)
-                      select new Tuple<Type,EntityMapping>(map.EntityType,map.CreateMapping(ontologyProvider))).ToList();
+                      select new Tuple<Type,EntityMapping>(map.EntityType,map.CreateMapping(mappingContext))).ToList();
 
             foreach (var tuple in maps)
             {

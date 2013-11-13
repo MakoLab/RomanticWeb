@@ -115,6 +115,7 @@
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\AttributeMappingsRepository.cs" />
+    <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\MappingException.cs" />
     <Compile Include="Mapping\Model\CollectionMapping.cs" />
     <Compile Include="Mapping\Model\IEntityMapping.cs" />

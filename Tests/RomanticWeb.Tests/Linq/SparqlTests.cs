@@ -6,7 +6,6 @@ using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Tests.Helpers;
-using RomanticWeb.Tests.Stubs;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests.Linq
@@ -51,7 +50,7 @@ namespace RomanticWeb.Tests.Linq
             _personMappingMock.Setup(mapping => mapping.PropertyFor("FamilyName")).Returns(_firstNamePropertyMappingMock.Object);
             _personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);
             _mappingsRepositoryMock=new Mock<IMappingsRepository>(MockBehavior.Strict);
-            _mappingsRepositoryMock.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
+            _mappingsRepositoryMock.Setup(m => m.RebuildMappings(It.IsAny<MappingContext>()));
             _mappingsRepositoryMock.Setup(repository => repository.MappingFor<IPerson>()).Returns(_personMappingMock.Object);
             _ontologyProviderMock=new Mock<IOntologyProvider>(MockBehavior.Strict);
             _ontologyProviderMock.SetupGet(provider => provider.Ontologies).Returns(
@@ -65,7 +64,8 @@ namespace RomanticWeb.Tests.Linq
                     new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
                     new Property("type")) });
             _factory=new Mock<IEntityContextFactory>();
-            _entityContext = new EntityContext(_factory.Object, _mappingsRepositoryMock.Object, _ontologyProviderMock.Object, new EntityStore(), new TripleStoreAdapter(_store));
+            MappingContext mappingContext = new MappingContext(_ontologyProviderMock.Object,new DefaultGraphSelector());
+            _entityContext = new EntityContext(_factory.Object, _mappingsRepositoryMock.Object, mappingContext, new EntityStore(), new TripleStoreAdapter(_store));
         }
 
         [Test]

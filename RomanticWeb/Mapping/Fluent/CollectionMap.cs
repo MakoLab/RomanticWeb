@@ -51,14 +51,14 @@ namespace RomanticWeb.Mapping.Fluent
             get { return true; }
         }
 
-        protected internal override IPropertyMapping GetMapping(Ontologies.IOntologyProvider ontologies)
+        protected internal override IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            Uri predicateUri = PredicateUri ?? ontologies.ResolveUri(NamespacePrefix, PredicateName);
+            Uri predicateUri = PredicateUri ?? mappingContext.OntologyProvider.ResolveUri(NamespacePrefix, PredicateName);
             return new CollectionMapping(
                 PropertyInfo.PropertyType,
                 PropertyInfo.Name,
                 predicateUri,
-                ((INamedGraphSelectingMap)this).GraphSelector,
+                ((INamedGraphSelectingMap)this).GraphSelector??mappingContext.DefaultGraphSelector,
                 StorageStrategy);
         }
 	}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
@@ -37,10 +36,10 @@ namespace RomanticWeb.Mapping
             return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
         }
 
-        public void RebuildMappings(IOntologyProvider ontologyProvider)
+        public void RebuildMappings(MappingContext mappingContext)
         {
             _mappings = new Dictionary<Type, IEntityMapping>();
-            foreach (var mapping in BuildTypeMappings(ontologyProvider))
+            foreach (var mapping in BuildTypeMappings(mappingContext))
             {
                 if (_mappings.ContainsKey(mapping.Item1))
                 {
@@ -51,6 +50,6 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(IOntologyProvider ontologyProvider);
+        protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext);
     }
 }

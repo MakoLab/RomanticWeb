@@ -74,7 +74,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         protected virtual IMappingsRepository SetupMappings()
         {
             var mock = new Mock<IMappingsRepository>();
-            mock.Setup(m => m.RebuildMappings(It.IsAny<IOntologyProvider>()));
+            mock.Setup(m => m.RebuildMappings(It.IsAny<MappingContext>()));
             return mock.Object;
         }
 

@@ -9,11 +9,12 @@ namespace RomanticWeb.Mapping.Model
             if (returnType == null) { throw new ArgumentNullException("returnType"); }
             if (name == null) { throw new ArgumentNullException("name"); }
             if (predicateUri == null) { throw new ArgumentNullException("predicateUri"); }
+            if (graphSelector == null) { throw new ArgumentNullException("graphSelector"); }
 
             ReturnType=returnType;
             Name=name;
             Uri=predicateUri;
-            GraphSelector=graphSelector??new DefaultGraphSelector();
+            GraphSelector=graphSelector;
         }
 
         public Uri Uri { get; private set; }

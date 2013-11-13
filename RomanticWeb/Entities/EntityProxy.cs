@@ -66,10 +66,11 @@ namespace RomanticWeb.Entities
             _entity.EnsureIsInitialized();
 
             var property=_entityMappings.PropertyFor(binder.Name);
+            var graph=property.GraphSelector.SelectGraph(_entity.Id);
 
-            LogTo.Debug("Reading property {0}", property.Uri);
+            LogTo.Debug("Reading property {0} from graph {1}",property.Uri,graph);
 
-            var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri);
+            var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
             var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
             var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;
@@ -94,10 +95,20 @@ namespace RomanticWeb.Entities
             LogTo.Trace("Setting property {0}", property.Uri);
 
             var propertyUri = Node.ForUri(property.Uri);
-            var newValue = Node.ForLiteral(value.ToString());
             var graphUri = property.GraphSelector.SelectGraph(_entity.Id);
 
-            _store.ReplacePredicateValue(_entity.Id,propertyUri,newValue,graphUri);
+            ////if (property.IsCollection)
+            ////{
+            ////    var newValue = Node.ForLiteral(value.ToString());
+
+            ////    _store.ReplaceCollection(_entity.Id, propertyUri, newValue, graphUri);
+            ////}
+            ////else
+            {
+                var newValues=_converter.ConvertBack(value,property);
+
+                _store.ReplacePredicateValues(_entity.Id, propertyUri, newValues, graphUri);
+            }
 
             return true;
         }

@@ -17,6 +17,7 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <FodyPath>..\..\packages\Fody.1.17.4.0</FodyPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,6 +94,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ModuleInitializer.cs">
+      <Link>ModuleInitializer.cs</Link>
+    </Compile>
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
     <Compile Include="Converters\DecimalConverterTests.cs" />
@@ -128,9 +132,11 @@
     <Compile Include="TripleTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Fody.targets" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -139,6 +145,7 @@
     <EmbeddedResource Include="TestGraphs\RdfLists\tomasz.ttl" />
     <EmbeddedResource Include="TestGraphs\Collections.trig" />
     <EmbeddedResource Include="TestGraphs\MixedCollections.trig" />
+    <EmbeddedResource Include="TestGraphs\TriplesInUnmappedGraphs.trig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RomanticWeb.TestEntities\RomanticWeb.TestEntities.csproj">
@@ -180,6 +187,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="Fody.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

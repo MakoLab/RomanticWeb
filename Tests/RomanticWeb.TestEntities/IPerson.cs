@@ -12,14 +12,14 @@ namespace RomanticWeb.TestEntities
 
 	    Uri Homepage { get; }
 
-        ICollection<string> Interests { get; }
-        
-        ICollection<string> NickNames { get; }
+        ICollection<string> Interests { get; set; }
 
-	    IList<IPerson> Friends { get; }
+	    ICollection<string> NickNames { get; }
 
-        IPerson Friend { get; }
+	    IList<IPerson> Friends { get; set; }
 
-        IEntity Entity { get; }
+	    IPerson Friend { get; }
+
+        IEntity Entity { get; set; }
 	}
 }

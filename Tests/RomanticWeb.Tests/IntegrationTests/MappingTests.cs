@@ -8,6 +8,7 @@ using RomanticWeb.Mapping;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -271,15 +272,89 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(Entity.FirstName, Is.EqualTo("Dominik"));
             Assert.That(Entity.LastName, Is.EqualTo("Kuziński"));
             Assert.That(EntityStore.Quads, Has.Count.EqualTo(4), "Actual triples were: {0}", SerializeStore());
-            var quads=EntityStore.Quads.Where(q => q.Graph==Node.ForUri(new Uri("personal://magi/people/Tomasz")));
+            var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("personal://magi/people/Tomasz")));
             Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
+        }
+
+        [Test]
+        public void Setting_rdf_list_of_literals_should_be_possible()
+        {
+            // given
+            Mappings.Add(new NamedGraphsPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+
+            // when
+            Entity.Interests = new[] { "semantic web", "linked data" };
+
+            // then
+            Assert.That(Entity.Interests, Contains.Item("semantic web"));
+            Assert.That(Entity.Interests, Contains.Item("linked data"));
+            var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
+            Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
+        }
+
+        [Test]
+        public void Setting_entity_property_should_be_posible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+            var someEntity=EntityContext.Create(new EntityId("urn:possibly:external"));
+            Entity.ForceInitialize();
+            var quadsInitially=EntityStore.Quads.Count();
+
+            // when
+            Entity.Entity=someEntity;
+
+            // then
+            Assert.That(Entity.Entity, Is.Not.Null);
+            Assert.That(Entity.Entity.Id, Is.EqualTo(new EntityId("urn:possibly:external")));
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially+1), "Actual triples were: {0}", SerializeStore());
+        }
+
+        [Test]
+        public void Setting_simple_collection_of_literals_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+            Entity.ForceInitialize();
+            var quadsInitially = EntityStore.Quads.Count();
+
+            // when
+            Entity.Interests = new[] { "semantic web", "linked data" };
+
+            // then
+            Assert.That(Entity.Interests, Contains.Item("semantic web"));
+            Assert.That(Entity.Interests, Contains.Item("linked data"));
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 2), "Actual triples were: {0}", SerializeStore());
+        }
+
+        [Test]
+        public void Setting_simple_collection_of_entities_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+            var someEntity = EntityContext.Create<IPerson>(new EntityId("urn:possibly:friend1"));
+            var otherEntity = EntityContext.Create<IPerson>(new EntityId("urn:possibly:friend2"));
+            Entity.ForceInitialize();
+            var quadsInitially = EntityStore.Quads.Count();
+
+            // when
+            Entity.Friends = new[] { someEntity, otherEntity };
+
+            // then
+            Assert.That(Entity.Friends, Contains.Item(someEntity));
+            Assert.That(Entity.Friends, Contains.Item(otherEntity));
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 2), "Actual triples were: {0}", SerializeStore());
         }
 
         [Test]
         public void Should_allow_chaining_typed_entities()
         {
             // given
-            Mappings.Add(new NamedGraphsPersonMapping());
+            Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("AssociatedInstances.trig");
 
             // when
@@ -288,6 +363,42 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(karol, Is.InstanceOf<IPerson>());
             Assert.That(karol.FirstName, Is.EqualTo("Karol"));
+        }
+
+        [Test]
+        public void Creating_entity_should_populate_changeset_with_entity_type()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            var entityUri=new Uri("http://magi/people/Tomasz");
+            var entityId=new EntityId(entityUri);
+
+            // then
+            EntityContext.Create<IPerson>(entityId);
+
+            // then
+            Assert.That(EntityContext.HasChanges);
+            var newTriple = new EntityTriple(
+                entityId, 
+                Node.ForUri(entityUri), 
+                Node.ForUri(Rdf.Type), 
+                Node.ForUri(Foaf.Person),
+                Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
+            EntityContext.Store.Changes.TriplesAdded.Should().Contain(newTriple);
+        }
+
+        [Test]
+        public void Should_only_return_triples_from_the_selected_named_graph()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("TriplesInUnmappedGraphs.trig");
+
+            // when
+            var name=Entity.FirstName;
+
+            // then
+            Assert.That(name,Is.Null);
         }
 
         protected override IMappingsRepository SetupMappings()

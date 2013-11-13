@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
+using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -38,12 +39,19 @@ namespace RomanticWeb
             }
         }
 
-        public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate)
+        public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,[AllowNull] Uri graph)
         {
-            return from triple in _entityQuads
-                   where triple.Predicate==Node.ForUri(predicate)
-                   && triple.Subject==Node.ForUri(entityId.Uri)
-                   select triple.Object;
+            var quads=from triple in _entityQuads
+                      where triple.Predicate==Node.ForUri(predicate)
+                         && triple.Subject==Node.ForUri(entityId.Uri)
+                      select triple;
+
+            if (graph!=null)
+            {
+                quads=quads.Where(triple => triple.Graph==Node.ForUri(graph));
+            }
+
+            return quads.Select(triple => triple.Object);
         }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityTriple> entityTriples)
@@ -65,7 +73,7 @@ namespace RomanticWeb
             }
         }
 
-        public void ReplacePredicateValue(EntityId entityId,Node propertyUri,Node valueNode,Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId,Node propertyUri,IEnumerable<Node> valueNodes,Uri graphUri)
         {
             var subjectNode=Node.ForUri(entityId.Uri);
             var quadsRemoved = from quad in Quads
@@ -85,9 +93,12 @@ namespace RomanticWeb
                 _removedTriples.Add(entityTriple);
             }
 
-            var triple=new EntityTriple(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
-            _entityQuads.Add(triple);
-            _addedTriples.Add(triple);
+            foreach (var valueNode in valueNodes)
+            {
+                var triple=new EntityTriple(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
+                _entityQuads.Add(triple);
+                _addedTriples.Add(triple);
+            }
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    using RomanticWeb.Mapping.Model;
-
     public class TestPropertyMapping : IPropertyMapping
 	{
 		public Uri Uri { get; set; }
@@ -16,5 +15,7 @@ namespace RomanticWeb.Tests.Stubs
         public bool IsCollection { get; set; }
 
         public Type ReturnType { get; set; }
+
+        public StorageStrategyOption StorageStrategy { get; set; }
 	}
 }

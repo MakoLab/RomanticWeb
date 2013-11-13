@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -48,7 +49,49 @@ namespace RomanticWeb.Converters
 	        return ConvertNodes(objects,null);
 	    }
 
-        private static bool PredicateIsEntityOrCollectionThereof(IPropertyMapping predicate,out Type entityType)
+	    public IEnumerable<Node> ConvertBack(object value,IPropertyMapping property)
+	    {
+            var convertedNodes=new List<Node>();
+
+	        if (typeof(IEntity).IsAssignableFrom(property.ReturnType))
+	        {
+	            convertedNodes.Add(ConvertOneBack(value));
+	        }
+
+            if (typeof(IEnumerable<IEntity>).IsAssignableFrom(property.ReturnType))
+            {
+                var convertedEntities=from entity in (IEnumerable<IEntity>)value 
+                                      select ConvertOneBack(entity);
+                convertedNodes.AddRange(convertedEntities);
+            }
+
+	        if (property.IsCollection)
+            {
+                var objectsToConvert=from obj in ((IEnumerable)value).Cast<object>()
+                                     where obj.GetType() == property.ReturnType.GetGenericArguments().First()
+                                     select obj;
+                foreach (var element in objectsToConvert)
+                {
+                    var converter = ComplexTypeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
+                    if (converter!=null)
+                    {
+                        convertedNodes.AddRange(converter.ConvertBack(element));
+                    }
+                    else
+                    {
+                        convertedNodes.Add(ConvertOneBack(element));
+                    }
+                }
+            }
+            else
+            {
+                convertedNodes.Add(ConvertOneBack(value));
+            }
+
+	        return convertedNodes;
+	    }
+
+	    private static bool PredicateIsEntityOrCollectionThereof(IPropertyMapping predicate,out Type entityType)
         {
             entityType=null;
             if (predicate==null)
@@ -71,6 +114,16 @@ namespace RomanticWeb.Converters
             return false;
         }
 
+        private Node ConvertOneBack(object element)
+        {
+            if (element is IEntity)
+            {
+                return Node.ForUri(((IEntity)element).Id.Uri);
+            }
+
+            return Node.ForLiteral(element.ToString());
+        }
+
 	    private object ConvertLiteral(Node objectNode)
 	    {
 	        if (objectNode.DataType==null)
@@ -91,7 +144,7 @@ namespace RomanticWeb.Converters
 	    {
 	        var entity=_entityContext.Load<IEntity>(objectNode.ToEntityId(),false);
 
-	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store));
+	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store,predicate));
 
 	        if (converter!=null)
 	        {

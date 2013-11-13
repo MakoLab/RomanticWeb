@@ -6,29 +6,30 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// Allows mapping a property to a named graph
     /// </summary>
-	public class NamedGraphPart
+    public sealed class NamedGraphPart<TParentMap> where TParentMap : INamedGraphSelectingMap
 	{
-		private readonly PredicatePart _predicatePart;
-		private readonly PropertyMap _propertyMap;
+        private readonly TParentMap _parentMap;
+		private readonly INamedGraphSelectingMap _propertyMap;
 
-        internal NamedGraphPart(PredicatePart predicatePart, PropertyMap propertyMap)
+        internal NamedGraphPart(TParentMap parentMap)
 		{
-			_predicatePart = predicatePart;
-			_propertyMap = propertyMap;
+			_parentMap = parentMap;
+            _propertyMap = parentMap;
 		}
 
-		public PredicatePart SelectedBy<T>() where T : IGraphSelectionStrategy
+        public TParentMap SelectedBy<T>() where T : IGraphSelectionStrategy, new()
 		{
-			throw new NotImplementedException();
+		    _propertyMap.GraphSelector=new T();
+		    return _parentMap;
 		}
 
         /// <summary>
         /// Maps the property do a named graph selected by a given function
         /// </summary>
-		public PredicatePart SelectedBy(Func<EntityId, Uri> createGraphUri)
+        public TParentMap SelectedBy(Func<EntityId, Uri> createGraphUri)
 		{
 			_propertyMap.GraphSelector = new FuncGraphSelector(createGraphUri);
-			return _predicatePart;
+			return _parentMap;
 		}
 	}
 }

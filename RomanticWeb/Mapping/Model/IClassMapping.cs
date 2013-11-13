@@ -10,6 +10,11 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>
         /// Gets the Entity's RDF class URI
         /// </summary>
-		Uri Uri { get; }
+        Uri Uri { get; }
+
+        /// <summary>
+        /// Gets the strategy for selecting named graph URIs
+        /// </summary>
+        IGraphSelectionStrategy GraphSelector { get; }
 	}
 }

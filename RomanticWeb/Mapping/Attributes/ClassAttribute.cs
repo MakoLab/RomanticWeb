@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Attributes
             Uri uri=ontology.ResolveUri(Prefix,ClassName);
             if (uri!=null)
             {
-                return new ClassMapping(uri);
+                return new ClassMapping(uri,new DefaultGraphSelector());
             }
 
             throw new MappingException(string.Format("Cannot resolve class {0}:{1}",Prefix,ClassName));

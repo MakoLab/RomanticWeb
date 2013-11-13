@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ImpromptuInterface;
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
@@ -10,6 +11,7 @@ using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests
 {
@@ -142,7 +144,7 @@ namespace RomanticWeb.Tests
         public void Accessing_entity_member_for_the_first_time_should_trigger_lazy_load()
         {
             // when
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             dynamic entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -162,7 +164,7 @@ namespace RomanticWeb.Tests
             mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>()))
                           .Returns((string prop) => GetMapping(prop));
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>()))
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
@@ -180,7 +182,7 @@ namespace RomanticWeb.Tests
         public void Loading_entity_twice_should_initialize_only_once()
         {
             // given
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -198,7 +200,7 @@ namespace RomanticWeb.Tests
         public void New_entity_should_not_trigger_initialization()
         {
             // given
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>()))
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             var entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
 
@@ -254,7 +256,8 @@ namespace RomanticWeb.Tests
                        {
                            Name=propertyName,
                            Uri=new Uri("http://unittest/"+propertyName),
-                           IsCollection=false
+                           IsCollection=false,
+                           GraphSelector = new DefaultGraphSelector()
                        };
         }
     }

@@ -260,7 +260,7 @@ namespace RomanticWeb.Model
         {
             if (IsLiteral)
             {
-                return Literal;
+                return string.Format("\"{0}\"",Literal);
             }
 
             if (IsUri||IsBlank)

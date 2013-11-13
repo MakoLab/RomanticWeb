@@ -30,7 +30,7 @@ namespace RomanticWeb
         public IEntityContext CreateContext()
         {
             var entitySourceFactory=_container.GetExportedValue<Func<IEntitySource>>();
-            var mappings = new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());
+            var mappings=new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());
             var ontologies = new CompoundOntologyProvider(_container.GetExportedValues<IOntologyProvider>());
 
             mappings.RebuildMappings(ontologies);

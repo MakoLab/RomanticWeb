@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -9,7 +8,7 @@ using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
-using RomanticWeb.Model;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -67,6 +66,14 @@ namespace RomanticWeb
             get
             {
                 return _entityStore;
+            }
+        }
+
+        public bool HasChanges
+        {
+            get
+            {
+                return Store.Changes.Any;
             }
         }
 
@@ -128,12 +135,21 @@ namespace RomanticWeb
 
         public T Create<T>(EntityId entityId) where T : class,IEntity
         {
-            if ((typeof(T) == typeof(IEntity)) || (typeof(T) == typeof(Entity)))
+            if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
             {
                 return (T)(IEntity)Create(entityId);
             }
-        
-            return EntityAs<T>(Create(entityId));
+
+            var entity=Create(entityId);
+
+            var classMapping=_mappings.MappingFor<T>().Class;
+            if (classMapping!=null)
+            {
+                var typedEntity = AsTypedEntity(entity,classMapping);
+                typedEntity.Types=new[] { new EntityId(classMapping.Uri) };
+            }
+
+            return EntityAs<T>(entity);
         }
 
         public Entity Create(EntityId entityId)
@@ -170,10 +186,13 @@ namespace RomanticWeb
         /// <returns>Passed entity beeing a given interface.</returns>
         internal T EntityAs<T>(Entity entity) where T:class,IEntity
         {
+            if (typeof(T) == typeof(IEntity))
+            {
+                return (T)(IEntity)entity;
+            }
+
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
-            var proxy=new EntityProxy(Store,entity,_mappings.MappingFor<T>(),_nodeConverter);
-            _factory.SatisfyImports(proxy);
-            return proxy.ActLike<T>();
+            return EntityAs<T>(entity,_mappings.MappingFor<T>());
         }
 
         private Entity Create(EntityId entityId, bool entityExists)
@@ -188,6 +207,23 @@ namespace RomanticWeb
             }
 
             return entity;
+        }
+
+        /// <summary>
+        /// Creates an instance of ITypedEntity with custom mapping 
+        /// to place rdf:type triple in correct named graph as declared by the parent mapping
+        /// </summary>
+        private ITypedEntity AsTypedEntity(Entity entity, IClassMapping classMapping)
+        {
+            var map = new TypeEntityMap(classMapping.GraphSelector.SelectGraph(entity.Id));
+            return EntityAs<ITypedEntity>(entity,map.CreateMapping(_ontologyProvider));
+        }
+
+        private T EntityAs<T>(Entity entity, IEntityMapping mapping) where T : class,IEntity
+        {
+            var proxy = new EntityProxy(Store, entity, mapping, _nodeConverter);
+            _factory.SatisfyImports(proxy);
+            return proxy.ActLike<T>();
         }
         #endregion
     }

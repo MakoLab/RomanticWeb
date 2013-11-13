@@ -51,9 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
+    <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="DatasetChanges.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Entities\ITypedEntity.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />
     <Compile Include="Entities\ResultAggregations\ProcessingOperation.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Entities\ResultAggregations\SingleResultProcessing.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />
+    <Compile Include="Entities\TypeEntityMap.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityStoreExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
@@ -98,6 +101,8 @@
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\FluentMappingsRepository.cs" />
     <Compile Include="Mapping\Fluent\ClassMap.cs" />
+    <Compile Include="Mapping\Fluent\INamedGraphSelectingMap.cs" />
+    <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -111,6 +116,7 @@
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\AttributeMappingsRepository.cs" />
     <Compile Include="Mapping\MappingException.cs" />
+    <Compile Include="Mapping\Model\CollectionMapping.cs" />
     <Compile Include="Mapping\Model\IEntityMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
@@ -123,7 +129,7 @@
     <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
     <Compile Include="Mapping\Fluent\PredicatePart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
-    <Compile Include="Mapping\Model\NullGraphSelector.cs" />
+    <Compile Include="Mapping\Model\DefaultGraphSelector.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
@@ -131,6 +137,7 @@
     <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
     <Compile Include="Mapping\Attributes\ClassAttribute.cs" />
     <Compile Include="Mapping\Model\ClassMapping.cs" />
+    <Compile Include="Mapping\Model\StorageStrategyOption.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
@@ -158,7 +165,9 @@
     <Compile Include="EntityStore.cs" />
     <Compile Include="Model\EntityTriple.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
+    <Compile Include="Vocabularies\Foaf.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
+    <Compile Include="Vocabularies\Rdfs.cs" />
     <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -47,7 +47,7 @@ namespace RomanticWeb.Mapping.Attributes
             Uri uri=ontology.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
-                return new PropertyMapping(propertyType,propertyName,uri,null,IsCollection);
+                return new PropertyMapping(propertyType,propertyName,uri,null);
             }
 
             throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));

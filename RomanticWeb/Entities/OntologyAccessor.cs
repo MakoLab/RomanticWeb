@@ -87,7 +87,7 @@ namespace RomanticWeb.Entities
 	    internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
         {
             LogTo.Debug("Reading property {0}", property.Uri);
-	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri);
+	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri,null);
 	        var objects=_nodeConverter.ConvertNodes(objectValues);
 
 	        var aggregation=(from agg in ResultAggregations

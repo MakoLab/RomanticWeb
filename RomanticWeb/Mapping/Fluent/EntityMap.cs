@@ -26,7 +26,7 @@ namespace RomanticWeb.Mapping.Fluent
 			return propertyMap;
 		}
 
-		protected PropertyMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
+        protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
 		{
 			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
 

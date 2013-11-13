@@ -28,5 +28,7 @@ namespace RomanticWeb.Converters
         /// </summary>
         /// <remarks>This will always return untyped instanes of <see cref="Entity"/> for URI nodes</remarks>
         IEnumerable<object> ConvertNodes(IEnumerable<Node> objects);
+
+        IEnumerable<Node> ConvertBack(object value,IPropertyMapping property);
     }
 }

@@ -29,5 +29,13 @@ namespace RomanticWeb.Vocabularies
                 return new Uri(BaseUri+"rest");
             }
         }
+
+        public static Uri Type
+        {
+            get
+            {
+                return new Uri(BaseUri+"type");
+            }
+        }
     }
 }

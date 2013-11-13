@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ImpromptuInterface;
 
 namespace RomanticWeb.Entities
@@ -59,8 +56,7 @@ namespace RomanticWeb.Entities
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
-            IEnumerable result=(IEnumerable)entity.AsDynamic().rdf.type;
-            return (result!=null?result.Cast<Entity>().Select(item => item.Id).ToArray():new EntityId[0]);
+            return entity.AsEntity<ITypedEntity>().Types;
         }
 
         /// <summary>

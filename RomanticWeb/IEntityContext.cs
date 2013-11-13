@@ -12,6 +12,8 @@ namespace RomanticWeb
         /// </summary>
         IEntityStore Store { get; }
 
+        bool HasChanges { get; }
+
         /// <summary>Enables given entity factory to be LINQ queryable with respect to the underlying triple store.</summary>
         /// <returns>A queryable collection of entities.</returns>
         IQueryable<Entity> AsQueryable();

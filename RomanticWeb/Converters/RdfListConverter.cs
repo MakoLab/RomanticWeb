@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using NullGuard;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
@@ -20,9 +24,22 @@ namespace RomanticWeb.Converters
             _listNilId=new EntityId("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
         }
 
-        public bool CanConvert(IEntity objectNode,IEntityStore entityStore)
+        public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
-            return (objectNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(objectNode));
+            var canConvert=(objectNode.AsDynamic().rdf.Has_first) 
+                && (entityStore.EntityIsCollectionRoot(objectNode));
+
+            return canConvert;
+        }
+
+        public IEnumerable<Node> ConvertBack(object obj)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool CanConvertBack(object value, IPropertyMapping predicate)
+        {
+            return (value is IEnumerable)&&(predicate.StorageStrategy==StorageStrategyOption.RdfList);
         }
 
         public object Convert(IEntity blankNode,IEntityStore entityStore)

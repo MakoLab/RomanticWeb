@@ -19,7 +19,14 @@ namespace RomanticWeb.Tests.Stubs
 
         public IEntityMapping MappingFor<TEntity>()
         {
-            return _entityMaps.First(map => map.EntityType==typeof(TEntity)).CreateMapping(_ontologies);
+            var entityMap=_entityMaps.FirstOrDefault(map => map.EntityType==typeof(TEntity));
+
+            if (entityMap==null)
+            {
+                throw new MappingException(string.Format("Mapping not found for type {0}",typeof(TEntity)));
+            }
+
+            return entityMap.CreateMapping(_ontologies);
         }
 
         public void RebuildMappings(IOntologyProvider ontologyProvider)

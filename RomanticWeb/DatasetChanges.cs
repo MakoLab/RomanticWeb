@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RomanticWeb.Model;
 
 namespace RomanticWeb
@@ -20,5 +21,13 @@ namespace RomanticWeb
         public IEnumerable<EntityTriple> TriplesAdded { get; set; }
 
         public IEnumerable<EntityTriple> TriplesRemoved { get; set; }
+
+        public bool Any 
+        {
+            get
+            {
+                return TriplesAdded.Any()||TriplesRemoved.Any();
+            }
+        }
     }
 }

@@ -43,14 +43,14 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new Node[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _nodeProcessor.Object);
 
             // when
             var givenName = accessor.givenName;
 
             // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri), Times.Once);
+            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri,null), Times.Once);
         }
 
         [Test]
@@ -58,14 +58,14 @@ namespace RomanticWeb.Tests
         {
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>())).Returns(new Node[0]);
+            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor = new OntologyAccessor(_graph.Object, _entity, _ontology, _nodeProcessor.Object);
 
             // when
             var givenName = accessor.fullName;
 
             // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri), Times.Once);
+            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri,null), Times.Once);
         }
     }
 }

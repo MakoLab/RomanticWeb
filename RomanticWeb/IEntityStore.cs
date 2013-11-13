@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb
@@ -23,13 +24,20 @@ namespace RomanticWeb
         /// <summary>
         /// Gets all objects for predicate for a given entity
         /// </summary>
-        IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate);
+        IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,Uri graph);
 
         /// <summary>
         /// Adds a triple to the store
         /// </summary>
         void AssertEntity(EntityId entityId, IEnumerable<EntityTriple> entityTriples);
 
-        void ReplacePredicateValue(EntityId id,Node propertyUri,Node valueNode,Uri graphUri);
+        /// <summary>
+        /// Removes the current triple(s) for subject/predicate and replaces it with triples with given object(s)
+        /// </summary>
+        /// <param name="id">the subject</param>
+        /// <param name="propertyUri">the predicate</param>
+        /// <param name="valueNode">new object node(s)</param>
+        /// <param name="graphUri">destination graph</param>
+        void ReplacePredicateValues(EntityId id,Node propertyUri,IEnumerable<Node> valueNode,Uri graphUri);
     }
 }

@@ -56,7 +56,7 @@ namespace RomanticWeb.Linq
                    select (T)createMethodInfo.Invoke(_context,new object[] { id,false });
         }
 
-        private IEnumerable<EntityTriple> VisitAndExecuteEntityQuery(QueryModel queryModel)
+        private IEnumerable<EntityQuad> VisitAndExecuteEntityQuery(QueryModel queryModel)
         {
             _modelVisitor.VisitQueryModel(queryModel);
             return _entitySource.ExecuteEntityQuery(_modelVisitor.SparqlQuery);

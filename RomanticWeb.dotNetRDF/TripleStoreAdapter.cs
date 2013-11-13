@@ -65,7 +65,7 @@ namespace RomanticWeb.DotNetRDF
                         let predicate = result["p"].WrapNode()
                         let @object = result["o"].WrapNode()
                         let graph = result.HasBoundValue("g")?result["g"].WrapNode():null
-                        select new EntityTriple(entityId,subject,predicate,@object,graph);
+                        select new EntityQuad(entityId,subject,predicate,@object,graph);
 
             store.AssertEntity(entityId,triples);
         }
@@ -82,7 +82,7 @@ namespace RomanticWeb.DotNetRDF
             return ExecuteAsk(ask.BuildQuery());
         }
 
-        public IEnumerable<EntityTriple> ExecuteEntityQuery(SparqlQuery sparqlQuery)
+        public IEnumerable<EntityQuad> ExecuteEntityQuery(SparqlQuery sparqlQuery)
         {
             throw new NotImplementedException();
         }
@@ -91,7 +91,7 @@ namespace RomanticWeb.DotNetRDF
         {
             foreach (var triple in datasetChanges.TriplesRemoved)
             {
-                var graph = GetGraph(triple.Graph);
+                var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Retract(
                     triple.Subject.UnWrapNode(graph),
                     triple.Predicate.UnWrapNode(graph),
@@ -100,17 +100,27 @@ namespace RomanticWeb.DotNetRDF
 
             foreach (var triple in datasetChanges.TriplesAdded)
             {
-                var graph=GetGraph(triple.Graph);
+                var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Assert(
                     triple.Subject.UnWrapNode(graph),
                     triple.Predicate.UnWrapNode(graph),
                     triple.Object.UnWrapNode(graph));
             }
+
+            // todo: find a way to allow users to extend the meta graph information
+            var metaGraph=GetGraph(MetaGraphUri);
+            var foafTopic = metaGraph.CreateUriNode(new Uri("http://xmlns.com/foaf/0.1/primaryTopic"));
+            foreach (var metaGraphChange in datasetChanges.MetaGraphChanges)
+            {
+                metaGraph.Assert(
+                    metaGraph.CreateUriNode(metaGraphChange.Item1),
+                    foafTopic,
+                    metaGraph.CreateUriNode(metaGraphChange.Item2.Uri));
+            }
         }
 
-        private IGraph GetGraph(Node graphNode)
+        private IGraph GetGraph(Uri graphUri)
         {
-            var graphUri=graphNode.UnWrapGraphUri();
             if (!_store.HasGraph(graphUri))
             {
                 _store.Add(new Graph { BaseUri=graphUri });

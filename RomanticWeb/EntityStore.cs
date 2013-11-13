@@ -10,20 +10,20 @@ namespace RomanticWeb
 {
     internal class EntityStore:IEntityStore
     {
-        private readonly ISet<EntityTriple> _entityQuads;
-
-        private readonly ISet<EntityTriple> _removedTriples;
-
-        private readonly ISet<EntityTriple> _addedTriples; 
+        private readonly ISet<EntityQuad> _entityQuads;
+        private readonly ISet<EntityQuad> _removedTriples;
+        private readonly ISet<EntityQuad> _addedTriples;
+        private readonly ISet<Tuple<Uri,EntityId>> _metaGraphChanges; 
 
         public EntityStore()
         {
-            _entityQuads=new SortedSet<EntityTriple>();
-            _removedTriples=new HashSet<EntityTriple>();
-            _addedTriples=new HashSet<EntityTriple>();
+            _entityQuads=new SortedSet<EntityQuad>();
+            _removedTriples=new HashSet<EntityQuad>();
+            _addedTriples=new HashSet<EntityQuad>();
+            _metaGraphChanges=new HashSet<Tuple<Uri,EntityId>>();
         }
 
-        public IEnumerable<EntityTriple> Quads
+        public IEnumerable<EntityQuad> Quads
         {
             get
             {
@@ -35,7 +35,7 @@ namespace RomanticWeb
         {
             get
             {
-                return new DatasetChanges(_addedTriples,_removedTriples);
+                return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges);
             }
         }
 
@@ -54,7 +54,7 @@ namespace RomanticWeb
             return quads.Select(triple => triple.Object);
         }
 
-        public void AssertEntity(EntityId entityId,IEnumerable<EntityTriple> entityTriples)
+        public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
         {
             if (_entityQuads.Any(quad => quad.EntityId==entityId))
             {
@@ -95,9 +95,10 @@ namespace RomanticWeb
 
             foreach (var valueNode in valueNodes)
             {
-                var triple=new EntityTriple(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
+                var triple=new EntityQuad(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
                 _entityQuads.Add(triple);
                 _addedTriples.Add(triple);
+                _metaGraphChanges.Add(Tuple.Create(graphUri,entityId));
             }
         }
     }

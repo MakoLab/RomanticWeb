@@ -378,7 +378,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Assert.That(EntityContext.HasChanges);
-            var newTriple = new EntityTriple(
+            var newTriple = new EntityQuad(
                 entityId, 
                 Node.ForUri(entityUri), 
                 Node.ForUri(Rdf.Type), 

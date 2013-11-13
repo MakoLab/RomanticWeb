@@ -20,7 +20,7 @@ namespace RomanticWeb
         /// </summary>
         bool EntityExist(EntityId entityId);
 
-        IEnumerable<EntityTriple> ExecuteEntityQuery(SparqlQuery sparqlQuery);
+        IEnumerable<EntityQuad> ExecuteEntityQuery(SparqlQuery sparqlQuery);
 
         void ApplyChanges(DatasetChanges datasetChanges);
     }

@@ -33,7 +33,7 @@ namespace RomanticWeb.Tests.Linq
             _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);
             
             _entityStore=new Mock<IEntityStore>(MockBehavior.Strict);
-            _entityStore.Setup(s => s.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityTriple>>()));
+            _entityStore.Setup(s => s.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
 
             _entityContext=new Mock<IEntityContext>(MockBehavior.Strict);
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>(),false)).Returns((EntityId id, bool b) => CreatePersonEntity(id));
@@ -63,10 +63,10 @@ namespace RomanticWeb.Tests.Linq
 
             // then
             Assert.That(result, Has.Count.EqualTo(5));
-            _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityTriple>>(t=>t.Count()==10)), Times.Exactly(5));
+            _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t=>t.Count()==10)), Times.Exactly(5));
         }
 
-        protected IEnumerable<EntityTriple> GetSamplePersonTriples(int count)
+        protected IEnumerable<EntityQuad> GetSamplePersonTriples(int count)
         {
             const string IdFormat="http://magi/test/person/{0}";
             return from i in Enumerable.Range(1,count)
@@ -75,7 +75,7 @@ namespace RomanticWeb.Tests.Linq
                    let s = Node.ForUri(id.Uri)
                    let p = Node.ForUri(new Uri(string.Format("http://magi/onto/predicate/{0}", j)))
                    let o=Node.ForUri(new Uri(string.Format("http://magi/onto/object/{0}",j)))
-                   select new EntityTriple(id,s,p,o);
+                   select new EntityQuad(id,s,p,o);
         }
 
         private static IPerson CreatePersonEntity(EntityId id)

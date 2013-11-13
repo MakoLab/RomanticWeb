@@ -14,7 +14,7 @@ namespace RomanticWeb
         /// <summary>
         /// Gets all quads from the store
         /// </summary>
-        IEnumerable<EntityTriple> Quads { get; }
+        IEnumerable<EntityQuad> Quads { get; }
 
         /// <summary>
         /// Gets all changes made to the triple store
@@ -29,7 +29,7 @@ namespace RomanticWeb
         /// <summary>
         /// Adds a triple to the store
         /// </summary>
-        void AssertEntity(EntityId entityId, IEnumerable<EntityTriple> entityTriples);
+        void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples);
 
         /// <summary>
         /// Removes the current triple(s) for subject/predicate and replaces it with triples with given object(s)

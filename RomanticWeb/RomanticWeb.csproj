@@ -140,6 +140,7 @@
     <Compile Include="Mapping\Model\ClassMapping.cs" />
     <Compile Include="Mapping\Model\StorageStrategyOption.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
+    <Compile Include="Model\Triple.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
@@ -164,7 +165,7 @@
     <Compile Include="Converters\NodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="EntityStore.cs" />
-    <Compile Include="Model\EntityTriple.cs" />
+    <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="Vocabularies\Foaf.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />

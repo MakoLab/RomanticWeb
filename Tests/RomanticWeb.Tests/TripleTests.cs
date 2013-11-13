@@ -34,7 +34,7 @@ namespace RomanticWeb.Tests
         public void Created_triple_should_expose_its_terms()
         {
             // when
-            var triple=new EntityTriple(_entityId,_validSubject,_validPredicate,_validObject,_graph);
+            var triple=new EntityQuad(_entityId,_validSubject,_validPredicate,_validObject,_graph);
 
             // then
             Assert.That(triple.Subject, Is.SameAs(_validSubject));
@@ -46,14 +46,14 @@ namespace RomanticWeb.Tests
         [TestCaseSource("NonUriNodes")]
         public void Predicate_must_be_a_URI_node(Node predicate)
         {
-            new EntityTriple(_entityId, _validSubject, predicate, _validObject, _graph);
+            new EntityQuad(_entityId, _validSubject, predicate, _validObject, _graph);
         }
 
         [Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
         [TestCaseSource("NonUriNodes")]
         public void Graph_must_be_a_URI_node(Node graph)
         {
-            new EntityTriple(_entityId, _validSubject, _validPredicate, _validObject, graph);
+            new EntityQuad(_entityId, _validSubject, _validPredicate, _validObject, graph);
         }
 
         [Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -63,14 +63,14 @@ namespace RomanticWeb.Tests
             var subject=Node.ForLiteral("literal");
 
             // then
-            new EntityTriple(_entityId,subject,_validPredicate,_validObject,_graph);
+            new EntityQuad(_entityId,subject,_validPredicate,_validObject,_graph);
         }
 
         [Test]
         public void Can_be_ceated_without_graph()
         {
             // when 
-            var triple=new EntityTriple(_entityId,_validSubject,_validPredicate,_validObject);
+            var triple=new EntityQuad(_entityId,_validSubject,_validPredicate,_validObject);
 
             // then
             Assert.That(triple.Graph,Is.Null);
@@ -80,12 +80,12 @@ namespace RomanticWeb.Tests
         public void Triples_should_be_equal_when_id_and_nodes_are_equal()
         {
             // given
-            IComparable triple = new EntityTriple(
+            IComparable triple = new EntityQuad(
                 new EntityId(new Uri("urn:some:entity")),
                 Node.ForUri(new Uri("urn:some:subject")),
                 Node.ForUri(new Uri("urn:some:predicate")),
                 Node.ForLiteral("10"));
-            var otherTriple = new EntityTriple(
+            var otherTriple = new EntityQuad(
                 new EntityId(new Uri("urn:some:entity")),
                 Node.ForUri(new Uri("urn:some:subject")),
                 Node.ForUri(new Uri("urn:some:predicate")),

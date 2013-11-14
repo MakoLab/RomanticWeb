@@ -22,8 +22,14 @@ namespace RomanticWeb.Converters
         /// </summary>
         bool CanConvert(IEntity objectNode,IEntityStore entityStore,IPropertyMapping predicate);
 
+        /// <summary>
+        /// Converts a value back to <see cref="Node"/>(s)
+        /// </summary>
         IEnumerable<Node> ConvertBack(object obj);
 
+        /// <summary>
+        /// Checks whether a value can be converted back to <see cref="Node"/>(s)
+        /// </summary>
         bool CanConvertBack(object value,IPropertyMapping predicate);
     }
 }

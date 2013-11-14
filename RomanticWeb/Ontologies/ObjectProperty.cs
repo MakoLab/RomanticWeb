@@ -14,11 +14,13 @@ namespace RomanticWeb.Ontologies
 		{
 		}
 
-		[ExcludeFromCodeCoverage]
+#pragma warning disable 1591
+        [ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			string prefix = Ontology == null ? "_" : Ontology.Prefix;
 			return string.Format("Object property {0}:{1}", prefix, PropertyName);
-		}
+        }
+#pragma warning restore
 	}
 }

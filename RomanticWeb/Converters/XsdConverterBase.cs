@@ -15,6 +15,7 @@ namespace RomanticWeb.Converters
         /// </summary>
         protected abstract IEnumerable<Uri> SupportedTypes { get; }
 
+        /// <inheritdoc />
         public abstract object Convert(Node objectNode);
 
         /// <summary>

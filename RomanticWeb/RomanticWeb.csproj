@@ -141,6 +141,7 @@
     <Compile Include="Mapping\Fluent\ClassMap.cs" />
     <Compile Include="Mapping\Fluent\INamedGraphSelectingMap.cs" />
     <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
+    <Compile Include="Mapping\Fluent\TermMap.cs" />
     <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -166,7 +167,7 @@
     <Compile Include="Mapping\Model\EntityMapping.cs" />
     <Compile Include="Mapping\FuncGraphSelector.cs" />
     <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
-    <Compile Include="Mapping\Fluent\PredicatePart.cs" />
+    <Compile Include="Mapping\Fluent\TermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\DefaultGraphSelector.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />

@@ -14,6 +14,7 @@ namespace RomanticWeb.Ontologies
 		{
 		}
 
+        /// <inheritdoc />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{

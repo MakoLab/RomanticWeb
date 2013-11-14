@@ -35,6 +35,9 @@ namespace RomanticWeb.Mapping
             return mappingsForType.SingleOrDefault(m => m!=null);
         }
 
+        /// <summary>
+        /// Builds and combines mapping from the underlying <see cref="IMappingsRepository"/>s
+        /// </summary>
         public void RebuildMappings(MappingContext mappingContext)
         {
             foreach (var mappingsRepository in _mappingsRepositories)

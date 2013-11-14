@@ -8,6 +8,9 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Statically typed converter for <see cref="EntityId"/>
+    /// </summary>
     [Export(typeof(IComplexTypeConverter))]
     public class EntityIdConverter : EntityIdConverter<EntityId>
     {
@@ -17,15 +20,21 @@ namespace RomanticWeb.Converters
         }
     }
 
+    /// <summary>
+    /// Generic converter for any type of entity id
+    /// </summary>
+    /// <typeparam name="TEntityId"></typeparam>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic nad non-generic class")]
     public abstract class EntityIdConverter<TEntityId> : IComplexTypeConverter
         where TEntityId:EntityId
     {
+        /// <inheritdoc />
         public object Convert(IEntity objectNode,IEntityStore entityStore)
         {
             return ConvertEntityId(objectNode.Id);
         }
 
+        /// <inheritdoc />
         public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
             return predicate!=null
@@ -33,16 +42,21 @@ namespace RomanticWeb.Converters
                 && !(objectNode.Id is BlankId);
         }
 
+        /// <inheritdoc />
         public IEnumerable<Node> ConvertBack(object obj)
         {
             yield return Node.ForUri(((TEntityId)obj).Uri);
         }
 
+        /// <inheritdoc />
         public bool CanConvertBack(object value,IPropertyMapping predicate)
         {
             return value is TEntityId;
         }
 
+        /// <summary>
+        /// Creates a <typeparamref name="TEntityId"/> from <see cref="EntityId"/>
+        /// </summary>
         protected abstract TEntityId ConvertEntityId(EntityId id);
     }
 }

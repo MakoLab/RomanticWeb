@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Reflection;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>
     /// A mapping definition for properties
     /// </summary>
-    public class PropertyMap : INamedGraphSelectingMap
+    public class PropertyMap:TermMap,INamedGraphSelectingMap
     {
 		private readonly PropertyInfo _propertyInfo;
 
@@ -20,11 +19,11 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets a predicate map part
         /// </summary>
-		public PredicatePart<PropertyMap> Predicate
+		public TermPart<PropertyMap> Term
 		{
 			get
 			{
-				return new PredicatePart<PropertyMap>(this);
+				return new TermPart<PropertyMap>(this);
 			}
 		}
 
@@ -36,16 +35,19 @@ namespace RomanticWeb.Mapping.Fluent
             get { return new NamedGraphPart<PropertyMap>(this); }
         }
 
+        /// <inheritdoc />
         IGraphSelectionStrategy INamedGraphSelectingMap.GraphSelector { get; set; }
 
-		internal Uri PredicateUri { get; set; }
+        /// <summary>
+        /// Gets a value indicating whether this property is a collection
+        /// </summary>
+        protected internal virtual bool IsCollection { get { return false; } }
 
-        internal string NamespacePrefix { get; set; }
-
-        internal string PredicateName { get; set; }
-
-		protected internal virtual bool IsCollection { get { return false; } }
-
+        /// <summary>
+        /// Not used for property map
+        /// </summary>
+        /// <returns><see cref="StorageStrategyOption.None"/></returns>
+        /// <remarks>Setting throws <see cref="InvalidOperationException"/></remarks>
         protected internal virtual StorageStrategyOption StorageStrategy
         {
             get
@@ -59,6 +61,9 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <summary>
+        /// Gets the mapped property's <see cref="System.Reflection.PropertyInfo"/>
+        /// </summary>
         protected PropertyInfo PropertyInfo
         {
             get
@@ -67,13 +72,15 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <summary>
+        /// Creates a mapping from this definition
+        /// </summary>
         protected internal virtual IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            Uri predicateUri = PredicateUri ?? mappingContext.OntologyProvider.ResolveUri(NamespacePrefix,PredicateName);
             return new PropertyMapping(
                 PropertyInfo.PropertyType,
                 PropertyInfo.Name,
-                predicateUri,
+                GetTermUri(mappingContext.OntologyProvider),
                 ((INamedGraphSelectingMap)this).GraphSelector ?? mappingContext.DefaultGraphSelector);
         }
     }

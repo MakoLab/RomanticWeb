@@ -70,6 +70,9 @@ namespace RomanticWeb.DotNetRDF
             store.AssertEntity(entityId,triples);
         }
 
+        /// <summary>
+        /// Executes an ASK query to perform existence check
+        /// </summary>
         public bool EntityExist(EntityId entityId)
         {
             var ask=QueryBuilder.Ask()
@@ -82,11 +85,16 @@ namespace RomanticWeb.DotNetRDF
             return ExecuteAsk(ask.BuildQuery());
         }
 
-        public IEnumerable<EntityQuad> ExecuteEntityQuery(QueryModel queryModel)
+        /// <inheritdoc />
+        public IEnumerable<EntityQuad> ExecuteEntityQuery(QueryModel sparqlQuery)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// One-by-one retracts deleted triples, asserts new triples
+        /// and updates the meta graph
+        /// </summary>
         public void ApplyChanges(DatasetChanges datasetChanges)
         {
             foreach (var triple in datasetChanges.TriplesRemoved)
@@ -129,7 +137,7 @@ namespace RomanticWeb.DotNetRDF
             return _store[graphUri];
         }
 
-        private bool ExecuteAsk(VDS.RDF.Query.SparqlQuery query)
+        private bool ExecuteAsk(SparqlQuery query)
         {
             var store = _store as IInMemoryQueryableStore;
             if (store != null)
@@ -142,7 +150,7 @@ namespace RomanticWeb.DotNetRDF
             return ((SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString())).Result;
         }
 
-        private SparqlResultSet ExecuteEntityLoadQuery(VDS.RDF.Query.SparqlQuery query)
+        private SparqlResultSet ExecuteEntityLoadQuery(SparqlQuery query)
         {
             var store=_store as IInMemoryQueryableStore;
             if (store!=null)

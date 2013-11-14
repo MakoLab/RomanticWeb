@@ -19,6 +19,7 @@ namespace RomanticWeb.Entities
 			_matchingPrefixes = matchingPrefixes;
 		}
 
+        /// <inheritdoc />
 		public override string Message
 		{
 			get

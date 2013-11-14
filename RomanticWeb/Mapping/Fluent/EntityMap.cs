@@ -11,11 +11,17 @@ namespace RomanticWeb.Mapping.Fluent
     /// </summary>
     public abstract class EntityMap<TEntity> : EntityMap
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityMap{TEntity}"/> class.
+        /// </summary>
 		protected EntityMap()
 			: base(typeof(TEntity))
 		{
 		}
 
+        /// <summary>
+        /// Gets a builder for mapping a property
+        /// </summary>
 		protected PropertyMap Property<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
 		{
 			var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
@@ -25,6 +31,9 @@ namespace RomanticWeb.Mapping.Fluent
 			return propertyMap;
 		}
 
+        /// <summary>
+        /// Gets a builder for mapping a collecition property
+        /// </summary>
         protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
 		{
 			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
@@ -43,6 +52,10 @@ namespace RomanticWeb.Mapping.Fluent
     {
         private ClassMap _class;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityMap"/> class.
+        /// </summary>
+        /// <param name="type">The mapped type.</param>
         protected EntityMap(Type type)
 		{
 			EntityType = type;
@@ -53,6 +66,9 @@ namespace RomanticWeb.Mapping.Fluent
 
 		internal IList<PropertyMap> MappedProperties { get; private set; }
 
+        /// <summary>
+        /// Gets a builder for mapping the type
+        /// </summary>
         protected ClassMap Class
         {
             get

@@ -8,7 +8,7 @@ namespace RomanticWeb.Entities
         public TypeEntityMap(Uri graphUri)
         {
             Collection(typed => typed.Types)
-                .Predicate.Is("rdf", "type")
+                .Term.Is("rdf", "type")
                 .NamedGraph.SelectedBy(id => graphUri);
         }
     }

@@ -32,6 +32,9 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         Type ReturnType { get; }
 
+        /// <summary>
+        /// Gets the storage strategy for a mapped property
+        /// </summary>
         StorageStrategyOption StorageStrategy { get; }
 	}
 }

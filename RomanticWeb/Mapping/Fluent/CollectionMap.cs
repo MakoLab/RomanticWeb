@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Fluent
@@ -17,11 +16,11 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets a predicate map part
         /// </summary>
-        public new PredicatePart<CollectionMap> Predicate
+        public new TermPart<CollectionMap> Term
         {
             get
             {
-                return new PredicatePart<CollectionMap>(this);
+                return new TermPart<CollectionMap>(this);
             }
         }
 
@@ -33,6 +32,9 @@ namespace RomanticWeb.Mapping.Fluent
             get { return new NamedGraphPart<CollectionMap>(this); }
         }
 
+        /// <summary>
+        /// Gets options for setting how this collection will be persisted
+        /// </summary>
         public StorageStrategyPart StoreAs
         {
             get
@@ -41,23 +43,25 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        internal StorageStrategyOption StorageStrategy { get; set; }
-
         /// <summary>
-        /// Returns true
+        /// Gets the storage strategy of this collection
         /// </summary>
+        protected internal override StorageStrategyOption StorageStrategy { get; set; }
+
+        /// <inheritdoc />
+        /// <returns>true</returns>
         protected internal override bool IsCollection
         {
             get { return true; }
         }
 
+        /// <inheritdoc />
         protected internal override IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            Uri predicateUri = PredicateUri ?? mappingContext.OntologyProvider.ResolveUri(NamespacePrefix, PredicateName);
             return new CollectionMapping(
                 PropertyInfo.PropertyType,
                 PropertyInfo.Name,
-                predicateUri,
+                GetTermUri(mappingContext.OntologyProvider),
                 ((INamedGraphSelectingMap)this).GraphSelector??mappingContext.DefaultGraphSelector,
                 StorageStrategy);
         }

@@ -92,6 +92,7 @@ namespace RomanticWeb.Entities
             return _uri == ((EntityId)obj)._uri;
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return Uri.ToString();

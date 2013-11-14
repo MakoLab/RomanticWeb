@@ -21,11 +21,13 @@ namespace RomanticWeb.Ontologies
         /// <remarks>See remarks under <see cref="Term.TermName"/></remarks>
         public string PropertyName { get { return TermName; } }
 
-		[ExcludeFromCodeCoverage]
+#pragma warning disable 1591
+        [ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
 			string prefix = Ontology == null ? "_" : Ontology.Prefix;
 			return string.Format("Property {0}:{1}", prefix, PropertyName);
-		}
+        }
+#pragma warning restore
 	}
 }

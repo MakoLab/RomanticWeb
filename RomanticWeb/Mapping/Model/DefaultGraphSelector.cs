@@ -8,6 +8,8 @@ namespace RomanticWeb.Mapping.Model
     /// </summary>
     public class DefaultGraphSelector:IGraphSelectionStrategy
     {
+        /// <inheritdoc />
+        /// <returns>the <see cref="EntityId.Uri"/></returns>
         public Uri SelectGraph(EntityId entityId)
         {
             return entityId.Uri;

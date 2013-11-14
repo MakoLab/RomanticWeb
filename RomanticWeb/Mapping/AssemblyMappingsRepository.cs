@@ -15,11 +15,18 @@ namespace RomanticWeb.Mapping
 
         private IDictionary<Type,IEntityMapping> _mappings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyMappingsRepository"/> class.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
         protected AssemblyMappingsRepository(Assembly assembly)
         {
             _assembly=assembly;
         }
 
+        /// <summary>
+        /// Gets the source <see cref="System.Reflection.Assembly"/>
+        /// </summary>
         protected Assembly Assembly
         {
             get
@@ -36,6 +43,7 @@ namespace RomanticWeb.Mapping
             return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
         }
 
+        /// <inheritdoc />
         public void RebuildMappings(MappingContext mappingContext)
         {
             _mappings = new Dictionary<Type, IEntityMapping>();
@@ -50,6 +58,9 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        /// <summary>
+        /// Builds mapping from the current <see cref="Assembly"/>
+        /// </summary>
         protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext);
     }
 }

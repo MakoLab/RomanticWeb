@@ -2,6 +2,9 @@
 
 namespace RomanticWeb.Model
 {
+    /// <summary>
+    /// Reprents a triple, which does nto belong to a graph
+    /// </summary>
     public class Triple : IComparable, IComparable<Triple>
     {
         private readonly Node _object;
@@ -10,6 +13,12 @@ namespace RomanticWeb.Model
 
         private readonly Node _predicate;
 
+        /// <summary>
+        /// Creates a new triple
+        /// </summary>
+        /// <param name="s">subject</param>
+        /// <param name="p">predicate</param>
+        /// <param name="o">object</param>
         public Triple(Node s,Node p,Node o)
         {
             if (!p.IsUri)
@@ -109,11 +118,11 @@ namespace RomanticWeb.Model
         {
             return string.Format("{0} {1} {2}", Subject, Predicate, Object);
         }
-#pragma warning restore
 
         protected bool Equals(Triple other)
         {
             return _object.Equals(other._object) && _subject.Equals(other._subject) && _predicate.Equals(other._predicate);
         }
+#pragma warning restore
     }
 }

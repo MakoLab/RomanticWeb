@@ -21,6 +21,9 @@ namespace RomanticWeb.Mapping
 
         #region Private methods
 
+        /// <summary>
+        /// Finds all types annotated with mapping attributes and build mappings
+        /// </summary>
         protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             return from type in Assembly.GetTypes() 

@@ -19,6 +19,10 @@ namespace RomanticWeb.Mapping
         {
         }
 
+        /// <summary>
+        /// Scans the <see cref="AssemblyMappingsRepository.Assembly"/> for implementations of
+        /// <see cref="EntityMap"/> and uses them to build mappings
+        /// </summary>
         protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             var maps=(from type in Assembly.GetTypes()

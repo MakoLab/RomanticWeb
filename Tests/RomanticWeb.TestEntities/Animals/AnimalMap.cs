@@ -7,7 +7,7 @@ namespace RomanticWeb.TestEntities.Animals
         public AnimalMap()
         {
             Class.Is("life", "Animal");
-            Property(p => p.Name).Predicate.Is("life","name");
+            Property(p => p.Name).Term.Is("life","name");
         }
     }
 }

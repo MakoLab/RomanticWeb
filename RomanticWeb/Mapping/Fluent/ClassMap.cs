@@ -1,10 +1,20 @@
-﻿using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
+﻿using System;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Fluent
 {
-    public sealed class ClassMap:INamedGraphSelectingMap
+    /// <summary>
+    /// A mapping definition for rdf class
+    /// </summary>
+    public sealed class ClassMap : TermMap,INamedGraphSelectingMap
     {
+        private readonly TermPart<ClassMap> _termPart;
+
+        internal ClassMap()
+        {
+            _termPart=new TermPart<ClassMap>(this);
+        }
+
         /// <summary>
         /// Gets a named graph mapping part
         /// </summary>
@@ -16,23 +26,29 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <inheritdoc />
         IGraphSelectionStrategy INamedGraphSelectingMap.GraphSelector { get; set; }
 
-        internal string NamespacePrefix { get; set; }
-
-        internal string ClassName { get; set; }
-
+        /// <summary>
+        /// Sets the class name 
+        /// </summary>
         public ClassMap Is(string prefix, string className)
         {
-            NamespacePrefix=prefix;
-            ClassName=className;
-            return this;
+            return _termPart.Is(prefix, className);
+        }
+
+        /// <summary>
+        /// Sets the class name 
+        /// </summary>
+        public ClassMap Is(Uri uri)
+        {
+            return _termPart.Is(uri);
         }
 
         internal IClassMapping GetMapping(MappingContext mappingContext)
         {
             return new ClassMapping(
-                mappingContext.OntologyProvider.ResolveUri(NamespacePrefix,ClassName),
+                GetTermUri(mappingContext.OntologyProvider),
                 ((INamedGraphSelectingMap)this).GraphSelector ?? mappingContext.DefaultGraphSelector);
         }
  }

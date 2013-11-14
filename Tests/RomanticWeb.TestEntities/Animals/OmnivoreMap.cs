@@ -7,7 +7,7 @@ namespace RomanticWeb.TestEntities.Animals
         public OmnivoreMap()
         {
             Class.Is("life","Omnivore");
-            Collection(p => p.Diet).Predicate.Is("life", "plantEaten");
+            Collection(p => p.Diet).Term.Is("life", "plantEaten");
         }
     }
 }

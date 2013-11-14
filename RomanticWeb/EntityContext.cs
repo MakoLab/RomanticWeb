@@ -12,6 +12,9 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Creates a new instance of <see cref="EntityContext"/>
+    /// </summary>
     public class EntityContext:IEntityContext
     {
         #region Fields
@@ -58,56 +61,44 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc/>
         public bool HasChanges
         {
             get
             {
                 return Store.Changes.Any;
-        }
+            }
         }
 
         #endregion
 
         #region Public methods
-        /// <summary>Converts this context into a LINQ queryable data source.</summary>
-        /// <returns>A LINQ querable data source.</returns>
+        
+        /// <inheritdoc />
         public IQueryable<Entity> AsQueryable()
         {
             return new EntityQueryable<Entity>(this,_entitySource,_mappings);
         }
 
-        /// <summary>Converts this context into a LINQ queryable data source of entities of given type.</summary>
-        /// <typeparam name="T">Type of entities to work with.</typeparam>
-        /// <returns>A LIQN queryable data source of entities of given type.</returns>
+        /// <inheritdoc />
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
             return new EntityQueryable<T>(this,_entitySource,_mappings);
+        }
+
+        /// <inheritdoc />
+        [return: AllowNull]
+        public T Load<T>(EntityId entityId) where T : class,IEntity
+        {
+            return Load<T>(entityId,true);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
         /// <param name="entityId">IRI of the entity to be loaded.</param>
         /// <param name="checkIfExist">Determines whether to check if entity does exist or not.</param>
         /// <returns>Loaded entity.</returns>
-        [Cache]
-        [return:AllowNull]
-        public Entity Load(EntityId entityId,bool checkIfExist=true)
-        {
-            LogTo.Debug("Loading entity {0}", entityId);
-
-            if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
-            {
-                return Create(entityId,false);
-            }
-
-            return null;
-        }
-
-        /// <summary>Loads a strongly typed entity from the underlying data source.</summary>
-        /// <param name="entityId">IRI of the entity to be loaded.</param>
-        /// <param name="checkIfExist">Determines whether to check if entity does exist or not.</param>
-        /// <returns>Loaded entity.</returns>
         [return: AllowNull]
-        public T Load<T>(EntityId entityId,bool checkIfExist=true) where T:class,IEntity
+        public T Load<T>(EntityId entityId,bool checkIfExist) where T:class,IEntity
         {
             var entity=Load(entityId,checkIfExist);
 
@@ -124,13 +115,14 @@ namespace RomanticWeb
             return EntityAs<T>(entity);
         }
 
+        /// <inheritdoc />
         public T Create<T>(EntityId entityId) where T : class,IEntity
         {
             if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
             {
                 return (T)(IEntity)Create(entityId);
             }
-        
+
             var entity=Create(entityId);
 
             var classMapping=_mappings.MappingFor<T>().Class;
@@ -143,12 +135,14 @@ namespace RomanticWeb
             return EntityAs<T>(entity);
         }
 
+        /// <inheritdoc />
         public Entity Create(EntityId entityId)
         {
             LogTo.Debug("Creating entity {0}", entityId);
             return Create(entityId,true);
         }
 
+        /// <inheritdoc />
         public void Commit()
         {
             var changes=_entityStore.Changes;
@@ -184,6 +178,20 @@ namespace RomanticWeb
 
             LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
             return EntityAs<T>(entity,_mappings.MappingFor<T>());
+        }
+
+        [Cache]
+        [return: AllowNull]
+        private Entity Load(EntityId entityId, bool checkIfExist = true)
+        {
+            LogTo.Debug("Loading entity {0}", entityId);
+
+            if ((entityId is BlankId) || (!checkIfExist) || (_entitySource.EntityExist(entityId)))
+            {
+                return Create(entityId, false);
+            }
+
+            return null;
         }
 
         private Entity Create(EntityId entityId, bool entityExists)

@@ -10,24 +10,24 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // todo: add helper method to facilitate protocol replacement operation
             this.Property(p => p.FirstName)
-                .Predicate.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"))
+                .Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"))
                 .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "personal")));
 
-            this.Property(p => p.LastName).Predicate.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"))
+            this.Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"))
                                      .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "personal")));
 
-            this.Property(p => p.Homepage).Predicate.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"))
+            this.Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"))
                                      .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "interestsOf")));
 
-            this.Property(p => p.Friend).Predicate.Is("foaf","knows")
+            this.Property(p => p.Friend).Term.Is("foaf", "knows")
                                      .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http","friendsOf")));
 
-            this.Property(p => p.Friends).Predicate.Is("foaf","friends");
+            this.Property(p => p.Friends).Term.Is("foaf", "friends");
 
             this.Class.Is("foaf","Person");
 
             Collection(p => p.Interests)
-                .Predicate.Is("foaf", "interest")
+                .Term.Is("foaf", "interest")
                 .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "interestsOf")))
                 .StoreAs.RdfList();
         }

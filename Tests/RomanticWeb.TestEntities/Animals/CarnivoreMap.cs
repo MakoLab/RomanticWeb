@@ -7,7 +7,7 @@ namespace RomanticWeb.TestEntities.Animals
         public CarnivoreMap()
         {
             Class.Is("life", "Carnivore");
-            Collection(p => p.Prey).Predicate.Is("life","animalEaten");
+            Collection(p => p.Prey).Term.Is("life","animalEaten");
         }
     }
 }

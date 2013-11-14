@@ -24,6 +24,10 @@ namespace RomanticWeb.Converters
             _listNilId=new EntityId("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
         }
 
+        /// <summary>
+        /// Check whether the node can be converted to an rdf:List,
+        /// ie. whether it is a root of such a list
+        /// </summary>
         public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
             var canConvert=(objectNode.AsDynamic().rdf.Has_first) 
@@ -32,16 +36,26 @@ namespace RomanticWeb.Converters
             return canConvert;
         }
 
+        /// <summary>
+        /// Converts a collection to an rdf:List triples
+        /// </summary>
         public IEnumerable<Node> ConvertBack(object obj)
         {
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Check whether the <paramref name="value"/> is a <see cref="IEnumerable"/> 
+        /// and the property mapping is set to produce rdf:Lists
+        /// </summary>
         public bool CanConvertBack(object value, IPropertyMapping predicate)
         {
             return (value is IEnumerable)&&(predicate.StorageStrategy==StorageStrategyOption.RdfList);
         }
 
+        /// <summary>
+        /// Converts an rdf:List subgraph to a collection
+        /// </summary>
         public object Convert(IEntity blankNode,IEntityStore entityStore)
         {
             // todo: consider removing dynamic typing

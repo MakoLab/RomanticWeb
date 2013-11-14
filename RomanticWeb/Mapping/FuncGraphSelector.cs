@@ -17,6 +17,7 @@ namespace RomanticWeb.Mapping
 			_createGraphUri = createGraphUri;
 		}
 
+        /// <inheritdoc />
 		public Uri SelectGraph(EntityId entityId)
 		{
 			return _createGraphUri(entityId);

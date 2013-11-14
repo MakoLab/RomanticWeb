@@ -116,6 +116,7 @@
     <Compile Include="IntegrationTests\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphsPersonMapping.cs" />
     <Compile Include="Linq\QueryableTests.cs" />
+    <Compile Include="Linq\VisitorTests.cs" />
     <Compile Include="Mapping\AttributeMappingsRepositoryTests.cs" />
     <Compile Include="Mapping\EntityMappingTests.cs" />
     <Compile Include="Mapping\FluentMappingsRepositoryTests.cs" />

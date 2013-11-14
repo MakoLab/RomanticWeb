@@ -35,6 +35,7 @@ namespace RomanticWeb.Entities
         /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
         /// <param name="entityId">IRI of the entity.</param>
         /// <param name="entityContext">Entity context to be attached to this entity.</param>
+        /// <param name="isInitialized">Sets the entiy to initialized or not initialized state.</param>
         internal Entity(EntityId entityId,EntityContext entityContext,bool isInitialized=false):this(entityId)
         {
             _entityContext=entityContext;

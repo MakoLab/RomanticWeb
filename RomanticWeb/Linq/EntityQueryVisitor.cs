@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
 using RomanticWeb.Entities;
+using RomanticWeb.Linq.Expressions;
+using RomanticWeb.Linq.Model;
+using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {
@@ -22,372 +19,280 @@ namespace RomanticWeb.Linq
     public class EntityQueryVisitor:ThrowingExpressionTreeVisitor
     {
         #region Fields
-        private IDictionary<QuerySourceReferenceExpression,string> _expressionSources;
-        private StringBuilder _commandText;
-        private IOntologyProvider _ontologyProvider;
+        private Query _query;
         private IMappingsRepository _mappingsRepository;
-        private int _bracketsStack=0;
-        private bool _suppressOperators=false;
-        private int _currentGraphPattern=0;
-        private string _querySourceVariableName="?s0";
+        private Stack<IQueryComponentNavigator> _currentComponent;
+        private QueryComponent _lastComponent;
         #endregion
 
         #region Constructors
         /// <summary>Creates an instance of the query visitor.</summary>
-        /// <param name="commandText">Command text string builder to be used to create query elements.</param>
-        /// <param name="expressionSources">Enumeration of expression sources acknowledged when parsing parent query models.</param>
-        /// <param name="querySourceVariableName">Query source variable name if any.</param>
-        /// <param name="ontologyProvider">Ontology providerholding the data scheme.</param>
+        /// <param name="query">Query to be filled.</param>
         /// <param name="mappingsRepository">Mappings repository used to resolve strongly typed properties and types.</param>
-        internal EntityQueryVisitor(StringBuilder commandText,IDictionary<QuerySourceReferenceExpression,string> expressionSources,string querySourceVariableName,IOntologyProvider ontologyProvider,IMappingsRepository mappingsRepository):base()
+        internal EntityQueryVisitor(Query query,IMappingsRepository mappingsRepository):base()
         {
-            if (commandText==null)
-            {
-                throw new ArgumentNullException("commandText");
-            }
-
-            if (expressionSources==null)
-            {
-                throw new ArgumentNullException("expressionSources");
-            }
-
-            if (ontologyProvider==null)
-            {
-                throw new ArgumentNullException("ontologyProvider");
-            }
-
-            if (mappingsRepository==null)
-            {
-                throw new ArgumentNullException("mappingsRepository");
-            }
-
-            _ontologyProvider=ontologyProvider;
             _mappingsRepository=mappingsRepository;
-            _expressionSources=expressionSources;
-            _commandText=commandText;
-            if (!System.String.IsNullOrEmpty(querySourceVariableName))
-            {
-                _querySourceVariableName=querySourceVariableName;
-            }
+            _currentComponent=new Stack<IQueryComponentNavigator>();
+            _query=query;
         }
         #endregion
 
-        #region Properties
-        private int CurrentGraphPattern
+        #region Public methods
+        /// <summary>Retrevies last visited and transformed query and prepares for next inspection.</summary>
+        /// <returns>Query component visited or query itself.</returns>
+        public QueryComponent RetrieveComponent()
         {
-            get
-            {
-                return _currentGraphPattern;
-            }
-
-            set
-            {
-                if (value==3)
-                {
-                    if (_commandText[_commandText.Length-1]==' ')
-                    {
-                        _commandText.Remove(_commandText.Length-1,1);
-                    }
-
-                    _commandText.Append(".");
-                }
-
-                _currentGraphPattern=(value>3?1:value);
-            }
+            CleanupComponent(_lastComponent);
+            QueryComponent result=_lastComponent;
+            _lastComponent=(_currentComponent.Count>0?(QueryComponent)_currentComponent.Pop():_query);
+            return result;
         }
         #endregion
 
         #region Protected methods
-        /// <summary>Creates a comman string from given expression.</summary>
-        /// <returns></returns>
-        protected string CreateCommadText()
-        {
-            return _commandText.ToString();
-        }
-
         /// <summary>Visits a query source expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
-        /// <returns>Expression visited</returns>
-        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+        /// <returns>Expression visited.</returns>
+        protected override System.Linq.Expressions.Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            _expressionSources[expression]=_querySourceVariableName;
+            EntityAccessor entityAccessor=GetEntityAccessor(GetSourceExpression(expression));
+            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            {
+                _query.Elements.Add(entityAccessor);
+            }
+
+            _lastComponent=_query;
             return expression;
         }
 
         /// <summary>Visits a binary expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        protected override System.Linq.Expressions.Expression VisitBinaryExpression(System.Linq.Expressions.BinaryExpression expression)
         {
-            _suppressOperators=false;
-            VisitExpression(expression.Left);
-            if (!_suppressOperators)
+            MethodNames operatorName;
+            System.Linq.Expressions.ExpressionType expressionType=expression.NodeType;
+            switch (expression.NodeType)
             {
-                switch (expression.NodeType)
-                {
-                    case ExpressionType.Equal:
-                        _commandText.Append("=");
-                        break;
-                    case ExpressionType.NotEqual:
-                        _commandText.Append("!=");
-                        break;
-                    case ExpressionType.GreaterThan:
-                        _commandText.Append(">");
-                        break;
-                    case ExpressionType.GreaterThanOrEqual:
-                        _commandText.Append(">=");
-                        break;
-                    case ExpressionType.LessThan:
-                        _commandText.Append("<");
-                        break;
-                    case ExpressionType.LessThanOrEqual:
-                        _commandText.Append("<=");
-                        break;
-                    case ExpressionType.AndAlso:
-                    case ExpressionType.And:
-                        _commandText.Append("&&");
-                        break;
-                    case ExpressionType.OrElse:
-                    case ExpressionType.Or:
-                        _commandText.Append("||");
-                        break;
-                    case ExpressionType.Not:
-                        _commandText.Append("!");
-                        break;
-                    case ExpressionType.Add:
-                        _commandText.Append("+");
-                        break;
-                    case ExpressionType.Subtract:
-                        _commandText.Append("-");
-                        break;
-                    case ExpressionType.Multiply:
-                        _commandText.Append("*");
-                        break;
-                    case ExpressionType.Divide:
-                        _commandText.Append("/");
-                        break;
-                    case ExpressionType.Modulo:
-                        _commandText.Append("%");
-                        break;
-                    default:
-                        base.VisitBinaryExpression(expression);
-                        break;
-                }
+                case System.Linq.Expressions.ExpressionType.OrElse:
+                    expressionType=System.Linq.Expressions.ExpressionType.Or;
+                    goto default;
+                case System.Linq.Expressions.ExpressionType.AndAlso:
+                    expressionType=System.Linq.Expressions.ExpressionType.And;
+                    goto default;
+                default:
+                    string methodName=Enum.GetNames(typeof(MethodNames)).Where(item => item==expressionType.ToString()).FirstOrDefault();
+                    if (!System.String.IsNullOrEmpty(methodName))
+                    {
+                        operatorName=(MethodNames)Enum.Parse(typeof(MethodNames),methodName);
+                    }
+                    else
+                    {
+                        return base.VisitBinaryExpression(expression);
+                    }
+
+                    break;
             }
 
-            if ((_commandText.Length>0)&&(_commandText[_commandText.Length-1]!=' '))
-            {
-                _commandText.Append(" ");
-            }
-    
+            BinaryOperator binaryOperator=new BinaryOperator(operatorName);
+            HandleComponent(binaryOperator);
+
+            VisitExpression(expression.Left);
+            CleanupComponent(_lastComponent);
+
             VisitExpression(expression.Right);
-            CloseBrackets();
-            _suppressOperators=false;
+            CleanupComponent(_lastComponent);
+
+            _lastComponent=binaryOperator;
             return expression;
         }
 
         /// <summary>Visits an unary expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitUnaryExpression(UnaryExpression expression)
+        protected override System.Linq.Expressions.Expression VisitUnaryExpression(System.Linq.Expressions.UnaryExpression expression)
         {
-            if (expression.NodeType==ExpressionType.Convert)
+            MethodNames operatorName;
+            System.Linq.Expressions.ExpressionType expressionType=expression.NodeType;
+            switch (expression.NodeType)
             {
-                if (typeof(EntityId).IsAssignableFrom(expression.Type))
-                {
-                    _suppressOperators=true;
-                    Tuple<string,string> propertyAccessor=ConvertToPropertyAccessor(expression);
-                    if (propertyAccessor!=null)
+                default:
+                    string methodName=Enum.GetNames(typeof(MethodNames)).Where(item => item==expressionType.ToString()).FirstOrDefault();
+                    if (!System.String.IsNullOrEmpty(methodName))
                     {
-                        _commandText.AppendFormat("{0}",propertyAccessor.Item2);
-                    }
-
-                    return expression;
-                }
-                else
-                {
-                    Tuple<string,string> propertyAccessor=ConvertToPropertyAccessor(expression);
-                    if (propertyAccessor!=null)
-                    {
-                        _suppressOperators=true;
-                        _commandText.AppendFormat("{0} {1} ",propertyAccessor.Item1,propertyAccessor.Item2);
-                        CurrentGraphPattern=2;
+                        operatorName=(MethodNames)Enum.Parse(typeof(MethodNames),methodName);
                     }
                     else
                     {
                         return base.VisitUnaryExpression(expression);
                     }
-                }
-            }
-            else
-            {
-                return base.VisitUnaryExpression(expression);
+
+                    break;
             }
 
+            UnaryOperator unaryOperator=new UnaryOperator(operatorName);
+            HandleComponent(unaryOperator);
+
+            VisitExpression(expression.Operand);
+            CleanupComponent(_lastComponent);
+
+            _lastComponent=unaryOperator;
             return expression;
         }
 
         /// <summary>Visits a method call expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        protected override System.Linq.Expressions.Expression VisitMethodCallExpression(System.Linq.Expressions.MethodCallExpression expression)
         {
-            if ((expression.Method.Name=="get_Item")&&(expression.Arguments.Count==1))
+            Call call=null;
+            switch (expression.Method.Name)
             {
-                if (expression.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))
-                {
-                    MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.Method.DeclaringType });
-                    IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-                    if ((entityMapping!=null)&&(entityMapping.Class!=null))
+                case "StartsWith":
+                case "EndsWith":
+                case "Contains":
+                case "Substring":
+                    if (expression.Method.DeclaringType==typeof(string))
                     {
-                        Ontology ontology=
-                            _ontologyProvider.Ontologies.Where(
-                                item => entityMapping.Class.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
-                        if (ontology!=null)
-                        {
-                            CurrentGraphPattern++;
-                            _commandText.AppendFormat("<{0}> ",entityMapping.Class.Uri.AbsoluteUri);
-                        }
-                        else
-                        {
-                            return base.VisitMethodCallExpression(expression);
-                        }
+                        call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name));
                     }
-                }
-                else if (expression.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))
-                {
-                    CurrentGraphPattern++;
-                    VisitExpression(expression.Arguments[0]);
-                    _commandText.Append(":");
-                }
-                else
-                {
+                    else
+                    {
+                        goto default;
+                    }
+
+                    break;
+                case "IsMatch":
+                    if (expression.Method.DeclaringType==typeof(Regex))
+                    {
+                        call=new Call(MethodNames.Regex);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+
+                    break;
+                default:
                     return base.VisitMethodCallExpression(expression);
-                }
-            }
-            else
-            {
-                return base.VisitMethodCallExpression(expression);
             }
 
+            HandleComponent(call);
+            foreach (System.Linq.Expressions.Expression argument in expression.Arguments)
+            {
+                VisitExpression(argument);
+                CleanupComponent(_lastComponent);
+            }
+
+            _lastComponent=call;
             return expression;
         }
 
         /// <summary>Visits a member expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitMemberExpression(MemberExpression expression)
+        protected override System.Linq.Expressions.Expression VisitMemberExpression(System.Linq.Expressions.MemberExpression expression)
         {
             if ((expression.Member.Name=="Id")&&(typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType)))
             {
-                if ((CurrentGraphPattern==0)||(CurrentGraphPattern==3))
+                Remotion.Linq.Clauses.FromClauseBase target=GetMemberTarget(expression);
+                if (target!=null)
                 {
-                    _commandText.AppendFormat("FILTER ({0} ",_expressionSources.Where(item => item.Key==(QuerySourceReferenceExpression)expression.Expression).Select(item => item.Value).First());
-                    _bracketsStack++;
-                }
-                else
-                {
-                    _suppressOperators=true;
-                }
-            }
-            else if (typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType))
-            {
-                MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.Member.DeclaringType });
-                IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-                if (entityMapping!=null)
-                {
-                    IPropertyMapping propertyMapping=entityMapping.PropertyFor(expression.Member.Name);
-                    if (propertyMapping!=null)
-                    {
-                        _commandText.AppendFormat("?s{0} <{1}> ?o{0} ",0,propertyMapping.Uri.AbsoluteUri);
-                        CurrentGraphPattern=3;
-                    }
-                    else
-                    {
-                        ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
-                    }
+                    return VisitEntityId(new EntityIdentifierExpression(expression,target));
                 }
                 else
                 {
                     ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
                 }
             }
-            else
+            else if ((typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType))&&(expression.Member is PropertyInfo))
             {
-                return base.VisitMemberExpression(expression);
+                IPropertyMapping propertyMapping=_mappingsRepository.FindPropertyMapping((PropertyInfo)expression.Member);
+                Remotion.Linq.Clauses.FromClauseBase target=GetMemberTarget(expression);
+                if ((propertyMapping!=null)&&(target!=null))
+                {
+                    return VisitEntityProperty(new EntityPropertyExpression(expression,propertyMapping,target));
+                }
+                else
+                {
+                    ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
+                }
             }
 
-            return expression;
+            return base.VisitMemberExpression(expression);
         }
 
         /// <summary>Visits a constant expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitConstantExpression(ConstantExpression expression)
+        protected override System.Linq.Expressions.Expression VisitConstantExpression(System.Linq.Expressions.ConstantExpression expression)
         {
-            string value=ConvertConstant(expression.Value);
-            if (value!=null)
-            {
-                _commandText.AppendFormat("{0} ",value);
-                CurrentGraphPattern++;
-            }
-
-            return expression;
-        }
-
-        /// <summary>Visits a type binary expression.</summary>
-        /// <param name="expression">Expression to be visited.</param>
-        /// <returns>Expression visited</returns>
-        protected override Expression VisitTypeBinaryExpression(TypeBinaryExpression expression)
-        {
-            if (expression.NodeType==ExpressionType.TypeIs)
-            {
-                if (!typeof(IEntity).IsAssignableFrom(expression.TypeOperand))
-                {
-                    return base.VisitTypeBinaryExpression(expression);
-                }
-
-                MethodInfo mappingForMethodInfo=_mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { expression.TypeOperand });
-                IEntityMapping entityMapping=(IEntityMapping)mappingForMethodInfo.Invoke(_mappingsRepository,null);
-                if ((entityMapping!=null)&&(entityMapping.Class!=null))
-                {
-                    Ontology ontology=
-                        _ontologyProvider.Ontologies.Where(
-                            item => entityMapping.Class.Uri.AbsoluteUri.StartsWith(item.BaseUri.AbsoluteUri)).FirstOrDefault();
-                    if (ontology!=null)
-                    {
-                        _commandText.AppendFormat("?s{0} a <{1}>",0,entityMapping.Class.Uri.AbsoluteUri);
-                        CurrentGraphPattern=3;
-                    }
-                    else
-                    {
-                        ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
-                    }
-                }
-                else
-                {
-                    ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.TypeOperand);
-                }
-            }
-            else
-            {
-                return base.VisitTypeBinaryExpression(expression);
-            }
-
+            HandleComponent(_lastComponent=new Literal(expression.Value));
             return expression;
         }
 
         /// <summary>Visits a sub-query expression.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Expression visited</returns>
-        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        protected override System.Linq.Expressions.Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
-            string subCommandText=EntityQueryModelVisitor.CreateCommandText(expression.QueryModel,_expressionSources,null,_ontologyProvider,_mappingsRepository);
-            if (subCommandText.Length>0)
+            EntityAccessor entityAccessor=GetEntityAccessor((Remotion.Linq.Clauses.FromClauseBase)((QuerySourceReferenceExpression)expression.QueryModel.SelectClause.Selector).ReferencedQuerySource);
+            Query query=_query.CreateSubQuery(entityAccessor.About);
+            if ((entityAccessor.OwnerQuery==null)&&(!query.Elements.Contains(entityAccessor)))
             {
-                _commandText.AppendFormat("{{ {0} }}",subCommandText);
+                query.Elements.Add(entityAccessor);
             }
 
+            EntityQueryModelVisitor queryModelVisitor=new EntityQueryModelVisitor(query,_mappingsRepository);
+            queryModelVisitor.VisitQueryModel(expression.QueryModel);
+            HandleComponent(queryModelVisitor.Result);
+            CleanupComponent(_lastComponent);
+            _lastComponent=queryModelVisitor.Result;
+            return expression;
+        }
+
+        /// <summary>Visits an entity identifier member.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Expression visited</returns>
+        protected virtual System.Linq.Expressions.Expression VisitEntityId(EntityIdentifierExpression expression)
+        {
+            BinaryOperator binaryOperator=new BinaryOperator(MethodNames.Equal);
+            binaryOperator.LeftOperand=_query.Subject;
+            Filter filter=new Filter(binaryOperator);
+            EntityAccessor entityAccessor=GetEntityAccessor(expression.Target);
+            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            {
+                _query.Elements.Add(entityAccessor);
+            }
+
+            entityAccessor.Elements.Add(filter);
+            HandleComponent(binaryOperator);
+            _lastComponent=binaryOperator;
+            return expression;
+        }
+
+        /// <summary>Visits an entity member.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Expression visited</returns>
+        protected virtual System.Linq.Expressions.Expression VisitEntityProperty(EntityPropertyExpression expression)
+        {
+            EntityAccessor entityAccessor=GetEntityAccessor(expression.Target);
+            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            {
+                _query.Elements.Add(entityAccessor);
+            }
+
+            Identifier memberIdentifier=(Helpers.FindAllComponents<EntityAccessor>(_query)
+                .Where(item => item.SourceExpression.FromExpression==expression.Expression)
+                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.EntityProperty.Name.CamelCase())));
+            EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
+            if (!entityAccessor.Elements.Contains(constrain))
+            {
+                entityAccessor.Elements.Add(constrain);
+            }
+
+            HandleComponent(memberIdentifier);
+            _lastComponent=memberIdentifier;
             return expression;
         }
 
@@ -397,239 +302,142 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected override Exception CreateUnhandledItemException<T>(T unhandledItem,string visitMethod)
         {
-            Expression expression=unhandledItem as Expression;
+            System.Linq.Expressions.Expression expression=unhandledItem as System.Linq.Expressions.Expression;
             return new NotSupportedException(expression!=null?FormattingExpressionTreeVisitor.Format(expression):unhandledItem.ToString());
         }
         #endregion
 
         #region Private methods
-        private string ConvertConstant(object constant)
+        private void HandleComponent(QueryComponent component)
         {
-            string value=null;
-            if (constant!=null)
+            if (_currentComponent.Count>0)
             {
-                switch (constant.GetType().FullName)
+                if (_currentComponent.Peek().CanAddComponent(component))
                 {
-                    case "System.SByte":
-                        value=System.String.Format("\"{0}\"^^xsd:byte",constant);
-                        break;
-                    case "System.Byte":
-                        value=System.String.Format("\"{0}\"^^xsd:unsignedByte",constant);
-                        break;
-                    case "System.Int16":
-                        value=System.String.Format("\"{0}\"^^xsd:short",constant);
-                        break;
-                    case "System.UInt16":
-                        value=System.String.Format("\"{0}\"^^xsd:unsignedShort",constant);
-                        break;
-                    case "System.Int32":
-                        value=System.String.Format("\"{0}\"^^xsd:int",constant);
-                        break;
-                    case "System.UInt32":
-                        value=System.String.Format("\"{0}\"^^xsd:unsignedInt",constant);
-                        break;
-                    case "System.Int64":
-                        value=System.String.Format("\"{0}\"^^xsd:long",constant);
-                        break;
-                    case "System.UInt64":
-                        value=System.String.Format("\"{0}\"^^xsd:unsignedLong",constant);
-                        break;
-                    case "System.Single":
-                        value=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:float",constant);
-                        break;
-                    case "System.Double":
-                        value=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:double",constant);
-                        break;
-                    case "System.Decimal":
-                        value=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:decimal",constant);
-                        break;
-                    case "System.DateTme":
-                        value=((DateTime)constant).ToString("\"yyyy\\-MM\\-dd\\THH:mm:ssZ\"^^xsd:dateTime");
-                        break;
-                    case "Sytem.Char":
-                    case "System.String":
-                        value=System.String.Format("\"{0}\"^^xsd:string",constant);
-                        break;
-                    default:
-                        {
-                            if (typeof(EntityId).IsAssignableFrom(constant.GetType()))
-                            {
-                                value=System.String.Format("<{0}>",constant);
-                            }
-                            else if (typeof(IEnumerable).IsAssignableFrom(constant.GetType()))
-                            {
-                                value=System.String.Empty;
-                                foreach (object item in (IEnumerable)constant)
-                                {
-                                    string itemValue=ConvertConstant(item);
-                                    if (itemValue!=null)
-                                    {
-                                        value=System.String.Format("{0}, {1}",value,itemValue);
-                                    }
-                                }
-
-                                if (value.Length>0)
-                                {
-                                    value=value.Substring(2);
-                                }
-                            }
-                            else
-                            {
-                                value=System.String.Format("\"{0}\"",constant);
-                            }
-
-                            break;
-                        }
-                }
-            }
-
-            return value;
-        }
-
-        private void CloseBrackets()
-        {
-            while (_bracketsStack>0)
-            {
-                _commandText.Append(")");
-                _bracketsStack--;
-            }
-        }
-
-        private Stack<MethodCallExpression> BuildPropertyAccessorCallStack(UnaryExpression expression,out QuerySourceReferenceExpression querySource)
-        {
-            Stack<MethodCallExpression> callStack=new Stack<MethodCallExpression>();
-            querySource=null;
-            Expression current=expression.Operand;
-            int index=11;
-            do
-            {
-                index--;
-                if ((current is PartialEvaluationExceptionExpression)&&(((PartialEvaluationExceptionExpression)current).EvaluatedExpression is MethodCallExpression))
-                {
-                    MethodCallExpression methodCall=(MethodCallExpression)((PartialEvaluationExceptionExpression)current).EvaluatedExpression;
-                    if ((methodCall.Method.Name=="get_Item")&&
-                        (methodCall.Arguments.Count==1)&&
-                        (methodCall.Arguments[0] is ConstantExpression)&&(
-                            (methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))||
-                            (methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
+                    if (!_currentComponent.Peek().ContainsComponent(component))
                     {
-                        callStack.Push(methodCall);
-                        current=methodCall.Object;
+                        _currentComponent.Peek().AddComponent(component);
                     }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else if (current is MethodCallExpression)
-                {
-                    MethodCallExpression methodCall=(MethodCallExpression)current;
-                    if ((methodCall.Method.Name=="get_Item")&&
-                        (methodCall.Arguments.Count==1)&&
-                        (methodCall.Arguments[0] is ConstantExpression)&&(
-                            (methodCall.Method.DeclaringType.IsAssignableFrom(typeof(IEntity)))||
-                            (methodCall.Method.DeclaringType.IsAssignableFrom(typeof(OntologyAccessor)))))
-                    {
-                        callStack.Push(methodCall);
-                        current=methodCall.Object;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else if ((current is UnaryExpression)&&(((UnaryExpression)current).NodeType==ExpressionType.Convert))
-                {
-                    expression=(UnaryExpression)current;
-                    if ((!(typeof(IEntity).IsAssignableFrom(expression.Type)))&&(!(typeof(OntologyAccessor).IsAssignableFrom(expression.Type))))
-                    {
-                        callStack.Clear();
-                        break;
-                    }
-
-                    current=expression.Operand;
-                }
-                else if (current is ConstantExpression)
-                {
-                    ConstantExpression constant=(ConstantExpression)current;
-                    if (constant.Value is OntologyAccessor)
-                    {
-                        OntologyAccessor ontologyAccessor=(OntologyAccessor)constant.Value;
-                        current=querySource=_expressionSources.Where(item => typeof(IEntity).IsAssignableFrom(item.Key.ReferencedQuerySource.ItemType)).Select(item => item.Key).FirstOrDefault();
-                        callStack.Push(Expression.Call(constant,constant.Value.GetType().GetMethod("get_Item"),Expression.Constant(ontologyAccessor.Ontology.Prefix)));
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else if (current is QuerySourceReferenceExpression)
-                {
-                    querySource=(QuerySourceReferenceExpression)current;
-                    break;
                 }
                 else
                 {
-                    callStack.Clear();
-                    break;
+                    _currentComponent.Pop();
                 }
             }
-            while (index>0);
-            return callStack;
+
+            IQueryComponentNavigator queryComponentNavigator=Helpers.GetQueryComponentNavigator(component);
+            if (queryComponentNavigator!=null)
+            {
+                _currentComponent.Push(queryComponentNavigator);
+            }
         }
 
-        private Tuple<string,string> ConvertToPropertyAccessor(UnaryExpression expression)
+        private void CleanupComponent(QueryComponent component)
         {
-            Tuple<string,string> result=null;
-            QuerySourceReferenceExpression querySource;
-            Stack<MethodCallExpression> callStack=BuildPropertyAccessorCallStack(expression,out querySource);
-            Ontology ontology=null;
-            string propertyName=null;
-            switch (callStack.Count)
+            IQueryComponentNavigator queryComponentNavigator=Helpers.GetQueryComponentNavigator(_lastComponent);
+            if (queryComponentNavigator!=null)
             {
-                case 1:
+                while ((_currentComponent.Count>0)&&(_currentComponent.Peek()!=queryComponentNavigator))
                 {
-                    propertyName=((ConstantExpression)callStack.Pop().Arguments[0]).Value.ToString();
-                    ontology=_ontologyProvider.Ontologies.Where(item => item.Properties.Any(property => property.PropertyName==propertyName)).FirstOrDefault();
-                    break;
+                    _currentComponent.Pop();
                 }
 
-                case 2:
+                if (_currentComponent.Count>0)
                 {
-                    string prefix=((ConstantExpression)callStack.Pop().Arguments[0]).Value.ToString();
-                    propertyName=((ConstantExpression)callStack.Pop().Arguments[0]).Value.ToString();
-                    ontology=_ontologyProvider.Ontologies.Where(item => (item.Prefix==prefix)&&(item.Properties.Any(property => property.PropertyName==propertyName))).FirstOrDefault();
-                    break;
+                    _currentComponent.Pop();
+                }
+            }
+        }
+
+        private EntityAccessor GetEntityAccessor(Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        {
+            EntityAccessor entityAccessor=Helpers.FindAllComponents<EntityAccessor>(_query).Where(item => item.SourceExpression.FromExpression==sourceExpression.FromExpression).FirstOrDefault();
+            if (entityAccessor==null)
+            {
+                entityAccessor=new EntityAccessor(new Identifier(_query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
+                Type entityType=sourceExpression.ItemType.FindEntityType();
+                if (entityType!=null)
+                {
+                    IClassMapping classMapping=_mappingsRepository.FindClassMapping(entityType);
+                    if (classMapping!=null)
+                    {
+                        EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                        if (!entityAccessor.Elements.Contains(constrain))
+                        {
+                            entityAccessor.Elements.Add(constrain);
+                        }
+                    }
                 }
             }
 
-            if (ontology!=null)
+            return entityAccessor;
+        }
+
+        private Remotion.Linq.Clauses.FromClauseBase GetMemberTarget(System.Linq.Expressions.MemberExpression expression)
+        {
+            Remotion.Linq.Clauses.FromClauseBase result=null;
+
+            if (expression.Expression is System.Linq.Expressions.MemberExpression)
             {
-                // AlignQuerySourceIndex(querySource);
-                result=new Tuple<string,string>(_expressionSources.Where(item => item.Key==querySource).Select(item => item.Value).First(),"<"+ontology.BaseUri.AbsoluteUri+propertyName+">");
+                System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)expression.Expression;
+                if (memberExpression.Member is PropertyInfo)
+                {
+                    PropertyInfo propertyInfo=(PropertyInfo)memberExpression.Member;
+                    string itemName=propertyInfo.Name.CamelCase();
+                    EntityAccessor entityAccessor=Helpers.FindAllComponents<EntityAccessor>(_query).Where(item => item.SourceExpression.FromExpression==memberExpression).FirstOrDefault();
+                    if (entityAccessor!=null)
+                    {
+                        itemName=_query.RetrieveIdentifier(entityAccessor.About.Name);
+                    }
+
+                    result=new FromPropertyClause(itemName,propertyInfo.PropertyType.FindItemType(),memberExpression);
+                }
+                else
+                {
+                    throw CreateUnhandledItemException<System.Linq.Expressions.MemberExpression>(expression,"GetMemberTarget");
+                }
+            }
+            else
+            {
+                result=GetSourceExpression(expression);
             }
 
             return result;
         }
 
-        /*private void AlignQuerySourceIndex(QuerySourceReferenceExpression querySource)
+        private Remotion.Linq.Clauses.FromClauseBase GetSourceExpression(System.Linq.Expressions.Expression expression)
         {
-            int querySourceIndex=_expressionSources.IndexOf(querySource);
-            string currentQuerySourceIndexString=_commandText.ToString().Substring("SELECT ?s".Length);
-            currentQuerySourceIndexString=currentQuerySourceIndexString.Substring(0,currentQuerySourceIndexString.IndexOf(" "));
-            int currentQuerySourceIndex=Int32.Parse(currentQuerySourceIndexString);
-            if (querySourceIndex!=currentQuerySourceIndex)
+            Remotion.Linq.Clauses.FromClauseBase result=null;
+            System.Linq.Expressions.Expression currentExpression=expression;
+            while (currentExpression!=null)
             {
-                Regex querySourceRegularExpression=new Regex("\\?(?<element>s|p|o)(?<currentQuerySourceIndex>[0-9]+)");
-                Match match=querySourceRegularExpression.Match(_commandText.ToString(),0);
-                while ((match!=null)&&(match.Groups["currentQuerySourceIndex"]!=null)&&(match.Groups["currentQuerySourceIndex"].Value.Length>0))
+                if (currentExpression is System.Linq.Expressions.MemberExpression)
                 {
-                    _commandText.Remove(match.Groups["currentQuerySourceIndex"].Index,match.Groups["currentQuerySourceIndex"].Length).Insert(
-                        match.Groups["currentQuerySourceIndex"].Index,querySourceIndex.ToString());
-                    match=querySourceRegularExpression.Match(_commandText.ToString(),match.Groups["currentQuerySourceIndex"].Index);
+                    System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)currentExpression;
+                    if (!(memberExpression.Member is PropertyInfo))
+                    {
+                        throw CreateUnhandledItemException<System.Linq.Expressions.MemberExpression>(memberExpression,"GetSourceExpression");
+                    }
+
+                    currentExpression=memberExpression.Expression;
+                }
+                else if (currentExpression is Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)
+                {
+                    result=(Remotion.Linq.Clauses.FromClauseBase)((Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)currentExpression).ReferencedQuerySource;
+                    if (!typeof(IQueryable).IsAssignableFrom(result.FromExpression.Type))
+                    {
+                        Stack<IQueryComponentNavigator> currentComponent=_currentComponent;
+                        _currentComponent=new Stack<IQueryComponentNavigator>();
+                        VisitExpression(result.FromExpression);
+                        _currentComponent=currentComponent;
+                    }
+
+                    break;
                 }
             }
-        }*/
+
+            return result;
+        }
         #endregion
     }
 }

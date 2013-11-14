@@ -63,7 +63,7 @@ namespace RomanticWeb
             get
             {
                 return Store.Changes.Any;
-            }
+        }
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace RomanticWeb
         /// <returns>A LINQ querable data source.</returns>
         public IQueryable<Entity> AsQueryable()
         {
-            return new EntityQueryable<Entity>(this, _mappings, _mappingContext.OntologyProvider);
+            return new EntityQueryable<Entity>(this,_entitySource,_mappings);
         }
 
         /// <summary>Converts this context into a LINQ queryable data source of entities of given type.</summary>
@@ -81,11 +81,12 @@ namespace RomanticWeb
         /// <returns>A LIQN queryable data source of entities of given type.</returns>
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
-            return new EntityQueryable<T>(this, _mappings, _mappingContext.OntologyProvider);
+            return new EntityQueryable<T>(this,_entitySource,_mappings);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
         /// <param name="entityId">IRI of the entity to be loaded.</param>
+        /// <param name="checkIfExist">Determines whether to check if entity does exist or not.</param>
         /// <returns>Loaded entity.</returns>
         [Cache]
         [return:AllowNull]
@@ -103,6 +104,7 @@ namespace RomanticWeb
 
         /// <summary>Loads a strongly typed entity from the underlying data source.</summary>
         /// <param name="entityId">IRI of the entity to be loaded.</param>
+        /// <param name="checkIfExist">Determines whether to check if entity does exist or not.</param>
         /// <returns>Loaded entity.</returns>
         [return: AllowNull]
         public T Load<T>(EntityId entityId,bool checkIfExist=true) where T:class,IEntity
@@ -128,7 +130,7 @@ namespace RomanticWeb
             {
                 return (T)(IEntity)Create(entityId);
             }
-
+        
             var entity=Create(entityId);
 
             var classMapping=_mappings.MappingFor<T>().Class;

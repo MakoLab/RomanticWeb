@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RomanticWeb
@@ -28,6 +30,33 @@ namespace RomanticWeb
             }
 
             return result;
+        }
+
+        /// <summary>Converts given text to camel case string.</summary>
+        /// <param name="text">Input text.</param>
+        /// <returns>Came case string or null.</returns>
+        public static string CamelCase(this string text)
+        {
+            if (System.String.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            string result=text.PascalCase();
+            return Char.ToLower(result[0])+result.Substring(1);
+        }
+
+        /// <summary>Converts given text to pascal case string.</summary>
+        /// <param name="text">Input text.</param>
+        /// <returns>Pascal case string or null.</returns>
+        public static string PascalCase(this string text)
+        {
+            if (System.String.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            return Regex.Replace(text," [a-z]",match => match.Value.Substring(1).ToUpper());
         }
     }
 }

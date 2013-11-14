@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
+using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Model;
 using VDS.RDF;
+using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;
 using VDS.RDF.Query.Datasets;
@@ -60,7 +62,7 @@ namespace RomanticWeb.DotNetRDF
                                      .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             sparql.Prefixes.Import(_namespaces);
 
-            var triples=from result in ExecuteEntityLoadQuery(sparql.BuildQuery())
+            var triples=from result in ExecuteSelect(sparql.BuildQuery())
                         let subject = result["s"].WrapNode()
                         let predicate = result["p"].WrapNode()
                         let @object = result["o"].WrapNode()
@@ -88,7 +90,20 @@ namespace RomanticWeb.DotNetRDF
         /// <inheritdoc />
         public IEnumerable<EntityQuad> ExecuteEntityQuery(QueryModel sparqlQuery)
         {
-            throw new NotImplementedException();
+            sparqlQuery.MetaGraphUri=MetaGraphUri;
+
+            var queryVisitor=new GenericSparqlQueryVisitor();
+            queryVisitor.VisitQueryModel(sparqlQuery);
+
+            var resultSet=ExecuteSelect(queryVisitor.CommandText);
+
+            return from result in resultSet
+                   let id=new EntityId(((IUriNode)result["composition0"]).Uri)
+                   let s = result["s"].WrapNode()
+                   let p = result["p"].WrapNode()
+                   let o = result["o"].WrapNode()
+                   let g = result["Gcomposition0"].WrapNode()
+                   select new EntityQuad(id,s,p,o,g);
         }
 
         /// <summary>
@@ -150,7 +165,15 @@ namespace RomanticWeb.DotNetRDF
             return ((SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString())).Result;
         }
 
-        private SparqlResultSet ExecuteEntityLoadQuery(SparqlQuery query)
+        private SparqlResultSet ExecuteSelect(string query)
+        {
+            var parser=new SparqlQueryParser();
+            var parsedQuery = parser.ParseFromString(query);
+
+            return ExecuteSelect(parsedQuery);
+        }
+
+        private SparqlResultSet ExecuteSelect(SparqlQuery query)
         {
             var store=_store as IInMemoryQueryableStore;
             if (store!=null)

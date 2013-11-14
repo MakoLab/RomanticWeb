@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Entities;
+using RomanticWeb.Linq.Model;
 using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;
 using VDS.RDF.Query.Datasets;
-using SparqlQuery = RomanticWeb.Linq.SparqlQuery;
 
 namespace RomanticWeb.DotNetRDF
 {
@@ -82,7 +82,7 @@ namespace RomanticWeb.DotNetRDF
             return ExecuteAsk(ask.BuildQuery());
         }
 
-        public IEnumerable<EntityQuad> ExecuteEntityQuery(SparqlQuery sparqlQuery)
+        public IEnumerable<EntityQuad> ExecuteEntityQuery(QueryModel queryModel)
         {
             throw new NotImplementedException();
         }

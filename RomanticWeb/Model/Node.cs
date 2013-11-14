@@ -169,7 +169,6 @@ namespace RomanticWeb.Model
         /// <summary>
         /// Factory method for creating blank nodes
         /// </summary>
-        /// todo:make extension method?
 		public static Node ForBlank(string blankNodeId, [AllowNull] Uri graphUri)
 		{
 			return new Node(new Uri(string.Format("node://{0}/{1}",blankNodeId, graphUri)));
@@ -274,7 +273,6 @@ namespace RomanticWeb.Model
         /// <summary>
         /// Creates an <see cref="EntityId"/> for a <see cref="Node"/>
         /// </summary>
-        /// todo:make extension method?
 		public EntityId ToEntityId()
 		{
             if (IsBlank)

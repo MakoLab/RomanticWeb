@@ -276,7 +276,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
         }
 
-        [Test]
+        [Test,Ignore]
         public void Setting_rdf_list_of_literals_should_be_possible()
         {
             // given

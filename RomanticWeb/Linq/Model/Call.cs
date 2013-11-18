@@ -129,6 +129,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Exists operator.</summary>
         Any=0x00000007,
+
+        /// <summary>Distinct.</summary>
+        Distinct=0x00000008,
         #endregion
         #region String functions
         /// <summary>String starts with.</summary>

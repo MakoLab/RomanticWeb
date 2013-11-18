@@ -8,6 +8,22 @@ using RomanticWeb.Linq.Model.Navigators;
 
 namespace RomanticWeb.Linq.Model
 {
+    /// <summary>Specifies target SPARQL query form.</summary>
+    public enum QueryForms
+    {
+        /// <summary>Selects expressions in to the resulting data set.</summary>
+        Select,
+
+        /// <summary>Asks for existance of a given entities.</summary>
+        Ask,
+
+        /// <summary>Returns triples describing given entities.</summary>
+        Describe,
+
+        /// <summary>Returns triples that can be used to construct another triple store.</summary>
+        Construct
+    }
+
     /// <summary>Represents a whole query.</summary>
     [QueryComponentNavigator(typeof(QueryNavigator))]
     public class Query:QueryElement,IExpression
@@ -18,6 +34,7 @@ namespace RomanticWeb.Linq.Model
         private IList<QueryElement> _elements;
         private IVariableNamingStrategy _variableNamingStrategy;
         private Identifier _subject;
+        private QueryForms _queryForm;
         #endregion
 
         #region Constructors
@@ -30,6 +47,7 @@ namespace RomanticWeb.Linq.Model
         /// <param name="subject">Subject of this query.</param>
         internal Query(Identifier subject):base()
         {
+            _queryForm=QueryForms.Select;
             ObservableCollection<Prefix> prefixes=new ObservableCollection<Prefix>();
             prefixes.CollectionChanged+=OnCollectionChanged;
             _prefixes=prefixes;
@@ -68,15 +86,19 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Gets a value indicating if the given query is actually a sub query.</summary>
         public bool IsSubQuery { get { return (OwnerQuery!=null); } }
 
+        /// <summary>Gets a query form of given query.</summary>
+        public QueryForms QueryForm { get { return _queryForm; } internal set { _queryForm=value; } }
+
         /// <summary>Gets an owning query.</summary>
-        internal override Query OwnerQuery
+        public override Query OwnerQuery
         {
+            [return: AllowNull]
             get
             {
                 return base.OwnerQuery;
             }
 
-            set
+            internal set
             {
                 if (value!=null)
                 {

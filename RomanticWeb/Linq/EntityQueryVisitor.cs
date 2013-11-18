@@ -282,7 +282,7 @@ namespace RomanticWeb.Linq
                 _query.Elements.Add(entityAccessor);
             }
 
-            Identifier memberIdentifier=(Helpers.FindAllComponents<EntityAccessor>(_query)
+            Identifier memberIdentifier=(_query.FindAllComponents<EntityAccessor>()
                 .Where(item => item.SourceExpression.FromExpression==expression.Expression)
                 .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.EntityProperty.Name.CamelCase())));
             EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
@@ -325,7 +325,7 @@ namespace RomanticWeb.Linq
                 }
             }
 
-            IQueryComponentNavigator queryComponentNavigator=Helpers.GetQueryComponentNavigator(component);
+            IQueryComponentNavigator queryComponentNavigator=component.GetQueryComponentNavigator();
             if (queryComponentNavigator!=null)
             {
                 _currentComponent.Push(queryComponentNavigator);
@@ -334,7 +334,7 @@ namespace RomanticWeb.Linq
 
         private void CleanupComponent(QueryComponent component)
         {
-            IQueryComponentNavigator queryComponentNavigator=Helpers.GetQueryComponentNavigator(_lastComponent);
+            IQueryComponentNavigator queryComponentNavigator=_lastComponent.GetQueryComponentNavigator();
             if (queryComponentNavigator!=null)
             {
                 while ((_currentComponent.Count>0)&&(_currentComponent.Peek()!=queryComponentNavigator))
@@ -351,7 +351,7 @@ namespace RomanticWeb.Linq
 
         private EntityAccessor GetEntityAccessor(Remotion.Linq.Clauses.FromClauseBase sourceExpression)
         {
-            EntityAccessor entityAccessor=Helpers.FindAllComponents<EntityAccessor>(_query).Where(item => item.SourceExpression.FromExpression==sourceExpression.FromExpression).FirstOrDefault();
+            EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression.FromExpression==sourceExpression.FromExpression).FirstOrDefault();
             if (entityAccessor==null)
             {
                 entityAccessor=new EntityAccessor(new Identifier(_query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
@@ -384,7 +384,7 @@ namespace RomanticWeb.Linq
                 {
                     PropertyInfo propertyInfo=(PropertyInfo)memberExpression.Member;
                     string itemName=propertyInfo.Name.CamelCase();
-                    EntityAccessor entityAccessor=Helpers.FindAllComponents<EntityAccessor>(_query).Where(item => item.SourceExpression.FromExpression==memberExpression).FirstOrDefault();
+                    EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression.FromExpression==memberExpression).FirstOrDefault();
                     if (entityAccessor!=null)
                     {
                         itemName=_query.RetrieveIdentifier(entityAccessor.About.Name);

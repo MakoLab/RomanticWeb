@@ -57,7 +57,7 @@ namespace RomanticWeb.Tests.Linq
         public void Should_assert_triples_resulting_from_query()
         {
             // given
-            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<QueryModel>())).Returns(GetSamplePersonTriples(5));
+            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>())).Returns(GetSamplePersonTriples(5));
             var query=from p in persons
                         where p.FirstName.Substring(2,1)=="A"
                         select p;

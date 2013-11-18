@@ -1,4 +1,5 @@
 ﻿using System;
+using NullGuard;
 
 namespace RomanticWeb.Linq.Model
 {
@@ -8,6 +9,6 @@ namespace RomanticWeb.Linq.Model
         private Query _ownerQuery;
 
         /// <summary>Gets an owning query.</summary>
-        internal virtual Query OwnerQuery { get { return _ownerQuery; } set { _ownerQuery=value; } }
+        public virtual Query OwnerQuery { [return: AllowNull] get { return _ownerQuery; } internal set { _ownerQuery=value; } }
     }
 }

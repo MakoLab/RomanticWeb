@@ -28,7 +28,7 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private IOntologyProvider _ontologies;
-        private Tuple<System.Linq.IQueryable<IPerson>,string>[] _testQueries;
+        private Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] _testQueries;
 
         [SetUp]
         public void Setup()
@@ -72,36 +72,94 @@ namespace RomanticWeb.Tests.Linq
             Test_correctness_of_query(3);
         }
 
+        [Test]
+        public void Test_correctness_of_query_asking_for_any_person()
+        {
+            Test_correctness_of_query_asking(4);
+        }
+
+        [Test]
+        public void Test_correctness_of_query_asking_for_count_of_persons()
+        {
+            Test_correctness_of_scalar_query(5);
+        }
+
+        private void Test_correctness_of_query_asking(int queryIndex)
+        {
+            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
+            string computedCommandText="";
+            _entitySource.Setup(e => e.ExecuteAskQuery(It.IsAny<Query>())).Returns<Query>(model =>
+            {
+                computedCommandText=VisitModel(model).CommandText;
+                return true;
+            });
+
+            query.Item1.Any();
+            computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
+            Assert.That(computedCommandText,Is.EqualTo(query.Item2));
+        }
+
+        private void Test_correctness_of_scalar_query(int queryIndex)
+        {
+            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
+            string computedCommandText="";
+            _entitySource.Setup(e => e.ExecuteScalarQuery(It.IsAny<Query>())).Returns<Query>(model =>
+            {
+                computedCommandText=VisitModel(model).CommandText;
+                return 1;
+            });
+
+            query.Item1.Count();
+            computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
+            Assert.That(computedCommandText,Is.EqualTo(query.Item2));
+        }
+
         private void Test_correctness_of_query(int queryIndex)
         {
-            Tuple<System.Linq.IQueryable<IPerson>,string> query=_testQueries[queryIndex];
+            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
             string computedCommandText="";
-            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<QueryModel>())).Returns<QueryModel>(model =>
+            string computedMetaGraphVariableName="";
+            string computedEntityVariableName="";
+            string computedSubjectVariableName="";
+            string computedPredicateVariableName="";
+            string computedObjectVariableName="";
+            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>())).Returns<Query>(model =>
             {
-                computedCommandText=VisitModel(model);
+                GenericSparqlQueryVisitor visitor=VisitModel(model);
+                computedCommandText=visitor.CommandText;
+                computedMetaGraphVariableName=visitor.MetaGraphVariableName;
+                computedEntityVariableName=visitor.EntityVariableName;
+                computedSubjectVariableName=visitor.SubjectVariableName;
+                computedPredicateVariableName=visitor.PredicateVariableName;
+                computedObjectVariableName=visitor.ObjectVariableName;
                 return GetSamplePersonTriples(5);
             });
 
             query.Item1.ToList();
             computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
             Assert.That(computedCommandText,Is.EqualTo(query.Item2));
+            Assert.That(computedMetaGraphVariableName,Is.EqualTo(query.Item3));
+            Assert.That(computedEntityVariableName,Is.EqualTo(query.Item4));
+            Assert.That(computedSubjectVariableName,Is.EqualTo(query.Item5));
+            Assert.That(computedPredicateVariableName,Is.EqualTo(query.Item6));
+            Assert.That(computedObjectVariableName,Is.EqualTo(query.Item7));
         }
 
-        protected string VisitModel(QueryModel queryModel)
+        protected GenericSparqlQueryVisitor VisitModel(Query queryModel)
         {
             GenericSparqlQueryVisitor visitor=new GenericSparqlQueryVisitor();
-            queryModel.MetaGraphUri=new Uri("http://app.magi/graphs");
-            visitor.VisitQueryModel(queryModel);
-            return visitor.CommandText;
+            visitor.MetaGraphUri=new Uri("http://app.magi/graphs");
+            visitor.VisitQuery(queryModel);
+            return visitor;
         }
 
-        protected Tuple<System.Linq.IQueryable<IPerson>,string>[] GetTestQueries()
+        protected Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] GetTestQueries()
         {
-            return new Tuple<System.Linq.IQueryable<IPerson>,string>[] {
-                new Tuple<System.Linq.IQueryable<IPerson>,string>(
+            return new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] {
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
                     from person in _persons select person,
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?Gperson0 ?person0 ?s ?p ?o "+
+                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
                     "WHERE { "+
                         "GRAPH ?Gperson0 { "+
                             "?s ?p ?o . "+
@@ -110,12 +168,17 @@ namespace RomanticWeb.Tests.Linq
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
                         "} "+
-                    "}"
+                    "}",
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"
                 ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string>(
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
                     from person in _persons where person.FirstName=="Karol" select person,
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?Gperson0 ?person0 ?s ?p ?o "+
+                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
                     "WHERE { "+
                         "GRAPH ?Gperson0 { "+
                             "?s ?p ?o . "+
@@ -126,12 +189,17 @@ namespace RomanticWeb.Tests.Linq
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
                         "} "+
-                    "}"
+                    "}",
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"
                 ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string>(
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
                     from person in _persons where person.Friends.Any(friend => friend.FirstName=="Karol") select person,
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?Gperson0 ?person0 ?s ?p ?o "+
+                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
                     "WHERE { "+
                         "GRAPH ?Gperson0 { "+
                             "?s ?p ?o . "+
@@ -156,12 +224,17 @@ namespace RomanticWeb.Tests.Linq
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
                         "} "+
-                    "}"
+                    "}",
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"
                 ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string>(
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
                     from person in _persons where person.Friend.Friends.Any(friend => Regex.IsMatch(friend.FirstName,"Ka.*")) select person,
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?Gperson0 ?person0 ?s ?p ?o "+
+                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
                     "WHERE { "+
                         "GRAPH ?Gperson0 { "+
                             "?s ?p ?o . "+
@@ -193,7 +266,50 @@ namespace RomanticWeb.Tests.Linq
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
                         "} "+
-                    "}"
+                    "}",
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"
+                ),
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+                    from person in _persons select person,
+                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
+                    "ASK "+
+                    "{ "+
+                        "GRAPH ?Gperson0 { "+
+                            "?s ?p ?o . "+
+                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
+                        "} "+
+                        "GRAPH <http://app.magi/graphs> { "+
+                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
+                        "} "+
+                    "}",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ),
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+                    from person in _persons select person,
+                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
+                    "SELECT COUNT(DISTINCT(?s)) AS ?personCount0 "+
+                    "WHERE { "+
+                        "GRAPH ?Gperson0 { "+
+                            "?s ?p ?o . "+
+                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
+                        "} "+
+                        "GRAPH <http://app.magi/graphs> { "+
+                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
+                        "} "+
+                    "}",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
                 )
             };
         }

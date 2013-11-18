@@ -4,6 +4,7 @@ using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
+using RomanticWeb.Linq.Visitor;
 using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -13,31 +14,23 @@ using VDS.RDF.Query.Datasets;
 
 namespace RomanticWeb.DotNetRDF
 {
-    /// <summary>
-    /// An implementation of <see cref="IEntitySource"/>, which reads triples from a VDS.RDF.ITripleStore
-    /// </summary>
+    /// <summary>An implementation of <see cref="IEntitySource"/>, which reads triples from a VDS.RDF.ITripleStore.</summary>
     public class TripleStoreAdapter:IEntitySource
     {
         private readonly ITripleStore _store;
-
         private readonly INamespaceMapper _namespaces;
-
         private Uri _metaGraphUri=new Uri("http://app.magi/graphs");
 
-        /// <summary>
-        /// Creates a new instance of <see cref="TripleStoreAdapter"/>
-        /// </summary>
-        /// <param name="store">the underlying triple store</param>
+        /// <summary>Creates a new instance of <see cref="TripleStoreAdapter"/></summary>
+        /// <param name="store">The underlying triple store</param>
         public TripleStoreAdapter(ITripleStore store)
         {
             _store=store;
-            _namespaces = new NamespaceMapper(true);
-            _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
+            _namespaces=new NamespaceMapper(true);
+            _namespaces.AddNamespace("foaf",new Uri("http://xmlns.com/foaf/0.1/"));
         }
 
-        /// <summary>
-        /// Uri of the meta graph, which contains information about Entities' named graphs
-        /// </summary>
+        /// <summary>Uri of the meta graph, which contains information about Entities' named graphs.</summary>
         public Uri MetaGraphUri
         {
             get
@@ -51,65 +44,75 @@ namespace RomanticWeb.DotNetRDF
             }
         }
 
-        /// <summary>
-        /// Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>
-        /// </summary>
+        /// <summary>Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>.</summary>
         public void LoadEntity(IEntityStore store,EntityId entityId)
         {
             // todo: maybe this should return EntityTriples instead and they should be asserted in EntityContext?
-            var sparql = QueryBuilder.Select("s", "p", "o", "g")
-                                     .Graph("?g", g => g.Where(t => t.Subject("s").Predicate("p").Object("o")))
-                                     .Where(t => t.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
+            var sparql=QueryBuilder.Select("s","p","o","g")
+                                   .Graph("?g",graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")))
+                                   .Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             sparql.Prefixes.Import(_namespaces);
-
             var triples=from result in ExecuteSelect(sparql.BuildQuery())
-                        let subject = result["s"].WrapNode()
-                        let predicate = result["p"].WrapNode()
-                        let @object = result["o"].WrapNode()
-                        let graph = result.HasBoundValue("g")?result["g"].WrapNode():null
+                        let subject=result["s"].WrapNode()
+                        let predicate=result["p"].WrapNode()
+                        let @object=result["o"].WrapNode()
+                        let graph=result.HasBoundValue("g")?result["g"].WrapNode():null
                         select new EntityQuad(entityId,subject,predicate,@object,graph);
 
             store.AssertEntity(entityId,triples);
         }
 
-        /// <summary>
-        /// Executes an ASK query to perform existence check
-        /// </summary>
+        /// <summary>Executes an ASK query to perform existence check.</summary>
         public bool EntityExist(EntityId entityId)
         {
             var ask=QueryBuilder.Ask()
                                 .Graph(
                                     "?g",
-                                    g => g.Where(t => t.Subject("s").Predicate("p").Object(entityId.Uri))
-                                          .Union(u => u.Where(t=>t.Subject(entityId.Uri).Predicate("p").Object("o"))));
+                                    graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object(entityId.Uri))
+                                                  .Union(union => union.Where(triple => triple.Subject(entityId.Uri).Predicate("p").Object("o"))));
             ask.Prefixes.Import(_namespaces);
-
             return ExecuteAsk(ask.BuildQuery());
         }
 
-        /// <inheritdoc />
-        public IEnumerable<EntityQuad> ExecuteEntityQuery(QueryModel sparqlQuery)
+        /// <summary>Executes a SPARQL query and returns resulting quads</summary>
+        /// <param name="queryModel">Query model to be executed.</param>
+        /// <returns>Enumeration of entity quads beeing a result of the query.</returns>
+        public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel)
         {
-            sparqlQuery.MetaGraphUri=MetaGraphUri;
-
-            var queryVisitor=new GenericSparqlQueryVisitor();
-            queryVisitor.VisitQueryModel(sparqlQuery);
-
-            var resultSet=ExecuteSelect(queryVisitor.CommandText);
-
+            string subjectVariableName;
+            string predicateVariableName;
+            string objectVariableName;
+            string entityVariableName;
+            string metaGraphVariableName;
+            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out subjectVariableName,out predicateVariableName,out objectVariableName,out entityVariableName,out metaGraphVariableName));
             return from result in resultSet
-                   let id=new EntityId(((IUriNode)result["composition0"]).Uri)
-                   let s = result["s"].WrapNode()
-                   let p = result["p"].WrapNode()
-                   let o = result["o"].WrapNode()
-                   let g = result["Gcomposition0"].WrapNode()
+                   let id=new EntityId(((IUriNode)result[entityVariableName]).Uri)
+                   let s=result[subjectVariableName].WrapNode()
+                   let p=result[predicateVariableName].WrapNode()
+                   let o=result[objectVariableName].WrapNode()
+                   let g=result[metaGraphVariableName].WrapNode()
                    select new EntityQuad(id,s,p,o,g);
         }
 
-        /// <summary>
-        /// One-by-one retracts deleted triples, asserts new triples
-        /// and updates the meta graph
-        /// </summary>
+        /// <summary>Executes a SPARQL query with scalar result.</summary>
+        /// <param name="queryModel">Query model to be executed.</param>
+        /// <returns>Scalar value beeing a result of the query.</returns>
+        public int ExecuteScalarQuery(Query queryModel)
+        {
+            string scalarVariableName;
+            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out scalarVariableName));
+            return (from result in resultSet select Int32.Parse(((ILiteralNode)result[scalarVariableName]).Value)).FirstOrDefault();
+        }
+
+        /// <summary>Executes a SPARQL ask query.</summary>
+        /// <param name="queryModel">Query model to be executed.</param>
+        /// <returns><b>true</b> in case a given query has solution, otherwise <b>false</b>.</returns>
+        public bool ExecuteAskQuery(Query queryModel)
+        {
+            return ExecuteSelect(GetSparqlQuery(queryModel)).Result;
+        }
+
+        /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
         public void ApplyChanges(DatasetChanges datasetChanges)
         {
             foreach (var triple in datasetChanges.TriplesRemoved)
@@ -132,7 +135,7 @@ namespace RomanticWeb.DotNetRDF
 
             // todo: find a way to allow users to extend the meta graph information
             var metaGraph=GetGraph(MetaGraphUri);
-            var foafTopic = metaGraph.CreateUriNode(new Uri("http://xmlns.com/foaf/0.1/primaryTopic"));
+            var foafTopic=metaGraph.CreateUriNode(new Uri("http://xmlns.com/foaf/0.1/primaryTopic"));
             foreach (var metaGraphChange in datasetChanges.MetaGraphChanges)
             {
                 metaGraph.Assert(
@@ -140,6 +143,43 @@ namespace RomanticWeb.DotNetRDF
                     foafTopic,
                     metaGraph.CreateUriNode(metaGraphChange.Item2.Uri));
             }
+        }
+
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery)
+        {
+            string scalarVariableName;
+            return GetSparqlQuery(sparqlQuery,out scalarVariableName);
+        }
+
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string scalarVariableName)
+        {
+            string subjectVariableName;
+            string predicateVariableName;
+            string objectVariableName;
+            string entityVariableName;
+            string metaGraphVariableName;
+            return GetSparqlQuery(sparqlQuery,out subjectVariableName,out predicateVariableName,out objectVariableName,out scalarVariableName,out entityVariableName,out metaGraphVariableName);
+        }
+
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string subjectVariableName,out string predicateVariableName,out string objectVariableName,out string entityVariableName,out string metaGraphVariableName)
+        {
+            string scalarVariableName;
+            return GetSparqlQuery(sparqlQuery,out subjectVariableName,out predicateVariableName,out objectVariableName,out scalarVariableName,out entityVariableName,out metaGraphVariableName);
+        }
+
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string subjectVariableName,out string predicateVariableName,out string objectVariableName,out string scalarVariableName,out string entityVariableName,out string metaGraphVariableName)
+        {
+            subjectVariableName=predicateVariableName=objectVariableName=scalarVariableName=entityVariableName=metaGraphVariableName=null;
+            GenericSparqlQueryVisitor queryVisitor=new GenericSparqlQueryVisitor();
+            queryVisitor.MetaGraphUri=MetaGraphUri;
+            queryVisitor.VisitQuery(sparqlQuery);
+            subjectVariableName=queryVisitor.SubjectVariableName;
+            predicateVariableName=queryVisitor.PredicateVariableName;
+            objectVariableName=queryVisitor.ObjectVariableName;
+            scalarVariableName=queryVisitor.ScalarVariableName;
+            metaGraphVariableName=queryVisitor.MetaGraphVariableName;
+            SparqlQueryParser parser=new SparqlQueryParser();
+            return parser.ParseFromString(queryVisitor.CommandText);
         }
 
         private IGraph GetGraph(Uri graphUri)
@@ -154,23 +194,15 @@ namespace RomanticWeb.DotNetRDF
 
         private bool ExecuteAsk(SparqlQuery query)
         {
-            var store = _store as IInMemoryQueryableStore;
-            if (store != null)
+            var store=_store as IInMemoryQueryableStore;
+            if (store!=null)
             {
                 var inMemoryQuadDataset=new InMemoryQuadDataset(store,MetaGraphUri);
-                var processor = new LeviathanQueryProcessor(inMemoryQuadDataset);
+                var processor=new LeviathanQueryProcessor(inMemoryQuadDataset);
                 return ((SparqlResultSet)processor.ProcessQuery(query)).Result;
             }
 
             return ((SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString())).Result;
-        }
-
-        private SparqlResultSet ExecuteSelect(string query)
-        {
-            var parser=new SparqlQueryParser();
-            var parsedQuery = parser.ParseFromString(query);
-
-            return ExecuteSelect(parsedQuery);
         }
 
         private SparqlResultSet ExecuteSelect(SparqlQuery query)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using NullGuard;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Visitor;
 
@@ -12,27 +13,51 @@ namespace RomanticWeb.Linq.Sparql
         #region Fields
         private StringBuilder _commandText=null;
         private Uri _metaGraphUri=null;
+        private string _metaGraphVariableName=null;
+        private string _entityVariableName=null;
+        private string _subjectVariableName=null;
+        private string _predicateVariableName=null;
+        private string _objectVariableName=null;
+        private string _scalarVariableName=null;
         #endregion
 
         #region Properties
         /// <summary>Gets a command text string.</summary>
         public string CommandText { get { return (_commandText!=null?_commandText.ToString():System.String.Empty); } }
+
+        /// <summary>Sets a meta-graph URI.</summary>
+        [AllowNull]
+        public Uri MetaGraphUri { get { return _metaGraphUri; } set { _metaGraphUri=value; } }
+
+        /// <summary>Gets or sets a meta-graph variable name.</summary>
+        [AllowNull]
+        public string MetaGraphVariableName { get { return _metaGraphVariableName; } set { _metaGraphVariableName=value; } }
+
+        /// <summary>Gets or sets an entity variable name.</summary>
+        [AllowNull]
+        public string EntityVariableName { get { return _entityVariableName; } set { _entityVariableName=value; } }
+
+        /// <summary>Gets or sets a subject variable name.</summary>
+        [AllowNull]
+        public string SubjectVariableName { get { return _subjectVariableName; } set { _subjectVariableName=value; } }
+
+        /// <summary>Gets or sets a predicate variable name.</summary>
+        [AllowNull]
+        public string PredicateVariableName { get { return _predicateVariableName; } set { _predicateVariableName=value; } }
+
+        /// <summary>Gets or sets a object variable name.</summary>
+        [AllowNull]
+        public string ObjectVariableName { get { return _objectVariableName; } set { _objectVariableName=value; } }
+
+        /// <summary>Gets or sets a scalar variable name.</summary>
+        [AllowNull]
+        public string ScalarVariableName { get { return _scalarVariableName; } set { _scalarVariableName=value; } }
         #endregion
 
         #region Public methods
-        /// <summary>Visit a query model.</summary>
-        /// <param name="queryModel">Query model to be visited.</param>
-        public override void VisitQueryModel(QueryModel queryModel)
-        {
-            _metaGraphUri=queryModel.MetaGraphUri;
-            base.VisitQueryModel(queryModel);
-        }
-        #endregion
-
-        #region Non-public methods
         /// <summary>Visit a query.</summary>
         /// <param name="query">Query to be visited.</param>
-        protected override void VisitQuery(Query query)
+        public override void VisitQuery(Query query)
         {
             if (_commandText==null)
             {
@@ -53,29 +78,72 @@ namespace RomanticWeb.Linq.Sparql
                 }
             }
 
-            _commandText.Append("SELECT ");
-            if (query.Select.Count>0)
+            _commandText.AppendFormat("{0} ",query.QueryForm.ToString().ToUpper());
+            if (query.QueryForm==QueryForms.Select)
             {
-                foreach (ISelectableQueryComponent expression in query.Select)
+                if (query.Select.Count>0)
                 {
-                    if ((expression is EntityAccessor)&&(!query.IsSubQuery))
+                    foreach (ISelectableQueryComponent expression in query.Select)
                     {
-                        _commandText.AppendFormat("?G{0} ",((EntityAccessor)expression).About.Name);
-                    }
+                        if (!query.IsSubQuery)
+                        {
+                            if (expression is EntityAccessor)
+                            {
+                                if ((_metaGraphVariableName==null)&&(_entityVariableName==null))
+                                {
+                                    _metaGraphVariableName=System.String.Format("G{0}",((EntityAccessor)expression).About.Name);
+                                    _entityVariableName=((EntityAccessor)expression).About.Name;
+                                }
 
-                    foreach (IExpression selectableExpression in expression.Expressions)
-                    {
-                        VisitComponent(selectableExpression);
-                        _commandText.Append(" ");
+                                _commandText.AppendFormat("?G{0} ",((EntityAccessor)expression).About.Name);
+                            }
+                            else if (expression is UnboundConstrain)
+                            {
+                                UnboundConstrain unboundConstrain=(UnboundConstrain)expression;
+                                if ((unboundConstrain.Subject is Identifier)&&(unboundConstrain.Predicate is Identifier)&&(unboundConstrain.Value is Identifier))
+                                {
+                                    _subjectVariableName=((Identifier)unboundConstrain.Subject).Name;
+                                    _predicateVariableName=((Identifier)unboundConstrain.Predicate).Name;
+                                    _objectVariableName=((Identifier)unboundConstrain.Value).Name;
+                                }
+                            }
+                            else if (expression is Call)
+                            {
+                                if (_scalarVariableName==null)
+                                {
+                                    _scalarVariableName=query.CreateVariableName(((Call)expression).Member.ToString().CamelCase());
+                                }
+                            }
+                            else if (expression is Alias)
+                            {
+                                Alias alias=(Alias)expression;
+                                if ((_scalarVariableName==null)&&(alias.Name!=null))
+                                {
+                                    _scalarVariableName=alias.Name.Name;
+                                }
+                            }
+                        }
+
+                        foreach (IExpression selectableExpression in expression.Expressions)
+                        {
+                            VisitComponent(selectableExpression);
+                            _commandText.Append(" ");
+                        }
                     }
                 }
-            }
-            else
-            {
-                _commandText.Append("* ");
+                else
+                {
+                    _commandText.Append("* ");
+                }
             }
 
-            _commandText.Append("WHERE { ");
+            if (query.QueryForm!=QueryForms.Ask)
+            {
+                _commandText.Append("WHERE ");
+            }
+
+            _commandText.Append("{ ");
+
             foreach (QueryElement element in query.Elements)
             {
                 VisitComponent(element);
@@ -88,7 +156,9 @@ namespace RomanticWeb.Linq.Sparql
                 _commandText.Append("} ");
             }
         }
+        #endregion
 
+        #region Non-public methods
         /// <summary>Visit a function call.</summary>
         /// <param name="call">Function call to be visited.</param>
         protected override void VisitCall(Call call)
@@ -244,6 +314,15 @@ namespace RomanticWeb.Linq.Sparql
             }
 
             _commandText.Append(valueString);
+        }
+
+        /// <summary>Visit an alias.</summary>
+        /// <param name="alias">Alias to be visited.</param>
+        protected override void VisitAlias(Alias alias)
+        {
+            VisitComponent(alias.Component);
+            _commandText.Append(" AS ");
+            VisitComponent(alias.Name);
         }
 
         /// <summary>Visit a prefix.</summary>

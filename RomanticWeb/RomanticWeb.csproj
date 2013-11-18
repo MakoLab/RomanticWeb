@@ -96,9 +96,11 @@
     <Compile Include="Linq\Expressions\EntityIdentifierExpression.cs" />
     <Compile Include="Linq\Expressions\EntityMemberExpression.cs" />
     <Compile Include="Linq\Expressions\FromPropertyClause.cs" />
+    <Compile Include="Linq\Model\Alias.cs" />
+    <Compile Include="Linq\Model\Navigators\AliasNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\UnboundConstrainNavigator.cs" />
     <Compile Include="Linq\Model\UnboundConstrain.cs" />
-    <Compile Include="Linq\Model\Helpers.cs" />
+    <Compile Include="Linq\Model\QueryComponentExtensions.cs" />
     <Compile Include="Linq\Model\IQueryComponent.cs" />
     <Compile Include="Linq\Model\ISelectableQueryComponent.cs" />
     <Compile Include="Linq\IVariableNamingStrategy.cs" />
@@ -113,7 +115,7 @@
     <Compile Include="Linq\Model\Navigators\UnaryOperatorNavigator.cs" />
     <Compile Include="Linq\Model\Prefix.cs" />
     <Compile Include="Linq\Model\Navigators\ICompoundQueryComponent.cs" />
-    <Compile Include="Linq\Model\QueryModel.cs" />
+    <None Include="Linq\Model\QueryModel.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\Model\Call.cs" />
     <Compile Include="Linq\Model\BinaryOperator.cs" />

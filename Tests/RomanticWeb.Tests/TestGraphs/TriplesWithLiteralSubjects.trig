@@ -12,7 +12,8 @@
 {
 	<people/Gniewoslaw> a foaf:Person;
 						foaf:givenName "Gniewosław" ;
-						foaf:familyName "Rzepka" .
+						foaf:familyName "Rzepka" ;
+						foaf:knows <people/Tomasz> .
 }
 
 <http://data.magi/people/Karol>

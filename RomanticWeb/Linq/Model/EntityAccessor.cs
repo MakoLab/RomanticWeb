@@ -130,8 +130,8 @@ namespace RomanticWeb.Linq.Model
         public override bool Equals(object operand)
         {
             return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(EntityAccessor))&&
-                (_about!=null?_about.Equals(((EntityAccessor)operand)._about):false)&&
-                (_sourceExpression!=null?_sourceExpression.Equals(((EntityAccessor)operand)._sourceExpression):false)&&
+                (_about!=null?_about.Equals(((EntityAccessor)operand)._about):Object.Equals(((EntityAccessor)operand)._about,null))&&
+                (_sourceExpression!=null?_sourceExpression.Equals(((EntityAccessor)operand)._sourceExpression):Object.Equals(((EntityAccessor)operand)._sourceExpression,null))&&
                 (_source==((EntityAccessor)operand)._source);
         }
 

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using RomanticWeb.Linq.Model.Navigators;
 
 namespace RomanticWeb.Linq.Model
@@ -217,6 +219,32 @@ namespace RomanticWeb.Linq.Model
             }
 
             return System.String.Format("{0}{2}{1}{3}",functionName,System.String.Join(",",_arguments),(useBrackets?"(":" "),(useBrackets?")":" "));
+        }
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="operand">Type: <see cref="System.Object" />
+        /// The object to compare with the current object.</param>
+        /// <returns>Type: <see cref="System.Boolean" />
+        /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
+        public override bool Equals(object operand)
+        {
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Call))&&(_member==(((Call)operand)._member))&&
+                (_arguments.Count==((Call)operand)._arguments.Count)&&
+                (_arguments.SequenceEqual((((Call)operand)._arguments)));
+        }
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>Type: <see cref="System.Int32" />
+        /// A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            int result=typeof(Call).FullName.GetHashCode()^_member.GetHashCode();
+            foreach (IExpression expression in _arguments)
+            {
+                result^=expression.GetHashCode();
+            }
+
+            return result;
         }
         #endregion
 

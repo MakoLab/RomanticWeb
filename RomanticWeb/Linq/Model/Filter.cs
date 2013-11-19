@@ -1,4 +1,5 @@
-﻿using NullGuard;
+﻿using System;
+using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
 
 namespace RomanticWeb.Linq.Model
@@ -55,6 +56,25 @@ namespace RomanticWeb.Linq.Model
         public override string ToString()
         {
             return System.String.Format("FILTER ({0})",(_expression!=null?_expression.ToString():System.String.Empty));
+        }
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="operand">Type: <see cref="System.Object" />
+        /// The object to compare with the current object.</param>
+        /// <returns>Type: <see cref="System.Boolean" />
+        /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
+        public override bool Equals(object operand)
+        {
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Filter))&&
+                (_expression!=null?_expression.Equals(((Filter)operand)._expression):Object.Equals(((Filter)operand)._expression,null));
+        }
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>Type: <see cref="System.Int32" />
+        /// A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return typeof(Filter).FullName.GetHashCode()^(_expression!=null?_expression.GetHashCode():0);
         }
         #endregion
     }

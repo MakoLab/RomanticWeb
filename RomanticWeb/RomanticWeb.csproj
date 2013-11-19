@@ -115,7 +115,6 @@
     <Compile Include="Linq\Model\Navigators\UnaryOperatorNavigator.cs" />
     <Compile Include="Linq\Model\Prefix.cs" />
     <Compile Include="Linq\Model\Navigators\ICompoundQueryComponent.cs" />
-    <None Include="Linq\Model\QueryModel.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\Model\Call.cs" />
     <Compile Include="Linq\Model\BinaryOperator.cs" />

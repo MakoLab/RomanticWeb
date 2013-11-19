@@ -74,7 +74,7 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals(object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Literal))&&(_value!=null?_value.Equals(((Literal)operand)._value):false);
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Literal))&&(_value!=null?_value.Equals(((Literal)operand)._value):Object.Equals(((Literal)operand)._value,null));
         }
 
         /// <summary>Serves as the default hash function.</summary>

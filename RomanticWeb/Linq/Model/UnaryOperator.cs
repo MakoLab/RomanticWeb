@@ -81,6 +81,25 @@ namespace RomanticWeb.Linq.Model
 
             return System.String.Format("{0}{1}",operatorString,(Operand!=null?Operand.ToString():System.String.Empty));
         }
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="operand">Type: <see cref="System.Object" />
+        /// The object to compare with the current object.</param>
+        /// <returns>Type: <see cref="System.Boolean" />
+        /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
+        public override bool Equals(object operand)
+        {
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(BinaryOperator))&&
+                (Operand!=null?Operand.Equals(((UnaryOperator)operand).Operand):Object.Equals(((BinaryOperator)operand).Operand,null));
+        }
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>Type: <see cref="System.Int32" />
+        /// A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return typeof(UnaryOperator).FullName.GetHashCode()^(Operand!=null?Operand.GetHashCode():0);
+        }
         #endregion
 
         #region Non-public methods

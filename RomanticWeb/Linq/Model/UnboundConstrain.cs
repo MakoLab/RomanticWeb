@@ -103,9 +103,9 @@ namespace RomanticWeb.Linq.Model
         public override bool Equals(object operand)
         {
             return (!Object.Equals(operand,null))&&(operand is UnboundConstrain)&&
-                (_subject!=null?_subject.Equals(((UnboundConstrain)operand)._subject):false)&&
-                (Predicate!=null?Predicate.Equals(((UnboundConstrain)operand).Predicate):false)&&
-                (Value!=null?Value.Equals(((UnboundConstrain)operand).Value):false);
+                (_subject!=null?_subject.Equals(((UnboundConstrain)operand)._subject):Object.Equals(((UnboundConstrain)operand)._subject,null))&&
+                (Predicate!=null?Predicate.Equals(((UnboundConstrain)operand).Predicate):Object.Equals(((UnboundConstrain)operand).Predicate,null))&&
+                (Value!=null?Value.Equals(((UnboundConstrain)operand).Value):Object.Equals(((UnboundConstrain)operand).Value,null));
         }
 
         /// <summary>Serves as the default hash function.</summary>

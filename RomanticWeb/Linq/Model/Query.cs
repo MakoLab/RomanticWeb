@@ -167,6 +167,49 @@ namespace RomanticWeb.Linq.Model
                 System.String.Join(Environment.NewLine,_elements),
                 System.String.Join(Environment.NewLine,_prefixes));
         }
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="operand">Type: <see cref="System.Object" />
+        /// The object to compare with the current object.</param>
+        /// <returns>Type: <see cref="System.Boolean" />
+        /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
+        public override bool Equals(object operand)
+        {
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Query))&&(_queryForm==((Query)operand)._queryForm)&&
+                (_subject!=null?_subject.Equals(((Query)operand)._subject):Object.Equals(((Query)operand)._subject,null))&&
+                (_variableNamingStrategy==((Query)operand)._variableNamingStrategy)&&
+                (_prefixes.Count==((Query)operand)._prefixes.Count)&&
+                (_select.Count==((Query)operand)._select.Count)&&
+                (_elements.Count==((Query)operand)._elements.Count)&&
+                (_prefixes.Count==((Query)operand)._prefixes.Count)&&
+                (_prefixes.SequenceEqual(((Query)operand)._prefixes))&&
+                (_select.SequenceEqual(((Query)operand)._select))&&
+                (_elements.SequenceEqual(((Query)operand)._elements));
+        }
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>Type: <see cref="System.Int32" />
+        /// A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            int result=typeof(Query).FullName.GetHashCode()^_variableNamingStrategy.GetHashCode()^_queryForm.GetHashCode()^(_subject!=null?_subject.GetHashCode():0);
+            foreach (Prefix prefix in _prefixes)
+            {
+                result^=prefix.GetHashCode();
+            }
+
+            foreach (ISelectableQueryComponent queryComponent in _select)
+            {
+                result^=queryComponent.GetHashCode();
+            }
+
+            foreach (IQueryComponent queryComponent in _elements)
+            {
+                result^=queryComponent.GetHashCode();
+            }
+
+            return result;
+        }
         #endregion
 
         #region Non-public methods

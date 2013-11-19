@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NullGuard;
 using Remotion.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -52,6 +53,7 @@ namespace RomanticWeb.Linq
         /// <param name="queryModel">Query model to be parsed.</param>
         /// <param name="returnDefaultWhenEmpty">Tells the executor to return a default value in case of an empty result.</param>
         /// <returns>Single entity beeing result of a query.</returns>
+        [return: AllowNull]
         public T ExecuteSingle<T>(QueryModel queryModel,bool returnDefaultWhenEmpty)
         {
             return (returnDefaultWhenEmpty?ExecuteCollection<T>(queryModel).SingleOrDefault():ExecuteCollection<T>(queryModel).Single());

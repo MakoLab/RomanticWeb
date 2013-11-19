@@ -99,8 +99,8 @@ namespace RomanticWeb.Linq.Model
         public override bool Equals(object operand)
         {
             return (!Object.Equals(operand,null))&&(operand is EntityConstrain)&&
-                (_predicate!=null?_predicate.Equals(((EntityConstrain)operand)._predicate):false)&&
-                (_value!=null?_value.Equals(((EntityConstrain)operand)._value):false);
+                (_predicate!=null?_predicate.Equals(((EntityConstrain)operand)._predicate):Object.Equals(((EntityConstrain)operand)._predicate,null))&&
+                (_value!=null?_value.Equals(((EntityConstrain)operand)._value):Object.Equals(((EntityConstrain)operand)._value,null));
         }
 
         /// <summary>Serves as the default hash function.</summary>

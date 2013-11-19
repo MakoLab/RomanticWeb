@@ -52,8 +52,8 @@ namespace RomanticWeb.Linq.Model
         public override bool Equals(object operand)
         {
             return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Alias))&&
-                (_component!=null?_component.Equals(((Alias)operand)._component):false)&&
-                (_name!=null?_name.Equals(((Alias)operand)._name):false);
+                (_component!=null?_component.Equals(((Alias)operand)._component):Object.Equals(((Alias)operand)._component,null))&&
+                (_name!=null?_name.Equals(((Alias)operand)._name):Object.Equals(((Alias)operand)._name,null));
         }
 
         /// <summary>Serves as the default hash function.</summary>

@@ -256,18 +256,26 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected virtual System.Linq.Expressions.Expression VisitEntityId(EntityIdentifierExpression expression)
         {
-            BinaryOperator binaryOperator=new BinaryOperator(MethodNames.Equal);
-            binaryOperator.LeftOperand=_query.Subject;
-            Filter filter=new Filter(binaryOperator);
-            EntityAccessor entityAccessor=GetEntityAccessor(expression.Target);
-            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            if ((_currentComponent.Count>0)&&(_currentComponent.Peek() is BinaryOperatorNavigator))
             {
-                _query.Elements.Add(entityAccessor);
+                HandleComponent(_query.Subject);
+                BinaryOperator binaryOperator=((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
+                Filter filter=new Filter(binaryOperator);
+                EntityAccessor entityAccessor=GetEntityAccessor(expression.Target);
+                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+                {
+                    _query.Elements.Add(entityAccessor);
+                }
+
+                entityAccessor.Elements.Add(filter);
+                _currentComponent.Push(filter.GetQueryComponentNavigator());
+                _lastComponent=filter;
+            }
+            else
+            {
+                return base.VisitMemberExpression(expression.Expression);
             }
 
-            entityAccessor.Elements.Add(filter);
-            HandleComponent(binaryOperator);
-            _lastComponent=binaryOperator;
             return expression;
         }
 
@@ -293,6 +301,37 @@ namespace RomanticWeb.Linq
 
             HandleComponent(memberIdentifier);
             _lastComponent=memberIdentifier;
+            return expression;
+        }
+
+        /// <summary>Visits a type binary expression.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Expression visited</returns>
+        protected override System.Linq.Expressions.Expression VisitTypeBinaryExpression(System.Linq.Expressions.TypeBinaryExpression expression)
+        {
+            IClassMapping classMapping=_mappingsRepository.FindClassMapping(expression.TypeOperand);
+            if (classMapping!=null)
+            {
+                Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression.Expression);
+                EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression==sourceExpression).FirstOrDefault();
+                if (entityAccessor==null)
+                {
+                    entityAccessor=GetEntityAccessor(sourceExpression);
+                    _query.Elements.Add(entityAccessor);
+                }
+
+                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                _lastComponent=constrain;
+                if (!entityAccessor.Elements.Contains(constrain))
+                {
+                    entityAccessor.Elements.Add(constrain);
+                }
+            }
+            else
+            {
+                return base.VisitTypeBinaryExpression(expression);
+            }
+
             return expression;
         }
 
@@ -337,7 +376,7 @@ namespace RomanticWeb.Linq
             IQueryComponentNavigator queryComponentNavigator=_lastComponent.GetQueryComponentNavigator();
             if (queryComponentNavigator!=null)
             {
-                while ((_currentComponent.Count>0)&&(_currentComponent.Peek()!=queryComponentNavigator))
+                while ((_currentComponent.Count>0)&&(!_currentComponent.Peek().Equals(queryComponentNavigator)))
                 {
                     _currentComponent.Pop();
                 }
@@ -356,7 +395,7 @@ namespace RomanticWeb.Linq
             {
                 entityAccessor=new EntityAccessor(new Identifier(_query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
                 Type entityType=sourceExpression.ItemType.FindEntityType();
-                if (entityType!=null)
+                if ((entityType!=null)&&(entityType!=typeof(IEntity)))
                 {
                     IClassMapping classMapping=_mappingsRepository.FindClassMapping(entityType);
                     if (classMapping!=null)

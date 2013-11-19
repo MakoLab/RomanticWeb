@@ -88,9 +88,13 @@ namespace RomanticWeb.Linq
             {
                 _query.Elements.Add((Query)queryComponent);
             }
-            else
+            else if (!_mainFromComponent.Elements.Contains(queryComponent))
             {
-                _mainFromComponent.Elements.Add(new Filter((IExpression)queryComponent));
+                Filter filter=new Filter((IExpression)queryComponent);
+                if (!_mainFromComponent.Elements.Contains(filter))
+                {
+                    _mainFromComponent.Elements.Add(filter);
+                }
             }
 
             base.VisitWhereClause(whereClause,queryModel,index);

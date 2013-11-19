@@ -177,6 +177,7 @@ namespace RomanticWeb.DotNetRDF
             predicateVariableName=queryVisitor.PredicateVariableName;
             objectVariableName=queryVisitor.ObjectVariableName;
             scalarVariableName=queryVisitor.ScalarVariableName;
+            entityVariableName=queryVisitor.EntityVariableName;
             metaGraphVariableName=queryVisitor.MetaGraphVariableName;
             SparqlQueryParser parser=new SparqlQueryParser();
             return parser.ParseFromString(queryVisitor.CommandText);

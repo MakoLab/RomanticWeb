@@ -286,6 +286,8 @@ namespace RomanticWeb.Linq.Sparql
             switch (literal.Value.GetType().FullName)
             {
                 default:
+                    valueString=System.String.Format("\"{0}\"",literal.Value);
+                    break;
                 case "System.Byte":
                 case "System.SByte":
                 case "System.Int16":
@@ -309,6 +311,9 @@ namespace RomanticWeb.Linq.Sparql
                     valueString=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
                     break;
                 case "System.Uri":
+                    valueString=System.String.Format("<{0}>",literal.Value);
+                    break;
+                case "RomanticWeb.Entities.EntityId":
                     valueString=System.String.Format("<{0}>",literal.Value);
                     break;
             }

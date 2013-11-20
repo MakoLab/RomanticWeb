@@ -50,18 +50,17 @@ namespace RomanticWeb
         #endregion
 
         #region Properties
+        // TODO: Consider hiding this Cache member.
 
+        /// <summary>Gets the cache of this entity contxt.</summary>
         public ICache Cache { get; set; }
 
-        public IEntityStore Store
-        {
-            get
-            {
-                return _entityStore;
-            }
-        }
+        // TODO: Consider hiding this Store member.
 
-        /// <inheritdoc/>
+        /// <summary>Gets the underlying in-memory store.</summary>
+        public IEntityStore Store { get { return _entityStore; } }
+
+        /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
         public bool HasChanges
         {
             get
@@ -69,7 +68,6 @@ namespace RomanticWeb
                 return Store.Changes.Any;
             }
         }
-
         #endregion
 
         #region Public methods

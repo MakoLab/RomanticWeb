@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using RomanticWeb.Linq.Model.Navigators;
 
 namespace RomanticWeb.Linq.Model
@@ -87,7 +88,7 @@ namespace RomanticWeb.Linq.Model
         internal Remotion.Linq.Clauses.FromClauseBase SourceExpression { get { return _sourceExpression; } }
 
         /// <summary>Gets an owning query.</summary>
-        internal virtual Query OwnerQuery
+        internal override Query OwnerQuery
         {
             get
             {
@@ -119,7 +120,7 @@ namespace RomanticWeb.Linq.Model
                 "GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}",
                 Environment.NewLine,
                 (_about!=null?_about.ToString():System.String.Empty),
-                System.String.Join(Environment.NewLine,_elements));
+                System.String.Join(Environment.NewLine,_elements.Select(item => (item is EntityAccessor?(_about!=null?item.ToString().Replace("?s ",_about.ToString()):item.ToString()):item.ToString()))));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>

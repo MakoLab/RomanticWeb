@@ -56,7 +56,7 @@ namespace RomanticWeb
                 return text;
             }
 
-            return Regex.Replace(text," [a-z]",match => match.Value.Substring(1).ToUpper());
+            return Regex.Replace(Regex.Replace(text,"[^a-zA-Z0-9_]","_")," [a-z]",match => match.Value.Substring(1).ToUpper());
         }
     }
 }

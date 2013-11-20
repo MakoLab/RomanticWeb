@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
@@ -10,11 +11,11 @@ namespace RomanticWeb
     /// <summary>
     /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
     /// </summary>
-    public class EntityContextFactory : IEntityContextFactory
+    public class EntityContextFactory:IEntityContextFactory
     {
         private readonly CompositionContainer _container;
 
-        private Func<IEntityStore> _entityStoreFactory=()=>new EntityStore();
+        private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
 
         private IGraphSelectionStrategy _defaultGraphSelector=new DefaultGraphSelector();
 
@@ -23,8 +24,8 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory()
         {
-            var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
-            _container = new CompositionContainer(catalog, true);
+            var catalog=new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
+            _container=new CompositionContainer(catalog,true);
         }
 
         /// <summary>
@@ -34,11 +35,11 @@ namespace RomanticWeb
         {
             var entitySourceFactory=_container.GetExportedValue<Func<IEntitySource>>();
             var mappings=new CompoundMappingsRepository(_container.GetExportedValues<IMappingsRepository>());
-            var ontologies = new CompoundOntologyProvider(_container.GetExportedValues<IOntologyProvider>());
+            var ontologies=new CompoundOntologyProvider(_container.GetExportedValues<IOntologyProvider>());
             var mappingContext=new MappingContext(ontologies,_defaultGraphSelector);
 
             mappings.RebuildMappings(mappingContext);
-            return new EntityContext(this, mappings, mappingContext, _entityStoreFactory(), entitySourceFactory());
+            return new EntityContext(this,mappings,mappingContext,_entityStoreFactory(),entitySourceFactory());
         }
 
         public IEntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)

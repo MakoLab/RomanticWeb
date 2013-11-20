@@ -11,16 +11,14 @@ namespace RomanticWeb.Ontologies
         #endregion
 
         #region Constructors
-
         internal CompoundOntologyProvider(params IOntologyProvider[] ontologyProviders)
         {
-            _ontologyProviders = new List<IOntologyProvider>(ontologyProviders);
+            _ontologyProviders=new List<IOntologyProvider>(ontologyProviders);
         }
 
         internal CompoundOntologyProvider(IEnumerable<IOntologyProvider> ontologyProviders):this(ontologyProviders.ToArray())
         {
         }
-
         #endregion
 
         #region Properties
@@ -38,7 +36,6 @@ namespace RomanticWeb.Ontologies
         {
             return new IOntologyProvider[0];
         }
-
         #endregion
     }
 }

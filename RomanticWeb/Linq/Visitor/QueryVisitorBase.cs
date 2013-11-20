@@ -10,32 +10,25 @@ namespace RomanticWeb.Linq.Visitor
     {
         #region Properties
         /// <summary>Sets a meta-graph URI.</summary>
-        [AllowNull]
-        public Uri MetaGraphUri { get; set; }
+        public abstract Uri MetaGraphUri { get; set; }
 
         /// <summary>Gets or sets a meta-graph variable name.</summary>
-        [AllowNull]
-        public string MetaGraphVariableName { get; set; }
+        public abstract string MetaGraphVariableName { get; set; }
 
         /// <summary>Gets or sets an entity variable name.</summary>
-        [AllowNull]
-        public string EntityVariableName { get; set; }
+        public abstract string EntityVariableName { get; set; }
 
         /// <summary>Gets or sets a subject variable name.</summary>
-        [AllowNull]
-        public string SubjectVariableName { get; set; }
+        public abstract string SubjectVariableName { get; set; }
 
         /// <summary>Gets or sets a predicate variable name.</summary>
-        [AllowNull]
-        public string PredicateVariableName { get; set; }
+        public abstract string PredicateVariableName { get; set; }
 
         /// <summary>Gets or sets a object variable name.</summary>
-        [AllowNull]
-        public string ObjectVariableName { get; set; }
+        public abstract string ObjectVariableName { get; set; }
 
         /// <summary>Gets or sets a scalar variable name.</summary>
-        [AllowNull]
-        public string ScalarVariableName { get; set; }
+        public abstract string ScalarVariableName { get; set; }
         #endregion
 
         #region Public methods
@@ -87,8 +80,12 @@ namespace RomanticWeb.Linq.Visitor
         /// <param name="literal">Literal to be visited.</param>
         protected abstract void VisitLiteral(Literal literal);
 
+        /// <summary>Visit a list.</summary>
+        /// <param name="list">List to be visited.</param>
+        protected abstract void VisitList(List list);
+
         /// <summary>Visit an alias.</summary>
-        /// <param name="literal">Alias to be visited.</param>
+        /// <param name="alias">Alias to be visited.</param>
         protected abstract void VisitAlias(Alias alias);
 
         /// <summary>Visit a prefix.</summary>

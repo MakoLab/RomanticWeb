@@ -35,6 +35,10 @@ namespace RomanticWeb.Linq.Model
                 switch (_value.GetType().FullName)
                 {
                     default:
+                    case "System.TimeSpan":
+                    case "System.String":
+                        valueString=System.String.Format("\"{0}\"",_value);
+                        break;
                     case "System.Byte":
                     case "System.SByte":
                     case "System.Int16":
@@ -48,16 +52,13 @@ namespace RomanticWeb.Linq.Model
                     case "System.Char":
                         valueString=System.String.Format("'{0}'",_value);
                         break;
-                    case "System.TimeSpan":
-                    case "System.String":
-                        valueString=System.String.Format("\"{0}\"",_value);
-                        break;
                     case "System.Single":
                     case "System.Double":
                     case "System.Decimal":
                     case "System.DateTime":
                         valueString=System.String.Format(CultureInfo.InvariantCulture,"{0}",_value);
                         break;
+                    case "RomanticWeb.Entities.EntityId":
                     case "System.Uri":
                         valueString=System.String.Format("<{0}>",_value);
                         break;

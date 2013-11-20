@@ -12,6 +12,7 @@ namespace RomanticWeb.Linq.Expressions
         private System.Linq.Expressions.MemberExpression _expression;
         private Remotion.Linq.Clauses.FromClauseBase _target;
         private IPropertyMapping _propertyMapping;
+        private string _name;
         #endregion
 
         #region Constructors
@@ -19,16 +20,32 @@ namespace RomanticWeb.Linq.Expressions
         /// <param name="expression">Base member expression.</param>
         /// <param name="propertyMapping">Ontology property mapping.</param>
         /// <param name="target">Target of the invocation.</param>
-        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression,IPropertyMapping propertyMapping,Remotion.Linq.Clauses.FromClauseBase target):base()
+        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression,IPropertyMapping propertyMapping,Remotion.Linq.Clauses.FromClauseBase target):
+            this(expression,propertyMapping,target,expression.Member.Name)
+        {
+        }
+
+        /// <summary>Default constructor with base <see cref="System.Linq.Expressions.MemberExpression" />, <see cref="IPropertyMapping" /> and <see cref="Remotion.Linq.Clauses.FromClauseBase" />.</summary>
+        /// <param name="expression">Base member expression.</param>
+        /// <param name="propertyMapping">Ontology property mapping.</param>
+        /// <param name="target">Target of the invocation.</param>
+        /// <param name="name">Name of the element in the property.</param>
+        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression,IPropertyMapping propertyMapping,Remotion.Linq.Clauses.FromClauseBase target,string name):base()
         {
             if (!(expression.Member is PropertyInfo))
             {
                 throw new ArgumentOutOfRangeException("expression");
             }
 
+            if (name.Length==0)
+            {
+                throw new ArgumentOutOfRangeException("name");
+            }
+
             _expression=expression;
             _propertyMapping=propertyMapping;
             _target=target;
+            _name=name;
         }
         #endregion
 
@@ -53,6 +70,9 @@ namespace RomanticWeb.Linq.Expressions
 
         /// <summary>Gets the target of the invocation.</summary>
         public Remotion.Linq.Clauses.FromClauseBase Target { get { return _target; } }
+
+        /// <summary>Gets a name of the element in the property.</summary>
+        public string Name { get { return _name; } }
         #endregion
     }
 }

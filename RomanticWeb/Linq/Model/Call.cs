@@ -209,16 +209,26 @@ namespace RomanticWeb.Linq.Model
         public override string ToString()
         {
             string functionName=_member.ToString().ToUpper();
-            bool useBrackets=true;
+            string openingBracket="(";
+            string closingBracket=")";
+            string targetAccessor=System.String.Empty;
+            string separator=System.String.Empty;
+            IEnumerable<IExpression> arguments=_arguments;
+            IExpression target=null;
             switch (_member)
             {
                 case MethodNames.Any:
                     functionName="EXISTS";
-                    useBrackets=false;
+                    openingBracket=closingBracket=" ";
+                    break;
+                case MethodNames.In:
+                    target=(_arguments.Count>0?_arguments.First():null);
+                    separator=targetAccessor=" ";
+                    arguments=(_arguments.Count>1?_arguments.Skip(1):new IExpression[0]);
                     break;
             }
 
-            return System.String.Format("{0}{2}{1}{3}",functionName,System.String.Join(",",_arguments),(useBrackets?"(":" "),(useBrackets?")":" "));
+            return System.String.Format("{0}{1}{2}{3}{4}{5}{6}",target,targetAccessor,functionName,separator,openingBracket,System.String.Join(",",arguments),closingBracket);
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>

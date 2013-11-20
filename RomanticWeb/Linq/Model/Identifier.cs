@@ -7,6 +7,8 @@ namespace RomanticWeb.Linq.Model
     public class Identifier:QueryComponent,IExpression,ISelectableQueryComponent
     {
         #region Fields
+        /// <summary>Gets a meta-identiefier that refers to current context's subject.</summary>
+        public static readonly Identifier Current=new Identifier("?s");
         private string _name;
         #endregion
 

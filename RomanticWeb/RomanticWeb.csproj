@@ -93,8 +93,11 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="Linq\Model\List.cs" />
+    <Compile Include="Linq\Model\Navigators\ListNavigator.cs" />
+    <Compile Include="Linq\NonEntityQueryModelVisitor.cs" />
     <Compile Include="Linq\Expressions\EntityIdentifierExpression.cs" />
-    <Compile Include="Linq\Expressions\EntityMemberExpression.cs" />
+    <Compile Include="Linq\Expressions\EntityPropertyExpression.cs" />
     <Compile Include="Linq\Expressions\FromPropertyClause.cs" />
     <Compile Include="Linq\Model\Alias.cs" />
     <Compile Include="Linq\Model\Navigators\AliasNavigator.cs" />
@@ -114,7 +117,7 @@
     <Compile Include="Linq\Model\Navigators\QueryComponentNavigatorBase.cs" />
     <Compile Include="Linq\Model\Navigators\UnaryOperatorNavigator.cs" />
     <Compile Include="Linq\Model\Prefix.cs" />
-    <Compile Include="Linq\Model\Navigators\ICompoundQueryComponent.cs" />
+    <Compile Include="Linq\Model\Navigators\IQueryComponentNavigator.cs" />
     <Compile Include="Linq\EntityQueryVisitor.cs" />
     <Compile Include="Linq\Model\Call.cs" />
     <Compile Include="Linq\Model\BinaryOperator.cs" />
@@ -150,9 +153,6 @@
     <Compile Include="IO\IContentTypeResolver.cs" />
     <Compile Include="IEntitySource.cs" />
     <Compile Include="Converters\INodeConverter.cs" />
-    <None Include="Linq\EntityQueryModelVisitor.old" />
-    <None Include="Linq\EntityQueryProvider.old" />
-    <None Include="Linq\EntityQueryVisitor.old" />
     <Compile Include="Linq\ExceptionHelper.cs" />
     <Compile Include="Mapping\AttributeMappingsRepository.cs" />
     <Compile Include="Mapping\MappingContext.cs" />
@@ -172,8 +172,6 @@
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\DefaultGraphSelector.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
-    <None Include="Linq\EntityQueryExecutor.old" />
-    <None Include="Linq\EntityQueryable.old" />
     <Compile Include="Mapping\Attributes\MappingAttribute.cs" />
     <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
     <Compile Include="Mapping\Attributes\ClassAttribute.cs" />
@@ -207,6 +205,7 @@
     <Compile Include="EntityStore.cs" />
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
+    <Compile Include="Vocabularies\Owl.cs" />
     <Compile Include="Vocabularies\Foaf.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Rdfs.cs" />

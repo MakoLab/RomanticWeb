@@ -90,7 +90,7 @@ namespace RomanticWeb.Linq.Model
         public QueryForms QueryForm { get { return _queryForm; } internal set { _queryForm=value; } }
 
         /// <summary>Gets an owning query.</summary>
-        public override Query OwnerQuery
+        internal override Query OwnerQuery
         {
             [return: AllowNull]
             get
@@ -98,7 +98,7 @@ namespace RomanticWeb.Linq.Model
                 return base.OwnerQuery;
             }
 
-            internal set
+            set
             {
                 if (value!=null)
                 {

@@ -76,7 +76,7 @@ namespace RomanticWeb.Linq.Model
         }
 
         /// <summary>Gets an owning query.</summary>
-        internal virtual Query OwnerQuery
+        internal override Query OwnerQuery
         {
             get
             {

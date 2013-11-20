@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
 using VDS.RDF;
 
+
 namespace RomanticWeb.Tests.Linq
 {
-    using RomanticWeb.Mapping;
-    using RomanticWeb.Mapping.Model;
-    using RomanticWeb.Ontologies;
-
     [TestFixture]
     public class SparqlTests
     {
@@ -28,6 +30,7 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IOntologyProvider> _ontologyProviderMock;
         private Mock<IEntityContextFactory> _factory;
         private Mock<IGraphSelectionStrategy> _grapheSelectorMock;
+        private CompositionContainer _container;
 
         public interface IPerson:IEntity
         {
@@ -40,6 +43,7 @@ namespace RomanticWeb.Tests.Linq
         [SetUp]
         public void Setup()
         {
+            _container=new CompositionContainer(new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath()),true);
             _grapheSelectorMock=new Mock<IGraphSelectionStrategy>();
             _grapheSelectorMock.Setup(graphSelector => graphSelector.SelectGraph(It.IsAny<EntityId>())).Returns<EntityId>(entityId => new Uri(entityId.Uri.AbsoluteUri.Replace("magi","data.magi")));
             _store=new TripleStore();
@@ -75,6 +79,7 @@ namespace RomanticWeb.Tests.Linq
                     new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
                     new Property("type")) });
             _factory=new Mock<IEntityContextFactory>();
+            _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => { _container.ComposeParts(component); });
             MappingContext mappingContext=new MappingContext(_ontologyProviderMock.Object,new DefaultGraphSelector());
             _entityContext=new EntityContext(_factory.Object,_mappingsRepositoryMock.Object,mappingContext,new EntityStore(),new TripleStoreAdapter(_store));
         }
@@ -131,13 +136,13 @@ namespace RomanticWeb.Tests.Linq
             IEntity tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
             Assert.That(tomasz,Is.Not.Null);
             Assert.That(tomasz,Is.InstanceOf<Entity>());
-            Assert.That(tomasz.AsDynamic().foaf.givenName,Is.EqualTo("Tomasz"));
-            Assert.That(tomasz.AsDynamic().foaf.familyName,Is.EqualTo("Pluskiewicz"));
+            Assert.That(tomasz.AsDynamic().foaf.first_givenName,Is.EqualTo("Tomasz"));
+            Assert.That(tomasz.AsDynamic().foaf.first_familyName,Is.EqualTo("Pluskiewicz"));
             IEntity gniewoslaw=entities.Where(item => item.Id==(EntityId)"http://magi/people/Gniewoslaw").FirstOrDefault();
             Assert.That(gniewoslaw,Is.Not.Null);
             Assert.That(gniewoslaw,Is.InstanceOf<Entity>());
-            Assert.That(gniewoslaw.AsDynamic().foaf.givenName,Is.EqualTo("Gniewosław"));
-            Assert.That(gniewoslaw.AsDynamic().foaf.familyName,Is.EqualTo("Rzepka"));
+            Assert.That(gniewoslaw.AsDynamic().foaf.first_givenName,Is.EqualTo("Gniewosław"));
+            Assert.That(gniewoslaw.AsDynamic().foaf.first_familyName,Is.EqualTo("Rzepka"));
         }
 
         [Test]

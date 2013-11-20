@@ -70,7 +70,7 @@ namespace RomanticWeb.Entities
 
             LogTo.Debug("Reading property {0} from graph {1}",property.Uri,graph);
 
-            var objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
+            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
             var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
             var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;

@@ -32,7 +32,7 @@ namespace RomanticWeb.Linq.Model
         public IExpression Expression { get { return _expression; } set { _expression=value; } }
 
         /// <summary>Gets an owning query.</summary>
-        internal virtual Query OwnerQuery
+        internal override Query OwnerQuery
         {
             get
             {

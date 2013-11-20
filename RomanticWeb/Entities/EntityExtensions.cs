@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ImpromptuInterface;
 
 namespace RomanticWeb.Entities
@@ -60,7 +61,7 @@ namespace RomanticWeb.Entities
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
-            return entity.AsEntity<ITypedEntity>().Types;
+            return entity.AsEntity<ITypedEntity>().Types.Union(new EntityId[] { new EntityId(RomanticWeb.Vocabularies.Owl.Thing) });
         }
 
         /// <summary>
@@ -81,21 +82,30 @@ namespace RomanticWeb.Entities
         }
 
         // todo: maybe this should be reconsidered
+
+        /// <summary>Gets the entity context associated with that entity.</summary>
+        /// <param name="entity">Source entity</param>
+        /// <returns><see cref="IEntityContext" /> instance or null.</returns>
         public static IEntityContext GetContext(this IEntity entity)
         {
-            entity=UnwrapProxy(entity);
-
-            if (entity is Entity)
+            if (entity!=null)
             {
-                return ((Entity)entity).EntityContext;
+                entity=UnwrapProxy(entity);
+
+                if (entity is Entity)
+                {
+                    return ((Entity)entity).EntityContext;
+                }
+                
+                if (entity is EntityProxy)
+                {
+                    return ((EntityProxy)entity).AsDynamic().EntityContext;
+                }
+
+                return ((dynamic)entity).EntityContext;
             }
 
-            if (entity is EntityProxy)
-            {
-                return ((EntityProxy)entity).AsDynamic().EntityContext;
-            }
-
-            return ((dynamic)entity).EntityContext;
+            return null;
         }
 
         private static IEntity UnwrapProxy(IEntity entity)

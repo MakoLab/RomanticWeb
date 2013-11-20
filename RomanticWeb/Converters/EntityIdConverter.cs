@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using NullGuard;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
@@ -38,7 +39,7 @@ namespace RomanticWeb.Converters
         public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
             return predicate!=null
-                && typeof(TEntityId).IsAssignableFrom(predicate.ReturnType) 
+                && typeof(TEntityId).IsAssignableFrom(predicate.ReturnType.FindItemType()) 
                 && !(objectNode.Id is BlankId);
         }
 

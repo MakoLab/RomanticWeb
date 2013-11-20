@@ -104,7 +104,7 @@ namespace RomanticWeb.Mapping
         }
 
         /// <summary>Searches for entity mappings.</summary>
-        /// <typeparam name="T">Type of entity.</param>
+        /// <typeparam name="T">Type of entity.</typeparam>
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <returns>Entity mapping or null.</returns>
         [return: AllowNull]

@@ -60,6 +60,47 @@ namespace RomanticWeb.Linq.Model.Navigators
             }
         }
 
+        /// <summary>Replaces given component with another component.</summary>
+        /// <param name="component">Component to be replaced.</param>
+        /// <param name="replacement">Component to be put instead.</param>
+        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        {
+            if ((component is QueryElement)&&(replacement is QueryElement))
+            {
+                int indexOf=NavigatedComponent.Elements.IndexOf((QueryElement)component);
+                if (indexOf!=-1)
+                {
+                    NavigatedComponent.Elements.RemoveAt(indexOf);
+                    NavigatedComponent.Elements.Insert(indexOf,(QueryElement)replacement);
+                }
+            }
+            else if ((component is Prefix)&&(replacement is Prefix))
+            {
+                int indexOf=NavigatedComponent.Prefixes.IndexOf((Prefix)component);
+                if (indexOf!=-1)
+                {
+                    NavigatedComponent.Prefixes.RemoveAt(indexOf);
+                    NavigatedComponent.Prefixes.Insert(indexOf,(Prefix)replacement);
+                }
+            }
+            else if ((component is ISelectableQueryComponent)&&(replacement is ISelectableQueryComponent))
+            {
+                int indexOf=NavigatedComponent.Select.IndexOf((ISelectableQueryComponent)component);
+                if (indexOf!=-1)
+                {
+                    NavigatedComponent.Select.RemoveAt(indexOf);
+                    NavigatedComponent.Select.Insert(indexOf,(ISelectableQueryComponent)replacement);
+                }
+            }
+            else if ((component is Identifier)&&(replacement is Identifier))
+            {
+                if (NavigatedComponent.Subject==(Identifier)component)
+                {
+                    NavigatedComponent.Subject=(Identifier)replacement;
+                }
+            }
+        }
+
         /// <summary>Retrieves all child components.</summary>
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()

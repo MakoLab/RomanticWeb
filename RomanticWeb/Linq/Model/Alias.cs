@@ -17,7 +17,7 @@ namespace RomanticWeb.Linq.Model
         #region Constructors
         /// <summary>Base constructor with component and alias passed.</summary>
         /// <param name="component">Component to be aliased.</param>
-        /// <param name="Name">Alias.</param>
+        /// <param name="name">Alias.</param>
         public Alias(IQueryComponent component,Identifier name):base()
         {
             _component=component;

@@ -52,6 +52,24 @@ namespace RomanticWeb.Linq.Model.Navigators
             }
         }
 
+        /// <summary>Replaces given component with another component.</summary>
+        /// <param name="component">Component to be replaced.</param>
+        /// <param name="replacement">Component to be put instead.</param>
+        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        {
+            if ((component is Identifier)&&(replacement is Identifier))
+            {
+                if (NavigatedComponent.Name==(Identifier)component)
+                {
+                    NavigatedComponent.Name=(Identifier)replacement;
+                }
+            }
+            else if (NavigatedComponent.Component==component)
+            {
+                NavigatedComponent.Component=replacement;
+            }
+        }
+
         /// <summary>Retrieves all child components.</summary>
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()

@@ -77,6 +77,11 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <param name="component">Component to be added.</param>
         public abstract void AddComponent(IQueryComponent component);
 
+        /// <summary>Replaces given component with another component.</summary>
+        /// <param name="component">Component to be replaced.</param>
+        /// <param name="replacement">Component to be put instead.</param>
+        public abstract void ReplaceComponent(IQueryComponent component,IQueryComponent replacement);
+
         /// <summary>Retrieves all child components.</summary>
         /// <returns>Enumeration of all child components.</returns>
         public abstract IEnumerable<IQueryComponent> GetComponents();

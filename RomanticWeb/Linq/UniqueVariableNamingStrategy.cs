@@ -43,6 +43,11 @@ namespace RomanticWeb.Linq
                 throw new InvalidOperationException("Cannot create a variable name for empty identifier.");
             }
 
+            if (Char.IsNumber(identifier[identifier.Length-1]))
+            {
+                identifier+='_';
+            }
+
             string result=identifier;
             lock (_lock)
             {

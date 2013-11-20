@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using NullGuard;
 using RomanticWeb.Linq.Model;
@@ -26,32 +28,25 @@ namespace RomanticWeb.Linq.Sparql
         public string CommandText { get { return (_commandText!=null?_commandText.ToString():System.String.Empty); } }
 
         /// <summary>Sets a meta-graph URI.</summary>
-        [AllowNull]
-        public Uri MetaGraphUri { get { return _metaGraphUri; } set { _metaGraphUri=value; } }
+        public override Uri MetaGraphUri { [return: AllowNull] get { return _metaGraphUri; } set { _metaGraphUri=value; } }
 
         /// <summary>Gets or sets a meta-graph variable name.</summary>
-        [AllowNull]
-        public string MetaGraphVariableName { get { return _metaGraphVariableName; } set { _metaGraphVariableName=value; } }
+        public override string MetaGraphVariableName { [return: AllowNull] get { return _metaGraphVariableName; } set { _metaGraphVariableName=value; } }
 
         /// <summary>Gets or sets an entity variable name.</summary>
-        [AllowNull]
-        public string EntityVariableName { get { return _entityVariableName; } set { _entityVariableName=value; } }
+        public override string EntityVariableName { [return: AllowNull] get { return _entityVariableName; } set { _entityVariableName=value; } }
 
         /// <summary>Gets or sets a subject variable name.</summary>
-        [AllowNull]
-        public string SubjectVariableName { get { return _subjectVariableName; } set { _subjectVariableName=value; } }
+        public override string SubjectVariableName { [return: AllowNull] get { return _subjectVariableName; } set { _subjectVariableName=value; } }
 
         /// <summary>Gets or sets a predicate variable name.</summary>
-        [AllowNull]
-        public string PredicateVariableName { get { return _predicateVariableName; } set { _predicateVariableName=value; } }
+        public override string PredicateVariableName { [return: AllowNull] get { return _predicateVariableName; } set { _predicateVariableName=value; } }
 
         /// <summary>Gets or sets a object variable name.</summary>
-        [AllowNull]
-        public string ObjectVariableName { get { return _objectVariableName; } set { _objectVariableName=value; } }
+        public override string ObjectVariableName { [return: AllowNull] get { return _objectVariableName; } set { _objectVariableName=value; } }
 
         /// <summary>Gets or sets a scalar variable name.</summary>
-        [AllowNull]
-        public string ScalarVariableName { get { return _scalarVariableName; } set { _scalarVariableName=value; } }
+        public override string ScalarVariableName { [return: AllowNull] get { return _scalarVariableName; } set { _scalarVariableName=value; } }
         #endregion
 
         #region Public methods
@@ -164,21 +159,36 @@ namespace RomanticWeb.Linq.Sparql
         protected override void VisitCall(Call call)
         {
             string functionName=call.Member.ToString().ToUpper();
-            bool useBrackets=true;
+            string openingBracket="(";
+            string closingBracket=")";
+            string separator=System.String.Empty;
+            string targetAccessor=System.String.Empty;
+            ICollection<IExpression> arguments=call.Arguments;
+            IExpression target=null;
             switch (call.Member)
             {
                 case MethodNames.Any:
                     functionName="EXISTS";
-                    useBrackets=false;
+                    openingBracket=closingBracket=" ";
+                    break;
+                case MethodNames.In:
+                    targetAccessor=separator=" ";
+                    target=(call.Arguments.Count>0?call.Arguments.First():null);
+                    arguments=(call.Arguments.Count>1?call.Arguments.Skip(1).ToList():new List<IExpression>());
                     break;
             }
 
-            _commandText.AppendFormat("{0}{1}",functionName,(useBrackets?"(":" "));
+            if (target!=null)
+            {
+                VisitComponent(target);
+            }
+
+            _commandText.AppendFormat("{0}{1}{2}{3}",targetAccessor,functionName,separator,openingBracket);
             int index=0;
-            foreach (IExpression argument in call.Arguments)
+            foreach (IExpression argument in arguments)
             {
                 VisitComponent(argument);
-                if (index<call.Arguments.Count-1)
+                if (index<arguments.Count-1)
                 {
                     _commandText.Append(",");
                 }
@@ -186,7 +196,7 @@ namespace RomanticWeb.Linq.Sparql
                 index++;
             }
 
-            _commandText.Append((useBrackets?")":" "));
+            _commandText.AppendFormat("{0}",closingBracket);
         }
 
         /// <summary>Visit an unary operator.</summary>
@@ -311,14 +321,29 @@ namespace RomanticWeb.Linq.Sparql
                     valueString=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
                     break;
                 case "System.Uri":
-                    valueString=System.String.Format("<{0}>",literal.Value);
-                    break;
                 case "RomanticWeb.Entities.EntityId":
                     valueString=System.String.Format("<{0}>",literal.Value);
                     break;
             }
 
             _commandText.Append(valueString);
+        }
+
+        /// <summary>Visit a list.</summary>
+        /// <param name="list">List to be visited.</param>
+        protected override void VisitList(List list)
+        {
+            int index=0;
+            foreach (Literal literal in list.Values)
+            {
+                VisitComponent(literal);
+                if (index<list.Values.Count-1)
+                {
+                    _commandText.Append(",");
+                }
+
+                index++;
+            }
         }
 
         /// <summary>Visit an alias.</summary>

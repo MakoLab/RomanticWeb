@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace RomanticWeb.Linq.Model.Navigators
 {
-    /// <summary>Navigates unbound constrain.</summary>
-    internal class UnboundConstrainNavigator:EntityConstrainNavigator
+    /// <summary>Navigates a list.</summary>
+    internal class ListNavigator:QueryComponentNavigatorBase
     {
         #region Constructors
-        /// <summary>Default constructor with nagivated unbound constrain.</summary>
-        /// <param name="unboundConstrain">Nagivated unbound constrain.</param>
-        internal UnboundConstrainNavigator(UnboundConstrain unboundConstrain):base(unboundConstrain)
+        /// <summary>Default constructor with nagivated list.</summary>
+        /// <param name="list">Nagivated list.</param>
+        internal ListNavigator(List list):base(list)
         {
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a navigated component.</summary>
-        public new UnboundConstrain NavigatedComponent { get { return (UnboundConstrain)((IQueryComponentNavigator)this).NavigatedComponent; } }
+        public List NavigatedComponent { get { return (List)((IQueryComponentNavigator)this).NavigatedComponent; } }
         #endregion
 
         #region Public methods
@@ -24,7 +25,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component can be added, otherwise <b>false</b>.</returns>
         public override bool CanAddComponent(IQueryComponent component)
         {
-            return (component is IExpression)&&((NavigatedComponent.Subject==null)||(base.CanAddComponent(component)));
+            return (component is IExpression);
         }
 
         /// <summary>Determines if the given component contains another component as a child.</summary>
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (NavigatedComponent.Subject==component)||(base.ContainsComponent(component));
+            return (component is IExpression?NavigatedComponent.Values.Contains((IExpression)component):false);
         }
 
         /// <summary>Adds component as a child of another component.</summary>
@@ -41,14 +42,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         {
             if (component is IExpression)
             {
-                if (NavigatedComponent.Subject==null)
-                {
-                    NavigatedComponent.Subject=(IExpression)component;
-                }
-                else
-                {
-                    base.AddComponent(component);
-                }
+                NavigatedComponent.Values.Add((IExpression)component);
             }
         }
 
@@ -59,13 +53,11 @@ namespace RomanticWeb.Linq.Model.Navigators
         {
             if ((component is IExpression)&&(replacement is IExpression))
             {
-                if (NavigatedComponent.Subject==(IExpression)component)
+                int indexOf=NavigatedComponent.Values.IndexOf((IExpression)component);
+                if (indexOf!=-1)
                 {
-                    NavigatedComponent.Subject=(IExpression)replacement;
-                }
-                else
-                {
-                    base.ReplaceComponent(component,replacement);
+                    NavigatedComponent.Values.RemoveAt(indexOf);
+                    NavigatedComponent.Values.Insert(indexOf,(IExpression)replacement);
                 }
             }
         }
@@ -74,14 +66,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()
         {
-            List<IQueryComponent> result=new List<IQueryComponent>();
-            if (NavigatedComponent.Subject!=null)
-            {
-                result.Add(NavigatedComponent.Subject);
-            }
-
-            result.AddRange(base.GetComponents());
-            return result.AsReadOnly();
+            return new List<IQueryComponent>(NavigatedComponent.Values).AsReadOnly();
         }
         #endregion
     }

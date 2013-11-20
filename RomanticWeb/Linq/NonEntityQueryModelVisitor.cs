@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Remotion.Linq;
@@ -9,38 +10,34 @@ using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
+using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Linq
 {
-    /// <summary>Converts LINQ query model to SPARQL abstraction.</summary>
-    internal class EntityQueryModelVisitor:QueryModelVisitorBase
+    /// <summary>Converts LINQ query model to SPARQL abstraction, but for LINQ parts that should not create sandalone SPARQL queries.</summary>
+    internal class NonEntityQueryModelVisitor:QueryModelVisitorBase
     {
         #region Fields
-        private readonly IMappingsRepository _mappingsRepository;
         private EntityQueryVisitor _visitor;
-        private Query _query;
-        private EntityAccessor _mainFromComponent;
         private QueryComponent _result;
+        private QueryComponent _from;
+        private IList<QueryComponent> _bodies;
         #endregion
 
         #region Constructors
-        /// <summary>Default constructor with mappings repository passed.</summary>
-        /// <param name="mappingsRepository">Mappings repository to be used to resolve properties.</param>
-        public EntityQueryModelVisitor(IMappingsRepository mappingsRepository):this(new Query(),mappingsRepository)
+        internal NonEntityQueryModelVisitor(EntityQueryVisitor queryVisitor)
         {
-        }
-
-        internal EntityQueryModelVisitor(Query query,IMappingsRepository mappingsRepository)
-        {
-            _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_mappingsRepository=mappingsRepository);
+            _visitor=queryVisitor;
+            _from=null;
+            _bodies=new List<QueryComponent>();
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a SPARQL abstraction model.</summary>
-        public Query Query { get { return _query; } }
+        public Query Query { get { return _visitor.Query; } }
 
         /// <summary>Gets a resulting query.</summary>
         internal QueryComponent Result { get { return _result; } }
@@ -59,22 +56,51 @@ namespace RomanticWeb.Linq
         /// <param name="queryModel">Query model containing given select clause.</param>
         public override void VisitSelectClause(SelectClause selectClause,Remotion.Linq.QueryModel queryModel)
         {
-            QuerySourceReferenceExpression querySource=(QuerySourceReferenceExpression)selectClause.Selector;
-            _visitor.VisitExpression(querySource);
-            _query=(Query)_visitor.RetrieveComponent();
-            _mainFromComponent=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression==querySource.ReferencedQuerySource).First();
-            if (_query.Subject==null)
+            if (queryModel.ResultOperators.Count==0)
             {
-                _query.Subject=_mainFromComponent.About;
-                UnboundConstrain genericConstrain=new UnboundConstrain(new Identifier("s"),new Identifier("p"),new Identifier("o"));
-                _mainFromComponent.Elements.Insert(0,genericConstrain);
-                _query.Select.Add(genericConstrain);
+                throw new InvalidOperationException("Must have an evaluating expression for sub-queries, i.e. 'Count' or 'Contains'.");
             }
 
+            string currentItemNameOverride=_visitor.ItemNameOverride;
+            _visitor.ItemNameOverride=((QuerySourceReferenceExpression)selectClause.Selector).ReferencedQuerySource.ItemName;
             queryModel.MainFromClause.Accept(this,queryModel);
-            _query.Select.Add(_mainFromComponent);
             VisitBodyClauses(queryModel.BodyClauses,queryModel);
             VisitResultOperators(queryModel.ResultOperators,queryModel);
+
+            IQueryComponentNavigator resultNavigator=_result.GetQueryComponentNavigator();
+            if (_from is IExpression)
+            {
+                if (_bodies.Count==0)
+                {
+                    resultNavigator.AddComponent((IExpression)_from);
+                }
+                else
+                {
+                    foreach (QueryComponent queryComponent in _bodies)
+                    {
+                        if (queryComponent is IExpression)
+                        {
+                            IExpression expression=(IExpression)queryComponent;
+                            Identifier currentIdentifier=null;
+                            IQueryComponentNavigator queryComponentNavigator=expression.GetQueryComponentNavigator();
+                            if (queryComponentNavigator!=null)
+                            {
+                                currentIdentifier=(_from is Identifier?(Identifier)_from:
+                                    _visitor.Query.FindAllComponents<Identifier>().Where(item => _visitor.Query.RetrieveIdentifier(item.Name)==_visitor.ItemNameOverride).FirstOrDefault())??_visitor.Query.Subject;
+                                queryComponentNavigator.ReplaceComponent(Identifier.Current,currentIdentifier);
+                            }
+
+                            resultNavigator.AddComponent(new Filter(expression));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException(System.String.Format("Cannot add value of type '{0}' as an method call argument.",_from.GetType().FullName));
+            }
+
+            _visitor.ItemNameOverride=currentItemNameOverride;
         }
 
         /// <summary>Visits a where clause.</summary>
@@ -85,20 +111,9 @@ namespace RomanticWeb.Linq
         {
             _visitor.VisitExpression(whereClause.Predicate);
             QueryComponent queryComponent=_visitor.RetrieveComponent();
-            if (queryComponent is QueryElement)
+            if (queryComponent!=null)
             {
-                if ((!(queryComponent is EntityConstrain))&&(!_query.Elements.Contains((QueryElement)queryComponent)))
-                {
-                    _query.Elements.Add((QueryElement)queryComponent);
-                }
-            }
-            else if (!_mainFromComponent.Elements.Contains(queryComponent))
-            {
-                Filter filter=new Filter((IExpression)queryComponent);
-                if (!_mainFromComponent.Elements.Contains(filter))
-                {
-                    _mainFromComponent.Elements.Add(filter);
-                }
+                _bodies.Add(queryComponent);
             }
 
             base.VisitWhereClause(whereClause,queryModel,index);
@@ -109,29 +124,8 @@ namespace RomanticWeb.Linq
         /// <param name="queryModel">Query model containing given from clause.</param>
         public override void VisitMainFromClause(MainFromClause fromClause,Remotion.Linq.QueryModel queryModel)
         {
-            if ((typeof(IQueryable).IsAssignableFrom(fromClause.FromExpression.Type))&&
-                (fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&
-                (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
-            {
-                IClassMapping classMapping=_mappingsRepository.FindClassMapping(fromClause.FromExpression.Type.GetGenericArguments()[0]);
-                if (classMapping!=null)
-                {
-                    EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
-                    if (!_mainFromComponent.Elements.Contains(constrain))
-                    {
-                        _mainFromComponent.Elements.Add(constrain);
-                    }
-                }
-            }
-            else if (fromClause.FromExpression is System.Linq.Expressions.MemberExpression)
-            {
-                System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)fromClause.FromExpression;
-                if (memberExpression.Member is PropertyInfo)
-                {
-                    _visitor.VisitExpression(memberExpression.Expression);
-                }
-            }
-
+            _visitor.VisitExpression(fromClause.FromExpression);
+            _from=_visitor.RetrieveComponent();
             base.VisitMainFromClause(fromClause,queryModel);
         }
 
@@ -169,49 +163,19 @@ namespace RomanticWeb.Linq
 
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            if (_query.IsSubQuery)
-            {
-                Call call=new Call(MethodNames.Any);
-                call.Arguments.Add(_query);
-                _result=call;
-            }
-            else
-            {
-                _query.QueryForm=QueryForms.Ask;
-            }
+            _result=_visitor.Query.Elements.Where(item => item is EntityAccessor).First();
         }
 
         private void VisitContainsResultOperator(ContainsResultOperator containsResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            if (_query.IsSubQuery)
-            {
-                Call call=new Call(MethodNames.Any);
-                call.Arguments.Add(_query);
-                _result=call;
-            }
-            else
-            {
-                throw new NotSupportedException(System.String.Format("Cannot perform 'Contains' operation on top level query."));
-            }
+            Call call=new Call(MethodNames.In);
+            call.Arguments.Add(Identifier.Current);
+            _result=call;
         }
 
         private void VisitCountResultOperator(CountResultOperator countResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            Call distinct=new Call(MethodNames.Distinct);
-            distinct.Arguments.Add((_query.IsSubQuery?_mainFromComponent.About:_query.Select.Where(item => item is UnboundConstrain).Select(item => ((UnboundConstrain)item).Subject).First()));
-            Call count=new Call(MethodNames.Count);
-            count.Arguments.Add(distinct);
-            _query.Select.Clear();
-            Alias alias=new Alias(count,new Identifier(_query.CreateVariableName(_query.RetrieveIdentifier(_mainFromComponent.About.Name)+"Count")));
-            _query.Select.Add(alias);
-        }
-
-        private void VisitFirstResultOperator(FirstResultOperator countResultOperator,Remotion.Linq.QueryModel queryModel,int index)
-        {
-        }
-
-        private void VisitSingleResultOperator(SingleResultOperator countResultOperator,Remotion.Linq.QueryModel queryModel,int index)
-        {
+            _result=new Call(MethodNames.Count);
         }
         #endregion
     }

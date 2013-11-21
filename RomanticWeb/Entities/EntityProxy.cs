@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
+using ImpromptuInterface;
 using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities.ResultAggregations;
@@ -81,7 +84,19 @@ namespace RomanticWeb.Entities
             aggregation=aggregation??FallbackProcessing;
 
             LogTo.Debug("Performing operation {0} on result nodes",operation);
-            result=aggregation.Process(objectsForPredicate);
+            var aggregatedResult=aggregation.Process(objectsForPredicate);
+
+            var enumerable=aggregatedResult as ICollection;
+            if (enumerable!=null)
+            {
+                var observableCollection=new ObservableCollection<object>(enumerable.Cast<object>());
+                observableCollection.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
+                result=observableCollection;
+            }
+            else
+            {
+                result=aggregatedResult;
+            }
 
             return true;
         }

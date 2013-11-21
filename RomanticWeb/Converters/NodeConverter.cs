@@ -60,8 +60,8 @@ namespace RomanticWeb.Converters
 
             if (typeof(IEnumerable<IEntity>).IsAssignableFrom(property.ReturnType))
             {
-                var convertedEntities=from entity in (IEnumerable<IEntity>)value 
-                                      select ConvertOneBack(entity);
+                var convertedEntities = from entity in ((IEnumerable)value).Cast<IEntity>()
+                                        select ConvertOneBack(entity);
                 convertedNodes.AddRange(convertedEntities);
             }
 

@@ -401,6 +401,38 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(name,Is.Null);
         }
 
+        [Test]
+        public void Given_new_entity_should_allow_adding_entity_to_collection()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            var tomasz = EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
+            var gniewo = EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
+
+            // when
+            tomasz.Friends.Add(gniewo);
+
+            // then
+            tomasz.Friends.Should().Contain(gniewo);
+        }
+
+        [Test]
+        public void Mapped_collection_of_entites_should_allow_removing_members()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("LooseCollections.trig");
+
+            // when
+            Entity.Friends.Remove(EntityContext.Load<IPerson>(new EntityId("http://magi/people/Monika")));
+            var friends = Entity.Friends;
+
+            // then
+            Assert.That(friends, Has.Count.EqualTo(4));
+            friends.Select(friend => friend.FirstName)
+                   .Should().Contain(new[] { "Karol", "Gniewko", "Dominik", "Przemek" });
+        }
+
         protected override IMappingsRepository SetupMappings()
         {
             return new TestMappingsRepository();

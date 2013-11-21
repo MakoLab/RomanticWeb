@@ -3,6 +3,7 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// Defines a contract for entities
     /// </summary>
+    /// todo: add a generic IEntity os that the Id's type can be changed?
     public interface IEntity
     {
         /// <summary>Gets the entity's identifier</summary>

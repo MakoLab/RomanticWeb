@@ -67,21 +67,27 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
-        public void Test_correctness_of_query_selecting_person_that_has_a_friend_that_has_any_friend_with_name_starting_with_Ka()
+        public void Test_correctness_of_query_selecting_person_that_has_a_friend_with_specific_name_alternative()
         {
             Test_correctness_of_query(3);
         }
 
         [Test]
+        public void Test_correctness_of_query_selecting_person_that_has_a_friend_that_has_any_friend_with_name_starting_with_Ka()
+        {
+            Test_correctness_of_query(4);
+        }
+
+        [Test]
         public void Test_correctness_of_query_asking_for_any_person()
         {
-            Test_correctness_of_query_asking(4);
+            Test_correctness_of_query_asking(5);
         }
 
         [Test]
         public void Test_correctness_of_query_asking_for_count_of_persons()
         {
-            Test_correctness_of_scalar_query(5);
+            Test_correctness_of_scalar_query(6);
         }
 
         private void Test_correctness_of_query_asking(int queryIndex)
@@ -223,6 +229,34 @@ namespace RomanticWeb.Tests.Linq
                         "} "+
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
+                        "} "+
+                    "}",
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"
+                ),
+                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+                    from person in _persons from friend in person.Friends where friend.FirstName=="Karol" select person,
+                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
+                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
+                    "WHERE { "+
+                        "GRAPH ?Gperson0 { "+
+                            "?s ?p ?o . "+
+                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
+                            "?person0 <http://xmlns.com/foaf/0.1/friends> ?friend0 . "+
+                            "FILTER (?firstName0=\"Karol\"^^xsd:string) " +
+                        "} "+
+                        "GRAPH <http://app.magi/graphs> { "+
+                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
+                        "} "+
+                        "GRAPH ?Gfriend0 { "+
+                            "?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
+                            "?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
+                        "} "+
+                        "GRAPH <http://app.magi/graphs> { "+
+                            "?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . "+
                         "} "+
                     "}",
                     "Gperson0",

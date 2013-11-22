@@ -9,6 +9,7 @@ using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
+using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 
@@ -23,6 +24,7 @@ namespace RomanticWeb.Linq
         private Query _query;
         private EntityAccessor _mainFromComponent;
         private QueryComponent _result;
+        private Identifier _subject;
         #endregion
 
         #region Constructors
@@ -35,6 +37,7 @@ namespace RomanticWeb.Linq
         internal EntityQueryModelVisitor(Query query,IMappingsRepository mappingsRepository)
         {
             _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_mappingsRepository=mappingsRepository);
+            _subject=null;
         }
         #endregion
 
@@ -71,6 +74,8 @@ namespace RomanticWeb.Linq
                 _query.Select.Add(genericConstrain);
             }
 
+            _subject=_query.Subject;
+
             queryModel.MainFromClause.Accept(this,queryModel);
             _query.Select.Add(_mainFromComponent);
             VisitBodyClauses(queryModel.BodyClauses,queryModel);
@@ -85,6 +90,12 @@ namespace RomanticWeb.Linq
         {
             _visitor.VisitExpression(whereClause.Predicate);
             QueryComponent queryComponent=_visitor.RetrieveComponent();
+            IQueryComponentNavigator queryComponentNavigator=queryComponent.GetQueryComponentNavigator();
+            if (queryComponentNavigator!=null)
+            {
+                queryComponentNavigator.ReplaceComponent(Identifier.Current,_subject);
+            }
+
             if (queryComponent is QueryElement)
             {
                 if ((!(queryComponent is EntityConstrain))&&(!_query.Elements.Contains((QueryElement)queryComponent)))
@@ -104,26 +115,41 @@ namespace RomanticWeb.Linq
             base.VisitWhereClause(whereClause,queryModel,index);
         }
 
+        /// <summary>Visits an additional from clause.</summary>
+        /// <param name="fromClause">From clause to be visited.</param>
+        /// <param name="queryModel">Query model containing given from clause.</param>
+        /// <param name="index">Index of the where clause in the query model.</param>
+        public override void VisitAdditionalFromClause(AdditionalFromClause fromClause,QueryModel queryModel,int index)
+        {
+            VisitQuerableFromClause(fromClause,queryModel,index);
+            EntityAccessor entityAccessor=_visitor.GetEntityAccessor(fromClause);
+            if (entityAccessor!=null)
+            {
+                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+                {
+                    _query.Elements.Add(entityAccessor);
+                }
+            }
+            else
+            {
+                NonEntityQueryModelVisitor modelVisitor=new NonEntityQueryModelVisitor(_visitor);
+                modelVisitor.VisitAdditionalFromClause(fromClause,queryModel,index);
+                if (modelVisitor.From is Identifier)
+                {
+                    _subject=(Identifier)modelVisitor.From;
+                }
+            }
+
+            base.VisitAdditionalFromClause(fromClause,queryModel,index);
+        }
+
         /// <summary>Visits a main from clause.</summary>
         /// <param name="fromClause">Main from clause to be visited.</param>
         /// <param name="queryModel">Query model containing given from clause.</param>
         public override void VisitMainFromClause(MainFromClause fromClause,Remotion.Linq.QueryModel queryModel)
         {
-            if ((typeof(IQueryable).IsAssignableFrom(fromClause.FromExpression.Type))&&
-                (fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&
-                (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
-            {
-                IClassMapping classMapping=_mappingsRepository.FindClassMapping(fromClause.FromExpression.Type.GetGenericArguments()[0]);
-                if (classMapping!=null)
-                {
-                    EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
-                    if (!_mainFromComponent.Elements.Contains(constrain))
-                    {
-                        _mainFromComponent.Elements.Add(constrain);
-                    }
-                }
-            }
-            else if (fromClause.FromExpression is System.Linq.Expressions.MemberExpression)
+            VisitQuerableFromClause(fromClause,queryModel,-1);
+            if (fromClause.FromExpression is System.Linq.Expressions.MemberExpression)
             {
                 System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)fromClause.FromExpression;
                 if (memberExpression.Member is PropertyInfo)
@@ -164,6 +190,28 @@ namespace RomanticWeb.Linq
             foreach (var indexValuePair in bodyClauses.AsChangeResistantEnumerableWithIndex())
             {
                 indexValuePair.Value.Accept(this,queryModel,indexValuePair.Index);
+            }
+        }
+
+        /// <summary>Visits a from clause.</summary>
+        /// <param name="fromClause">From clause to be visited.</param>
+        /// <param name="queryModel">Query model containing given from clause.</param>
+        /// <param name="index">Index of the where clause in the query model. In case of the main from clause this value is -1.</param>
+        protected virtual void VisitQuerableFromClause(FromClauseBase fromClause,Remotion.Linq.QueryModel queryModel,int index)
+        {
+            if ((typeof(IQueryable).IsAssignableFrom(fromClause.FromExpression.Type))&&
+                (fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&
+                (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
+            {
+                IClassMapping classMapping=_mappingsRepository.FindClassMapping(fromClause.FromExpression.Type.GetGenericArguments()[0]);
+                if (classMapping!=null)
+                {
+                    EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                    if (!_mainFromComponent.Elements.Contains(constrain))
+                    {
+                        _mainFromComponent.Elements.Add(constrain);
+                    }
+                }
             }
         }
 

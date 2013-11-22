@@ -8,7 +8,7 @@ namespace RomanticWeb.Linq.Model
     {
         #region Fields
         /// <summary>Gets a meta-identiefier that refers to current context's subject.</summary>
-        public static readonly Identifier Current=new Identifier("?s");
+        public static readonly Identifier Current=new Identifier("s");
         private string _name;
         #endregion
 

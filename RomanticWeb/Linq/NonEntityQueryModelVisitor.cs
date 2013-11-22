@@ -41,6 +41,9 @@ namespace RomanticWeb.Linq
 
         /// <summary>Gets a resulting query.</summary>
         internal QueryComponent Result { get { return _result; } }
+
+        /// <summary>Gets a from component.</summary>
+        internal QueryComponent From { get { return _from; } }
         #endregion
 
         #region Public methods
@@ -127,6 +130,17 @@ namespace RomanticWeb.Linq
             _visitor.VisitExpression(fromClause.FromExpression);
             _from=_visitor.RetrieveComponent();
             base.VisitMainFromClause(fromClause,queryModel);
+        }
+
+        /// <summary>Visits an additional from clause.</summary>
+        /// <param name="fromClause">From clause to be visited.</param>
+        /// <param name="queryModel">Query model containing given from clause.</param>
+        /// <param name="index">Index of the where clause in the query model.</param>
+        public override void VisitAdditionalFromClause(AdditionalFromClause fromClause,QueryModel queryModel,int index)
+        {
+            _visitor.VisitExpression(fromClause.FromExpression);
+            _from=_visitor.RetrieveComponent();
+            base.VisitAdditionalFromClause(fromClause,queryModel,index);
         }
 
         /// <summary>Visits a result operator.</summary>

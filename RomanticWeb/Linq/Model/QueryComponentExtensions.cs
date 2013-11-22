@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NullGuard;
+using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model.Navigators;
+using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Linq.Model
 {
@@ -79,6 +83,42 @@ namespace RomanticWeb.Linq.Model
             if (queryComponentNavigatorAttribute!=null)
             {
                 result=(IQueryComponentNavigator)queryComponentNavigatorAttribute.Constructor.Invoke(new object[] { queryComponent });
+            }
+
+            return result;
+        }
+
+        internal static EntityAccessor GetEntityAccessor(this EntityQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        {
+            EntityAccessor entityAccessor=null;
+            if (typeof(IEntity).IsAssignableFrom(sourceExpression.ItemType))
+            {
+                entityAccessor=visitor.Query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression.FromExpression==sourceExpression.FromExpression).FirstOrDefault();
+                if (entityAccessor==null)
+                {
+                    entityAccessor=new EntityAccessor(new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
+                    EntityConstrain constrain=visitor.CreateTypeConstrain(sourceExpression);
+                    if ((constrain!=null)&&(!entityAccessor.Elements.Contains(constrain)))
+                    {
+                        entityAccessor.Elements.Add(constrain);
+                    }
+                }
+            }
+
+            return entityAccessor;
+        }
+
+        internal static EntityConstrain CreateTypeConstrain(this EntityQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        {
+            EntityConstrain result=null;
+            Type entityType=sourceExpression.ItemType.FindEntityType();
+            if ((entityType!=null)&&(entityType!=typeof(IEntity)))
+            {
+                IClassMapping classMapping=visitor.MappingsRepository.FindClassMapping(entityType);
+                if (classMapping!=null)
+                {
+                    result=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                }
             }
 
             return result;

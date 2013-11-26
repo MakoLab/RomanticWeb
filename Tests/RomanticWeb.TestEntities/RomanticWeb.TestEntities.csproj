@@ -51,8 +51,10 @@
     <Compile Include="Animals\IHerbivore.cs" />
     <Compile Include="Animals\IOmnivore.cs" />
     <Compile Include="Animals\IPlant.cs" />
+    <Compile Include="Animals\IUntypedAnimal.cs" />
     <Compile Include="Animals\OmnivoreMap.cs" />
     <Compile Include="Animals\PlantMap.cs" />
+    <Compile Include="Animals\UntypedAnimalMap.cs" />
     <Compile Include="IPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

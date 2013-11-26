@@ -2,11 +2,10 @@
 
 namespace RomanticWeb.TestEntities.Animals
 {
-    public class AnimalMap : EntityMap<IAnimal>
+    public class UntypedAnimalMap : EntityMap<IUntypedAnimal>
     {
-        public AnimalMap()
+        public UntypedAnimalMap()
         {
-            Class.Is("life", "Animal");
             Property(p => p.Name).Term.Is("life", "name");
         }
     }

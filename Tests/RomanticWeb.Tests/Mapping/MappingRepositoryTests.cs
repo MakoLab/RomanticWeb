@@ -53,6 +53,17 @@ namespace RomanticWeb.Tests.Mapping
         }
 
         [Test]
+        public void Type_can_be_mapped_without_rdf_type()
+        {
+            // given
+            var mapping = _mappingsRepository.MappingFor<IUntypedAnimal>();
+
+            // then
+            Assert.That(mapping.Class,Is.Null);
+            Assert.That(mapping.PropertyFor("Name"), Is.Not.Null);
+        }
+
+        [Test]
         public void Mapped_type_should_contain_inherited_properties()
         {
             // given

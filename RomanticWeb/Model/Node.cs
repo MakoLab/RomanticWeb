@@ -163,10 +163,15 @@ namespace RomanticWeb.Model
         /// </summary>
         public static Node ForLiteral(string literal, string language)
         {
+            if (string.IsNullOrWhiteSpace(language))
+            {
+                language=null;
+            }
+
             return new Node(literal,language,null);
         }
 
-        /// <summary>
+	    /// <summary>
         /// Factory method for creating blank nodes
         /// </summary>
 		public static Node ForBlank(string blankNodeId, [AllowNull] Uri graphUri)

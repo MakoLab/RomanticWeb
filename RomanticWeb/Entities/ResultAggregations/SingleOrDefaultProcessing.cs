@@ -8,6 +8,7 @@ namespace RomanticWeb.Entities.ResultAggregations
     {
         private readonly ResultFlatteningProcessing _flatten=new ResultFlatteningProcessing();
 
+        [Anotar.NLog.LogToErrorOnException]
         public object Process(IEnumerable<object> objects)
         {
             var objectList = objects as IList<object> ?? objects.ToList();

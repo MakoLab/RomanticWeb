@@ -26,11 +26,13 @@ namespace RomanticWeb.Mapping
         /// </summary>
         protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
-            return from type in Assembly.GetTypes() 
-                   from mapping in type.GetCustomAttributes(typeof(ClassAttribute),true).Cast<ClassAttribute>() 
-                   let classMapping = mapping.GetMapping(mappingContext) 
+            return from type in Assembly.GetTypes()
+                   let entityAttributes = type.GetCustomAttributes(typeof(EntityAttribute), true)
+                   let classAttributes=type.GetCustomAttributes(typeof(ClassAttribute),true)
+                   where entityAttributes.Any() || classAttributes.Any()
+                   let singleOrDefault = classAttributes.Cast<ClassAttribute>().SingleOrDefault()
+                   let classMapping = singleOrDefault != null ? singleOrDefault.GetMapping(mappingContext) :null
                    let propertyMappings = BuildPropertyMappings(type,mappingContext).ToList() 
-                   where (classMapping!=null)&&(propertyMappings.Count>0) 
                    select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=classMapping,Properties=propertyMappings });
         }
 

@@ -139,6 +139,7 @@
     <Compile Include="Linq\Sparql\GenericSparqlQueryVisitor.cs" />
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
     <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
+    <Compile Include="Mapping\Attributes\EntityAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Extensions.cs" />
     <Compile Include="Mapping\FluentMappingsRepository.cs" />

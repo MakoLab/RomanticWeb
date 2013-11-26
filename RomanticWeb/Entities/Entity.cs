@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using ImpromptuInterface.Dynamic;
 using NullGuard;
 
 namespace RomanticWeb.Entities
@@ -11,7 +12,7 @@ namespace RomanticWeb.Entities
     /// <summary>An RDF entity, which can be used to dynamically access RDF triples.</summary>
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("Entity <{Id}>")]
-    public class Entity:DynamicObject,IEntity
+    public class Entity:ImpromptuDictionary,IEntity
     {
         #region Fields
         private readonly EntityContext _entityContext;

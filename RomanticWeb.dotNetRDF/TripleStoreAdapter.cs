@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Resourcer;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
-using RomanticWeb.Linq.Visitor;
 using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Builder;
 using VDS.RDF.Query.Datasets;
+using VDS.RDF.Update;
 
 namespace RomanticWeb.DotNetRDF
 {
@@ -119,19 +120,18 @@ namespace RomanticWeb.DotNetRDF
             {
                 var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Retract(
-                    triple.Subject.UnWrapNode(graph),
-                    triple.Predicate.UnWrapNode(graph),
-                    triple.Object.UnWrapNode(graph));
+                    triple.Subject.UnWrapNode(graph),triple.Predicate.UnWrapNode(graph),triple.Object.UnWrapNode(graph));
             }
 
             foreach (var triple in datasetChanges.TriplesAdded)
             {
                 var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Assert(
-                    triple.Subject.UnWrapNode(graph),
-                    triple.Predicate.UnWrapNode(graph),
-                    triple.Object.UnWrapNode(graph));
+                    triple.Subject.UnWrapNode(graph),triple.Predicate.UnWrapNode(graph),triple.Object.UnWrapNode(graph));
             }
+
+            // todo: more flexible delete
+            ExecuteDelete(new SparqlUpdateCommandSet(GetDeleteCommands(datasetChanges.DeletedEntites)));
 
             // todo: find a way to allow users to extend the meta graph information
             var metaGraph=GetGraph(MetaGraphUri);
@@ -144,6 +144,23 @@ namespace RomanticWeb.DotNetRDF
                     metaGraph.CreateUriNode(metaGraphChange.Item2.Uri));
             }
         }
+
+        private IEnumerable<SparqlUpdateCommand> GetDeleteCommands(IEnumerable<EntityId> entitiesToDelete)
+        {
+            // todo: implement DELETE in Fluent SPARQL
+            var parser=new SparqlUpdateParser();
+            foreach (var entityId in entitiesToDelete)
+            {
+                var delete =new SparqlParameterizedString(Resource.AsString("Queries.DeleteEntity.ru"));
+                delete.SetUri("entityId",entityId.Uri);
+                delete.SetUri("metaGraph",MetaGraphUri);
+
+                foreach (var command in parser.ParseFromString(delete).Commands)
+                {
+                    yield return command;
+                }
+            }
+        } 
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)
         {
@@ -191,6 +208,17 @@ namespace RomanticWeb.DotNetRDF
             }
 
             return _store[graphUri];
+        }
+
+        private void ExecuteDelete(SparqlUpdateCommandSet deleteCommands)
+        {
+            var store=_store as IUpdateableTripleStore;
+            if (store==null)
+            {
+                throw new InvalidOperationException(string.Format("Store doesn't implement {0}",typeof(IUpdateableTripleStore)));
+            }
+
+            store.ExecuteUpdate(deleteCommands);
         }
 
         private bool ExecuteAsk(SparqlQuery query)

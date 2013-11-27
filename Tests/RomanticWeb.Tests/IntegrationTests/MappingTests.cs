@@ -299,7 +299,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
-            var someEntity=EntityContext.Create(new EntityId("urn:possibly:external"));
+            var someEntity=EntityContext.Create<IEntity>(new EntityId("urn:possibly:external"));
             Entity.ForceInitialize();
             var quadsInitially=EntityStore.Quads.Count();
 

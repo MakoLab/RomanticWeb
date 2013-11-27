@@ -10,6 +10,7 @@ namespace RomanticWeb
 {
     internal class EntityStore:IEntityStore
     {
+        private readonly ISet<EntityId> _deletedEntites; 
         private readonly ISet<EntityQuad> _entityQuads;
         private readonly ISet<EntityQuad> _removedTriples;
         private readonly ISet<EntityQuad> _addedTriples;
@@ -21,6 +22,7 @@ namespace RomanticWeb
             _removedTriples=new HashSet<EntityQuad>();
             _addedTriples=new HashSet<EntityQuad>();
             _metaGraphChanges=new HashSet<Tuple<Uri,EntityId>>();
+            _deletedEntites=new HashSet<EntityId>();
         }
 
         public IEnumerable<EntityQuad> Quads
@@ -35,7 +37,7 @@ namespace RomanticWeb
         {
             get
             {
-                return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges);
+                return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges, _deletedEntites);
             }
         }
 
@@ -100,6 +102,11 @@ namespace RomanticWeb
                 _addedTriples.Add(triple);
                 _metaGraphChanges.Add(Tuple.Create(graphUri,entityId));
             }
+        }
+
+        public void Delete(EntityId entityId)
+        {
+            _deletedEntites.Add(entityId);
         }
     }
 }

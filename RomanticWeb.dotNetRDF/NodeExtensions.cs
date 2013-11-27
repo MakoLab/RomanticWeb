@@ -4,7 +4,7 @@ using VDS.RDF;
 
 namespace RomanticWeb.DotNetRDF
 {
-	internal static class NodeExtensions
+	public static class NodeExtensions
 	{
 	    private static readonly INodeFactory NodeFactory=new NodeFactory();
 

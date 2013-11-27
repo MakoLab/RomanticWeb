@@ -201,7 +201,7 @@ namespace RomanticWeb.Tests
             // given
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            var entity = _entityContext.Create(new EntityId("http://magi/people/Tomasz"));
+            var entity = _entityContext.Create<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
             var page = entity.AsDynamic().foaf.homePage;
@@ -247,6 +247,20 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(store=>store.ApplyChanges(aChangeset), Times.Once);
+        }
+
+        [Test]
+        public void Deleting_entity_should_mark_for_deletion_in_changeset()
+        {
+            // given
+            var entityId = new EntityId("urn:some:entityid");
+            _entityStore.Setup(store => store.Delete(entityId));
+
+            // when
+            _entityContext.Delete(entityId);
+
+            // then
+            _entityStore.Verify(store => store.Delete(entityId), Times.Once);
         }
 
         private static IPropertyMapping GetMapping(string propertyName)

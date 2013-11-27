@@ -147,6 +147,11 @@ namespace RomanticWeb
             _entitySource.ApplyChanges(changes);
         }
 
+        public void Delete(EntityId entityId)
+        {
+            _entityStore.Delete(entityId);
+        }
+
         void IDisposable.Dispose()
         {
             // todo: implement

@@ -173,5 +173,13 @@ namespace RomanticWeb.Vocabularies
                 return new Uri(BaseUri + "duration");
             }
         }
+
+        public static Uri AnyUri
+        {
+            get
+            {
+                return new Uri(BaseUri + "anyUri");
+            }
+        }
     }
 }

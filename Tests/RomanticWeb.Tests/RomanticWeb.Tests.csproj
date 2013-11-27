@@ -105,6 +105,7 @@
     <Compile Include="Converters\DurationConverterTests.cs" />
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="dotNetRDF\TripleStoreAdapterTests.cs" />
     <Compile Include="EntityContextTests.cs" />
     <Compile Include="EntityIdTests.cs" />
     <Compile Include="Helpers\Nodes.cs" />

@@ -40,11 +40,9 @@ namespace RomanticWeb
         /// <param name="entityId">Entity identifier</param>
         T Create<T>(EntityId entityId) where T:class,IEntity;
 
-        /// <summary>Creates a new entity.</summary>
-        /// <param name="entityId">Entity identifier</param>
-        Entity Create(EntityId entityId);
-
         /// <summary>Saves all changes to the underlying store.</summary>
         void Commit();
+
+        void Delete(EntityId entityId);
     }
 }

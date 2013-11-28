@@ -1,6 +1,4 @@
-﻿using System;
-using RomanticWeb.Mapping;
-using RomanticWeb.Ontologies;
+﻿using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -9,6 +7,11 @@ namespace RomanticWeb
     /// </summary>
     public interface IEntityContextFactory
     {
+        /// <summary>
+        /// Gets the ontology provider
+        /// </summary>
+        IOntologyProvider Ontologies { get; }
+
         /// <summary>
         /// Creates a new instance of entity context
         /// </summary>

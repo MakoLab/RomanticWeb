@@ -139,6 +139,10 @@
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\Sparql\GenericSparqlQueryVisitor.cs" />
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
+    <Compile Include="Mapping\MappingBuilder.cs" />
+    <Compile Include="Mapping\MappingFrom.cs" />
+    <Compile Include="Mapping\MappingFromAttributes.cs" />
+    <Compile Include="Mapping\MappingFromFluent.cs" />
     <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
     <Compile Include="Mapping\Attributes\CollectionAttribute.cs" />
     <Compile Include="Mapping\Attributes\EntityAttribute.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="Mapping\Model\ClassMapping.cs" />
     <Compile Include="Mapping\Model\StorageStrategyOption.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
+    <Compile Include="Mapping\UnMappedTypeException.cs" />
     <Compile Include="Model\Triple.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />

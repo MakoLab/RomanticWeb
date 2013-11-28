@@ -123,7 +123,13 @@ namespace RomanticWeb
 
             var entity=Create(entityId);
 
-            var classMapping=_mappings.MappingFor<T>().Class;
+            var entityMapping=_mappings.MappingFor<T>();
+            if (entityMapping==null)
+            {
+                throw new UnMappedTypeException(typeof(T));
+            }
+
+            var classMapping=entityMapping.Class;
             if (classMapping!=null)
             {
                 var typedEntity = AsTypedEntity(entity,classMapping);

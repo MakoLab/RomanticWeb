@@ -8,26 +8,32 @@ namespace RomanticWeb.Mapping.Attributes
     public class PropertyAttribute:MappingAttribute
     {
         #region Fields
-        private readonly string _propertyName;
         private Uri[] _range=new Uri[0];
         private int _cardinality=Int32.MaxValue;
 
         #endregion
 
         #region Constructors
-        /// <summary>Default constructor with namespace prefix and predicate name passed.</summary>
-        /// <param name="prefix">Namespace prefix.</param>
-        /// <param name="propertyName">Predicate name.</param>
-        public PropertyAttribute(string prefix,string propertyName):base(prefix)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyAttribute"/> class.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        public PropertyAttribute(string prefix,string propertyName):base(prefix,propertyName)
         {
-            _propertyName=propertyName;
         }
 
         #endregion
 
         #region Properties
-        /// <summary>Gets a predicate name.</summary>
-        public string PropertyName { get { return _propertyName; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyAttribute"/> class.
+        /// </summary>
+        /// <param name="propertyUri">The property URI.</param>
+        public PropertyAttribute(string propertyUri):base(propertyUri)
+        {
+        }
 
         /// <summary>Gets or sets an array of Uri's beeing a range of given predicate.</summary>
         public Uri[] Range { get { return _range; } set { _range=(value??new Uri[0]); } }
@@ -40,13 +46,7 @@ namespace RomanticWeb.Mapping.Attributes
         #region Internal methods
         internal IPropertyMapping GetMapping(Type propertyType,string propertyName,MappingContext mappingContext)
         {
-            Uri uri=mappingContext.OntologyProvider.ResolveUri(Prefix,PropertyName);
-            if (uri!=null)
-            {
-                return GetMappingInternal(propertyType, propertyName, uri, mappingContext);
-            }
-
-            throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));
+            return GetMappingInternal(propertyType, propertyName, GetTermUri(mappingContext), mappingContext);
         }
         #endregion
 

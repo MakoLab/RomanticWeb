@@ -37,7 +37,7 @@ namespace RomanticWeb.Mapping
 
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
-        [return: AllowNull]
+        [return:AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
             return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);

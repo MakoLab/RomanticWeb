@@ -7,38 +7,33 @@ namespace RomanticWeb.Mapping.Attributes
     [AttributeUsage(AttributeTargets.Interface|AttributeTargets.Class|AttributeTargets.Struct)]
     public sealed class ClassAttribute:MappingAttribute
     {
-        #region Fields
-        private readonly string _className;
-        #endregion
-
         #region Constructors
-        /// <summary>Default constructor with namespace prefix and class name passed.</summary>
-        /// <param name="prefix">Namespace prefix.</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClassAttribute"/> class.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
         /// <param name="className">Name of the class.</param>
-        public ClassAttribute(string prefix,string className):base(prefix)
+        public ClassAttribute(string prefix,string className):base(prefix,className)
         {
-            _className=className;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClassAttribute"/> class.
+        /// </summary>
+        /// <param name="classUri">The URI.</param>
+        public ClassAttribute(string classUri):base(classUri)
+        {
         }
         #endregion
 
-        #region Properties
-        /// <summary>Gets a class name.</summary>
-        public string ClassName { get { return _className; } }
-        #endregion
-
         #region Internal methods
+
         /// <summary>Creates a class mapping using given mappingContext.</summary>
         /// <param name="mappingContext">Ontology to be used to resolve the prefix.</param>
         /// <returns>Class mapping or null.</returns>
         internal IClassMapping GetMapping(MappingContext mappingContext)
         {
-            Uri uri=mappingContext.OntologyProvider.ResolveUri(Prefix,ClassName);
-            if (uri!=null)
-            {
-                return new ClassMapping(uri,mappingContext.DefaultGraphSelector);
-            }
-
-            throw new MappingException(string.Format("Cannot resolve class {0}:{1}",Prefix,ClassName));
+            return new ClassMapping(GetTermUri(mappingContext), mappingContext.DefaultGraphSelector);
         }
         #endregion
     }

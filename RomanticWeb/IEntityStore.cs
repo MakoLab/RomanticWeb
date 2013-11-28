@@ -40,6 +40,9 @@ namespace RomanticWeb
         /// <param name="graphUri">destination graph</param>
         void ReplacePredicateValues(EntityId id,Node propertyUri,IEnumerable<Node> valueNode,Uri graphUri);
 
+        /// <summary>
+        /// Marks an entity for deletion
+        /// </summary>
         void Delete(EntityId entityId);
     }
 }

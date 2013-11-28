@@ -3,10 +3,10 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.Animals
 {
-    [Class("life", "Carnivore")]
+    [Class("life","Carnivore")]
     public interface ICarnivore:IAnimal
     {
-        [Property("life", "animalEaten", IsCollection=true)]
+        [Collection("life","animalEaten")]
         IList<IAnimal> Prey { get; }
     }
 }

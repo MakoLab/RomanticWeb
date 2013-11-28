@@ -24,6 +24,9 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts xsd:duration to <see cref="Duration"/>
+        /// </summary>
         public override object Convert(Node objectNode)
         {
             return Duration.Parse(objectNode.Literal);

@@ -4,10 +4,14 @@ using VDS.RDF;
 
 namespace RomanticWeb.DotNetRDF
 {
+    /// <summary>
+    /// Estension methods for <see cref="INode"/>s
+    /// </summary>
 	public static class NodeExtensions
 	{
-	    private static readonly INodeFactory NodeFactory=new NodeFactory();
-
+        /// <summary>
+        /// Converts a dotNetRDF's INode into RomanticWeb's INode
+        /// </summary>
 	    public static Node WrapNode(this INode node)
 		{
 			var literal = node as ILiteralNode;
@@ -41,6 +45,9 @@ namespace RomanticWeb.DotNetRDF
 			throw new ArgumentException("The node was neither URI, literal nor blank", "node");
 		}
 
+        /// <summary>
+        /// Converts a RomanticWeb's INode into dotNetRDF's INode
+        /// </summary>
         public static INode UnWrapNode(this Node node, INodeFactory nodeFactory)
         {
             if (node.IsUri)
@@ -66,6 +73,9 @@ namespace RomanticWeb.DotNetRDF
             throw new NotImplementedException("Cannot unwrap blank nodes yet");
         }
 
+        /// <summary>
+        /// Gets the graph node's Uri
+        /// </summary>
         public static Uri UnWrapGraphUri(this Node graphUriNode)
         {
             if (graphUriNode==null)
@@ -78,7 +88,7 @@ namespace RomanticWeb.DotNetRDF
                 throw new ArgumentException("Graphs can only be URI nodes");
             }
 
-            return ((IUriNode)UnWrapNode(graphUriNode, NodeFactory)).Uri;
+            return graphUriNode.Uri;
         }
 	}
 }

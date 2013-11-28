@@ -384,7 +384,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                 Node.ForUri(Rdf.Type), 
                 Node.ForUri(Foaf.Person),
                 Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
-            EntityContext.Store.Changes.TriplesAdded.Should().Contain(newTriple);
+            EntityContext.Store.Changes.QuadsAdded.Should().Contain(newTriple);
         }
 
         [Test]

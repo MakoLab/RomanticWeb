@@ -20,8 +20,6 @@ namespace RomanticWeb.Mapping.Attributes
         /// <param name="propertyName">Predicate name.</param>
         public PropertyAttribute(string prefix,string propertyName):base(prefix)
         {
-            IsCollection=false;
-            StorageStrategy=StorageStrategyOption.Simple;
             _propertyName=propertyName;
         }
 
@@ -32,14 +30,10 @@ namespace RomanticWeb.Mapping.Attributes
         public string PropertyName { get { return _propertyName; } }
 
         /// <summary>Gets or sets an array of Uri's beeing a range of given predicate.</summary>
-        public Uri[] Range { get { return _range; } set { _range=(value!=null?value:new Uri[0]); } }
+        public Uri[] Range { get { return _range; } set { _range=(value??new Uri[0]); } }
 
         /// <summary>Gets or sets cardinality of the predicate.</summary>
         public int Cardinality { get { return _cardinality; } set { _cardinality = value; } }
-
-        public bool IsCollection { get; set; }
-
-        public StorageStrategyOption StorageStrategy { get; set; }
 
         #endregion
 
@@ -49,17 +43,19 @@ namespace RomanticWeb.Mapping.Attributes
             Uri uri=mappingContext.OntologyProvider.ResolveUri(Prefix,PropertyName);
             if (uri!=null)
             {
-                if (IsCollection)
-                {
-                    return new CollectionMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector,StorageStrategy);    
-                }
-
-                return new PropertyMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector);
+                return GetMappingInternal(propertyType, propertyName, uri, mappingContext);
             }
 
             throw new MappingException(string.Format("Cannot resolve property {0}:{1}", Prefix, PropertyName));
         }
-
         #endregion
+
+        /// <summary>
+        /// Creates a <see cref="PropertyMapping"/>
+        /// </summary>
+        protected virtual IPropertyMapping GetMappingInternal(Type propertyType,string propertyName,Uri uri,MappingContext mappingContext)
+        {
+            return new PropertyMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector);
+        }
     }
 }

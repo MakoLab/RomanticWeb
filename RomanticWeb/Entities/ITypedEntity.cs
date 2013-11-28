@@ -8,7 +8,7 @@ namespace RomanticWeb.Entities
     public interface ITypedEntity:IEntity
     {
         /// <summary>Gets or sets the entity's rdf classes.</summary>
-        [Property("rdf","type",IsCollection=true)]
+        [Collection("rdf", "type")]
         IEnumerable<EntityId> Types { get; set; }
     }
 }

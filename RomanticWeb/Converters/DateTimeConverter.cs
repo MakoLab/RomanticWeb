@@ -26,6 +26,9 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts xsd:date, xsd:time and xsd:dateTime into <see cref="DateTime"/>
+        /// </summary>
         public override object Convert(Node objectNode)
         {
             var dateTime=XmlConvert.ToDateTime(objectNode.Literal,XmlDateTimeSerializationMode.RoundtripKind);

@@ -147,6 +147,7 @@ namespace RomanticWeb
             _entitySource.ApplyChanges(changes);
         }
 
+        /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
             _entityStore.Delete(entityId);

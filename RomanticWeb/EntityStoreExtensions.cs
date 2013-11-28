@@ -5,7 +5,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb
 {
-    public static class EntityStoreExtensions
+    internal static class EntityStoreExtensions
     {
         public static bool EntityIsCollectionRoot(this IEntityStore store, IEntity potentialList)
         {

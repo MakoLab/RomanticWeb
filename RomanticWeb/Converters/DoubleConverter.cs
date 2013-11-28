@@ -13,6 +13,9 @@ namespace RomanticWeb.Converters
     [Export(typeof(ILiteralNodeConverter))]
     public class DoubleConverter:XsdConverterBase
     {
+        /// <summary>
+        /// Gets Uris of xsd floating point types
+        /// </summary>
         protected override IEnumerable<Uri> SupportedTypes
         {
             get
@@ -22,6 +25,9 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts xsd:float or xsd:double to <see cref="double"/>
+        /// </summary>
         public override object Convert(Node objectNode)
         {
             if (objectNode.Literal=="+INF")

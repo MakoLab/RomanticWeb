@@ -42,7 +42,7 @@ namespace RomanticWeb
             return new EntityContext(this,mappings,mappingContext,_entityStoreFactory(),entitySourceFactory());
         }
 
-        public IEntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
+        public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
         {
             _container.ComposeExportedValue(entitySource);
             return this;
@@ -53,25 +53,25 @@ namespace RomanticWeb
             _container.ComposeParts(obj);
         }
 
-        public IEntityContextFactory WithOntology(IOntologyProvider ontologyProvider)
+        public EntityContextFactory WithOntology(IOntologyProvider ontologyProvider)
         {
             _container.ComposeExportedValue(ontologyProvider);
             return this;
         }
 
-        public IEntityContextFactory WithMappings(IMappingsRepository mappingsRepository)
+        public EntityContextFactory WithMappings(IMappingsRepository mappingsRepository)
         {
             _container.ComposeExportedValue(mappingsRepository);
             return this;
         }
 
-        public IEntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
+        public EntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
         {
             _entityStoreFactory=entityStoreFactory;
             return this;
         }
 
-        public IEntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector)
+        public EntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector)
         {
             _defaultGraphSelector=graphSelector;
             return this;

@@ -14,16 +14,6 @@ namespace RomanticWeb
         /// </summary>
         IEntityContext CreateContext();
 
-        IEntityContextFactory WithEntitySource(Func<IEntitySource> entitySource);
-
         void SatisfyImports(object obj);
-
-        IEntityContextFactory WithOntology(IOntologyProvider ontologyProvider);
-
-        IEntityContextFactory WithMappings(IMappingsRepository mappingsRepository);
-
-        IEntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory);
-
-        IEntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector);
     }
 }

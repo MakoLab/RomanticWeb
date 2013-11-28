@@ -43,6 +43,9 @@ namespace RomanticWeb
         /// <summary>Saves all changes to the underlying store.</summary>
         void Commit();
 
+        /// <summary>
+        /// Marks an entity for deletion
+        /// </summary>
         void Delete(EntityId entityId);
     }
 }

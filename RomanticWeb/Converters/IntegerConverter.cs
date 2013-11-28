@@ -35,6 +35,9 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts xsd:int (and subtypes) into <see cref="long"/>
+        /// </summary>
         public override object Convert(Node objectNode)
         {
             return long.Parse(objectNode.Literal);

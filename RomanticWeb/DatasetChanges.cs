@@ -6,6 +6,9 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Represents changes made the triple store
+    /// </summary>
     public sealed class DatasetChanges
     {
         internal DatasetChanges(
@@ -14,8 +17,8 @@ namespace RomanticWeb
             IEnumerable<Tuple<Uri, EntityId>> metaGraphChanges,
             IEnumerable<EntityId> deletedEntites)
         {
-            TriplesAdded=addedTriples;
-            TriplesRemoved = removedTriples;
+            QuadsAdded=addedTriples;
+            QuadsRemoved = removedTriples;
             MetaGraphChanges=metaGraphChanges;
             DeletedEntites=deletedEntites;
         }
@@ -25,19 +28,34 @@ namespace RomanticWeb
         {
         }
 
-        public IEnumerable<EntityQuad> TriplesAdded { get; private set; }
+        /// <summary>
+        /// Gets the added quads
+        /// </summary>
+        public IEnumerable<EntityQuad> QuadsAdded { get; private set; }
 
-        public IEnumerable<EntityQuad> TriplesRemoved { get; private set; }
+        /// <summary>
+        /// Gets the quads removed
+        /// </summary>
+        public IEnumerable<EntityQuad> QuadsRemoved { get; private set; }
 
+        /// <summary>
+        /// Gets the changes to meta graph
+        /// </summary>
         public IEnumerable<Tuple<Uri, EntityId>> MetaGraphChanges { get; private set; }
 
+        /// <summary>
+        /// Gets the entities marked for deletion
+        /// </summary>
         public IEnumerable<EntityId> DeletedEntites { get; private set; }
 
+        /// <summary>
+        /// Gets a value idicating whether there are any changes
+        /// </summary>
         public bool Any 
         {
             get
             {
-                return (TriplesAdded.Any())||(TriplesRemoved.Any())||(DeletedEntites.Any());
+                return (QuadsAdded.Any())||(QuadsRemoved.Any())||(DeletedEntites.Any());
             }
         }
     }

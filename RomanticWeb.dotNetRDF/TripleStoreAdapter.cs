@@ -116,14 +116,14 @@ namespace RomanticWeb.DotNetRDF
         /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
         public void ApplyChanges(DatasetChanges datasetChanges)
         {
-            foreach (var triple in datasetChanges.TriplesRemoved)
+            foreach (var triple in datasetChanges.QuadsRemoved)
             {
                 var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Retract(
                     triple.Subject.UnWrapNode(graph),triple.Predicate.UnWrapNode(graph),triple.Object.UnWrapNode(graph));
             }
 
-            foreach (var triple in datasetChanges.TriplesAdded)
+            foreach (var triple in datasetChanges.QuadsAdded)
             {
                 var graph=GetGraph(triple.Graph.UnWrapGraphUri());
                 graph.Assert(

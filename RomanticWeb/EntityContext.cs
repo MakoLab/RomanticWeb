@@ -129,8 +129,8 @@ namespace RomanticWeb
                 throw new UnMappedTypeException(typeof(T));
             }
 
-            var classMapping=entityMapping.Class;
-            if (classMapping!=null)
+            var classMappings = entityMapping.Classes;
+            foreach (var classMapping in classMappings)
             {
                 var typedEntity = AsTypedEntity(entity,classMapping);
                 typedEntity.Types=new[] { new EntityId(classMapping.Uri) };

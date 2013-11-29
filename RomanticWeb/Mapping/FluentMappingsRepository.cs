@@ -12,6 +12,8 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public sealed class FluentMappingsRepository : AssemblyMappingsRepository
     {
+        private static readonly IEqualityComparer<Uri> UriComparer = new AbsoluteUriComparer();
+
         /// <summary>
         /// Creates a new instance of <see cref="FluentMappingsRepository"/>
         /// </summary>
@@ -33,19 +35,38 @@ namespace RomanticWeb.Mapping
             foreach (var tuple in maps)
             {
                 var currentMap=tuple;
-                var parentMaps=maps.Where(map => map.Item1.IsAssignableFrom(currentMap.Item1));
+                var parentMaps=maps.Where(map => map.Item1.IsAssignableFrom(currentMap.Item1)).ToList();
 
-                var missingInheritedProperties=from parentMap in parentMaps
-                                               from property in parentMap.Item2.Properties
-                                               where currentMap.Item2.Properties.All(p => p.Name!=property.Name)
-                                               select property;
-
-                foreach (var missingProperty in missingInheritedProperties)
-                {
-                    currentMap.Item2.Properties.Add(missingProperty);
-                }
+                FillMissingPropertyMappings(parentMaps,currentMap);
+                FillMissingClassMappings(parentMaps,currentMap);
 
                 yield return new Tuple<Type, IEntityMapping>(tuple.Item1, tuple.Item2);
+            }
+        }
+
+        private static void FillMissingPropertyMappings(IEnumerable<Tuple<Type,EntityMapping>> parentMaps,Tuple<Type,EntityMapping> currentMap)
+        {
+            var missingInheritedProperties=from parentMap in parentMaps
+                                           from property in parentMap.Item2.Properties
+                                           where currentMap.Item2.Properties.All(p => p.Name!=property.Name)
+                                           select property;
+
+            foreach (var missingProperty in missingInheritedProperties)
+            {
+                currentMap.Item2.AddPropertyMapping(missingProperty);
+            }
+        }
+
+        private static void FillMissingClassMappings(IEnumerable<Tuple<Type,EntityMapping>> parentMaps,Tuple<Type,EntityMapping> currentMap)
+        {
+            var missingInheritedClasses=from parentMap in parentMaps
+                                        from classMap in parentMap.Item2.Classes
+                                        where currentMap.Item2.Classes.All(c => !UriComparer.Equals(c.Uri,classMap.Uri))
+                                        select classMap;
+
+            foreach (var missingClass in missingInheritedClasses)
+            {
+                currentMap.Item2.AddClassMapping(missingClass);
             }
         }
     }

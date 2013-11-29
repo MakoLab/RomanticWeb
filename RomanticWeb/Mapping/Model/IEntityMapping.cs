@@ -1,4 +1,6 @@
-﻿namespace RomanticWeb.Mapping.Model
+﻿using System.Collections.Generic;
+
+namespace RomanticWeb.Mapping.Model
 {
     /// <summary>
     /// A higeset level of entity mapping,
@@ -9,7 +11,7 @@
         /// <summary>
         /// Gets the RDF type mapping
         /// </summary>
-		IClassMapping Class { get; }
+		IEnumerable<IClassMapping> Classes { get; }
 
         /// <summary>
         /// Gets the property mapping for a property by name

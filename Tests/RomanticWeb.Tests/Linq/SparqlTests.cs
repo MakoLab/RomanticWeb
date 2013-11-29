@@ -60,7 +60,7 @@ namespace RomanticWeb.Tests.Linq
             _knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/knows"));
             _knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelectorMock.Object);
             _personMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
-            _personMappingMock.SetupGet(mapping => mapping.Class).Returns(_personTypeMappingMock.Object);
+            _personMappingMock.SetupGet(mapping => mapping.Classes).Returns(new []{_personTypeMappingMock.Object});
             _personMappingMock.Setup(mapping => mapping.PropertyFor("Surname")).Returns(_surnamePropertyMappingMock.Object);
             _personMappingMock.Setup(mapping => mapping.PropertyFor("FirstName")).Returns(_firstNamePropertyMappingMock.Object);
             _personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);

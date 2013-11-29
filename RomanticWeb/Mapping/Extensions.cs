@@ -22,9 +22,9 @@ namespace RomanticWeb.Mapping
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <returns>Class mapping or null.</returns>
         [return: AllowNull]
-        public static IClassMapping FindClassMapping<T>(this IMappingsRepository mappingsRepository) where T:IEntity
+        public static IEnumerable<IClassMapping> FindClassMapping<T>(this IMappingsRepository mappingsRepository) where T : IEntity
         {
-            return mappingsRepository.FindClassMapping(typeof(T));
+            return mappingsRepository.FindClassMappings(typeof(T));
         }
 
         /// <summary>Searches for class mappings.</summary>
@@ -32,16 +32,16 @@ namespace RomanticWeb.Mapping
         /// <param name="type">Type of entity.</param>
         /// <returns>Class mapping or null.</returns>
         [return: AllowNull]
-        public static IClassMapping FindClassMapping(this IMappingsRepository mappingsRepository,Type type)
+        public static IEnumerable<IClassMapping> FindClassMappings(this IMappingsRepository mappingsRepository,Type type)
         {
-            IClassMapping result=null;
+            IEnumerable<IClassMapping> result = null;
             type=type.FindEntityType();
             if (entityType.IsAssignableFrom(type))
             {
                 IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(type);
                 if (entityMapping!=null)
                 {
-                    result=entityMapping.Class;
+                    result=entityMapping.Classes;
                 }
             }
 

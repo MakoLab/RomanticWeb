@@ -3,7 +3,7 @@
 namespace RomanticWeb.Mapping.Model
 {
     /// <summary>
-    /// A RDF type mapping fr an Entity
+    /// A RDF type mapping for an Entity
     /// </summary>
     public interface IClassMapping
 	{

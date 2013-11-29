@@ -46,9 +46,11 @@
     <Compile Include="Animals\AnimalMap.cs" />
     <Compile Include="Animals\CarnivoreMap.cs" />
     <Compile Include="Animals\HerbivoreMap.cs" />
+    <Compile Include="Animals\HumanMap.cs" />
     <Compile Include="Animals\IAnimal.cs" />
     <Compile Include="Animals\ICarnivore.cs" />
     <Compile Include="Animals\IHerbivore.cs" />
+    <Compile Include="Animals\IHuman.cs" />
     <Compile Include="Animals\IOmnivore.cs" />
     <Compile Include="Animals\IPlant.cs" />
     <Compile Include="Animals\IUntypedAnimal.cs" />

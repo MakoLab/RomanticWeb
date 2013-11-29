@@ -349,8 +349,8 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected override System.Linq.Expressions.Expression VisitTypeBinaryExpression(System.Linq.Expressions.TypeBinaryExpression expression)
         {
-            IClassMapping classMapping=_mappingsRepository.FindClassMapping(expression.TypeOperand);
-            if (classMapping!=null)
+            var classMappings=_mappingsRepository.FindClassMappings(expression.TypeOperand);
+            if (classMappings.Any())
             {
                 Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression.Expression);
                 EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression==sourceExpression).FirstOrDefault();
@@ -360,7 +360,7 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add(entityAccessor);
                 }
 
-                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
                 _lastComponent=constrain;
                 if (!entityAccessor.Elements.Contains(constrain))
                 {

@@ -5,14 +5,35 @@ namespace RomanticWeb.Mapping.Model
 {
     internal class EntityMapping : IEntityMapping
 	{
-		public EntityMapping()
+        private readonly IList<IClassMapping> _classes;
+
+        private readonly IList<IPropertyMapping> _properties;
+
+        public EntityMapping(IEnumerable<IClassMapping> classes, IEnumerable<IPropertyMapping> properties)
+        {
+            _properties=properties.ToList();
+            _classes=classes.ToList();
+        }
+
+        internal EntityMapping():this(new IClassMapping[0],new IPropertyMapping[0])
+        {
+        }
+
+        public IEnumerable<IClassMapping> Classes
 		{
-			Properties = new List<IPropertyMapping>();
+		    get
+		    {
+		        return _classes;
+		    }
 		}
 
-		public IClassMapping Class { get; internal set; }
-
-        internal IList<IPropertyMapping> Properties { get; set; }
+        internal IEnumerable<IPropertyMapping> Properties
+        {
+            get
+            {
+                return _properties;
+            }
+        }
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
@@ -24,6 +45,16 @@ namespace RomanticWeb.Mapping.Model
             }
 
             return propertyMapping;
+        }
+
+        internal void AddPropertyMapping(IPropertyMapping propertyMapping)
+        {
+            _properties.Add(propertyMapping);
+        }
+
+        internal void AddClassMapping(IClassMapping classMapping)
+        {
+            _classes.Add(classMapping);
         }
 	}
 }

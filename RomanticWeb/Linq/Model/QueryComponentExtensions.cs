@@ -114,10 +114,10 @@ namespace RomanticWeb.Linq.Model
             Type entityType=sourceExpression.ItemType.FindEntityType();
             if ((entityType!=null)&&(entityType!=typeof(IEntity)))
             {
-                IClassMapping classMapping=visitor.MappingsRepository.FindClassMapping(entityType);
-                if (classMapping!=null)
+                var classMappings=visitor.MappingsRepository.FindClassMappings(entityType);
+                if (classMappings.Any())
                 {
-                    result=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                    result=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
                 }
             }
 

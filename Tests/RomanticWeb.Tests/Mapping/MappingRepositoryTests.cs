@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
@@ -32,7 +34,7 @@ namespace RomanticWeb.Tests.Mapping
             var mapping = _mappingsRepository.MappingFor<IAnimal>();
 
             // when
-            var classMapping = mapping.Class;
+            var classMapping = mapping.Classes.First();
 
             // then
             Assert.That(classMapping.Uri, Is.EqualTo(new Uri("http://example/livingThings#Animal")));
@@ -59,7 +61,7 @@ namespace RomanticWeb.Tests.Mapping
             var mapping = _mappingsRepository.MappingFor<IUntypedAnimal>();
 
             // then
-            Assert.That(mapping.Class,Is.Null);
+            Assert.That(mapping.Classes,Is.Empty);
             Assert.That(mapping.PropertyFor("Name"), Is.Not.Null);
         }
 
@@ -75,6 +77,19 @@ namespace RomanticWeb.Tests.Mapping
             // then
             Assert.That(propertyMapping.Name, Is.EqualTo("Name"));
             Assert.That(propertyMapping.Uri, Is.EqualTo(new Uri("http://example/livingThings#name")));
+        }
+
+        [Test]
+        public void Subclass_should_inherit_parent_Class_mappings()
+        {
+            // given
+            var mapping = _mappingsRepository.MappingFor<IHuman>();
+
+            // when
+            var classMappings=mapping.Classes;
+
+            // then
+            classMappings.Should().HaveCount(4);
         }
 
         protected abstract IMappingsRepository CreateMappingsRepository();

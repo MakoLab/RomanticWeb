@@ -203,10 +203,10 @@ namespace RomanticWeb.Linq
                 (fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&
                 (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
             {
-                IClassMapping classMapping=_mappingsRepository.FindClassMapping(fromClause.FromExpression.Type.GetGenericArguments()[0]);
-                if (classMapping!=null)
+                var classMappings=_mappingsRepository.FindClassMappings(fromClause.FromExpression.Type.GetGenericArguments()[0]);
+                if (classMappings.Any())
                 {
-                    EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMapping.Uri));
+                    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
                     if (!_mainFromComponent.Elements.Contains(constrain))
                     {
                         _mainFromComponent.Elements.Add(constrain);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using RomanticWeb.Mapping.Model;
 
@@ -50,7 +51,7 @@ namespace RomanticWeb.Mapping.Fluent
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
     public abstract class EntityMap
     {
-        private ClassMap _class;
+        private readonly IList<ClassMap> _classes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityMap"/> class.
@@ -60,6 +61,7 @@ namespace RomanticWeb.Mapping.Fluent
 		{
 			EntityType = type;
 			MappedProperties = new List<PropertyMap>();
+            _classes=new List<ClassMap>();
 		}
 
 		internal Type EntityType { get; set; }
@@ -73,25 +75,18 @@ namespace RomanticWeb.Mapping.Fluent
         {
             get
             {
-                return _class??(_class=new ClassMap());
+                var classMap=new ClassMap();
+                _classes.Add(classMap);
+                return classMap;
             }
         }
 
         internal EntityMapping CreateMapping(MappingContext mappingContext)
 		{
-			var entityMapping = new EntityMapping();
+            var classMappings=_classes.Select(cs => cs.GetMapping(mappingContext));
+            var propertyMappings=MappedProperties.Select(mp=>mp.GetMapping(mappingContext));
 
-            if (_class!=null)
-            {
-                entityMapping.Class=_class.GetMapping(mappingContext);
-            }
-
-            foreach (var mappedProperty in MappedProperties)
-			{
-				entityMapping.Properties.Add(mappedProperty.GetMapping(mappingContext));
-			}
-
-			return entityMapping;
+            return new EntityMapping(classMappings,propertyMappings);
 		}
 	}
 }

@@ -27,13 +27,13 @@ namespace RomanticWeb.Mapping
         protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             return from type in Assembly.GetTypes()
-                   let entityAttributes = type.GetCustomAttributes(typeof(EntityAttribute), true)
-                   let classAttributes=type.GetCustomAttributes(typeof(ClassAttribute),true)
-                   where entityAttributes.Any() || classAttributes.Any()
-                   let singleOrDefault = classAttributes.Cast<ClassAttribute>().SingleOrDefault()
-                   let classMapping = singleOrDefault != null ? singleOrDefault.GetMapping(mappingContext) :null
-                   let propertyMappings = BuildPropertyMappings(type,mappingContext).ToList() 
-                   select new Tuple<Type,IEntityMapping>(type,new EntityMapping { Class=classMapping,Properties=propertyMappings });
+                   let classAtributes = type.GetCustomAttributes<ClassAttribute>()
+                   where type.GetCustomAttributes<EntityAttribute>().Any() || classAtributes.Any()
+                   let parentTypes = type.GetInterfaces()
+                   let inheritedMappings = parentTypes.SelectMany(iface => iface.GetCustomAttributes<ClassAttribute>()).Select(s=>s.GetMapping(mappingContext))
+                   let classMappings = classAtributes.Select(s => s.GetMapping(mappingContext))
+                   let propertyMappings = BuildPropertyMappings(type,mappingContext).ToList()
+                   select new Tuple<Type, IEntityMapping>(type, new EntityMapping(classMappings.Union(inheritedMappings).Distinct(), propertyMappings));
         }
 
         private static IEnumerable<IPropertyMapping> BuildPropertyMappings(Type type, MappingContext ontologyProvider)

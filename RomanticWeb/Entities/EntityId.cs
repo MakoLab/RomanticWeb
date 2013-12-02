@@ -1,4 +1,7 @@
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using NullGuard;
 
 namespace RomanticWeb.Entities
@@ -6,9 +9,9 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// An Entity's identifier (URI or blank node)
     /// </summary>
-	public class EntityId:IComparable,IComparable<EntityId>
+    public class EntityId : IComparable, IComparable<EntityId>, IXmlSerializable
     {
-        private readonly Uri _uri;
+        private Uri _uri;
 
 		/// <summary>
 		/// Creates a new instance of <see cref="EntityId"/> from string
@@ -24,6 +27,13 @@ namespace RomanticWeb.Entities
 		{
 			_uri=uri;
 		}
+
+        /// <summary>
+        /// Used for XML serialization
+        /// </summary>
+        protected EntityId()
+        {
+        }
 
         /// <summary>
         /// The underlying Uniform Resource Identifier
@@ -96,6 +106,21 @@ namespace RomanticWeb.Entities
         public override string ToString()
         {
             return Uri.ToString();
+        }
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            _uri = new Uri(reader.ReadElementContentAsString());
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteValue(_uri.ToString());
         }
 
         /// <summary>

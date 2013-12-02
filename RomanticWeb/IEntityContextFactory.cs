@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Ontologies;
+﻿using RomanticWeb.Mapping;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -11,6 +12,8 @@ namespace RomanticWeb
         /// Gets the ontology provider
         /// </summary>
         IOntologyProvider Ontologies { get; }
+
+        IMappingsRepository Mappings { get; }
 
         /// <summary>
         /// Creates a new instance of entity context

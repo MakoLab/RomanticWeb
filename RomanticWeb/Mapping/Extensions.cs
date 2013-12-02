@@ -99,8 +99,7 @@ namespace RomanticWeb.Mapping
                 throw new ArgumentOutOfRangeException("type");
             }
 
-            MethodInfo mappingForMethodInfo=mappingsRepository.GetType().GetMethod("MappingFor").MakeGenericMethod(new Type[] { type });
-            return (IEntityMapping)mappingForMethodInfo.Invoke(mappingsRepository,null);
+            return mappingsRepository.MappingFor(type);
         }
 
         /// <summary>Searches for entity mappings.</summary>

@@ -3,21 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
-	internal sealed class NodeConverter:INodeConverter
+    public sealed class NodeConverter:INodeConverter
 	{
 	    private readonly IEntityContext _entityContext;
 
-	    private readonly IEntityStore _store;
-
-	    public NodeConverter(IEntityContext entityContext,IEntityStore store)
+	    public NodeConverter(IEntityContext entityContext)
 	    {
-	        _store=store;
 	        _entityContext=entityContext;
             Converters=new List<ILiteralNodeConverter>();
             ComplexTypeConverters=new List<IComplexTypeConverter>();
@@ -29,7 +27,7 @@ namespace RomanticWeb.Converters
         [ImportMany]
         public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
-	    public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,IPropertyMapping predicate)
+	    public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,[AllowNull] IPropertyMapping predicate)
 		{
 			foreach (var objectNode in objects.ToList())
 			{
@@ -150,11 +148,11 @@ namespace RomanticWeb.Converters
 	    {
 	        var entity=_entityContext.Load<IEntity>(objectNode.ToEntityId(),false);
 
-	        var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_store,predicate));
+            var converter = ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_entityContext.Store,predicate));
 
 	        if (converter!=null)
 	        {
-	            return converter.Convert(entity,_store);
+                return converter.Convert(entity,_entityContext.Store);
 	        }
 
 	        Type entityType;

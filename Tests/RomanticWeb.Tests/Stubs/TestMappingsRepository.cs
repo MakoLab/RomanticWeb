@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
@@ -19,19 +20,24 @@ namespace RomanticWeb.Tests.Stubs
 
         public IEntityMapping MappingFor<TEntity>()
         {
-            var entityMap=_entityMaps.FirstOrDefault(map => map.EntityType==typeof(TEntity));
-
-            if (entityMap==null)
-            {
-                throw new MappingException(string.Format("Mapping not found for type {0}",typeof(TEntity)));
-            }
-
-            return entityMap.CreateMapping(_mappingContext);
+            return MappingFor(typeof(TEntity));
         }
 
         public void RebuildMappings(MappingContext mappingContext)
         {
             _mappingContext=mappingContext;
+        }
+
+        public IEntityMapping MappingFor(Type entityType)
+        {
+            var entityMap = _entityMaps.FirstOrDefault(map => map.EntityType == entityType);
+
+            if (entityMap == null)
+            {
+                throw new MappingException(string.Format("Mapping not found for type {0}", entityType));
+            }
+
+            return entityMap.CreateMapping(_mappingContext);
         }
 
         public void Add(EntityMap personMapping)

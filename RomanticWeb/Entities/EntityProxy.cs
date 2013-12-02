@@ -16,7 +16,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Entities
 {
     [NullGuard(ValidationFlags.OutValues)]
-    internal class EntityProxy:DynamicObject,IEntity
+    public class EntityProxy:DynamicObject,IEntity
     {
         private static readonly IResultProcessingStrategy FallbackProcessing = new SingleOrDefaultProcessing();
 

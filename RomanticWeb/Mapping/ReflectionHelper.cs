@@ -19,13 +19,7 @@ namespace RomanticWeb.Mapping
 			    throw new NotImplementedException("Currently mapping fields is not supported");
 			}
 
-			var property = (PropertyInfo)memberExpression.Member;
-			if ((property.CanRead?property.GetGetMethod():property.GetSetMethod()).IsVirtual==false)
-			{
-			    throw new ArgumentException(string.Format("Property '{0}' must be virtual", property));
-			}
-
-			return property;
+			return (PropertyInfo)memberExpression.Member;
 		} 
 	}
 }

@@ -41,7 +41,7 @@ namespace RomanticWeb
             _factory=factory;
             _entityStore=entityStore;
             _entitySource=entitySource;
-            _nodeConverter=new NodeConverter(this,entityStore);
+            _nodeConverter=new NodeConverter(this);
             _mappings=mappings;
             _mappingContext = mappingContext;
             Cache = new DictionaryCache();

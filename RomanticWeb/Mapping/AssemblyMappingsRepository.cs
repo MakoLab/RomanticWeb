@@ -40,7 +40,13 @@ namespace RomanticWeb.Mapping
         [return:AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
-            return (_mappings.ContainsKey(typeof(TEntity))?_mappings[typeof(TEntity)]:null);
+            return MappingFor(typeof(TEntity));
+        }
+
+        [return: AllowNull]
+        public IEntityMapping MappingFor(Type entityType)
+        {
+            return (_mappings.ContainsKey(entityType) ? _mappings[entityType] : null);
         }
 
         /// <inheritdoc />

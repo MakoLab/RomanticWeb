@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
@@ -31,8 +32,14 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
-            var mappingsForType=_mappingsRepositories.Select(item => item.MappingFor<TEntity>());
-            return mappingsForType.SingleOrDefault(m => m!=null);
+            return MappingFor(typeof(TEntity));
+        }
+
+        [return: AllowNull]
+        public IEntityMapping MappingFor(Type entityType)
+        {
+            var mappingsForType = _mappingsRepositories.Select(item => item.MappingFor(entityType));
+            return mappingsForType.SingleOrDefault(m => m != null);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace RomanticWeb.Entities
     /// <summary>An RDF entity, which can be used to dynamically access RDF triples.</summary>
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("Entity <{Id}>")]
-    public class Entity:ImpromptuDictionary,IEntity
+    public class Entity:DynamicObject,IEntity
     {
         #region Fields
         private readonly EntityContext _entityContext;

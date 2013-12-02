@@ -55,7 +55,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
                                                  .WithOntology(new DefaultOntologiesProvider())
                                                  .WithOntology(new TestOntologyProvider())
-                                                 .Mappings(m=>m.AddMapping(GetType().Assembly,_mappings))
+                                                 .WithMappings(m=>m.AddMapping(GetType().Assembly,_mappings))
                                                  .WithEntityStore(() => _entityStore);
             ChildSetup();
         }

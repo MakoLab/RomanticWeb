@@ -109,7 +109,7 @@ namespace RomanticWeb.Tests
 
         private NodeConverter CreateProcessor(params object[] converters)
         {
-            return new NodeConverter(_entityContext.Object,_entityStore.Object)
+            return new NodeConverter(_entityContext.Object)
                        {
                            Converters=converters.OfType<ILiteralNodeConverter>(),
                            ComplexTypeConverters=converters.OfType<IComplexTypeConverter>()

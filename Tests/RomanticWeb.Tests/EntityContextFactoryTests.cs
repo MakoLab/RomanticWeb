@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.Mapping;
 using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests
@@ -27,7 +28,7 @@ namespace RomanticWeb.Tests
             var withMappings=typeof(IPerson).Assembly;
 
             // when
-            _entityContextFactory.Mappings(
+            _entityContextFactory.WithMappings(
                 m =>
                     {
                         m.Attributes.FromAssembly(withMappings);
@@ -35,7 +36,8 @@ namespace RomanticWeb.Tests
                     });
 
             // then
-            _entityContextFactory.MappingRepositories.Should().HaveCount(1);
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(1);
         }
 
         [Test]
@@ -45,7 +47,7 @@ namespace RomanticWeb.Tests
             var withMappings = typeof(IPerson).Assembly;
 
             // when
-            _entityContextFactory.Mappings(
+            _entityContextFactory.WithMappings(
                 m =>
                 {
                     m.Fluent.FromAssembly(withMappings);
@@ -53,7 +55,8 @@ namespace RomanticWeb.Tests
                 });
 
             // then
-            _entityContextFactory.MappingRepositories.Should().HaveCount(1);
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(1);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace RomanticWeb.Mapping
         {
             var maps=(from type in Assembly.GetTypes()
                       where typeof(EntityMap).IsAssignableFrom(type)
-                      let map = (EntityMap)Activator.CreateInstance(type)
+                      let map = (EntityMap)Activator.CreateInstance(type,true)
                       select new Tuple<Type,EntityMapping>(map.EntityType,map.CreateMapping(mappingContext))).ToList();
 
             foreach (var tuple in maps)

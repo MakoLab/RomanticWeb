@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using RomanticWeb.Linq.Model.Navigators;
 
-namespace RomanticWeb.Linq.Model
+namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates unary operator.</summary>
     internal class UnaryOperatorNavigator:QueryComponentNavigatorBase

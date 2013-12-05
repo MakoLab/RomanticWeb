@@ -103,7 +103,7 @@ namespace RomanticWeb.ComponentModel
                 }
                 else if (destinationType==typeof(Uri))
                 {
-                    result=new Uri(((EntityId)value).Uri.ToString());
+                    result=((EntityId)value).Uri;
                 }
             }
             else

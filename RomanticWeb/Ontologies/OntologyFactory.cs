@@ -12,7 +12,7 @@ namespace RomanticWeb.Ontologies
     /// <summary>Provides a centralized access to ontology provider factories.</summary>
     public class OntologyFactory
     {
-        private static IEnumerable<IOntologyFactory> OntologyFactories;
+        private static IEnumerable<IOntologyFactory> OntologyFactories; 
 
         static OntologyFactory()
         {

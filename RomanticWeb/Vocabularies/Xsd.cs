@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.Vocabularies
 {
-    internal static class Xsd
+    public static class Xsd
     {
         public const string BaseUri = "http://www.w3.org/2001/XMLSchema#";
 
@@ -179,6 +179,14 @@ namespace RomanticWeb.Vocabularies
             get
             {
                 return new Uri(BaseUri + "anyUri");
+            }
+        }
+
+        public static Uri String
+        {
+            get
+            {
+                return new Uri(BaseUri+"string");
             }
         }
     }

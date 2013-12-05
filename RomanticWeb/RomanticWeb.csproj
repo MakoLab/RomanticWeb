@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
+    <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="DatasetChanges.cs" />

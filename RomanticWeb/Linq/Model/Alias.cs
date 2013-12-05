@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
 
 namespace RomanticWeb.Linq.Model
@@ -49,7 +50,7 @@ namespace RomanticWeb.Linq.Model
         /// The object to compare with the current object.</param>
         /// <returns>Type: <see cref="System.Boolean" />
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
-        public override bool Equals(object operand)
+        public override bool Equals([AllowNull] object operand)
         {
             return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Alias))&&
                 (_component!=null?_component.Equals(((Alias)operand)._component):Object.Equals(((Alias)operand)._component,null))&&

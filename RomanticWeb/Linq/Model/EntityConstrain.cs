@@ -96,7 +96,7 @@ namespace RomanticWeb.Linq.Model
         /// The object to compare with the current object.</param>
         /// <returns>Type: <see cref="System.Boolean" />
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
-        public override bool Equals(object operand)
+        public override bool Equals([AllowNull] object operand)
         {
             return (!Object.Equals(operand,null))&&(operand is EntityConstrain)&&
                 (_predicate!=null?_predicate.Equals(((EntityConstrain)operand)._predicate):Object.Equals(((EntityConstrain)operand)._predicate,null))&&

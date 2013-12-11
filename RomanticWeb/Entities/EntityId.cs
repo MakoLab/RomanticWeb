@@ -78,7 +78,7 @@ namespace RomanticWeb.Entities
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return _uri.GetHashCode();
+            return _uri.ToString().GetHashCode();
         }
 
         /// <summary>Compares the current object with another object of the same type.</summary>
@@ -108,7 +108,7 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object obj)
         {
-            if (obj==null||GetType()!=obj.GetType())
+            if ((obj==null)||(GetType()!=obj.GetType()))
             {
                 return false;
             }
@@ -118,14 +118,14 @@ namespace RomanticWeb.Entities
                 return true;
             }
 
-            return _uri==((EntityId)obj)._uri;
+            return _uri.ToString()==((EntityId)obj)._uri.ToString();
         }
 
         /// <summary>Creates a string representation of this entity identifier.</summary>
         /// <returns>String representation of this entity identifier.</returns>
         public override string ToString()
         {
-            return Uri.ToString();
+            return _uri.ToString();
         }
 
         /// <summary>This method is reserved and should not be used.
@@ -161,7 +161,7 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified identifier is equal to the current one; otherwise, <b>false</b>.</returns>
         protected bool Equals([AllowNull] EntityId other)
         {
-            return other!=null&&Equals(_uri,other._uri);
+            return (other!=null)&&(Equals(_uri,other._uri));
         }
         #endregion
     }

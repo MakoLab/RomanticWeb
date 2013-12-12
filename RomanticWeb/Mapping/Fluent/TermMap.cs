@@ -31,7 +31,19 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         protected Uri GetTermUri(IOntologyProvider ontologyProvider)
         {
-            return TermUri ?? ontologyProvider.ResolveUri(NamespacePrefix, TermName);
+            if (TermUri!=null)
+            {
+                return TermUri;
+            }
+
+            Uri resolvedUri=ontologyProvider.ResolveUri(NamespacePrefix,TermName);
+
+            if (resolvedUri==null)
+            {
+                throw new MappingException(string.Format("Cannot resolved QName {0}:{1}",NamespacePrefix,TermName));
+            }
+
+            return resolvedUri;
         }
     }
 }

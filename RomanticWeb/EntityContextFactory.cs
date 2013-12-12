@@ -65,9 +65,9 @@ namespace RomanticWeb
         /// </summary>
         public IEntityContext CreateContext()
         {
+            EnsureComplete();
             EnsureInitialized();
             _mappingContext = new MappingContext(_actualOntologyProvider, _defaultGraphSelector);
-            _actualMappingsRepository.RebuildMappings(_mappingContext);
 
             return new EntityContext(this, Mappings, _mappingContext, _entityStoreFactory(), _entitySourceFactory());
         }
@@ -129,8 +129,9 @@ namespace RomanticWeb
             batch.AddPart(this);
 
             _container.Compose(batch);
-            _actualOntologyProvider = new CompoundOntologyProvider(_importedOntologies);
-            _actualMappingsRepository = new CompoundMappingsRepository(_importedMappings);
+            EnsureOntologyProvider();
+            EnsureMappingsRepository();
+            EnsureMappingsRebuilt();
 
             _isInitialized=true;
         }
@@ -139,12 +140,51 @@ namespace RomanticWeb
         {
             if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IMappingsRepository>()))
             {
-                _actualMappingsRepository = new CompoundMappingsRepository(_importedMappings);
+                EnsureMappingsRepository();
+                EnsureMappingsRebuilt();
             }
 
             if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IOntologyProvider>()))
             {
+                EnsureOntologyProvider();
+                EnsureMappingsRebuilt();
+            }
+        }
+
+        private void EnsureOntologyProvider()
+        {
+            if (_importedOntologies.Count() == 1)
+            {
+                _actualOntologyProvider = _importedOntologies.Single();
+            }
+            else
+            {
                 _actualOntologyProvider = new CompoundOntologyProvider(_importedOntologies);
+            }
+        }
+
+        private void EnsureMappingsRepository()
+        {
+            if (_importedMappings.Count() == 1)
+            {
+                _actualMappingsRepository = _importedMappings.Single();
+            }
+            else
+            {
+                _actualMappingsRepository = new CompoundMappingsRepository(_importedMappings);
+            }
+        }
+
+        private void EnsureMappingsRebuilt()
+        {
+            _actualMappingsRepository.RebuildMappings(new MappingContext(_actualOntologyProvider, _defaultGraphSelector));
+        }
+
+        private void EnsureComplete()
+        {
+            if (_entitySourceFactory==null)
+            {
+                throw new InvalidOperationException("Entity source factory wasn't set");
             }
         }
     }

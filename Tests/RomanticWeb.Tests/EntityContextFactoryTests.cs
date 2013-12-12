@@ -1,6 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
+using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests
@@ -9,11 +12,15 @@ namespace RomanticWeb.Tests
     public class EntityContextFactoryTests
     {
         private EntityContextFactory _entityContextFactory;
-
+        private Mock<IOntologyProvider> _ontology;
+        
         [SetUp]
         public void Setup()
         {
-            _entityContextFactory=new EntityContextFactory();
+            _ontology=new Mock<IOntologyProvider>();
+            _ontology.Setup(op => op.ResolveUri(It.IsAny<string>(),It.IsAny<string>()))
+                     .Returns((string prefix,string name) => new Uri(new Uri("http://base/"),name));
+            _entityContextFactory=new EntityContextFactory().WithOntology(_ontology.Object);
         }
 
         [TearDown]
@@ -36,8 +43,7 @@ namespace RomanticWeb.Tests
                     });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(1);
+            _entityContextFactory.Mappings.Should().BeAssignableTo<AttributeMappingsRepository>();
         }
 
         [Test]
@@ -55,8 +61,7 @@ namespace RomanticWeb.Tests
                 });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(1);
+            _entityContextFactory.Mappings.Should().BeAssignableTo<FluentMappingsRepository>();
         }
     }
 }

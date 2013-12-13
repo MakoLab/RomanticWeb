@@ -18,8 +18,7 @@ namespace RomanticWeb.Entities
 
         #region Constructors
         /// <summary>Creates a new instance of <see cref="EntityId"/> from string.</summary>
-        public EntityId(string uri)
-            : this(new Uri(uri))
+        public EntityId(string uri):this(new Uri(uri))
         {
         }
 
@@ -82,13 +81,13 @@ namespace RomanticWeb.Entities
         }
 
         /// <summary>Compares the current object with another object of the same type.</summary>
-        /// <param name="other">Type: <see cref="System.Object" />
+        /// <param name="operand">Type: <see cref="System.Object" />
         /// An object to compare with this object.</param>
         /// <returns>Type: <see cref="System.Int32" />
         /// A value that indicates the relative order of the objects being compared.</returns>
-        int IComparable.CompareTo(object obj)
+        int IComparable.CompareTo(object operand)
         {
-            return FluentCompare<EntityId>.Arguments(this,obj).By(id => id.Uri,new AbsoluteUriComparer()).End();
+            return FluentCompare<EntityId>.Arguments(this,operand).By(id => id.Uri,new AbsoluteUriComparer()).End();
         }
 
         /// <summary>Compares the current identifier with another identifier of the same type.</summary>

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
+    <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="DatasetChanges.cs" />
@@ -224,6 +225,7 @@
     <EmbeddedResource Include="Ontologies\RDF.owl" />
     <EmbeddedResource Include="Ontologies\RDFS.owl" />
     <None Include="Fody.targets" />
+    <EmbeddedResource Include="Ontologies\OWL.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

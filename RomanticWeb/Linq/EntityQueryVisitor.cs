@@ -360,7 +360,7 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add(entityAccessor);
                 }
 
-                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
+                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
                 _lastComponent=constrain;
                 if (!entityAccessor.Elements.Contains(constrain))
                 {

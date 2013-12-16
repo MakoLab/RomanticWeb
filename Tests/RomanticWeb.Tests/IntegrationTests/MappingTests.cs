@@ -381,7 +381,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             var newTriple = new EntityQuad(
                 entityId, 
                 Node.ForUri(entityUri), 
-                Node.ForUri(Rdf.Type), 
+                Node.ForUri(Rdf.type), 
                 Node.ForUri(Foaf.Person),
                 Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
             EntityContext.Store.Changes.QuadsAdded.Should().Contain(newTriple);

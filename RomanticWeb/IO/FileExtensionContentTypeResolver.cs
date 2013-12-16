@@ -21,13 +21,13 @@ namespace RomanticWeb.IO
                     switch (extension.ToLower())
                     {
                         case ".owl":
-                            result="text/xml+owl";
+                            result="application/owl+xml";
                             break;
                         case ".ttl":
                             result="text/turtle";
                             break;
                         case ".rdf":
-                            result="text/xml+rdf";
+                            result="application/rdf+xml";
                             break;
                     }
                 }

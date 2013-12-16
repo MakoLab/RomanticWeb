@@ -206,7 +206,7 @@ namespace RomanticWeb.Linq
                 var classMappings=_mappingsRepository.FindClassMappings(fromClause.FromExpression.Type.GetGenericArguments()[0]);
                 if (classMappings.Any())
                 {
-                    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
+                    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
                     if (!_mainFromComponent.Elements.Contains(constrain))
                     {
                         _mainFromComponent.Elements.Add(constrain);

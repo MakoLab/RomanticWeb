@@ -20,7 +20,7 @@ namespace RomanticWeb.Model
 			_uri = uri;
 		}
 
-		private Node(string literal, string language, Uri dataType)
+        private Node(string literal,string language,Uri dataType)
 		{
             if (language!=null&&dataType!=null)
             {

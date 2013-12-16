@@ -13,7 +13,10 @@ namespace RomanticWeb.Ontologies
         RDF=1,
 
         /// <summary>Points to an RDF Schema ontology.</summary>
-        RDFS=1<<1
+        RDFS=1<<1,
+
+        /// <summary>Points to an OWL ontology.</summary>
+        OWL=1<<2
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -27,12 +30,12 @@ namespace RomanticWeb.Ontologies
         {
             _ontologies=new List<Ontology>();
             _includedOntologies=new List<BuiltInOntologies>();
-            Include(BuiltInOntologies.RDF|BuiltInOntologies.RDFS);
+            Include(BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
-        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS)
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL)
         {
         }
 
@@ -67,7 +70,7 @@ namespace RomanticWeb.Ontologies
                 {
                     Ontology ontologyInstance=OntologyFactory.Create(
                         Assembly.GetExecutingAssembly().GetManifestResourceStream(System.String.Format("{0}.{1}.owl",typeof(DefaultOntologiesProvider).Namespace,ontology.ToString())),
-                        "text/xml+owl");
+                        "application/owl+xml");
                     if (ontologyInstance!=null)
                     {
                         _includedOntologies.Add(ontology);

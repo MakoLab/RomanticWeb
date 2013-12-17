@@ -86,7 +86,7 @@ namespace RomanticWeb.Entities
 
 	    internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
         {
-            LogTo.Debug("Reading property {0}", property.Uri);
+            LogTo.Trace("Reading property {0}", property.Uri);
 	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri,null);
 	        var objects=_nodeConverter.ConvertNodes(objectValues);
 
@@ -96,7 +96,7 @@ namespace RomanticWeb.Entities
 
             if (aggregation!=null)
             {
-                LogTo.Debug("Performing operation {0} on result nodes", aggregate.Aggregation);
+                LogTo.Trace("Performing operation {0} on result nodes", aggregate.Aggregation);
                 return aggregation.Value.Process(objects);
             }
 

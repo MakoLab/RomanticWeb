@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Anotar.NLog;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 
@@ -17,6 +18,7 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public AttributeMappingsRepository(Assembly assembly):base(assembly)
         {
+            LogTo.Trace("Created attribute mappings repository for assembly {0}", assembly);
         }
 
         #region Private methods

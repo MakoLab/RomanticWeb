@@ -80,18 +80,14 @@ namespace RomanticWeb.DotNetRDF
         /// <returns>Enumeration of entity quads beeing a result of the query.</returns>
         public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel)
         {
-            string subjectVariableName;
-            string predicateVariableName;
-            string objectVariableName;
-            string entityVariableName;
-            string metaGraphVariableName;
-            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out subjectVariableName,out predicateVariableName,out objectVariableName,out entityVariableName,out metaGraphVariableName));
+            SparqlQueryVariables variables;
+            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel, out variables));
             return from result in resultSet
-                   let id=new EntityId(((IUriNode)result[entityVariableName]).Uri)
-                   let s=result[subjectVariableName].WrapNode()
-                   let p=result[predicateVariableName].WrapNode()
-                   let o=result[objectVariableName].WrapNode()
-                   let g=result[metaGraphVariableName].WrapNode()
+                   let id=new EntityId(((IUriNode)result[variables.Entity]).Uri)
+                   let s = result[variables.Subject].WrapNode()
+                   let p = result[variables.Predicate].WrapNode()
+                   let o = result[variables.Object].WrapNode()
+                   let g = result[variables.MetaGraph].WrapNode()
                    select new EntityQuad(id,s,p,o,g);
         }
 
@@ -100,9 +96,9 @@ namespace RomanticWeb.DotNetRDF
         /// <returns>Scalar value beeing a result of the query.</returns>
         public int ExecuteScalarQuery(Query queryModel)
         {
-            string scalarVariableName;
-            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out scalarVariableName));
-            return (from result in resultSet select Int32.Parse(((ILiteralNode)result[scalarVariableName]).Value)).FirstOrDefault();
+            SparqlQueryVariables variables;
+            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out variables));
+            return (from result in resultSet select Int32.Parse(((ILiteralNode)result[variables.Scalar]).Value)).FirstOrDefault();
         }
 
         /// <summary>Executes a SPARQL ask query.</summary>
@@ -160,42 +156,20 @@ namespace RomanticWeb.DotNetRDF
                     yield return command;
                 }
             }
-        } 
+        }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)
         {
-            string scalarVariableName;
-            return GetSparqlQuery(sparqlQuery,out scalarVariableName);
+            SparqlQueryVariables variables;
+            return GetSparqlQuery(sparqlQuery,out variables);
         }
 
-        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string scalarVariableName)
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery, out SparqlQueryVariables variables)
         {
-            string subjectVariableName;
-            string predicateVariableName;
-            string objectVariableName;
-            string entityVariableName;
-            string metaGraphVariableName;
-            return GetSparqlQuery(sparqlQuery,out subjectVariableName,out predicateVariableName,out objectVariableName,out scalarVariableName,out entityVariableName,out metaGraphVariableName);
-        }
-
-        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string subjectVariableName,out string predicateVariableName,out string objectVariableName,out string entityVariableName,out string metaGraphVariableName)
-        {
-            string scalarVariableName;
-            return GetSparqlQuery(sparqlQuery,out subjectVariableName,out predicateVariableName,out objectVariableName,out scalarVariableName,out entityVariableName,out metaGraphVariableName);
-        }
-
-        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out string subjectVariableName,out string predicateVariableName,out string objectVariableName,out string scalarVariableName,out string entityVariableName,out string metaGraphVariableName)
-        {
-            subjectVariableName=predicateVariableName=objectVariableName=scalarVariableName=entityVariableName=metaGraphVariableName=null;
             GenericSparqlQueryVisitor queryVisitor=new GenericSparqlQueryVisitor();
             queryVisitor.MetaGraphUri=MetaGraphUri;
             queryVisitor.VisitQuery(sparqlQuery);
-            subjectVariableName=queryVisitor.SubjectVariableName;
-            predicateVariableName=queryVisitor.PredicateVariableName;
-            objectVariableName=queryVisitor.ObjectVariableName;
-            scalarVariableName=queryVisitor.ScalarVariableName;
-            entityVariableName=queryVisitor.EntityVariableName;
-            metaGraphVariableName=queryVisitor.MetaGraphVariableName;
+            variables=queryVisitor.Variables;
             SparqlQueryParser parser=new SparqlQueryParser();
             return parser.ParseFromString(queryVisitor.CommandText);
         }

@@ -135,6 +135,7 @@
     <Compile Include="Linq\Model\Literal.cs" />
     <Compile Include="Linq\Model\EntityConstrain.cs" />
     <Compile Include="Linq\Model\QueryComponent.cs" />
+    <Compile Include="Linq\Sparql\SparqlQueryVariables.cs" />
     <Compile Include="Linq\UniqueVariableNamingStrategy.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />

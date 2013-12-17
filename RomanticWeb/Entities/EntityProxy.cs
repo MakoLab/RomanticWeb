@@ -71,7 +71,7 @@ namespace RomanticWeb.Entities
             var property=_entityMappings.PropertyFor(binder.Name);
             var graph=property.GraphSelector.SelectGraph(_entity.Id);
 
-            LogTo.Debug("Reading property {0} from graph {1}",property.Uri,graph);
+            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
 
             IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
             var objectsForPredicate=_converter.ConvertNodes(objects,property);
@@ -83,7 +83,7 @@ namespace RomanticWeb.Entities
 
             aggregation=aggregation??FallbackProcessing;
 
-            LogTo.Debug("Performing operation {0} on result nodes",operation);
+            LogTo.Trace("Performing operation {0} on result nodes",operation);
             var aggregatedResult=aggregation.Process(objectsForPredicate);
 
             var enumerable=aggregatedResult as ICollection;

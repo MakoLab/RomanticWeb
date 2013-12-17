@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using Anotar.NLog;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
@@ -38,6 +39,7 @@ namespace RomanticWeb
             var catalog = new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
             _container = new CompositionContainer(catalog, true);
             catalog.Changed += CatalogChanged;
+            LogTo.Info("Created entity context factory");
         }
 
         /// <inheritdoc />
@@ -65,6 +67,8 @@ namespace RomanticWeb
         /// </summary>
         public IEntityContext CreateContext()
         {
+            LogTo.Debug("Creating entity context");
+
             EnsureComplete();
             EnsureInitialized();
             _mappingContext = new MappingContext(_actualOntologyProvider, _defaultGraphSelector);
@@ -120,6 +124,7 @@ namespace RomanticWeb
 
         private void EnsureInitialized()
         {
+            LogTo.Info("Initializing entity context factory");
             if (_isInitialized)
             {
                 return;
@@ -138,15 +143,25 @@ namespace RomanticWeb
 
         private void CatalogChanged(object sender, ComposablePartCatalogChangeEventArgs changeEventArgs)
         {
+            LogTo.Info("MEF catalog has changed");
+            bool shouldRebuildMappings=false;
+            
             if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IMappingsRepository>()))
             {
+                LogTo.Info("Refreshing mapping repositories");
                 EnsureMappingsRepository();
-                EnsureMappingsRebuilt();
+                shouldRebuildMappings=true;
             }
 
             if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IOntologyProvider>()))
             {
+                LogTo.Info("Refreshing ontology providers");
                 EnsureOntologyProvider();
+                shouldRebuildMappings=true;
+            }
+
+            if (shouldRebuildMappings)
+            {
                 EnsureMappingsRebuilt();
             }
         }

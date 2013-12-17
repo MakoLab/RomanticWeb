@@ -2,4 +2,5 @@
 <Weavers>
   <NullGuard />
   <Resourcer />
+  <Anotar.NLog />
 </Weavers>

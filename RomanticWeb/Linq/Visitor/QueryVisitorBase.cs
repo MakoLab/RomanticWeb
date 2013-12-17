@@ -10,25 +10,7 @@ namespace RomanticWeb.Linq.Visitor
     {
         #region Properties
         /// <summary>Sets a meta-graph URI.</summary>
-        public abstract Uri MetaGraphUri { get; set; }
-
-        /// <summary>Gets or sets a meta-graph variable name.</summary>
-        public abstract string MetaGraphVariableName { get; set; }
-
-        /// <summary>Gets or sets an entity variable name.</summary>
-        public abstract string EntityVariableName { get; set; }
-
-        /// <summary>Gets or sets a subject variable name.</summary>
-        public abstract string SubjectVariableName { get; set; }
-
-        /// <summary>Gets or sets a predicate variable name.</summary>
-        public abstract string PredicateVariableName { get; set; }
-
-        /// <summary>Gets or sets a object variable name.</summary>
-        public abstract string ObjectVariableName { get; set; }
-
-        /// <summary>Gets or sets a scalar variable name.</summary>
-        public abstract string ScalarVariableName { get; set; }
+        public Uri MetaGraphUri { get; set; }
         #endregion
 
         #region Public methods

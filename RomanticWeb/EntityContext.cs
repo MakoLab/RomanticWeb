@@ -149,6 +149,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public void Commit()
         {
+            LogTo.Debug("Committing changes to triple store");
             var changes=_entityStore.Changes;
             _entitySource.ApplyChanges(changes);
         }
@@ -156,6 +157,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
+            LogTo.Debug("Deleting entity {0}",entityId);
             _entityStore.Delete(entityId);
         }
 

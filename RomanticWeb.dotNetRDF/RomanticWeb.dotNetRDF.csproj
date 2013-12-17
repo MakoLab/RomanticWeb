@@ -66,6 +66,10 @@
     <EmbeddedResource Include="Queries\DeleteEntity.ru" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Anotar.NLog">
+      <HintPath>..\packages\Anotar.NLog.Fody.2.7.4.0\Lib\portable-net4+sl4+wp7+windows8\Anotar.NLog.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="dotNetRDF, Version=1.0.2.2880, Culture=neutral, PublicKeyToken=6055ffe4c97cc780, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\dotNetRDF.1.0.2.2880\lib\net40\dotNetRDF.dll</HintPath>
@@ -80,6 +84,10 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NullGuard">
       <HintPath>..\packages\NullGuard.Fody.0.7.1\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\NullGuard.dll</HintPath>

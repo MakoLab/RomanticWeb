@@ -133,11 +133,11 @@ namespace RomanticWeb.Tests.Linq
             {
                 GenericSparqlQueryVisitor visitor=VisitModel(model);
                 computedCommandText=visitor.CommandText;
-                computedMetaGraphVariableName=visitor.MetaGraphVariableName;
-                computedEntityVariableName=visitor.EntityVariableName;
-                computedSubjectVariableName=visitor.SubjectVariableName;
-                computedPredicateVariableName=visitor.PredicateVariableName;
-                computedObjectVariableName=visitor.ObjectVariableName;
+                computedMetaGraphVariableName=visitor.Variables.MetaGraph;
+                computedEntityVariableName=visitor.Variables.Entity;
+                computedSubjectVariableName=visitor.Variables.Subject;
+                computedPredicateVariableName=visitor.Variables.Predicate;
+                computedObjectVariableName=visitor.Variables.Object;
                 return GetSamplePersonTriples(5);
             });
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Anotar.NLog;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
 
@@ -19,6 +20,7 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public FluentMappingsRepository(Assembly assembly):base(assembly)
         {
+            LogTo.Trace("Created fluent mappings repository for assembly {0}",assembly);
         }
 
         /// <summary>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using NullGuard;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Visitor;
 
@@ -13,40 +12,38 @@ namespace RomanticWeb.Linq.Sparql
     public class GenericSparqlQueryVisitor:QueryVisitorBase
     {
         #region Fields
-        private StringBuilder _commandText=null;
-        private Uri _metaGraphUri=null;
-        private string _metaGraphVariableName=null;
-        private string _entityVariableName=null;
-        private string _subjectVariableName=null;
-        private string _predicateVariableName=null;
-        private string _objectVariableName=null;
-        private string _scalarVariableName=null;
+        private StringBuilder _commandText;
+
+        private string _metaGraphVariableName;
+        private string _entityVariableName;
+        private string _subjectVariableName;
+        private string _predicateVariableName;
+        private string _objectVariableName;
+        private string _scalarVariableName;
+
         #endregion
 
         #region Properties
         /// <summary>Gets a command text string.</summary>
-        public string CommandText { get { return (_commandText!=null?_commandText.ToString():System.String.Empty); } }
+        public string CommandText { get { return (_commandText != null ? _commandText.ToString() : String.Empty); } }
 
-        /// <summary>Sets a meta-graph URI.</summary>
-        public override Uri MetaGraphUri { [return: AllowNull] get { return _metaGraphUri; } set { _metaGraphUri=value; } }
+        /// <summary>
+        /// Gets the SPARQL query's variables.
+        /// </summary>
+        public SparqlQueryVariables Variables
+        {
+            get
+            {
+                return new SparqlQueryVariables(
+                    _entityVariableName,
+                    _subjectVariableName,
+                    _predicateVariableName,
+                    _objectVariableName,
+                    _metaGraphVariableName,
+                    _scalarVariableName);
+            }
+        }
 
-        /// <summary>Gets or sets a meta-graph variable name.</summary>
-        public override string MetaGraphVariableName { [return: AllowNull] get { return _metaGraphVariableName; } set { _metaGraphVariableName=value; } }
-
-        /// <summary>Gets or sets an entity variable name.</summary>
-        public override string EntityVariableName { [return: AllowNull] get { return _entityVariableName; } set { _entityVariableName=value; } }
-
-        /// <summary>Gets or sets a subject variable name.</summary>
-        public override string SubjectVariableName { [return: AllowNull] get { return _subjectVariableName; } set { _subjectVariableName=value; } }
-
-        /// <summary>Gets or sets a predicate variable name.</summary>
-        public override string PredicateVariableName { [return: AllowNull] get { return _predicateVariableName; } set { _predicateVariableName=value; } }
-
-        /// <summary>Gets or sets a object variable name.</summary>
-        public override string ObjectVariableName { [return: AllowNull] get { return _objectVariableName; } set { _objectVariableName=value; } }
-
-        /// <summary>Gets or sets a scalar variable name.</summary>
-        public override string ScalarVariableName { [return: AllowNull] get { return _scalarVariableName; } set { _scalarVariableName=value; } }
         #endregion
 
         #region Public methods
@@ -65,7 +62,7 @@ namespace RomanticWeb.Linq.Sparql
             }
             else
             {
-                VisitComponent(new Prefix("xsd",new Uri(RomanticWeb.Vocabularies.Xsd.BaseUri)));
+                VisitComponent(new Prefix("xsd",new Uri(Vocabularies.Xsd.BaseUri)));
 
                 foreach (Prefix prefix in query.Prefixes)
                 {
@@ -86,7 +83,7 @@ namespace RomanticWeb.Linq.Sparql
                             {
                                 if ((_metaGraphVariableName==null)&&(_entityVariableName==null))
                                 {
-                                    _metaGraphVariableName=System.String.Format("G{0}",((EntityAccessor)expression).About.Name);
+                                    _metaGraphVariableName=String.Format("G{0}",((EntityAccessor)expression).About.Name);
                                     _entityVariableName=((EntityAccessor)expression).About.Name;
                                 }
 
@@ -161,8 +158,8 @@ namespace RomanticWeb.Linq.Sparql
             string functionName=call.Member.ToString().ToUpper();
             string openingBracket="(";
             string closingBracket=")";
-            string separator=System.String.Empty;
-            string targetAccessor=System.String.Empty;
+            string separator=String.Empty;
+            string targetAccessor=String.Empty;
             ICollection<IExpression> arguments=call.Arguments;
             IExpression target=null;
             switch (call.Member)
@@ -203,14 +200,14 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="unaryOperator">Unary operator to be visited.</param>
         protected override void VisitUnaryOperator(UnaryOperator unaryOperator)
         {
-            string operatorString=System.String.Empty;
+            string operatorString;
             switch (unaryOperator.Member)
             {
                 case MethodNames.Not:
                     operatorString="!";
                     break;
                 default:
-                    throw new NotImplementedException(System.String.Format("Unary operator '{0}' is not supported.",unaryOperator.Member));
+                    throw new NotImplementedException(String.Format("Unary operator '{0}' is not supported.",unaryOperator.Member));
             }
 
             _commandText.Append(operatorString);
@@ -221,7 +218,7 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="binaryOperator">Binary operator to be visited.</param>
         protected override void VisitBinaryOperator(BinaryOperator binaryOperator)
         {
-            string operatorString=System.String.Empty;
+            string operatorString;
             switch (binaryOperator.Member)
             {
                 case MethodNames.Add:
@@ -261,7 +258,7 @@ namespace RomanticWeb.Linq.Sparql
                     operatorString="&&";
                     break;
                 default:
-                    throw new NotImplementedException(System.String.Format("Binary operator '{0}' is not supported.",binaryOperator.Member));
+                    throw new NotImplementedException(String.Format("Binary operator '{0}' is not supported.",binaryOperator.Member));
             }
 
             VisitComponent(binaryOperator.LeftOperand);
@@ -285,18 +282,18 @@ namespace RomanticWeb.Linq.Sparql
         {
             VisitComponent(unboundConstrain.Subject);
             _commandText.Append(" ");
-            VisitEntityConstrain((EntityConstrain)unboundConstrain);
+            VisitEntityConstrain(unboundConstrain);
         }
 
         /// <summary>Visit a literal.</summary>
         /// <param name="literal">Literal to be visited.</param>
         protected override void VisitLiteral(Literal literal)
         {
-            string valueString=System.String.Empty;
+            string valueString;
             switch (literal.Value.GetType().FullName)
             {
                 default:
-                    valueString=System.String.Format("\"{0}\"",literal.Value);
+                    valueString=String.Format("\"{0}\"",literal.Value);
                     break;
                 case "System.Byte":
                 case "System.SByte":
@@ -310,19 +307,19 @@ namespace RomanticWeb.Linq.Sparql
                     break;
                 case "System.Char":
                 case "System.String":
-                    valueString=System.String.Format("\"{0}\"^^xsd:string",literal.Value);
+                    valueString=String.Format("\"{0}\"^^xsd:string",literal.Value);
                     break;
                 case "System.Single":
                 case "System.Double":
                 case "System.Decimal":
-                    valueString=System.String.Format(CultureInfo.InvariantCulture,"{0}",literal.Value);
+                    valueString=String.Format(CultureInfo.InvariantCulture,"{0}",literal.Value);
                     break;
                 case "System.DateTime":
-                    valueString=System.String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
+                    valueString=String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
                     break;
                 case "System.Uri":
                 case "RomanticWeb.Entities.EntityId":
-                    valueString=System.String.Format("<{0}>",literal.Value);
+                    valueString=String.Format("<{0}>",literal.Value);
                     break;
             }
 
@@ -394,7 +391,7 @@ namespace RomanticWeb.Linq.Sparql
             }
 
             _commandText.Append("} ");
-            _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <http://xmlns.com/foaf/0.1/primaryTopic> ",_metaGraphUri,entityAccessor.About.Name);
+            _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <http://xmlns.com/foaf/0.1/primaryTopic> ",MetaGraphUri,entityAccessor.About.Name);
             VisitComponent(entityAccessor.About);
             _commandText.Append(" . } ");
         }

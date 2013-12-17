@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NullGuard;
 using RomanticWeb.Entities;
 
 namespace RomanticWeb.ComponentModel
 {
+    /// <summary>
+    /// <see cref="TypeConverter"/> between <see cref="EntityId"/> and <see cref="Uri"/>
+    /// </summary>
     public class EntityIdTypeConverter:TypeConverter
     {
         #region Fields
-        private static UriTypeConverter uriTypeConverter=null;
+        private static readonly UriTypeConverter UriTypeConverter;
         #endregion
 
         #region Constructors
         static EntityIdTypeConverter()
         {
-            uriTypeConverter=(UriTypeConverter)TypeDescriptor.GetConverter(typeof(Uri));
+            UriTypeConverter=(UriTypeConverter)TypeDescriptor.GetConverter(typeof(Uri));
         }
         #endregion
 
@@ -34,7 +32,7 @@ namespace RomanticWeb.ComponentModel
         /// <b>true</b> if this converter can perform the conversion; otherwise, <b>false</b>.</returns>
         public override bool CanConvertFrom([AllowNull] ITypeDescriptorContext context,Type sourceType)
         {
-            return (uriTypeConverter.CanConvertFrom(context,sourceType))||(base.CanConvertFrom(context,sourceType));
+            return (UriTypeConverter.CanConvertFrom(context,sourceType))||(base.CanConvertFrom(context,sourceType));
         }
 
         /// <summary>Returns whether this converter can convert the object to the specified type, using the specified context.</summary>
@@ -60,10 +58,10 @@ namespace RomanticWeb.ComponentModel
         /// An <see cref="System.Object" /> that represents the converted value.</returns>
         public override object ConvertFrom([AllowNull] ITypeDescriptorContext context,[AllowNull] CultureInfo culture,[AllowNull] object value)
         {
-            object result=null;
+            object result;
             if (value!=null)
             {
-                Uri uri=(Uri)uriTypeConverter.ConvertFrom(context,culture,value);
+                Uri uri=(Uri)UriTypeConverter.ConvertFrom(context,culture,value);
                 if (uri!=null)
                 {
                     result=new EntityId(uri);
@@ -123,7 +121,7 @@ namespace RomanticWeb.ComponentModel
         /// <b>true</b> if the specified value is valid for this object; otherwise <b>false</b>.</returns>
         public override bool IsValid([AllowNull] ITypeDescriptorContext context,[AllowNull] object value)
         {
-            return ((value!=null)&&(value is EntityId)&&(uriTypeConverter.IsValid(((EntityId)value).Uri)))||(base.IsValid(context,value));
+            return ((value!=null)&&(value is EntityId)&&(UriTypeConverter.IsValid(((EntityId)value).Uri)))||(base.IsValid(context,value));
         }
         #endregion
     }

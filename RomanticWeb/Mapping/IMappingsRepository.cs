@@ -17,6 +17,7 @@ namespace RomanticWeb.Mapping
         /// </summary>
         void RebuildMappings(MappingContext mappingContext);
 
+        /// <summary>Gets a mapping for an Entity type.</summary>
         IEntityMapping MappingFor(Type entityType);
     }
 }

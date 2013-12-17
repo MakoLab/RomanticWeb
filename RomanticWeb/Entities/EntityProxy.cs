@@ -15,6 +15,9 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
+    /// <summary>
+    /// Proxy for exposing mapped entity members
+    /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
     public class EntityProxy:DynamicObject,IEntity
     {
@@ -25,12 +28,15 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMappings;
         private readonly INodeConverter _converter;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityProxy"/> class.
+        /// </summary>
+        /// <param name="store">The store.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="entityMappings">The entity mappings.</param>
+        /// <param name="converter">The converter.</param>
         public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
         {
-            if (store == null) { throw new ArgumentNullException("store"); }
-            if (entity == null) { throw new ArgumentNullException("entity"); }
-            if (converter == null) { throw new ArgumentNullException("converter"); }
-
             _store = store;
             _entity = entity;
             _entityMappings = entityMappings;
@@ -38,6 +44,9 @@ namespace RomanticWeb.Entities
             ResultAggregations = new Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>[0];
         }
 
+        /// <summary>
+        /// Gets the result aggregation strategies.
+        /// </summary>
         [ImportMany(typeof(IResultProcessingStrategy))]
         public IEnumerable<Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>> ResultAggregations { get; internal set; } 
 
@@ -146,11 +155,17 @@ namespace RomanticWeb.Entities
             return _entity.ToString();
         }
 
+        /// <summary>
+        /// Gets the underlying wrapper as another type of entity.
+        /// </summary>
         public TInterface AsEntity<TInterface>() where TInterface : class,IEntity
         {
             return _entity.AsEntity<TInterface>();
         }
 
+        /// <summary>
+        /// Gets the undelying entity as dynamic.
+        /// </summary>
         public dynamic AsDynamic()
         {
             return _entity;

@@ -2,8 +2,12 @@
 
 namespace RomanticWeb.Vocabularies
 {
+    /// <summary>
+    /// The XSD vocabulary (http://www.w3.org/2001/XMLSchema#)
+    /// </summary>
     public static class Xsd
     {
+#pragma warning disable 1591
         public const string BaseUri="http://www.w3.org/2001/XMLSchema#";
 
         public static Uri Int { get { return new Uri(BaseUri+"int"); } }
@@ -53,5 +57,6 @@ namespace RomanticWeb.Vocabularies
         public static Uri String { get { return new Uri(BaseUri+"string"); } }
 
         public static Uri Base64Binary { get { return new Uri(BaseUri+"base64Binary"); } }
+#pragma warning restore 1591
     }
 }

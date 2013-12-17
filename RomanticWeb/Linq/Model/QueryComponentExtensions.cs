@@ -117,7 +117,7 @@ namespace RomanticWeb.Linq.Model
                 var classMappings=visitor.MappingsRepository.FindClassMappings(entityType);
                 if (classMappings.Any())
                 {
-                    result=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
+                    result=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
                 }
             }
 

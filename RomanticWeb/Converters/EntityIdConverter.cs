@@ -15,6 +15,7 @@ namespace RomanticWeb.Converters
     [Export(typeof(IComplexTypeConverter))]
     public class EntityIdConverter : EntityIdConverter<EntityId>
     {
+        /// <inheritdoc/>
         protected override EntityId ConvertEntityId(EntityId id)
         {
             return id;

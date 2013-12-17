@@ -10,7 +10,7 @@ namespace RomanticWeb
         public static bool EntityIsCollectionRoot(this IEntityStore store, IEntity potentialList)
         {
             return !(from propertyObjectPair in store.Quads
-                     where propertyObjectPair.Predicate == Node.ForUri(Rdf.rest)
+                     where propertyObjectPair.Predicate == Node.ForUri(Rdf.Rest)
                      && propertyObjectPair.Object == Node.ForUri(potentialList.Id.Uri)
                      select propertyObjectPair).Any();
         }

@@ -13,6 +13,9 @@ namespace RomanticWeb
         /// </summary>
         IOntologyProvider Ontologies { get; }
 
+        /// <summary>
+        /// Gets the mappings.
+        /// </summary>
         IMappingsRepository Mappings { get; }
 
         /// <summary>

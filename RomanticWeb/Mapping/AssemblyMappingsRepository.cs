@@ -43,6 +43,7 @@ namespace RomanticWeb.Mapping
             return MappingFor(typeof(TEntity));
         }
 
+        /// <inheritdoc />
         [return: AllowNull]
         public IEntityMapping MappingFor(Type entityType)
         {

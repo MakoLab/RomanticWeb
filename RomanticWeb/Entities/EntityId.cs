@@ -101,7 +101,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
-        /// <param name="operand">Type: <see cref="System.Object" />
+        /// <param name="obj">Type: <see cref="System.Object" />
         /// The object to compare with the current object.</param>
         /// <returns>Type: <see cref="System.Boolean" />
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>

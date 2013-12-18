@@ -69,7 +69,8 @@ namespace RomanticWeb.DotNetRDF
             var ask=QueryBuilder.Ask()
                                 .Graph(
                                     "?g",
-                                    graph => graph.Where(triple => triple.Subject(_metaGraphUri).PredicateUri("foaf:primaryTopic").Object(entityId.Uri)));
+                                    graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object(entityId.Uri))
+                                                  .Union(union => union.Where(triple => triple.Subject(entityId.Uri).Predicate("p").Object("o"))));
             ask.Prefixes.Import(_namespaces);
             return ExecuteAsk(ask.BuildQuery());
         }

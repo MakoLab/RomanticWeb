@@ -211,39 +211,39 @@ namespace RomanticWeb.Linq
             {
                 this.GetEntityAccessor(fromClause);
 
-                //Type type=fromClause.FromExpression.Type.GetGenericArguments()[0];
-                //var classMappings=_mappingsRepository.FindClassMapping(type);
-                //if (classMappings.Any())
-                //{
-                //    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
-                //    if (!_mainFromComponent.Elements.Contains(constrain))
-                //    {
-                //        _mainFromComponent.Elements.Add(constrain);
-                //    }
+                ////Type type=fromClause.FromExpression.Type.GetGenericArguments()[0];
+                ////var classMappings=_mappingsRepository.FindClassMapping(type);
+                ////if (classMappings.Any())
+                ////{
+                ////    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
+                ////    if (!_mainFromComponent.Elements.Contains(constrain))
+                ////    {
+                ////        _mainFromComponent.Elements.Add(constrain);
+                ////    }
 
-                //    IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(type);
-                //    if (inheritedTypes.Any())
-                //    {
-                //        OptionalPattern optional=new OptionalPattern();
-                //        foreach (Type inheritedType in inheritedTypes)
-                //        {
-                //            classMappings=_mappingsRepository.FindClassMapping(inheritedType);
-                //            if (classMappings.Any())
-                //            {
-                //                constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
-                //                if ((!_mainFromComponent.Elements.Contains(constrain))&&(!optional.Patterns.Contains(constrain)))
-                //                {
-                //                    optional.Patterns.Add(constrain);
-                //                }
-                //            }
-                //        }
+                ////    IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(type);
+                ////    if (inheritedTypes.Any())
+                ////    {
+                ////        OptionalPattern optional=new OptionalPattern();
+                ////        foreach (Type inheritedType in inheritedTypes)
+                ////        {
+                ////            classMappings=_mappingsRepository.FindClassMapping(inheritedType);
+                ////            if (classMappings.Any())
+                ////            {
+                ////                constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
+                ////                if ((!_mainFromComponent.Elements.Contains(constrain))&&(!optional.Patterns.Contains(constrain)))
+                ////                {
+                ////                    optional.Patterns.Add(constrain);
+                ////                }
+                ////            }
+                ////        }
 
-                //        if ((optional.Patterns.Count>0)&&(!_mainFromComponent.Elements.Contains(constrain)))
-                //        {
-                //            _mainFromComponent.Elements.Add(optional);
-                //        }
-                //    }
-                //}
+                ////        if ((optional.Patterns.Count>0)&&(!_mainFromComponent.Elements.Contains(constrain)))
+                ////        {
+                ////            _mainFromComponent.Elements.Add(optional);
+                ////        }
+                ////    }
+                ////}
             }
         }
 

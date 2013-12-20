@@ -1,4 +1,5 @@
 ﻿using System;
+using Anotar.NLog;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
@@ -40,7 +41,9 @@ namespace RomanticWeb.Mapping.Fluent
 
             if (resolvedUri==null)
             {
-                throw new MappingException(string.Format("Cannot resolved QName {0}:{1}",NamespacePrefix,TermName));
+                var message=string.Format("Cannot resolve QName {0}:{1}",NamespacePrefix,TermName);
+                LogTo.Fatal(message);
+                throw new MappingException(message);
             }
 
             return resolvedUri;

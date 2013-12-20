@@ -1,4 +1,5 @@
 ﻿using System;
+using Anotar.NLog;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -61,7 +62,9 @@ namespace RomanticWeb.Mapping.Attributes
             Uri uri = _uri??mappingContext.OntologyProvider.ResolveUri(Prefix,Term);
             if (uri==null)
             {
-                throw new MappingException(string.Format("Cannot resolve QName {0}:{1}",Prefix,Term));
+                var message=string.Format("Cannot resolve QName {0}:{1}",Prefix,Term);
+                LogTo.Fatal(message);
+                throw new MappingException(message);
             }
 
             return uri;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
@@ -15,25 +16,15 @@ namespace RomanticWeb.Mapping
 
         private IDictionary<Type,IEntityMapping> _mappings;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AssemblyMappingsRepository"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="AssemblyMappingsRepository"/> class.</summary>
         /// <param name="assembly">The assembly.</param>
         protected AssemblyMappingsRepository(Assembly assembly)
         {
             _assembly=assembly;
         }
 
-        /// <summary>
-        /// Gets the source <see cref="System.Reflection.Assembly"/>
-        /// </summary>
-        protected Assembly Assembly
-        {
-            get
-            {
-                return _assembly;
-            }
-        }
+        /// <summary>Gets the source <see cref="System.Reflection.Assembly"/>.</summary>
+        protected Assembly Assembly { get { return _assembly; } }
 
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
@@ -51,6 +42,15 @@ namespace RomanticWeb.Mapping
         }
 
         /// <inheritdoc />
+        [return: AllowNull]
+        public Type MappingFor(Uri classUri)
+        {
+            return (from mapping in _mappings
+                    where mapping.Value.Classes.Any(item => item.Uri.AbsoluteUri==classUri.AbsoluteUri)
+                    select mapping.Key).FirstOrDefault();
+        }
+
+        /// <inheritdoc />
         public void RebuildMappings(MappingContext mappingContext)
         {
             _mappings = new Dictionary<Type, IEntityMapping>();
@@ -65,9 +65,7 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        /// <summary>
-        /// Builds mapping from the current <see cref="Assembly"/>
-        /// </summary>
+        /// <summary>Builds mapping from the current <see cref="Assembly"/>.</summary>
         protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext);
     }
 }

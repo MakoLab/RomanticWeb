@@ -110,6 +110,7 @@
     <Compile Include="EntityIdTests.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\TripleStoreExtensions.cs" />
+    <Compile Include="IntegrationTests\DefaultGraphTypeMapping.cs" />
     <Compile Include="IntegrationTests\DefaultGraphPersonMapping.cs" />
     <Compile Include="IntegrationTests\DynamicTests.cs" />
     <Compile Include="IntegrationTests\InMemoryDynamicTests.cs" />

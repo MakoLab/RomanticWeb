@@ -11,6 +11,32 @@ namespace RomanticWeb.ComponentModel.Composition
     public class ContainerFactory
     {
         #region Static methods
+        /// <summary>Creates an enumeration of types implementing given interface.</summary>
+        /// <typeparam name="T">Interface to be implemented by resulting types.</typeparam>
+        /// <remarks>Method iterates through loaded assemblies and searches for types that implement given interface.</remarks>
+        /// <returns>Enumeration of types implementing given interface.</returns>
+        public static IEnumerable<Type> GetTypesImplementing<T>()
+        {
+            return GetTypesImplementing(typeof(T));
+        }
+
+        /// <summary>Creates an enumeration of types implementing given interface.</summary>
+        /// <param name="interface">Interface to be implemented by resulting types.</typeparam>
+        /// <remarks>Method iterates through loaded assemblies and searches for types that implement given interface.</remarks>
+        /// <returns>Enumeration of types implementing given interface.</returns>
+        public static IEnumerable<Type> GetTypesImplementing(Type @interface)
+        {
+            if (!@interface.IsInterface)
+            {
+                throw new ArgumentOutOfRangeException("T");
+            }
+
+            return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    from type in assembly.GetTypes()
+                    where (type!=@interface)&&(@interface.IsAssignableFrom(type))&&(type.IsInterface)
+                    select type);
+        }
+
         /// <summary>Creates an enumeration of instances implementing given interface.</summary>
         /// <typeparam name="T">Interface to be implemented by resulting instances.</typeparam>
         /// <param name="arguments">Optional arguments to be passed to constructor.</param>

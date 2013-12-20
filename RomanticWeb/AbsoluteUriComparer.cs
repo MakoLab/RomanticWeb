@@ -5,6 +5,8 @@ namespace RomanticWeb
 {
     internal sealed class AbsoluteUriComparer:IComparer<Uri>,IEqualityComparer<Uri>
     {
+        public static readonly AbsoluteUriComparer Default=new AbsoluteUriComparer();
+
         public int Compare(Uri x,Uri y)
         {
             return Uri.Compare(x,y,UriComponents.AbsoluteUri,UriFormat.UriEscaped,StringComparison.Ordinal);

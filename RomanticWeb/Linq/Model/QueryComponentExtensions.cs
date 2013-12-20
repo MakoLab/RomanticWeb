@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
@@ -88,7 +89,7 @@ namespace RomanticWeb.Linq.Model
             return result;
         }
 
-        internal static EntityAccessor GetEntityAccessor(this EntityQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        internal static EntityAccessor GetEntityAccessor(this IQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
         {
             EntityAccessor entityAccessor=null;
             if (typeof(IEntity).IsAssignableFrom(sourceExpression.ItemType))
@@ -97,7 +98,7 @@ namespace RomanticWeb.Linq.Model
                 if (entityAccessor==null)
                 {
                     entityAccessor=new EntityAccessor(new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
-                    EntityConstrain constrain=visitor.CreateTypeConstrain(sourceExpression);
+                    EntityTypeConstrain constrain=visitor.CreateTypeConstrain(sourceExpression);
                     if ((constrain!=null)&&(!entityAccessor.Elements.Contains(constrain)))
                     {
                         entityAccessor.Elements.Add(constrain);
@@ -108,16 +109,35 @@ namespace RomanticWeb.Linq.Model
             return entityAccessor;
         }
 
-        internal static EntityConstrain CreateTypeConstrain(this EntityQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
         {
-            EntityConstrain result=null;
+            EntityTypeConstrain result=null;
             Type entityType=sourceExpression.ItemType.FindEntityType();
             if ((entityType!=null)&&(entityType!=typeof(IEntity)))
             {
-                var classMappings=visitor.MappingsRepository.FindClassMappings(entityType);
+                var classMappings=visitor.MappingsRepository.FindClassMapping(entityType);
                 if (classMappings.Any())
                 {
-                    result=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
+                    Uri primaryTypeUri=classMappings.First().Uri;
+                    IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(entityType);
+                    IList<Uri> inheritedTypeUris=new List<Uri>();
+                    if (inheritedTypes.Any())
+                    {
+                        foreach (Type inheritedType in inheritedTypes)
+                        {
+                            classMappings=visitor.MappingsRepository.FindClassMapping(inheritedType);
+                            if (classMappings.Any())
+                            {
+                                Uri inheritedTypeUri=classMappings.First().Uri;
+                                if ((primaryTypeUri.AbsoluteUri!=inheritedTypeUri.AbsoluteUri)&&(!inheritedTypeUris.Contains(inheritedTypeUri,AbsoluteUriComparer.Default)))
+                                {
+                                    inheritedTypeUris.Add(inheritedTypeUri);
+                                }
+                            }
+                        }
+                    }
+
+                    result=new EntityTypeConstrain(primaryTypeUri,inheritedTypeUris.ToArray());
                 }
             }
 

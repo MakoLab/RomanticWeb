@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NullGuard;
 using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
@@ -65,6 +69,12 @@ namespace RomanticWeb.Linq
         /// <returns>Enumeration of resulting entities matching given query.</returns>
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
+            IEnumerable<ResultOperatorBase> resultOperators=queryModel.ResultOperators.Where(item => item is CastResultOperator).ToArray();
+            foreach (ResultOperatorBase resultOperator in resultOperators)
+            {
+                queryModel.ResultOperators.Remove(resultOperator);
+            }
+
             RomanticWeb.Linq.Model.Query sparqlQuery=VisitQueryModel(queryModel);
             var createMethodInfo=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean").MakeGenericMethod(new[] { typeof(T) });
             ISet<EntityId> ids=new HashSet<EntityId>();
@@ -78,7 +88,17 @@ namespace RomanticWeb.Linq
                 _entityContext.Store.AssertEntity(triples.Key.EntityId,triples);
             }
 
-            return ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
+            IEnumerable<T> result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
+            foreach (ResultOperatorBase resultOperator in resultOperators)
+            {
+                if (resultOperator is CastResultOperator)
+                {
+                    MethodInfo castMethod=typeof(System.Linq.Enumerable).GetMethod("Cast",BindingFlags.Static|BindingFlags.Public,null,new Type[] { typeof(IEnumerable) },null);
+                    result=(IEnumerable<T>)castMethod.MakeGenericMethod(((CastResultOperator)resultOperator).CastItemType).Invoke(null,new object[] { result });
+                }
+            }
+
+            return result;
         }
         #endregion
 

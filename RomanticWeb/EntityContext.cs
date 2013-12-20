@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Anotar.NLog;
 using ImpromptuInterface;
 using MethodCache.Attributes;
@@ -18,23 +20,22 @@ namespace RomanticWeb
     public class EntityContext:IEntityContext
     {
         #region Fields
-
         private readonly IEntityContextFactory _factory;
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
         private readonly MappingContext _mappingContext;
         private readonly INodeConverter _nodeConverter;
-
+        private IDictionary<string,Type> _classInterfacesMap;
+        private IList<string> _missingClassInterfacesMap;
         #endregion
 
         #region Constructors
-
         internal EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            MappingContext mappingContext, 
-            IEntityStore entityStore, 
+            MappingContext mappingContext,
+            IEntityStore entityStore,
             IEntitySource entitySource)
         {
             LogTo.Info("Creating entity context");
@@ -43,9 +44,11 @@ namespace RomanticWeb
             _entitySource=entitySource;
             _nodeConverter=new NodeConverter(this);
             _mappings=mappings;
-            _mappingContext = mappingContext;
-            Cache = new DictionaryCache();
+            _mappingContext=mappingContext;
+            Cache=new DictionaryCache();
             factory.SatisfyImports(_nodeConverter);
+            _classInterfacesMap=new Dictionary<string,Type>();
+            _missingClassInterfacesMap=new List<string>();
         }
         #endregion
 
@@ -71,11 +74,10 @@ namespace RomanticWeb
         #endregion
 
         #region Public methods
-        
         /// <inheritdoc />
-        public IQueryable<Entity> AsQueryable()
+        public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<Entity>(this,_entitySource,_mappings);
+            return new EntityQueryable<IEntity>(this,_entitySource,_mappings);
         }
 
         /// <inheritdoc />
@@ -86,7 +88,7 @@ namespace RomanticWeb
 
         /// <inheritdoc />
         [return: AllowNull]
-        public T Load<T>(EntityId entityId) where T : class,IEntity
+        public T Load<T>(EntityId entityId) where T:class,IEntity
         {
             return Load<T>(entityId,true);
         }
@@ -105,16 +107,28 @@ namespace RomanticWeb
                 return null;
             }
 
-            if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
+            T result;
+            Type entityType=GetEntityType(entity);
+            if ((entityType!=null)&&(typeof(T).IsAssignableFrom(entityType)))
             {
-                return (T)(IEntity)entity;
+                result=(T)GetType().GetMethod("EntityAs",BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(Entity) },null)
+                    .MakeGenericMethod(entityType)
+                    .Invoke(this,new object[] { entity });
             }
-        
-            return EntityAs<T>(entity);
+            else if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
+            {
+                result=(T)(IEntity)entity;
+            }
+            else
+            {
+                result=EntityAs<T>(entity);
+            }
+
+            return result;
         }
 
         /// <inheritdoc />
-        public T Create<T>(EntityId entityId) where T : class,IEntity
+        public T Create<T>(EntityId entityId) where T:class,IEntity
         {
             if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
             {
@@ -129,10 +143,10 @@ namespace RomanticWeb
                 throw new UnMappedTypeException(typeof(T));
             }
 
-            var classMappings = entityMapping.Classes;
+            var classMappings=entityMapping.Classes;
             foreach (var classMapping in classMappings)
             {
-                var typedEntity = AsTypedEntity(entity,classMapping);
+                var typedEntity=AsTypedEntity(entity,classMapping);
                 typedEntity.Types=new[] { new EntityId(classMapping.Uri) };
             }
 
@@ -142,7 +156,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public Entity Create(EntityId entityId)
         {
-            LogTo.Debug("Creating entity {0}", entityId);
+            LogTo.Debug("Creating entity {0}",entityId);
             return Create(entityId,true);
         }
 
@@ -165,7 +179,6 @@ namespace RomanticWeb
         {
             // todo: implement
         }
-
         #endregion
 
         #region Non-public methods
@@ -183,30 +196,30 @@ namespace RomanticWeb
         /// <returns>Passed entity beeing a given interface.</returns>
         internal T EntityAs<T>(Entity entity) where T:class,IEntity
         {
-            if (typeof(T) == typeof(IEntity))
+            if (typeof(T)==typeof(IEntity))
             {
                 return (T)(IEntity)entity;
             }
 
-            LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
+            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,typeof(T));
             return EntityAs<T>(entity,_mappings.MappingFor<T>());
         }
 
         [Cache]
         [return: AllowNull]
-        private Entity Load(EntityId entityId, bool checkIfExist = true)
+        private Entity Load(EntityId entityId,bool checkIfExist=true)
         {
-            LogTo.Debug("Loading entity {0}", entityId);
+            LogTo.Debug("Loading entity {0}",entityId);
 
-            if ((entityId is BlankId) || (!checkIfExist) || (_entitySource.EntityExist(entityId)))
+            if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
             {
-                return Create(entityId, false);
+                return Create(entityId,false);
             }
 
             return null;
         }
 
-        private Entity Create(EntityId entityId, bool entityExists)
+        private Entity Create(EntityId entityId,bool entityExists)
         {
             var entity=new Entity(entityId,this,entityExists);
 
@@ -214,7 +227,7 @@ namespace RomanticWeb
             {
                 var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter);
                 _factory.SatisfyImports(ontologyAccessor);
-                entity[ontology.Prefix] = ontologyAccessor;
+                entity[ontology.Prefix]=ontologyAccessor;
             }
 
             return entity;
@@ -224,17 +237,75 @@ namespace RomanticWeb
         /// Creates an instance of ITypedEntity with custom mapping 
         /// to place rdf:type triple in correct named graph as declared by the parent mapping
         /// </summary>
-        private ITypedEntity AsTypedEntity(Entity entity, IClassMapping classMapping)
+        private ITypedEntity AsTypedEntity(Entity entity,IClassMapping classMapping)
         {
-            var map = new TypeEntityMap(classMapping.GraphSelector.SelectGraph(entity.Id));
-            return EntityAs<ITypedEntity>(entity, map.CreateMapping(_mappingContext));
+            var map=new TypeEntityMap(classMapping.GraphSelector.SelectGraph(entity.Id));
+            return EntityAs<ITypedEntity>(entity,map.CreateMapping(_mappingContext));
         }
 
-        private T EntityAs<T>(Entity entity, IEntityMapping mapping) where T : class,IEntity
+        private T EntityAs<T>(Entity entity,IEntityMapping mapping) where T:class,IEntity
         {
-            var proxy = new EntityProxy(Store, entity, mapping, _nodeConverter);
+            var proxy=new EntityProxy(Store,entity,mapping,_nodeConverter);
             _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();
+        }
+       
+        private IList<Type> GetEntityTypes(Entity entity)
+        {
+            IEnumerable<EntityId> entityClasses=entity.AsEntity<ITypedEntity>().Types??new EntityId[0];
+            IList<Type> entityTypes=new List<Type>();
+            if (entityClasses.Any())
+            {
+                foreach (EntityId classId in entityClasses)
+                {
+                    if (!_missingClassInterfacesMap.Contains(classId.Uri.AbsoluteUri))
+                    {
+                        Type type=null;
+                        if (_classInterfacesMap.ContainsKey(classId.Uri.AbsoluteUri))
+                        {
+                            type=_classInterfacesMap[classId.Uri.AbsoluteUri];
+                        }
+                        else
+                        {
+                            type=_mappings.MappingFor(classId.Uri);
+                            if ((type!=null)&&(type.IsInterface))
+                            {
+                                _classInterfacesMap[classId.Uri.AbsoluteUri]=type;
+                            }
+                            else
+                            {
+                                _missingClassInterfacesMap.Add(classId.Uri.AbsoluteUri);
+                            }
+                        }
+
+                        if (type!=null)
+                        {
+                            entityTypes.Add(type);
+                        }
+                    }
+                }
+            }
+
+            return entityTypes;
+        }
+
+        private Type GetEntityType(Entity entity)
+        {
+            Type result=null;
+            IList<Type> entityTypes=GetEntityTypes(entity);
+            if (entityTypes.Count>0)
+            {
+                result=entityTypes[0];
+                foreach (Type entityType in entityTypes.Skip(1))
+                {
+                    if (entityType.GetInterfaces().Contains(result))
+                    {
+                        result=entityType;
+                    }
+                }
+            }
+
+            return result;
         }
         #endregion
     }

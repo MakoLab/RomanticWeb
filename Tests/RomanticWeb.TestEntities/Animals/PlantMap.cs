@@ -6,7 +6,7 @@ namespace RomanticWeb.TestEntities.Animals
     {
         public PlantMap()
         {
-            Class.Is("life", "Plant");
+            Class.Is("life","Plant");
         }
     }
 }

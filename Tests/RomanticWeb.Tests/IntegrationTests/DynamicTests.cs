@@ -3,17 +3,25 @@ using System.Collections;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping;
+using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
     [TestFixture]
     public abstract class DynamicTests:IntegrationTestsBase
 	{
+        private new TestMappingsRepository Mappings
+        {
+            get { return (TestMappingsRepository)base.Mappings; }
+        }
+
         [Test]
         public void Creating_Entity_should_allow_accessing_existing_literal_properties()
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -29,6 +37,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -42,6 +51,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("AssociatedInstances.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -57,6 +67,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("AssociatedInstances.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -71,6 +82,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -84,6 +96,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -98,6 +111,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesInNamedGraphs.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -115,6 +129,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("BlankNodes.trig");
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -134,6 +149,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -154,6 +170,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -172,6 +189,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
@@ -190,6 +208,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -200,5 +219,10 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(nicks[0], Is.EqualTo("Tomasz"));
             Assert.That(nicks[1], Is.EqualTo("Tomek"));
         }
-	}
+
+        protected override IMappingsRepository SetupMappings()
+        {
+            return new TestMappingsRepository();
+        }
+    }
 }

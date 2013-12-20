@@ -27,8 +27,7 @@ namespace RomanticWeb.Mapping
         #endregion
 
         #region Pulic methods
-        /// <summary>Gets a mapping for an Entity type.</summary>
-        /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
+        /// <inheritdoc />
         [return: AllowNull]
         public IEntityMapping MappingFor<TEntity>()
         {
@@ -39,13 +38,11 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public IEntityMapping MappingFor(Type entityType)
         {
-            var mappingsForType = _mappingsRepositories.Select(item => item.MappingFor(entityType));
-            return mappingsForType.SingleOrDefault(m => m != null);
+            var mappingsForType=_mappingsRepositories.Select(item => item.MappingFor(entityType));
+            return mappingsForType.SingleOrDefault(m => m!=null);
         }
 
-        /// <summary>
-        /// Builds and combines mapping from the underlying <see cref="IMappingsRepository"/>s
-        /// </summary>
+        /// <inheritdoc />
         public void RebuildMappings(MappingContext mappingContext)
         {
             foreach (var mappingsRepository in _mappingsRepositories)
@@ -54,6 +51,15 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        /// <inheritdoc />
+        [return: AllowNull]
+        public Type MappingFor(Uri classUri)
+        {
+            return (from mappingsRepository in _mappingsRepositories
+                    let mapping=mappingsRepository.MappingFor(classUri)
+                    where mapping!=null
+                    select mapping).FirstOrDefault();
+        }
         #endregion
     }
 }

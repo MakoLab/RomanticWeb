@@ -21,6 +21,9 @@ namespace RomanticWeb.Tests.Linq
     {
         private IEntityContext _entityContext;
         private TripleStore _store;
+        private Mock<IEntityMapping> _typeMappingMock;
+        private Mock<IClassMapping> _classTypeMappingMock;
+        private Mock<IPropertyMapping> _typesPropertyMappingMock;
         private Mock<IClassMapping> _personTypeMappingMock;
         private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
         private Mock<IPropertyMapping> _surnamePropertyMappingMock;
@@ -48,8 +51,19 @@ namespace RomanticWeb.Tests.Linq
             _grapheSelectorMock.Setup(graphSelector => graphSelector.SelectGraph(It.IsAny<EntityId>())).Returns<EntityId>(entityId => new Uri(entityId.Uri.AbsoluteUri.Replace("magi","data.magi")));
             _store=new TripleStore();
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig");
+            _classTypeMappingMock=new Mock<IClassMapping>(MockBehavior.Strict);
+            _classTypeMappingMock.SetupGet(classMapping => classMapping.Uri).Returns(RomanticWeb.Vocabularies.Rdfs.Class);
+            _typesPropertyMappingMock=new Mock<IPropertyMapping>(MockBehavior.Strict);
+            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(RomanticWeb.Vocabularies.Rdf.type);
+            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelectorMock.Object);
+            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.IsCollection).Returns(true);
+            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Name).Returns("Types");
+            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.ReturnType).Returns(typeof(IEnumerable<EntityId>));
             _personTypeMappingMock=new Mock<IClassMapping>(MockBehavior.Strict);
             _personTypeMappingMock.SetupGet(typeMapping => typeMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/Person"));
+            _typeMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
+            _typeMappingMock.SetupGet(mapping => mapping.Classes).Returns(new[] { _classTypeMappingMock.Object });
+            _typeMappingMock.Setup(mapping => mapping.PropertyFor("Types")).Returns(_typesPropertyMappingMock.Object);
             _firstNamePropertyMappingMock=new Mock<IPropertyMapping>();
             _firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/givenName"));
             _firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelectorMock.Object);
@@ -68,6 +82,9 @@ namespace RomanticWeb.Tests.Linq
             _mappingsRepositoryMock.Setup(m => m.RebuildMappings(It.IsAny<MappingContext>()));
             _mappingsRepositoryMock.Setup(repository => repository.MappingFor<IPerson>()).Returns(_personMappingMock.Object);
             _mappingsRepositoryMock.Setup(repository => repository.MappingFor(typeof(IPerson))).Returns(_personMappingMock.Object);
+            _mappingsRepositoryMock.Setup(repository => repository.MappingFor<ITypedEntity>()).Returns(_typeMappingMock.Object);
+            _mappingsRepositoryMock.Setup(repository => repository.MappingFor(typeof(ITypedEntity))).Returns(_typeMappingMock.Object);
+            _mappingsRepositoryMock.Setup(repository => repository.MappingFor(new Uri("http://xmlns.com/foaf/0.1/Person"))).Returns(typeof(IPerson));
             _ontologyProviderMock=new Mock<IOntologyProvider>(MockBehavior.Strict);
             _ontologyProviderMock.SetupGet(provider => provider.Ontologies).Returns(
                 new Ontology[] { new Ontology(
@@ -136,12 +153,12 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(entities.Count,Is.EqualTo(2));
             IEntity tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
             Assert.That(tomasz,Is.Not.Null);
-            Assert.That(tomasz,Is.InstanceOf<Entity>());
+            Assert.That(tomasz,Is.InstanceOf<IPerson>());
             Assert.That(tomasz.AsDynamic().foaf.first_givenName,Is.EqualTo("Tomasz"));
             Assert.That(tomasz.AsDynamic().foaf.first_familyName,Is.EqualTo("Pluskiewicz"));
             IEntity gniewoslaw=entities.Where(item => item.Id==(EntityId)"http://magi/people/Gniewoslaw").FirstOrDefault();
             Assert.That(gniewoslaw,Is.Not.Null);
-            Assert.That(gniewoslaw,Is.InstanceOf<Entity>());
+            Assert.That(gniewoslaw,Is.InstanceOf<IPerson>());
             Assert.That(gniewoslaw.AsDynamic().foaf.first_givenName,Is.EqualTo("Gniewosław"));
             Assert.That(gniewoslaw.AsDynamic().foaf.first_familyName,Is.EqualTo("Rzepka"));
         }

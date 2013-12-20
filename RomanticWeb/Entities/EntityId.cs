@@ -72,6 +72,20 @@ namespace RomanticWeb.Entities
             return result;
         }
 
+        /// <summary>Converts an Uri into an entity identifier.</summary>
+        /// <param name="uri">Uri representation of the entity identifier.</param>
+        /// <returns><see cref="EntityId"/> instance or null.</returns>
+        public static implicit operator EntityId(Uri uri)
+        {
+            EntityId result=null;
+            if (uri!=null)
+            {
+                result=new EntityId(uri);
+            }
+
+            return result;
+        }
+
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>Type: <see cref="System.Int32" />
         /// A hash code for the current object.</returns>

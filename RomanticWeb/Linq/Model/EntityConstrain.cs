@@ -6,7 +6,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Provides details about entity constrain.</summary>
     [QueryComponentNavigator(typeof(EntityConstrainNavigator))]
-    public class EntityConstrain:QueryElement
+    public class EntityConstrain:QueryElement,IExpression
     {
         #region Fields
         private IExpression _predicate;
@@ -32,7 +32,7 @@ namespace RomanticWeb.Linq.Model
         #region Properties
         /// <summary>Gets or sets a predicate for this constrain.</summary>
         [AllowNull]
-        public IExpression Predicate
+        public virtual IExpression Predicate
         {
             get
             {
@@ -50,7 +50,7 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Gets or sets an object for this constrain.</summary>
         [AllowNull]
-        public IExpression Value
+        public virtual IExpression Value
         {
             get
             {

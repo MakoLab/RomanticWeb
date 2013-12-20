@@ -54,6 +54,10 @@ namespace RomanticWeb.Linq.Visitor
         /// <param name="entityConstrain">Entity constrain to be visited.</param>
         protected abstract void VisitEntityConstrain(EntityConstrain entityConstrain);
 
+        /// <summary>Visit an entity type constrain.</summary>
+        /// <param name="entityTypeConstrain">Entity type constrain to be visited.</param>
+        protected abstract void VisitEntityTypeConstrain(EntityTypeConstrain entityTypeConstrain);
+
         /// <summary>Visit an unbound constrain.</summary>
         /// <param name="unboundConstrain">Unbound constrain to be visited.</param>
         protected abstract void VisitUnboundConstrain(UnboundConstrain unboundConstrain);
@@ -85,6 +89,10 @@ namespace RomanticWeb.Linq.Visitor
         /// <summary>Visit an entity accessor.</summary>
         /// <param name="entityAccessor">Entity accessor to be visited.</param>
         protected abstract void VisitEntityAccessor(EntityAccessor entityAccessor);
+
+        /// <summary>Visit an optional patterns.</summary>
+        /// <param name="optionalPattern">Optional patterns to be visited.</param>
+        protected abstract void VisitOptionalPattern(OptionalPattern optionalPattern);
         #endregion
     }
 }

@@ -17,7 +17,7 @@ using RomanticWeb.Mapping.Model;
 namespace RomanticWeb.Linq
 {
     /// <summary>Visits query expressions.</summary>
-    public class EntityQueryVisitor:ThrowingExpressionTreeVisitor
+    public class EntityQueryVisitor:ThrowingExpressionTreeVisitor,IQueryVisitor
     {
         #region Fields
         private Query _query;
@@ -41,6 +41,12 @@ namespace RomanticWeb.Linq
         #endregion
 
         #region Properties
+        /// <summary>Gets an associated query.</summary>
+        Query IQueryVisitor.Query { get { return _query; } }
+
+        /// <summary>Gets the mappings repository.</summary>
+        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _mappingsRepository; } }
+
         /// <summary>Gets an associated query.</summary>
         internal Query Query { get { return _query; } }
 
@@ -252,6 +258,10 @@ namespace RomanticWeb.Linq
 
                 _lastComponent=list;
             }
+            else if (expression.Value is IEntity)
+            {
+                HandleComponent(_lastComponent=new Literal(((IEntity)expression.Value).Id.Uri));
+            }
             else
             {
                 HandleComponent(_lastComponent=new Literal(expression.Value));
@@ -349,7 +359,7 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected override System.Linq.Expressions.Expression VisitTypeBinaryExpression(System.Linq.Expressions.TypeBinaryExpression expression)
         {
-            var classMappings=_mappingsRepository.FindClassMappings(expression.TypeOperand);
+            var classMappings=_mappingsRepository.FindClassMapping(expression.TypeOperand);
             if (classMappings.Any())
             {
                 Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression.Expression);
@@ -360,9 +370,13 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add(entityAccessor);
                 }
 
-                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
+                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
                 _lastComponent=constrain;
-                if (!entityAccessor.Elements.Contains(constrain))
+                if ((_currentComponent.Count>0)&&(_currentComponent.Peek() is BinaryOperatorNavigator))
+                {
+                    HandleComponent(constrain);
+                }
+                else if (!entityAccessor.Elements.Contains(constrain))
                 {
                     entityAccessor.Elements.Add(constrain);
                 }

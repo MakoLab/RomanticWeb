@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public DefaultGraphPersonMapping()
 		{
             Class.Is("foaf","Person").NamedGraph.SelectedBy<TestSelector>();
-            Property(p => p.FirstName).Term.Is("foaf", "givenName").NamedGraph.SelectedBy<TestSelector>();
+            Property(p => p.FirstName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName")).NamedGraph.SelectedBy<TestSelector>();
 			Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName")).NamedGraph.SelectedBy<TestSelector>();
             Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage")).NamedGraph.SelectedBy<TestSelector>();
             Property(p => p.Friend).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows")).NamedGraph.SelectedBy<TestSelector>();

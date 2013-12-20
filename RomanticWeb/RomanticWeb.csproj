@@ -96,6 +96,11 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="Linq\IQueryVisitor.cs" />
+    <Compile Include="Linq\Model\EntityTypeConstrain.cs" />
+    <Compile Include="Linq\Model\Navigators\EntityTypeConstrainNavigator.cs" />
+    <Compile Include="Linq\Model\Navigators\OptionalPatternNavigator.cs" />
+    <Compile Include="Linq\Model\OptionalPattern.cs" />
     <Compile Include="Linq\Model\List.cs" />
     <Compile Include="Linq\Model\Navigators\ListNavigator.cs" />
     <Compile Include="Linq\NonEntityQueryModelVisitor.cs" />

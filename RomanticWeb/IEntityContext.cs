@@ -15,7 +15,7 @@ namespace RomanticWeb
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>
-        IQueryable<Entity> AsQueryable();
+        IQueryable<IEntity> AsQueryable();
 
         /// <summary>Converts this context into a LINQ queryable data source of entities of given type.</summary>
         /// <typeparam name="T">Type of entities to work with.</typeparam>

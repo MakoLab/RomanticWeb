@@ -4,6 +4,7 @@ using System.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {
@@ -38,6 +39,27 @@ namespace RomanticWeb.Tests.Stubs
             }
 
             return entityMap.CreateMapping(_mappingContext);
+        }
+
+        public Type MappingFor(Uri classUri)
+        {
+            return _entityMaps.Where(map => 
+                {
+                    return map.Classes.Any(item =>
+                    {
+                        Uri uri=item.TermUri;
+                        if (uri==null)
+                        {
+                            Ontology ontology=_mappingContext.OntologyProvider.Ontologies.Where(element => element.Prefix==item.NamespacePrefix).FirstOrDefault();
+                            if (ontology!=null)
+                            {
+                                uri=new Uri(ontology.BaseUri.AbsoluteUri+item.TermName);
+                            }
+                        }
+
+                        return (uri!=null)&&(uri.AbsoluteUri==classUri.AbsoluteUri);
+                    });
+                }).Select(map => map.EntityType).FirstOrDefault();
         }
 
         public void Add(EntityMap personMapping)

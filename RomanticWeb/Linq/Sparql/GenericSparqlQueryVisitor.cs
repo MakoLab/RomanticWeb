@@ -21,6 +21,7 @@ namespace RomanticWeb.Linq.Sparql
         private string _objectVariableName;
         private string _scalarVariableName;
 
+        private Stack<EntityAccessor> _currentEntityAccessor=new Stack<EntityAccessor>();
         #endregion
 
         #region Properties
@@ -43,7 +44,6 @@ namespace RomanticWeb.Linq.Sparql
                     _scalarVariableName);
             }
         }
-
         #endregion
 
         #region Public methods
@@ -150,7 +150,7 @@ namespace RomanticWeb.Linq.Sparql
         }
         #endregion
 
-        #region Non-public methods
+        #region Protected methods
         /// <summary>Visit a function call.</summary>
         /// <param name="call">Function call to be visited.</param>
         protected override void VisitCall(Call call)
@@ -218,62 +218,100 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="binaryOperator">Binary operator to be visited.</param>
         protected override void VisitBinaryOperator(BinaryOperator binaryOperator)
         {
-            string operatorString;
-            switch (binaryOperator.Member)
+            if (IsBinaryOperatorComplexEntityContrain(binaryOperator))
             {
-                case MethodNames.Add:
-                    operatorString="+";
-                    break;
-                case MethodNames.Substract:
-                    operatorString="-";
-                    break;
-                case MethodNames.Multiply:
-                    operatorString="*";
-                    break;
-                case MethodNames.Divide:
-                    operatorString="/";
-                    break;
-                case MethodNames.Equal:
-                    operatorString="=";
-                    break;
-                case MethodNames.GreaterThan:
-                    operatorString=">";
-                    break;
-                case MethodNames.GreaterThanOrEqual:
-                    operatorString=">=";
-                    break;
-                case MethodNames.LessThan:
-                    operatorString="<";
-                    break;
-                case MethodNames.LessThanOrEqual:
-                    operatorString="<=";
-                    break;
-                case MethodNames.NotEqual:
-                    operatorString="!=";
-                    break;
-                case MethodNames.Or:
-                    operatorString="||";
-                    break;
-                case MethodNames.And:
-                    operatorString="&&";
-                    break;
-                default:
-                    throw new NotImplementedException(String.Format("Binary operator '{0}' is not supported.",binaryOperator.Member));
+                VisitComplexEntityContrain(binaryOperator);
             }
+            else
+            {
+                string operatorString;
+                switch (binaryOperator.Member)
+                {
+                    case MethodNames.Add:
+                        operatorString="+";
+                        break;
+                    case MethodNames.Substract:
+                        operatorString="-";
+                        break;
+                    case MethodNames.Multiply:
+                        operatorString="*";
+                        break;
+                    case MethodNames.Divide:
+                        operatorString="/";
+                        break;
+                    case MethodNames.Equal:
+                        operatorString="=";
+                        break;
+                    case MethodNames.GreaterThan:
+                        operatorString=">";
+                        break;
+                    case MethodNames.GreaterThanOrEqual:
+                        operatorString=">=";
+                        break;
+                    case MethodNames.LessThan:
+                        operatorString="<";
+                        break;
+                    case MethodNames.LessThanOrEqual:
+                        operatorString="<=";
+                        break;
+                    case MethodNames.NotEqual:
+                        operatorString="!=";
+                        break;
+                    case MethodNames.Or:
+                        operatorString="||";
+                        break;
+                    case MethodNames.And:
+                        operatorString="&&";
+                        break;
+                    default:
+                        throw new NotImplementedException(String.Format("Binary operator '{0}' is not supported.",binaryOperator.Member));
+                }
 
-            VisitComponent(binaryOperator.LeftOperand);
-            _commandText.Append(operatorString);
-            VisitComponent(binaryOperator.RightOperand);
+                VisitComponent(binaryOperator.LeftOperand);
+                _commandText.Append(operatorString);
+                VisitComponent(binaryOperator.RightOperand);
+            }
         }
 
         /// <summary>Visit an entity constrain.</summary>
         /// <param name="entityConstrain">Entity constrain to be visited.</param>
         protected override void VisitEntityConstrain(EntityConstrain entityConstrain)
         {
+            _commandText.AppendFormat("?{0} ",_currentEntityAccessor.Peek().About.Name);
             VisitComponent(entityConstrain.Predicate);
             _commandText.Append(" ");
             VisitComponent(entityConstrain.Value);
             _commandText.Append(" . ");
+        }
+
+        /// <summary>Visit an entity type constrain.</summary>
+        /// <param name="entityTypeConstrain">Entity type constrain to be visited.</param>
+        protected override void VisitEntityTypeConstrain(EntityTypeConstrain entityTypeConstrain)
+        {
+            if (entityTypeConstrain.InheritedTypes.Any())
+            {
+                _commandText.Append("FILTER ( EXISTS { ");
+                _commandText.AppendFormat("?{0} ",_currentEntityAccessor.Peek().About.Name);
+                VisitComponent(entityTypeConstrain.Predicate);
+                _commandText.Append(" ");
+                VisitComponent(entityTypeConstrain.Value);
+                _commandText.Append(" . } ");
+                foreach (Literal inheritedType in entityTypeConstrain.InheritedTypes)
+                {
+                    _commandText.Append("|| EXISTS { ");
+                    _commandText.AppendFormat("?{0} ",_currentEntityAccessor.Peek().About.Name);
+                    VisitComponent(entityTypeConstrain.Predicate);
+                    _commandText.Append(" ");
+                    VisitComponent(inheritedType);
+                    _commandText.Append(" . } ");
+                }
+
+                _commandText.Append(") ");
+            }
+            else
+            {
+                VisitEntityConstrain(entityTypeConstrain);
+            }
         }
 
         /// <summary>Visit an unbound constrain.</summary>
@@ -282,7 +320,10 @@ namespace RomanticWeb.Linq.Sparql
         {
             VisitComponent(unboundConstrain.Subject);
             _commandText.Append(" ");
-            VisitEntityConstrain(unboundConstrain);
+            VisitComponent(unboundConstrain.Predicate);
+            _commandText.Append(" ");
+            VisitComponent(unboundConstrain.Value);
+            _commandText.Append(" . ");
         }
 
         /// <summary>Visit a literal.</summary>
@@ -379,14 +420,10 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="entityAccessor">Entity accessor to be visited.</param>
         protected override void VisitEntityAccessor(EntityAccessor entityAccessor)
         {
+            _currentEntityAccessor.Push(entityAccessor);
             _commandText.AppendFormat("GRAPH ?G{0} {{ ",entityAccessor.About.Name);
             foreach (QueryElement element in entityAccessor.Elements)
             {
-                if (element.GetType()==typeof(EntityConstrain))
-                {
-                    _commandText.AppendFormat("?{0} ",entityAccessor.About.Name);
-                }
-
                 VisitComponent(element);
             }
 
@@ -394,6 +431,68 @@ namespace RomanticWeb.Linq.Sparql
             _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <http://xmlns.com/foaf/0.1/primaryTopic> ",MetaGraphUri,entityAccessor.About.Name);
             VisitComponent(entityAccessor.About);
             _commandText.Append(" . } ");
+            _currentEntityAccessor.Pop();
+        }
+
+        /// <summary>Visit an optional patterns.</summary>
+        /// <param name="optionalPattern">Optional patterns accessor to be visited.</param>
+        protected override void VisitOptionalPattern(OptionalPattern optionalPattern)
+        {
+            _commandText.Append("OPTIONAL { ");
+            foreach (EntityConstrain pattern in optionalPattern.Patterns)
+            {
+                VisitComponent(pattern);
+            }
+
+            _commandText.Append(" } ");
+        }
+        #endregion
+
+        #region Private methods
+        private void VisitComplexEntityContrain(BinaryOperator binaryOperator)
+        {
+            string operatorString;
+            switch (binaryOperator.Member)
+            {
+                case MethodNames.Or:
+                    operatorString="||";
+                    break;
+                case MethodNames.And:
+                    operatorString="&&";
+                    break;
+                default:
+                    throw new NotImplementedException(String.Format("Binary operator '{0}' is not supported.",binaryOperator.Member));
+            }
+
+            switch (operatorString)
+            {
+                case "||":
+                    {
+                        _commandText.Append("EXISTS { ");
+                        VisitComponent(binaryOperator.LeftOperand);
+                        _commandText.Append(" } || EXISTS { ");
+                        VisitComponent(binaryOperator.RightOperand);
+                        _commandText.Append("} ");
+                        break;
+                    }
+
+                case "&&":
+                    {
+                        _commandText.Append("{ ");
+                        VisitComponent(binaryOperator.LeftOperand);
+                        VisitComponent(binaryOperator.RightOperand);
+                        _commandText.Append("} ");
+                        break;
+                    }
+            }
+        }
+
+        private bool IsBinaryOperatorComplexEntityContrain(BinaryOperator binaryOperator)
+        {
+            return ((binaryOperator.Member==MethodNames.Or)||(binaryOperator.Member==MethodNames.And))&&
+                ((binaryOperator.LeftOperand is EntityConstrain)||(binaryOperator.RightOperand is EntityConstrain)||
+                ((binaryOperator.LeftOperand is BinaryOperator)&&(IsBinaryOperatorComplexEntityContrain((BinaryOperator)binaryOperator.LeftOperand)))||
+                ((binaryOperator.RightOperand is BinaryOperator)&&(IsBinaryOperatorComplexEntityContrain((BinaryOperator)binaryOperator.RightOperand))));
         }
         #endregion
     }

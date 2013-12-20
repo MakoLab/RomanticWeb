@@ -8,11 +8,11 @@ namespace RomanticWeb.Mapping.Fluent
     /// </summary>
     public abstract class TermMap
     {
-        private Uri TermUri { get; set; }
+        internal Uri TermUri { get; set; }
 
-        private string NamespacePrefix { get; set; }
+        internal string NamespacePrefix { get; set; }
 
-        private string TermName { get; set; }
+        internal string TermName { get; set; }
 
         internal void SetUri(Uri uri)
         {

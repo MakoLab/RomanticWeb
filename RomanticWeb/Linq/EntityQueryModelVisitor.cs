@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Remotion.Linq;
@@ -7,6 +8,7 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
+using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
@@ -16,7 +18,7 @@ using RomanticWeb.Mapping.Model;
 namespace RomanticWeb.Linq
 {
     /// <summary>Converts LINQ query model to SPARQL abstraction.</summary>
-    internal class EntityQueryModelVisitor:QueryModelVisitorBase
+    internal class EntityQueryModelVisitor:QueryModelVisitorBase,IQueryVisitor
     {
         #region Fields
         private readonly IMappingsRepository _mappingsRepository;
@@ -44,6 +46,9 @@ namespace RomanticWeb.Linq
         #region Properties
         /// <summary>Gets a SPARQL abstraction model.</summary>
         public Query Query { get { return _query; } }
+
+        /// <summary>Gets the mappings repository.</summary>
+        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _mappingsRepository; } }
 
         /// <summary>Gets a resulting query.</summary>
         internal QueryComponent Result { get { return _result; } }
@@ -155,6 +160,7 @@ namespace RomanticWeb.Linq
                 if (memberExpression.Member is PropertyInfo)
                 {
                     _visitor.VisitExpression(memberExpression.Expression);
+                    _visitor.VisitExpression(memberExpression);
                 }
             }
 
@@ -203,15 +209,41 @@ namespace RomanticWeb.Linq
                 (fromClause.FromExpression.Type.GetGenericArguments().Length>0)&&
                 (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
             {
-                var classMappings=_mappingsRepository.FindClassMappings(fromClause.FromExpression.Type.GetGenericArguments()[0]);
-                if (classMappings.Any())
-                {
-                    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.Type),new Literal(classMappings.First().Uri));
-                    if (!_mainFromComponent.Elements.Contains(constrain))
-                    {
-                        _mainFromComponent.Elements.Add(constrain);
-                    }
-                }
+                this.GetEntityAccessor(fromClause);
+
+                //Type type=fromClause.FromExpression.Type.GetGenericArguments()[0];
+                //var classMappings=_mappingsRepository.FindClassMapping(type);
+                //if (classMappings.Any())
+                //{
+                //    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
+                //    if (!_mainFromComponent.Elements.Contains(constrain))
+                //    {
+                //        _mainFromComponent.Elements.Add(constrain);
+                //    }
+
+                //    IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(type);
+                //    if (inheritedTypes.Any())
+                //    {
+                //        OptionalPattern optional=new OptionalPattern();
+                //        foreach (Type inheritedType in inheritedTypes)
+                //        {
+                //            classMappings=_mappingsRepository.FindClassMapping(inheritedType);
+                //            if (classMappings.Any())
+                //            {
+                //                constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
+                //                if ((!_mainFromComponent.Elements.Contains(constrain))&&(!optional.Patterns.Contains(constrain)))
+                //                {
+                //                    optional.Patterns.Add(constrain);
+                //                }
+                //            }
+                //        }
+
+                //        if ((optional.Patterns.Count>0)&&(!_mainFromComponent.Elements.Contains(constrain)))
+                //        {
+                //            _mainFromComponent.Elements.Add(optional);
+                //        }
+                //    }
+                //}
             }
         }
 
@@ -233,6 +265,23 @@ namespace RomanticWeb.Linq
         {
             if (_query.IsSubQuery)
             {
+                _visitor.VisitExpression(containsResultOperator.Item);
+                QueryComponent item=_visitor.RetrieveComponent();
+                if (item is IExpression)
+                {
+                    Filter filter=new Filter(new BinaryOperator(MethodNames.Equal,_mainFromComponent.About,(IExpression)item));
+                    if (!_mainFromComponent.Elements.Contains(filter))
+                    {
+                        _mainFromComponent.Elements.Add(filter);
+                    }
+                }
+
+                EntityConstrain constrain=new EntityConstrain(new Identifier(_mainFromComponent.About.Name+"_p"),new Identifier(_mainFromComponent.About.Name+"_o"));
+                if (!_mainFromComponent.Elements.Contains(constrain))
+                {
+                    _mainFromComponent.Elements.Add(constrain);
+                }
+
                 Call call=new Call(MethodNames.Any);
                 call.Arguments.Add(_query);
                 _result=call;

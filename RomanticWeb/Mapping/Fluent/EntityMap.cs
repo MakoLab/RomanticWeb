@@ -68,6 +68,8 @@ namespace RomanticWeb.Mapping.Fluent
 
 		internal IList<PropertyMap> MappedProperties { get; private set; }
 
+        internal IList<ClassMap> Classes { get { return _classes; } }
+
         /// <summary>
         /// Gets a builder for mapping the type
         /// </summary>

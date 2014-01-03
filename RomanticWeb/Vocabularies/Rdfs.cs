@@ -7,6 +7,8 @@ namespace RomanticWeb.Vocabularies
     {
         public const string BaseUri="http://www.w3.org/2000/01/rdf-schema#";
 
+        public static readonly Uri Resource=new Uri(BaseUri+"Resource");
+
         public static readonly Uri Class=new Uri(BaseUri+"Class");
 
         public static readonly Uri Literal=new Uri(BaseUri+"Literal");

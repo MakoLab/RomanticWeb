@@ -232,6 +232,11 @@
     <EmbeddedResource Include="Ontologies\RDFS.owl" />
     <None Include="Fody.targets" />
     <EmbeddedResource Include="Ontologies\OWL.owl" />
+    <EmbeddedResource Include="Ontologies\DC.owl" />
+    <EmbeddedResource Include="Ontologies\DCAM.owl" />
+    <EmbeddedResource Include="Ontologies\DCMIType.owl" />
+    <EmbeddedResource Include="Ontologies\DCTerms.owl" />
+    <EmbeddedResource Include="Ontologies\SKOS.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

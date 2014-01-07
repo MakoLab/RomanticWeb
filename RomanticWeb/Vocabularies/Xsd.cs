@@ -2,9 +2,7 @@
 
 namespace RomanticWeb.Vocabularies
 {
-    /// <summary>
-    /// The XSD vocabulary (http://www.w3.org/2001/XMLSchema#)
-    /// </summary>
+    /// <summary>The XSD vocabulary (http://www.w3.org/2001/XMLSchema#).</summary>
     public static class Xsd
     {
 #pragma warning disable 1591

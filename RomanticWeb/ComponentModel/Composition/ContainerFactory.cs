@@ -21,7 +21,7 @@ namespace RomanticWeb.ComponentModel.Composition
         }
 
         /// <summary>Creates an enumeration of types implementing given interface.</summary>
-        /// <param name="interface">Interface to be implemented by resulting types.</typeparam>
+        /// <param name="interface">Interface to be implemented by resulting types.</param>
         /// <remarks>Method iterates through loaded assemblies and searches for types that implement given interface.</remarks>
         /// <returns>Enumeration of types implementing given interface.</returns>
         public static IEnumerable<Type> GetTypesImplementing(Type @interface)

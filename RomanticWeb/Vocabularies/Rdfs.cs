@@ -3,8 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Vocabularies
 {
+    /// <summary>The RDF Schema vocabulary (http://www.w3.org/2000/01/rdf-schema#).</summary>
     public static class Rdfs
     {
+#pragma warning disable 1591
         public const string BaseUri="http://www.w3.org/2000/01/rdf-schema#";
 
         public static readonly Uri Resource=new Uri(BaseUri+"Resource");
@@ -27,5 +29,6 @@ namespace RomanticWeb.Vocabularies
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         public static readonly Uri isDefinedBy=new Uri(BaseUri+"isDefinedBy");
+#pragma warning restore 1591
     }
 }

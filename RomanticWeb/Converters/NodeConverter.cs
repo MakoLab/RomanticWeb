@@ -11,10 +11,13 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>Default converter for <see cref="Node"/>s to value objects or entities.</summary>
     public sealed class NodeConverter:INodeConverter
     {
         private readonly IEntityContext _entityContext;
 
+        /// <summary>Constructor with entity context passed.</summary>
+        /// <param name="entityContext">Entity context to be used.</param>
         public NodeConverter(IEntityContext entityContext)
         {
             _entityContext=entityContext;
@@ -22,12 +25,21 @@ namespace RomanticWeb.Converters
             ComplexTypeConverters=new List<IComplexTypeConverter>();
         }
 
+        /// <summary>Gets literal node converters.</summary>
         [ImportMany]
         public IEnumerable<ILiteralNodeConverter> Converters { get; internal set; }
 
+        /// <summary>Gets complex type converters.</summary>
         [ImportMany]
         public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
+        /// <summary>Converts <see cref="Node"/>s and checks for validity against destination property mapping.</summary>
+        /// <remarks>
+        ///     <ul>
+        ///         <li>Returns typed instances of <see cref="Entity"/> based on property's return value</li>
+        ///         <li>Doesn't check the type of literals against the property's return type (todo: implement this check)</li>
+        ///     </ul>
+        /// </remarks>
         public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,[AllowNull] IPropertyMapping predicate)
         {
             foreach (var objectNode in objects.ToList())
@@ -43,11 +55,14 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>Converts <see cref="Node"/>s to most appropriate type based on raw RDF data.</summary>
+        /// <remarks>This will always return untyped instanes of <see cref="Entity"/> for URI nodes.</remarks>
         public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects)
         {
             return ConvertNodes(objects,null);
         }
 
+        /// <summary>Converts a value to nodes.</summary>
         public IEnumerable<Node> ConvertBack(object value,IPropertyMapping property)
         {
             var convertedNodes=new List<Node>();

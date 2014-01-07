@@ -3,8 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Vocabularies
 {
+    /// <summary>The Web Ontology Language vocabulary (http://www.w3.org/2002/07/owl#).</summary>
     public static class Owl
     {
+#pragma warning disable 1591
         public const string BaseUri="http://www.w3.org/2002/07/owl#";
 
         public static readonly Uri Thing=new Uri(BaseUri+"Thing");
@@ -29,5 +31,6 @@ namespace RomanticWeb.Vocabularies
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         public static readonly Uri hasValue=new Uri(BaseUri+"hasValue");
+#pragma warning restore 1591
     }
 }

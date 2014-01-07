@@ -21,13 +21,16 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     public class EntityProxy:DynamicObject,IEntity
     {
-        private static readonly IResultProcessingStrategy FallbackProcessing = new SingleOrDefaultProcessing();
+        #region Fields
+        private static readonly IResultProcessingStrategy FallbackProcessing=new SingleOrDefaultProcessing();
 
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMappings;
         private readonly INodeConverter _converter;
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityProxy"/> class.
         /// </summary>
@@ -35,21 +38,24 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The entity.</param>
         /// <param name="entityMappings">The entity mappings.</param>
         /// <param name="converter">The converter.</param>
-        public EntityProxy(IEntityStore store, Entity entity, IEntityMapping entityMappings, INodeConverter converter)
+        public EntityProxy(IEntityStore store,Entity entity,IEntityMapping entityMappings,INodeConverter converter)
         {
-            _store = store;
-            _entity = entity;
-            _entityMappings = entityMappings;
-            _converter = converter;
-            ResultAggregations = new Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>[0];
+            _store=store;
+            _entity=entity;
+            _entityMappings=entityMappings;
+            _converter=converter;
+            ResultAggregations=new Lazy<IResultProcessingStrategy,IResultProcessingStrategyMetadata>[0];
         }
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Gets the result aggregation strategies.
         /// </summary>
         [ImportMany(typeof(IResultProcessingStrategy))]
-        public IEnumerable<Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>> ResultAggregations { get; internal set; } 
+        public IEnumerable<Lazy<IResultProcessingStrategy,IResultProcessingStrategyMetadata>> ResultAggregations { get; internal set; }
 
+        /// <summary>Gets the entity's identifier</summary>
         public EntityId Id
         {
             get
@@ -58,6 +64,7 @@ namespace RomanticWeb.Entities
             }
         }
 
+        /// <inheritdoc />
         public dynamic this[string member]
         {
             get
@@ -65,8 +72,11 @@ namespace RomanticWeb.Entities
                 return _entity[member];
             }
         }
+        #endregion
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        #region Public methods
+        /// <inheritdoc />
+        public override bool TryGetMember(GetMemberBinder binder,out object result)
         {
             if (_entityMappings==null)
             {
@@ -86,8 +96,8 @@ namespace RomanticWeb.Entities
             var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
             var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;
-            var aggregation=(from agg in ResultAggregations 
-                             where agg.Metadata.Operation==operation 
+            var aggregation=(from agg in ResultAggregations
+                             where agg.Metadata.Operation==operation
                              select agg.Value).SingleOrDefault();
 
             aggregation=aggregation??FallbackProcessing;
@@ -110,16 +120,17 @@ namespace RomanticWeb.Entities
             return true;
         }
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
+        /// <inheritdoc />
+        public override bool TrySetMember(SetMemberBinder binder,object value)
         {
             _entity.EnsureIsInitialized();
 
-            var property = _entityMappings.PropertyFor(binder.Name);
+            var property=_entityMappings.PropertyFor(binder.Name);
 
-            LogTo.Trace("Setting property {0}", property.Uri);
+            LogTo.Trace("Setting property {0}",property.Uri);
 
-            var propertyUri = Node.ForUri(property.Uri);
-            var graphUri = property.GraphSelector.SelectGraph(_entity.Id);
+            var propertyUri=Node.ForUri(property.Uri);
+            var graphUri=property.GraphSelector.SelectGraph(_entity.Id);
 
             ////if (property.IsCollection)
             ////{
@@ -131,25 +142,28 @@ namespace RomanticWeb.Entities
             {
                 var newValues=_converter.ConvertBack(value,property);
 
-                _store.ReplacePredicateValues(_entity.Id, propertyUri, newValues, graphUri);
+                _store.ReplacePredicateValues(_entity.Id,propertyUri,newValues,graphUri);
             }
 
             return true;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var entity = obj as IEntity;
-            if (entity == null) { return false; }
+            var entity=obj as IEntity;
+            if (entity==null) { return false; }
 
             return entity.Equals(_entity);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return _entity.GetHashCode();
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return _entity.ToString();
@@ -158,7 +172,7 @@ namespace RomanticWeb.Entities
         /// <summary>
         /// Gets the underlying wrapper as another type of entity.
         /// </summary>
-        public TInterface AsEntity<TInterface>() where TInterface : class,IEntity
+        public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
         {
             return _entity.AsEntity<TInterface>();
         }
@@ -170,5 +184,6 @@ namespace RomanticWeb.Entities
         {
             return _entity;
         }
+        #endregion
     }
 }

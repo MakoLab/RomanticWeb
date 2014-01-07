@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Vocabularies
 {
-    /// <summary>The RDF vocabulary (http://www.w3.org/1999/02/22-rdf-syntax-ns#).</summary>
+    /// <summary>The Resource Description Framework vocabulary (http://www.w3.org/1999/02/22-rdf-syntax-ns#).</summary>
     public static class Rdf
     {
 #pragma warning disable 1591

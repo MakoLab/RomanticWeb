@@ -237,6 +237,7 @@
     <EmbeddedResource Include="Ontologies\DCMIType.owl" />
     <EmbeddedResource Include="Ontologies\DCTerms.owl" />
     <EmbeddedResource Include="Ontologies\SKOS.owl" />
+    <EmbeddedResource Include="Ontologies\FOAF.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

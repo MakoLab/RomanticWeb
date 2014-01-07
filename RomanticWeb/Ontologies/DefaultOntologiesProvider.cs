@@ -31,7 +31,10 @@ namespace RomanticWeb.Ontologies
         DCAM=1<<6,
 
         /// <summary>Points to a Dublin Core Metadata Initiatie Type vocabulary.</summary>
-        DCMIType=1<<7
+        DCMIType=1<<7,
+
+        /// <summary>Points to a Friend of a Friend vocabulary.</summary>
+        FOAF=1<<8
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -52,13 +55,14 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.DC|
                 BuiltInOntologies.DCTerms|
                 BuiltInOntologies.DCAM|
-                BuiltInOntologies.DCMIType);
+                BuiltInOntologies.DCMIType|
+                BuiltInOntologies.FOAF);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF)
             {
             }
 
@@ -159,6 +163,13 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithDCMIType()
         {
             return Include(BuiltInOntologies.DCMIType);
+        }
+
+        /// <summary>Includes an Friend of a Friend vocabulary.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithFOAF()
+        {
+            return Include(BuiltInOntologies.FOAF);
         }
     }
 }

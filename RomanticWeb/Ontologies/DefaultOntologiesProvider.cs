@@ -40,7 +40,10 @@ namespace RomanticWeb.Ontologies
         Schema=1<<9,
 
         /// <summary>Points to a GoodRelations ontology.</summary>
-        GR=1<<10
+        GR=1<<10,
+
+        /// <summary>Points to a Semantically-Interlinked Online Communities ontology.</summary>
+        SIOC=1<<11
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -63,13 +66,14 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.DCAM|
                 BuiltInOntologies.DCMIType|
                 BuiltInOntologies.FOAF|
-                BuiltInOntologies.Schema);
+                BuiltInOntologies.Schema|
+                BuiltInOntologies.SIOC);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC)
             {
             }
 
@@ -200,6 +204,13 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithGR()
         {
             return Include(BuiltInOntologies.GR);
+        }
+
+        /// <summary>Includes a Semantically-Interlinked Online Communities ontology.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithSIOC()
+        {
+            return Include(BuiltInOntologies.SIOC);
         }
     }
 }

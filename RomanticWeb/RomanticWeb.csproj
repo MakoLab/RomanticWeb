@@ -240,6 +240,7 @@
     <EmbeddedResource Include="Ontologies\FOAF.owl" />
     <EmbeddedResource Include="Ontologies\Schema.rdf" />
     <EmbeddedResource Include="Ontologies\GR.owl" />
+    <EmbeddedResource Include="Ontologies\SIOC.rdf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

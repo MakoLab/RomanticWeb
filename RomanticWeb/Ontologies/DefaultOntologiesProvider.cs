@@ -37,7 +37,10 @@ namespace RomanticWeb.Ontologies
         FOAF=1<<8,
 
         /// <summary>Points to a Schema.org vocabulary.</summary>
-        Schema=1<<9
+        Schema=1<<9,
+
+        /// <summary>Points to a GoodRelations ontology.</summary>
+        GR=1<<10
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -150,46 +153,53 @@ namespace RomanticWeb.Ontologies
             return Include(BuiltInOntologies.SKOS);
         }
 
-        /// <summary>Includes an Dublin Core ontology.</summary>
+        /// <summary>Includes a Dublin Core ontology.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithDC()
         {
             return Include(BuiltInOntologies.DC);
         }
 
-        /// <summary>Includes an Dublin Core Terms ontology.</summary>
+        /// <summary>Includes a Dublin Core Terms ontology.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithDCTerms()
         {
             return Include(BuiltInOntologies.DCTerms);
         }
 
-        /// <summary>Includes an Dublin Core Abstraction Model ontology.</summary>
+        /// <summary>Includes a Dublin Core Abstraction Model ontology.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithDCAM()
         {
             return Include(BuiltInOntologies.DCAM);
         }
 
-        /// <summary>Includes an Dublin Core Metadata Initiative Type vocabulary.</summary>
+        /// <summary>Includes a Dublin Core Metadata Initiative Type vocabulary.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithDCMIType()
         {
             return Include(BuiltInOntologies.DCMIType);
         }
 
-        /// <summary>Includes an Friend of a Friend vocabulary.</summary>
+        /// <summary>Includes a Friend of a Friend vocabulary.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithFOAF()
         {
             return Include(BuiltInOntologies.FOAF);
         }
 
-        /// <summary>Includes an Schema.org vocabulary.</summary>
+        /// <summary>Includes a Schema.org vocabulary.</summary>
         /// <returns>This instance of the default ontologies provider.</returns>
         public DefaultOntologiesProvider WithSchema()
         {
             return Include(BuiltInOntologies.Schema);
+        }
+
+        /// <summary>Includes a GoodRelations ontology.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithGR()
+        {
+            return Include(BuiltInOntologies.GR);
         }
     }
 }

@@ -239,6 +239,7 @@
     <EmbeddedResource Include="Ontologies\SKOS.owl" />
     <EmbeddedResource Include="Ontologies\FOAF.owl" />
     <EmbeddedResource Include="Ontologies\Schema.rdf" />
+    <EmbeddedResource Include="Ontologies\GR.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

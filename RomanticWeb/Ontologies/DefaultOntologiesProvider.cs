@@ -34,7 +34,10 @@ namespace RomanticWeb.Ontologies
         DCMIType=1<<7,
 
         /// <summary>Points to a Friend of a Friend vocabulary.</summary>
-        FOAF=1<<8
+        FOAF=1<<8,
+
+        /// <summary>Points to a Schema.org vocabulary.</summary>
+        Schema=1<<9
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -56,13 +59,14 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.DCTerms|
                 BuiltInOntologies.DCAM|
                 BuiltInOntologies.DCMIType|
-                BuiltInOntologies.FOAF);
+                BuiltInOntologies.FOAF|
+                BuiltInOntologies.Schema);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema)
             {
             }
 
@@ -95,9 +99,18 @@ namespace RomanticWeb.Ontologies
             {
                 if (((ontologies&ontology)==ontology)&&(!_includedOntologies.Contains(ontology)))
                 {
+                    string resourceName=System.String.Format("{0}.{1}.",typeof(DefaultOntologiesProvider).Namespace,ontology.ToString());
+                    resourceName=(from manifestResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                                  where manifestResourceName.StartsWith(resourceName)
+                                  select manifestResourceName).FirstOrDefault();
+                    if (System.String.IsNullOrEmpty(resourceName))
+                    {
+                        throw new System.IO.FileNotFoundException(System.String.Format("No embedded ontology stream found for '{0}'.",ontology.ToString()));
+                    }
+
                     Ontology ontologyInstance=OntologyFactory.Create(
-                        Assembly.GetExecutingAssembly().GetManifestResourceStream(System.String.Format("{0}.{1}.owl",typeof(DefaultOntologiesProvider).Namespace,ontology.ToString())),
-                        "application/owl+xml");
+                        Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName),
+                        "application/"+(resourceName.EndsWith(".owl")?"owl":"rdf")+"+xml");
                     if (ontologyInstance!=null)
                     {
                         _includedOntologies.Add(ontology);
@@ -170,6 +183,13 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithFOAF()
         {
             return Include(BuiltInOntologies.FOAF);
+        }
+
+        /// <summary>Includes an Schema.org vocabulary.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithSchema()
+        {
+            return Include(BuiltInOntologies.Schema);
         }
     }
 }

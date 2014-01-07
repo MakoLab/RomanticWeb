@@ -26,29 +26,68 @@ namespace RomanticWeb.Ontologies
 
         private Ontology CreateFromXML(Stream fileStream)
         {
-            NamespaceSpecification namespaceSpecification=null;
-            string displayName=null;
+            bool isOwlBasedFile=true;
             XDocument document=XDocument.Load(fileStream);
             XElement ontologyElement=(from element in document.Descendants() where element.Name.LocalName=="Ontology" select element).FirstOrDefault();
-            if (ontologyElement!=null)
+            if (ontologyElement==null)
             {
-                namespaceSpecification=(from attribute in ontologyElement.Attributes()
-                                        where attribute.Name.LocalName=="about"
-                                        select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value),attribute.Value)).FirstOrDefault();
-                displayName=(from child in ontologyElement.Descendants()
-                             where (child.Name.LocalName=="label")||(child.Name.LocalName=="title")
-                             select child.Value).FirstOrDefault();
+                isOwlBasedFile=false;
+                ontologyElement=(from element in document.Descendants() where element.Name.LocalName=="Description" select element).FirstOrDefault();
+                if (ontologyElement==null)
+                {
+                    throw new ArgumentOutOfRangeException("Provided stream does not contain ontology information suitable for usage.");
+                }
             }
 
-            IEnumerable<Term> terms=(from element in document.Descendants()
-                                     where AcceptedNodeTypes.Contains(element.Name.LocalName)
-                                     from attribute in element.Attributes()
-                                     where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(namespaceSpecification.BaseUri.AbsoluteUri))
-                                     select (Term)Type.GetType(
-                                        System.String.Format("RomanticWeb.Ontologies.{0}, RomanticWeb",element.Name.LocalName)).GetConstructor(
-                                            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(string) },null).Invoke(
-                                            new object[] { attribute.Value.Substring(namespaceSpecification.BaseUri.AbsoluteUri.Length) }));
+            NamespaceSpecification namespaceSpecification=null;
+            string displayName=null;
+            IEnumerable<Term> terms=null;
+            namespaceSpecification=(
+                from attribute in ontologyElement.Attributes()
+                where attribute.Name.LocalName=="about"
+                select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value),attribute.Value)).FirstOrDefault();
+            displayName=(
+                from child in ontologyElement.Descendants()
+                where (child.Name.LocalName=="label")||(child.Name.LocalName=="title")
+                select child.Value).FirstOrDefault();
+            if (isOwlBasedFile)
+            {
+                terms=CreateFromOWLXML(document,namespaceSpecification.BaseUri);
+            }
+            else
+            {
+                terms=CreateFromRDFXML(document,namespaceSpecification.BaseUri);
+            }
+
             return new Ontology(displayName,namespaceSpecification,terms.ToArray());
+        }
+
+        private IEnumerable<Term> CreateFromOWLXML(XDocument document,Uri baseUri)
+        {
+            return (from element in document.Descendants()
+                    where AcceptedNodeTypes.Contains(element.Name.LocalName)
+                    from attribute in element.Attributes()
+                    where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
+                    select (Term)Type.GetType(
+                        System.String.Format("RomanticWeb.Ontologies.{0}, RomanticWeb",element.Name.LocalName)).GetConstructor(
+                            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(string) },null).Invoke(
+                            new object[] { attribute.Value.Substring(baseUri.AbsoluteUri.Length) }));
+        }
+
+        private IEnumerable<Term> CreateFromRDFXML(XDocument document,Uri baseUri)
+        {
+            return (from element in document.Descendants()
+                    where (element.Name.LocalName=="Description")
+                    from child in element.Descendants()
+                    where (child.Name.LocalName=="type")
+                    from childAttribute in child.Attributes()
+                    where (childAttribute.Name.LocalName=="resource")&&(AcceptedNodeTypes.Any(nodeName => childAttribute.Value.EndsWith(nodeName)))
+                    from attribute in element.Attributes()
+                    where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
+                    select (Term)Type.GetType(
+                        System.String.Format("RomanticWeb.Ontologies.{0}, RomanticWeb",AcceptedNodeTypes.First(nodeName => childAttribute.Value.EndsWith(nodeName)))).GetConstructor(
+                            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(string) },null).Invoke(
+                            new object[] { attribute.Value.Substring(baseUri.AbsoluteUri.Length) }));
         }
     }
 }

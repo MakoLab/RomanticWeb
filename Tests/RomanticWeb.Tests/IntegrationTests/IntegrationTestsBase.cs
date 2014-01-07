@@ -17,6 +17,16 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         private IEntityContext _entityContext;
 
+        private bool _includeFoaf=false;
+
+        public virtual bool IncludeFoaf
+        {
+            get
+            {
+                return _includeFoaf;
+            }
+        }
+
         public IMappingsRepository Mappings
         {
             get
@@ -54,7 +64,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
                                                  .WithOntology(new DefaultOntologiesProvider())
-                                                 .WithOntology(new TestOntologyProvider())
+                                                 .WithOntology(new TestOntologyProvider(_includeFoaf))
                                                  .WithMappings(m=>m.AddMapping(GetType().Assembly,_mappings))
                                                  .WithEntityStore(() => _entityStore);
             ChildSetup();

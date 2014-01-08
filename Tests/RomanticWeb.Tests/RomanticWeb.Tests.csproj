@@ -94,6 +94,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseUriSelectorBuilderTests.cs" />
+    <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
     <Compile Include="Converters\DecimalConverterTests.cs" />

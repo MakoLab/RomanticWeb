@@ -99,7 +99,7 @@ namespace RomanticWeb.Tests.Linq
             _factory=new Mock<IEntityContextFactory>();
             _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => { _container.ComposeParts(component); });
             MappingContext mappingContext=new MappingContext(_ontologyProviderMock.Object,new DefaultGraphSelector());
-            _entityContext=new EntityContext(_factory.Object,_mappingsRepositoryMock.Object,mappingContext,new EntityStore(),new TripleStoreAdapter(_store));
+            _entityContext=new EntityContext(_factory.Object,_mappingsRepositoryMock.Object,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),null);
         }
 
         [Test]

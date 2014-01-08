@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.Linq;
 using Anotar.NLog;
 using RomanticWeb.Entities;
@@ -34,6 +33,8 @@ namespace RomanticWeb
         private IGraphSelectionStrategy _defaultGraphSelector=new DefaultGraphSelector();
         private IMappingsRepository _actualMappingsRepository;
         private IOntologyProvider _actualOntologyProvider;
+        private IBaseUriSelectionPolicy _baseUriSelector;
+
         #endregion
 
         #region Constructors
@@ -45,7 +46,7 @@ namespace RomanticWeb
             var catalog=new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
             _container=new CompositionContainer(catalog, true);
             catalog.Changed+=CatalogChanged;
-            this.WithMappings(DefaultMappings);
+            WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
         }
         #endregion
@@ -84,7 +85,7 @@ namespace RomanticWeb
             EnsureInitialized();
             _mappingContext=new MappingContext(_actualOntologyProvider,_defaultGraphSelector);
 
-            return new EntityContext(this,Mappings,_mappingContext,_entityStoreFactory(),_entitySourceFactory());
+            return new EntityContext(this,Mappings,_mappingContext,_entityStoreFactory(),_entitySourceFactory(),_baseUriSelector);
         }
 
         /// <summary>Satisfies imports for given object.</summary>
@@ -136,12 +137,23 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>Exposes themethod to register a default graph selector.</summary>
+        /// <summary>Exposes the method to register a default graph selector.</summary>
         /// <param name="graphSelector">Delegate method to be used for selecting graph names.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector)
         {
             _defaultGraphSelector=graphSelector;
+            return this;
+        }
+
+        /// <summary>
+        /// Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s
+        /// </summary>
+        public EntityContextFactory WithBaseUri(Action<BaseUriSelectorBuilder> setupPolicy)
+        {
+            var builder=new BaseUriSelectorBuilder();
+            setupPolicy(builder);
+            _baseUriSelector=builder.Build();
             return this;
         }
         #endregion
@@ -224,6 +236,11 @@ namespace RomanticWeb
             if (_entitySourceFactory==null)
             {
                 throw new InvalidOperationException("Entity source factory wasn't set");
+            }
+
+            if (_baseUriSelector==null)
+            {
+                LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
             }
         }
         #endregion

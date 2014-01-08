@@ -28,6 +28,7 @@ namespace RomanticWeb
         private readonly INodeConverter _nodeConverter;
         private readonly IDictionary<string,Type> _classInterfacesMap;
         private readonly IList<string> _missingClassInterfacesMap;
+        private readonly IBaseUriSelectionPolicy _baseUriSelector;
         #endregion
 
         #region Constructors
@@ -36,12 +37,14 @@ namespace RomanticWeb
             IMappingsRepository mappings,
             MappingContext mappingContext,
             IEntityStore entityStore,
-            IEntitySource entitySource)
+            IEntitySource entitySource,
+            IBaseUriSelectionPolicy baseUriSelector)
         {
             LogTo.Info("Creating entity context");
             _factory=factory;
             _entityStore=entityStore;
             _entitySource=entitySource;
+            _baseUriSelector=baseUriSelector;
             _nodeConverter=new NodeConverter(this);
             _mappings=mappings;
             _mappingContext=mappingContext;
@@ -156,6 +159,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public Entity Create(EntityId entityId)
         {
+            entityId=EnsureAbsolutEntityId(entityId);
             LogTo.Debug("Creating entity {0}",entityId);
             return Create(entityId,true);
         }
@@ -171,6 +175,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
+            entityId=EnsureAbsolutEntityId(entityId);
             LogTo.Debug("Deleting entity {0}",entityId);
             _entityStore.Delete(entityId);
         }
@@ -209,6 +214,7 @@ namespace RomanticWeb
         [return: AllowNull]
         private Entity Load(EntityId entityId,bool checkIfExist=true)
         {
+            entityId = EnsureAbsolutEntityId(entityId);
             LogTo.Debug("Loading entity {0}",entityId);
 
             if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
@@ -231,6 +237,16 @@ namespace RomanticWeb
             }
 
             return entity;
+        }
+
+        private EntityId EnsureAbsolutEntityId(EntityId entityId)
+        {
+            if (!entityId.Uri.IsAbsoluteUri)
+            {
+                entityId=entityId.MakeAbsolute(_baseUriSelector.SelectBaseUri(entityId));
+            }
+
+            return entityId;
         }
 
         /// <summary>

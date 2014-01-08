@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
+    <Compile Include="BaseUriSelectorBuilder.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
@@ -58,8 +59,12 @@
     <Compile Include="Converters\GuidConverter.cs" />
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="DatasetChanges.cs" />
+    <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Entities\ConstantBaseUri.cs" />
+    <Compile Include="Entities\EntityIdExtensions.cs" />
+    <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />

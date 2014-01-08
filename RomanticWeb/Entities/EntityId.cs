@@ -18,7 +18,7 @@ namespace RomanticWeb.Entities
 
         #region Constructors
         /// <summary>Creates a new instance of <see cref="EntityId"/> from string.</summary>
-        public EntityId(string uri):this(new Uri(uri))
+        public EntityId(string uri):this(new Uri(uri,UriKind.RelativeOrAbsolute))
         {
         }
 

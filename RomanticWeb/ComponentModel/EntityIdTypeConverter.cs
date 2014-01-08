@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -10,7 +11,7 @@ namespace RomanticWeb.ComponentModel
     /// <summary>
     /// <see cref="TypeConverter"/> between <see cref="EntityId"/> and <see cref="Uri"/>
     /// </summary>
-    public abstract class EntityIdTypeConverter<TEntityId>:TypeConverter
+    public class EntityIdTypeConverter<TEntityId>:TypeConverter
     {
         #region Fields
         private static readonly UriTypeConverter UriTypeConverter;
@@ -126,7 +127,21 @@ namespace RomanticWeb.ComponentModel
         }
         #endregion
 
-        protected abstract TEntityId CreateEntityId(Uri uri);
+        #region Non-public methods
+        protected virtual TEntityId CreateEntityId(Uri uri)
+        {
+            ConstructorInfo constructorInfo=typeof(TEntityId).GetConstructor(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(Uri) },null);
+            if (constructorInfo==null)
+            {
+                throw new NotImplementedException(System.String.Format(
+                    "Type '{0}' does not implement constructor that accepts single argument of type '{1}'.",
+                    typeof(TEntityId),
+                    typeof(Uri)));
+            }
+
+            return (TEntityId)constructorInfo.Invoke(new object[] { uri });
+        }
+        #endregion
     }
 
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Reviewed. Suppression is OK here.")]

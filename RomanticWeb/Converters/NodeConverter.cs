@@ -175,7 +175,7 @@ namespace RomanticWeb.Converters
             var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_entityContext.Store,predicate));
             if (converter!=null)
             {
-                return converter.Convert(entity,_entityContext.Store);
+                return converter.Convert(entity,_entityContext.Store,predicate);
             }
 
             Type entityType;
@@ -184,10 +184,7 @@ namespace RomanticWeb.Converters
                 Type itemType=predicate.ReturnType.FindItemType();
                 if ((!entityType.IsAssignableFrom(itemType))||((itemType==entityType)&&(!entityType.IsAssignableFrom(entity.GetType()))))
                 {
-                    var wrapEntity=Info.OfMethod("RomanticWeb","RomanticWeb.Entities.Entity","AsEntity")
-                                         .MakeGenericMethod(entityType);
-
-                    return wrapEntity.Invoke(entity,null);
+                    return Info.OfMethod("RomanticWeb","RomanticWeb.Entities.Entity","AsEntity").MakeGenericMethod(entityType).Invoke(entity,null);
                 }
                 else
                 {

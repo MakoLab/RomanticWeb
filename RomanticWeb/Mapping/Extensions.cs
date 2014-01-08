@@ -154,31 +154,6 @@ namespace RomanticWeb.Mapping
             return result;
         }
 
-        /// <summary>Tries to resolve item type of complex types.</summary>
-        /// <param name="type">Type to be resolved.</param>
-        /// <returns>Collection item type or <b>null</b>.</returns>
-        public static Type FindItemType(this Type type)
-        {
-            Type result=type;
-            if (type.IsArray)
-            {
-                result=type.GetElementType();
-            }
-            else if (typeof(IEnumerable).IsAssignableFrom(type))
-            {
-                if (type.IsGenericType)
-                {
-                    result=type.GetGenericArguments()[0];
-                }
-                else
-                {
-                    type=typeof(object);
-                }
-            }
-
-            return result;
-        }
-
         [return: AllowNull]
         private static Type FindEntityType(IEnumerable<Type> types)
         {

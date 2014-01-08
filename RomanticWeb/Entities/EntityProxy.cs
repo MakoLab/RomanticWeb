@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.Linq;
@@ -95,7 +96,9 @@ namespace RomanticWeb.Entities
             IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
             var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
-            var operation=property.IsCollection?ProcessingOperation.Flatten:ProcessingOperation.SingleOrDefault;
+            var operation=(!property.IsCollection?ProcessingOperation.SingleOrDefault:
+                ((typeof(IDictionary).IsAssignableFrom(property.ReturnType))||(typeof(IDictionary<,>).IsAssignableFromSpecificGeneric(property.ReturnType))?ProcessingOperation.Dictionary:
+                    ProcessingOperation.Flatten));
             var aggregation=(from agg in ResultAggregations
                              where agg.Metadata.Operation==operation
                              select agg.Value).SingleOrDefault();
@@ -105,12 +108,41 @@ namespace RomanticWeb.Entities
             LogTo.Trace("Performing operation {0} on result nodes",operation);
             var aggregatedResult=aggregation.Process(objectsForPredicate);
 
-            var enumerable=aggregatedResult as ICollection;
-            if (enumerable!=null)
+            var collection=aggregatedResult as ICollection;
+            if (collection!=null)
             {
-                var observableCollection=new ObservableCollection<object>(enumerable.Cast<object>());
-                observableCollection.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
-                result=observableCollection;
+                INotifyCollectionChanged observable;
+                Type[] genericArguments=null;
+                IDictionary dictionary=aggregatedResult as IDictionary;
+                if (dictionary!=null)
+                {
+                    genericArguments=new Type[] { typeof(object),typeof(object) };
+                    if (typeof(IDictionary<,>).IsAssignableFromSpecificGeneric(dictionary.GetType()))
+                    {
+                        genericArguments=dictionary.GetType().GetGenericArguments().Take(2).ToArray();
+                    }
+
+                    observable=(INotifyCollectionChanged)typeof(ObservableDictionary<,>)
+                        .MakeGenericType(genericArguments)
+                        .GetConstructor(new Type[] { typeof(IDictionary) })
+                        .Invoke(new object[] { dictionary });
+                }
+                else
+                {
+                    genericArguments=new Type[] { typeof(object) };
+                    if (typeof(IEnumerable<>).IsAssignableFromSpecificGeneric(collection.GetType()))
+                    {
+                        genericArguments=collection.GetType().GetGenericArguments().Take(1).ToArray();
+                    }
+
+                    observable=(INotifyCollectionChanged)typeof(ObservableCollection<>)
+                        .MakeGenericType(genericArguments)
+                        .GetConstructor(new Type[] { typeof(IEnumerable<>).MakeGenericType(genericArguments) })
+                        .Invoke(new object[] { collection.Cast<object>() });
+                }
+
+                observable.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
+                result=observable;
             }
             else
             {

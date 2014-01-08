@@ -13,10 +13,10 @@ namespace RomanticWeb.Converters
     /// Generic converter for any type of entity id
     /// </summary>
     [Export(typeof(IComplexTypeConverter))]
-    public class DefaultUriConverter : IComplexTypeConverter
+    public class DefaultUriConverter:IComplexTypeConverter
     {
         /// <inheritdoc />
-        public object Convert(IEntity objectNode,IEntityStore entityStore)
+        public object Convert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
             return objectNode.Id.Uri;
         }
@@ -24,9 +24,7 @@ namespace RomanticWeb.Converters
         /// <inheritdoc />
         public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
         {
-            return predicate!=null
-                && typeof(Uri).IsAssignableFrom(predicate.ReturnType.FindItemType()) 
-                && !(objectNode.Id is BlankId);
+            return (predicate!=null)&&(typeof(Uri).IsAssignableFrom(predicate.ReturnType.FindItemType()))&&(!(objectNode.Id is BlankId));
         }
 
         /// <inheritdoc />

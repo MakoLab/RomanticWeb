@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [DebuggerDisplay("Property {Name} => {Uri}")]
     internal class PropertyMapping:IPropertyMapping
     {
         public PropertyMapping(Type returnType,string name,Uri predicateUri,IGraphSelectionStrategy graphSelector)

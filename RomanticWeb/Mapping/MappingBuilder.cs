@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace RomanticWeb.Mapping
@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping
     /// <summary>
     /// Builder for registering mapping repositories with <see cref="IEntityContextFactory"/>
     /// </summary>
-    public sealed class MappingBuilder:IEnumerable<IMappingsRepository>
+    public sealed class MappingBuilder
     {
         private readonly IDictionary<Tuple<Assembly,Type>, IMappingsRepository> _mappingsRepositories=new Dictionary<Tuple<Assembly,Type>,IMappingsRepository>(); 
 
@@ -34,16 +34,6 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        IEnumerator<IMappingsRepository> IEnumerable<IMappingsRepository>.GetEnumerator()
-        {
-            return _mappingsRepositories.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _mappingsRepositories.Values.GetEnumerator();
-        }
-
         internal void AddMapping<TMappingRepository>(Assembly mappingAssembly,TMappingRepository mappingsRepository)
             where TMappingRepository:IMappingsRepository
         {
@@ -53,6 +43,13 @@ namespace RomanticWeb.Mapping
             {
                 _mappingsRepositories.Add(key,mappingsRepository);
             }
+        }
+
+        internal IEnumerable<IMappingsRepository> BuildMappings(Action<MappingBuilder> buildDelegate)
+        {
+            var currentRepositories=_mappingsRepositories.Values.ToList();
+            buildDelegate.Invoke(this);
+            return _mappingsRepositories.Values.Except(currentRepositories);
         }
     }
 }

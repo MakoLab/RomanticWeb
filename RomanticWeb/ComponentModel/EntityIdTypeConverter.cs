@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -9,7 +10,7 @@ namespace RomanticWeb.ComponentModel
     /// <summary>
     /// <see cref="TypeConverter"/> between <see cref="EntityId"/> and <see cref="Uri"/>
     /// </summary>
-    public class EntityIdTypeConverter:TypeConverter
+    public abstract class EntityIdTypeConverter<TEntityId>:TypeConverter
     {
         #region Fields
         private static readonly UriTypeConverter UriTypeConverter;
@@ -64,7 +65,7 @@ namespace RomanticWeb.ComponentModel
                 Uri uri=(Uri)UriTypeConverter.ConvertFrom(context,culture,value);
                 if (uri!=null)
                 {
-                    result=new EntityId(uri);
+                    result=CreateEntityId(uri);
                 }
                 else
                 {
@@ -93,7 +94,7 @@ namespace RomanticWeb.ComponentModel
         public override object ConvertTo([AllowNull] ITypeDescriptorContext context,[AllowNull] CultureInfo culture,[AllowNull] object value,Type destinationType)
         {
             object result=null;
-            if ((value!=null)&&(typeof(EntityId).IsAssignableFrom(value.GetType()))&&((destinationType==typeof(string))||(destinationType==typeof(Uri))))
+            if ((value is EntityId)&&((destinationType==typeof(string))||(destinationType==typeof(Uri))))
             {
                 if (destinationType==typeof(string))
                 {
@@ -121,8 +122,19 @@ namespace RomanticWeb.ComponentModel
         /// <b>true</b> if the specified value is valid for this object; otherwise <b>false</b>.</returns>
         public override bool IsValid([AllowNull] ITypeDescriptorContext context,[AllowNull] object value)
         {
-            return ((value!=null)&&(value is EntityId)&&(UriTypeConverter.IsValid(((EntityId)value).Uri)))||(base.IsValid(context,value));
+            return ((value is EntityId)&&(UriTypeConverter.IsValid(((EntityId)value).Uri)))||(base.IsValid(context,value));
         }
         #endregion
+
+        protected abstract TEntityId CreateEntityId(Uri uri);
+    }
+
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Reviewed. Suppression is OK here.")]
+    public class EntityIdTypeConverter:EntityIdTypeConverter<EntityId>
+    {
+        protected override EntityId CreateEntityId(Uri uri)
+        {
+            return new EntityId(uri);
+        }
     }
 }

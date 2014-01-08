@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [DebuggerDisplay("Collection {Name} => {Uri}")]
     internal class CollectionMapping : PropertyMapping, IPropertyMapping
     {
         private readonly StorageStrategyOption _storageStrategy;

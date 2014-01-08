@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RomanticWeb.Model;
+﻿using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
@@ -19,11 +14,21 @@ namespace RomanticWeb.Converters
         }
 
         /// <summary>Checks for ability to convert given data type.</summary>
-        /// <param name="dataType">Data type to be converted</param>
+        /// <param name="literalNode"></param>
         /// <returns><b>true</b> if the data type is Base64 binary; otherwise <b>false</b>.</returns>
-        public bool CanConvert(Uri dataType)
+        public LiteralConversionMatch CanConvert(Node literalNode)
         {
-            return dataType==Vocabularies.Xsd.Base64Binary;
+            var match=new LiteralConversionMatch
+                       {
+                           LiteralFormatMatches = MatchResult.DontCare
+                       };
+
+            if (literalNode.DataType== Vocabularies.Xsd.Base64Binary)
+            {
+                match.DatatypeMatches=MatchResult.ExactMatch;
+            }
+
+            return match;
         }
     }
 }

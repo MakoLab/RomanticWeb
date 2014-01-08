@@ -21,9 +21,19 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Check if a converter can convert the given XSD datatype
         /// </summary>
-        public bool CanConvert(Uri dataType)
+        public virtual LiteralConversionMatch CanConvert(Node literalNode)
         {
-            return SupportedTypes.Contains(dataType,new AbsoluteUriComparer());
+            var match = new LiteralConversionMatch
+            {
+                LiteralFormatMatches = MatchResult.DontCare
+            };
+
+            if (SupportedTypes.Contains(literalNode.DataType,new AbsoluteUriComparer()))
+            {
+                match.DatatypeMatches = MatchResult.ExactMatch;
+            }
+
+            return match;
         }
     }
 }

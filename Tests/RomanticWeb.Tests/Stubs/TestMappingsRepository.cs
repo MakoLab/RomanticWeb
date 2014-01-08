@@ -35,7 +35,7 @@ namespace RomanticWeb.Tests.Stubs
 
             if (entityMap == null)
             {
-                throw new MappingException(string.Format("Mapping not found for type {0}", entityType));
+                return null;
             }
 
             return entityMap.CreateMapping(_mappingContext);

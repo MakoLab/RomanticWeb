@@ -11,12 +11,12 @@ public static class ModuleInitializer
     /// </summary>
     public static void Initialize()
     {
-        foreach (var listener in Debug.Listeners.Cast<TraceListener>().ToList())
-        {
-            if (listener is DefaultTraceListener)
-            {
-                Debug.Listeners.Remove(listener);
-            }
-        }
+        ////foreach (var listener in Debug.Listeners.Cast<TraceListener>().ToList())
+        ////{
+        ////    if (listener is DefaultTraceListener)
+        ////    {
+        ////        Debug.Listeners.Remove(listener);
+        ////    }
+        ////}
     }
 }

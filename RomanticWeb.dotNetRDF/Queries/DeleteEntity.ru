@@ -22,14 +22,14 @@ WHERE
 
 DELETE
 {
-	GRAPH <meta://www.renault.co.uk/>
+	GRAPH @metaGraph
 	{ 
 		?g foaf:primaryTopic @entityId . 
 	}
 }
 where
 {
-	GRAPH <meta://www.renault.co.uk/>
+	GRAPH @metaGraph
 	{ 
 		?g foaf:primaryTopic @entityId . 
 	}

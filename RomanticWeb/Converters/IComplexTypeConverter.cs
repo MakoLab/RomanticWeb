@@ -6,7 +6,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>
-    /// Defines a contract for converts a complex RDF structure to an object
+    /// Defines a contract for converting complex RDF structures to objects
     /// </summary>
     public interface IComplexTypeConverter
     {

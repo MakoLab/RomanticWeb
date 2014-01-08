@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [DebuggerDisplay("Class {Uri}")]
     internal class ClassMapping:IClassMapping
     {
         private static readonly AbsoluteUriComparer UriComparer=new AbsoluteUriComparer();

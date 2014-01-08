@@ -29,25 +29,26 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Adding_attribute_mappings_for_an_Assembly_twice_should_add_only_one_repository()
+        public void Adding_attribute_mappings_for_an_Assembly_twice_should_add_only_one_repository_single_call()
         {
             // given
-            var withMappings=typeof(IPerson).Assembly;
+            var withMappings = typeof(IPerson).Assembly;
 
             // when
             _entityContextFactory.WithMappings(
                 m =>
-                    {
-                        m.Attributes.FromAssembly(withMappings);
-                        m.Attributes.FromAssemblyOf<IPerson>();
-                    });
+                {
+                    m.Attributes.FromAssembly(withMappings);
+                    m.Attributes.FromAssemblyOf<IPerson>();
+                });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<AttributeMappingsRepository>();
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
         }
 
         [Test]
-        public void Adding_fluent_mappings_for_an_Assembly_twice_should_add_only_one_repository()
+        public void Adding_fluent_mappings_for_an_Assembly_twice_should_add_only_one_repository_single_call()
         {
             // given
             var withMappings = typeof(IPerson).Assembly;
@@ -61,7 +62,38 @@ namespace RomanticWeb.Tests
                 });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<FluentMappingsRepository>();
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+        }
+
+        [Test, Description("Calling WithMappings twice")]
+        public void Adding_attribute_mappings_for_an_Assembly_twice_should_add_only_one_repository()
+        {
+            // given
+            var withMappings = typeof(IPerson).Assembly;
+
+            // when
+            _entityContextFactory.WithMappings(m => m.Attributes.FromAssembly(withMappings));
+            _entityContextFactory.WithMappings(m => m.Attributes.FromAssemblyOf<IPerson>());
+
+            // then
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+        }
+
+        [Test,Description("Calling WithMappings twice")]
+        public void Adding_fluent_mappings_for_an_Assembly_twice_should_add_only_one_repository()
+        {
+            // given
+            var withMappings = typeof(IPerson).Assembly;
+
+            // when
+            _entityContextFactory.WithMappings(m => m.Fluent.FromAssembly(withMappings));
+            _entityContextFactory.WithMappings(m => m.Fluent.FromAssemblyOf<IPerson>());
+
+            // then
+            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
+            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
         }
     }
 }

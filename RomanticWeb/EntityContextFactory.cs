@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Linq;
 using Anotar.NLog;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
@@ -16,6 +18,7 @@ namespace RomanticWeb
     public class EntityContextFactory:IEntityContextFactory
     {
         #region Fields
+        private readonly MappingBuilder _mappingBuilder = new MappingBuilder();
         private readonly CompositionContainer _container;
         private bool _isInitialized;
 
@@ -40,8 +43,9 @@ namespace RomanticWeb
         public EntityContextFactory()
         {
             var catalog=new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
-            _container=new CompositionContainer(catalog,true);
+            _container=new CompositionContainer(catalog, true);
             catalog.Changed+=CatalogChanged;
+            this.WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
         }
         #endregion
@@ -122,10 +126,9 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
-            var mappingBuilder=new MappingBuilder();
-            buildMappings(mappingBuilder);
+            var repositories=_mappingBuilder.BuildMappings(buildMappings);
 
-            foreach (var mappingsRepository in mappingBuilder)
+            foreach (var mappingsRepository in repositories)
             {
                 _container.ComposeExportedValue(mappingsRepository);
             }
@@ -142,6 +145,12 @@ namespace RomanticWeb
             return this;
         }
         #endregion
+
+        private static void DefaultMappings(MappingBuilder mappings)
+        {
+            mappings.Fluent.FromAssemblyOf<ITypedEntity>();
+            mappings.Attributes.FromAssemblyOf<ITypedEntity>();
+        }
 
         #region Non-public methods
         private void EnsureInitialized()
@@ -167,7 +176,7 @@ namespace RomanticWeb
         {
             LogTo.Info("MEF catalog has changed");
             bool shouldRebuildMappings=false;
-
+            
             if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IMappingsRepository>()))
             {
                 LogTo.Info("Refreshing mapping repositories");
@@ -202,14 +211,7 @@ namespace RomanticWeb
 
         private void EnsureMappingsRepository()
         {
-            if (_importedMappings.Count()==1)
-            {
-                _actualMappingsRepository=_importedMappings.Single();
-            }
-            else
-            {
-                _actualMappingsRepository=new CompoundMappingsRepository(_importedMappings);
-            }
+            _actualMappingsRepository=new CompoundMappingsRepository(_importedMappings);
         }
 
         private void EnsureMappingsRebuilt()

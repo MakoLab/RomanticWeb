@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
-using ImpromptuInterface.Dynamic;
 using NullGuard;
 
 namespace RomanticWeb.Entities
@@ -28,6 +27,11 @@ namespace RomanticWeb.Entities
         /// <remarks>It will not be backed by <b>any</b> triples, when not created via factory.</remarks>
         internal Entity(EntityId entityId)
         {
+            if (!entityId.Uri.IsAbsoluteUri)
+            {
+                throw new ArgumentException("The identifier must be an absolute URI", "entityId");
+            }
+
             _asDynamic=this;
             _entityId=entityId;
             _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();

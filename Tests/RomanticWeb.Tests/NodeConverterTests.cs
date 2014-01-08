@@ -10,7 +10,7 @@ using RomanticWeb.Tests.Helpers;
 namespace RomanticWeb.Tests
 {
     [TestFixture]
-    public class NodeProcessorTests
+    public class NodeConverterTests
     {
         private Mock<IEntityContext> _entityContext;
         private Mock<IEntityStore> _tripleSource;
@@ -36,7 +36,7 @@ namespace RomanticWeb.Tests
         public void Unless_otherwise_specified_should_convert_URI_nodes_to_Entites()
         {
             // given
-            var converter=CreateProcessor();
+            var converter=CreateConverter();
             var objects = Nodes.Create(10).Uris().GetNodes();
             _entityContext.Setup(ctx => ctx.Load<IEntity>(It.IsAny<EntityId>(), false)).Returns((EntityId id, bool b) => new Entity(id));
 
@@ -51,7 +51,7 @@ namespace RomanticWeb.Tests
         public void Unless_otherwise_specified_should_convert_blank_nodes_to_Entites()
         {
             // given
-            var converter = CreateProcessor();
+            var converter = CreateConverter();
             var objects = Nodes.Create(10).Blanks().GetNodes();
             _entityContext.Setup(ctx => ctx.Load<IEntity>(It.IsAny<EntityId>(), false)).Returns((EntityId id, bool b) => new Entity(id));
 
@@ -67,8 +67,9 @@ namespace RomanticWeb.Tests
         {
             // given
             var intConverter = new Mock<ILiteralNodeConverter>(MockBehavior.Strict);
-            intConverter.Setup(c => c.CanConvert(new Uri("http://www.w3.org/2001/XMLSchema#int"))).Returns(false);
-            var processor = CreateProcessor(intConverter.Object);
+            intConverter.Setup(c => c.CanConvert(It.IsAny<Node>()))
+                        .Returns(new LiteralConversionMatch());
+            var processor = CreateConverter(intConverter.Object);
             var objects = Nodes.Create(1)
                                .Literals()
                                .WithDatatype(new Uri("http://www.w3.org/2001/XMLSchema#token"))
@@ -91,8 +92,9 @@ namespace RomanticWeb.Tests
             // given
             var intConverter=new Mock<ILiteralNodeConverter>(MockBehavior.Strict);
             intConverter.Setup(c => c.Convert(It.IsAny<Node>())).Returns(5);
-            intConverter.Setup(c => c.CanConvert(new Uri("http://www.w3.org/2001/XMLSchema#int"))).Returns(true);
-            var processor = CreateProcessor(intConverter.Object);
+            intConverter.Setup(c => c.CanConvert(It.IsAny<Node>()))
+                        .Returns((Node n) => CreateSuccesfulMatch());
+            var processor = CreateConverter(intConverter.Object);
             var objects = Nodes.Create(1)
                                .Literals()
                                .WithDatatype(new Uri("http://www.w3.org/2001/XMLSchema#int"))
@@ -107,7 +109,16 @@ namespace RomanticWeb.Tests
             intConverter.VerifyAll();
         }
 
-        private NodeConverter CreateProcessor(params object[] converters)
+        private static LiteralConversionMatch CreateSuccesfulMatch()
+        {
+            return new LiteralConversionMatch
+                       {
+                           DatatypeMatches=MatchResult.ExactMatch,
+                           LiteralFormatMatches=MatchResult.ExactMatch
+                       };
+        }
+
+        private NodeConverter CreateConverter(params object[] converters)
         {
             return new NodeConverter(_entityContext.Object)
                        {

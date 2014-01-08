@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
 
@@ -39,7 +40,15 @@ namespace RomanticWeb.Mapping
         public IEntityMapping MappingFor(Type entityType)
         {
             var mappingsForType=_mappingsRepositories.Select(item => item.MappingFor(entityType));
-            return mappingsForType.SingleOrDefault(m => m!=null);
+            try
+            {
+                return mappingsForType.SingleOrDefault(m => m!=null);
+            }
+            catch (InvalidOperationException)
+            {
+                LogTo.Fatal("Multiple mappings found for type {0}",entityType);
+                throw;
+            }
         }
 
         /// <inheritdoc />

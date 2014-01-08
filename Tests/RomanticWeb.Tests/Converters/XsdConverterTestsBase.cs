@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Converters;
+using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Converters
@@ -69,7 +71,7 @@ namespace RomanticWeb.Tests.Converters
         [TestCaseSource("DatatypesSupportedByConverter")]
         public void Should_support_converting_supported_xsd_types(Uri type, Type netType)
         {
-            Assert.That(Converter.CanConvert(type));
+            Converter.CanConvert(Node.ForLiteral(string.Empty,type)).DatatypeMatches.Should().Be(MatchResult.ExactMatch);
         }
     }
 }

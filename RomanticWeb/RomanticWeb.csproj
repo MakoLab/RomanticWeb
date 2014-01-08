@@ -55,6 +55,8 @@
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
+    <Compile Include="Converters\GuidConverter.cs" />
+    <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="DatasetChanges.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Mapping\Model\ClassMapping.cs" />
     <Compile Include="Mapping\Model\StorageStrategyOption.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
+    <Compile Include="Mapping\TypeExtensions.cs" />
     <Compile Include="Mapping\UnMappedTypeException.cs" />
     <Compile Include="Model\Triple.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
@@ -245,7 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Anotar.NLog">
-      <HintPath>..\packages\Anotar.NLog.Fody.2.6.0.0\Lib\portable-net4+sl4+wp7+windows8\Anotar.NLog.dll</HintPath>
+      <HintPath>..\packages\Anotar.NLog.Fody.2.7.4.0\Lib\portable-net4+sl4+wp7+windows8\Anotar.NLog.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ImpromptuInterface">

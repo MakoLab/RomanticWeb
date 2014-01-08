@@ -30,7 +30,7 @@ namespace RomanticWeb.Mapping
         protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
         {
             var maps=(from type in Assembly.GetTypes()
-                      where typeof(EntityMap).IsAssignableFrom(type)
+                      where type.IsConstructableEntityMap()
                       let map = (EntityMap)Activator.CreateInstance(type,true)
                       select new Tuple<Type,EntityMapping>(map.EntityType,map.CreateMapping(mappingContext))).ToList();
 

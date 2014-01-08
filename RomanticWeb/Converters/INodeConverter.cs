@@ -15,7 +15,7 @@ namespace RomanticWeb.Converters
         ///         <li>Doesn't check the type of literals against the property's return type (todo: implement this check)</li>
         ///     </ul>
         /// </remarks>
-        IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,IPropertyMapping predicate);
+        IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,IPropertyMapping propertyMapping);
 
         /// <summary>Converts <see cref="Node"/>s to most appropriate type based on raw RDF data.</summary>
         /// <remarks>This will always return untyped instanes of <see cref="Entity"/> for URI nodes.</remarks>

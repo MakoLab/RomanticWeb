@@ -26,8 +26,8 @@ namespace RomanticWeb
         private readonly IMappingsRepository _mappings;
         private readonly MappingContext _mappingContext;
         private readonly INodeConverter _nodeConverter;
-        private IDictionary<string,Type> _classInterfacesMap;
-        private IList<string> _missingClassInterfacesMap;
+        private readonly IDictionary<string,Type> _classInterfacesMap;
+        private readonly IList<string> _missingClassInterfacesMap;
         #endregion
 
         #region Constructors

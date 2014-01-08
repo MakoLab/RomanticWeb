@@ -21,7 +21,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -37,7 +36,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -51,7 +49,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("AssociatedInstances.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -67,7 +64,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("AssociatedInstances.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -82,7 +78,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -96,7 +91,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesWithLiteralSubjects.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -111,7 +105,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("TriplesInNamedGraphs.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -129,7 +122,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("BlankNodes.trig");
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -149,7 +141,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -170,7 +161,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -189,7 +179,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
@@ -208,7 +197,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
-            Mappings.Add(new DefaultGraphTypeMapping());
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));

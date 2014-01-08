@@ -40,17 +40,17 @@ namespace RomanticWeb.Converters
         ///         <li>Doesn't check the type of literals against the property's return type (todo: implement this check)</li>
         ///     </ul>
         /// </remarks>
-        public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,[AllowNull] IPropertyMapping predicate)
+        public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,[AllowNull] IPropertyMapping propertyMapping)
         {
             foreach (var objectNode in objects.ToList())
             {
                 if (objectNode.IsLiteral)
                 {
-                    yield return ConvertLiteral(objectNode);
+                    yield return ConvertLiteral(objectNode,propertyMapping);
                 }
                 else
                 {
-                    yield return ConvertEntity(objectNode,predicate);
+                    yield return ConvertEntity(objectNode,propertyMapping);
                 }
             }
         }
@@ -144,14 +144,14 @@ namespace RomanticWeb.Converters
             return Node.ForLiteral(element.ToString());
         }
 
-        private object ConvertLiteral(Node objectNode)
+        private object ConvertLiteral(Node objectNode,IPropertyMapping propertyMapping)
         {
-            if (objectNode.DataType==null)
+            if ((propertyMapping != null)&&(propertyMapping.ReturnType==typeof(String)))
             {
                 return objectNode.Literal;
             }
 
-            var converter=Converters.FirstOrDefault(c => c.CanConvert(objectNode.DataType));
+            var converter=GetBestConverter(objectNode);
             if (converter!=null)
             {
                 return converter.Convert(objectNode);
@@ -196,6 +196,18 @@ namespace RomanticWeb.Converters
             }
 
             return entity;
+        }
+
+        private ILiteralNodeConverter GetBestConverter(Node literalNode)
+        {
+            var matches=from converter in Converters
+                        let match = converter.CanConvert(literalNode)
+                        where match.LiteralFormatMatches!=MatchResult.NoMatch
+                           && match.DatatypeMatches!=MatchResult.NoMatch
+                        orderby match
+                        select converter;
+
+            return matches.FirstOrDefault();
         }
     }
 }

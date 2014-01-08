@@ -25,59 +25,55 @@ namespace RomanticWeb.Tests.IntegrationTests
             get { return (TestMappingsRepository)base.Mappings; }
         }
 
-        [Test]
-        public void Property_should_be_mapped_to_default_graph()
-        {
-            // given
-            Mappings.Add(new DefaultGraphTypeMapping());
+		[Test]
+		public void Property_should_be_mapped_to_default_graph()
+		{
+			// given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("TriplesWithLiteralSubjects.trig");
+			LoadTestFile("TriplesWithLiteralSubjects.trig");
 
-            // when
-            string firstName = Entity.FirstName;
+			// when
+			string firstName = Entity.FirstName;
 
-            // then
-            Assert.That(firstName, Is.EqualTo("Tomasz"));
-        }
+			// then
+			Assert.That(firstName, Is.EqualTo("Tomasz"));
+		}
 
-        [Test]
-        public void Mapping_property_to_specific_graph_should_be_possible()
-        {
-            // given
-            Mappings.Add(new DefaultGraphTypeMapping());
+		[Test]
+		public void Mapping_property_to_specific_graph_should_be_possible()
+		{
+			// given
             Mappings.Add(new NamedGraphsPersonMapping());
-            LoadTestFile("TriplesInNamedGraphs.trig");
+			LoadTestFile("TriplesInNamedGraphs.trig");
 
-            // when
-            string firstName = Entity.FirstName;
-            string lastName = Entity.LastName;
+			// when
+			string firstName = Entity.FirstName;
+			string lastName = Entity.LastName;
 
-            // then
-            Assert.That(firstName, Is.EqualTo("Tomasz"));
-            Assert.That(lastName, Is.EqualTo("Pluskiewicz"));
-        }
+			// then
+			Assert.That(firstName, Is.EqualTo("Tomasz"));
+			Assert.That(lastName, Is.EqualTo("Pluskiewicz"));
+		}
 
-        [Test]
-        public void Mapping_simple_collections_should_be_possible()
-        {
-            // given
-            Mappings.Add(new DefaultGraphTypeMapping());
+		[Test]
+		public void Mapping_simple_collections_should_be_possible()
+		{
+			// given
             Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("LooseCollections.trig");
+			LoadTestFile("LooseCollections.trig");
 
-            // when
-            var interests = Entity.Interests;
+			// when
+			var interests = Entity.Interests;
 
-            // then
-            Assert.That(interests, Has.Count.EqualTo(5));
-            interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
+			// then
+			Assert.That(interests, Has.Count.EqualTo(5));
+			interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
         }
 
         [Test]
         public void Mapping_rdflist_of_entites_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
@@ -101,7 +97,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_loose_collection_of_entites_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("LooseCollections.trig");
 
@@ -124,7 +119,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapped_collection_of_entites_should_allow_accessing_members()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("LooseCollections.trig");
 
@@ -141,7 +135,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_loose_collection_of_entites_should_be_possible_if_only_one_element_is_present()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("AssociatedInstances.trig");
 
@@ -157,7 +150,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_loose_collection_of_entites_should_be_possible_if_only_are_no_elements_present()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("AssociatedInstances.trig");
 
@@ -172,7 +164,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_blank_node_rdf_collection_of_entities_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
@@ -195,7 +186,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_URI_node_rdf_collection_of_entities_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
             LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
@@ -211,7 +201,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         [Test]
         public void Should_throw_if_a_property_returns_an_rdf_collection()
         {
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("Collections.trig");
 
@@ -222,7 +211,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         [Test]
         public void Should_throw_if_a_property_returns_multiple_values()
         {
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("Collections.trig");
 
@@ -235,7 +223,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         [Test]
         public void Should_throw_if_a_collection_is_backed_by_a_list_and_a_direct_relation()
         {
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("MixedCollections.trig");
 
@@ -248,7 +235,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         [Test]
         public void Should_throw_if_a_collection_is_backed_by_two_lists()
         {
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("MixedCollections.trig");
 
@@ -260,7 +246,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_property_should_be_possible_in_default_graph()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
@@ -276,7 +261,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_property_should_be_possible_in_named_graph()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new NamedGraphsPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
 
@@ -296,7 +280,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_rdf_list_of_literals_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new NamedGraphsPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
 
@@ -314,7 +297,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_entity_property_should_be_posible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
             var someEntity=EntityContext.Create<IEntity>(new EntityId("urn:possibly:external"));
@@ -334,7 +316,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_simple_collection_of_literals_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
             Entity.ForceInitialize();
@@ -353,7 +334,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_simple_collection_of_entities_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
             var someEntity = EntityContext.Create<IPerson>(new EntityId("urn:possibly:friend1"));
@@ -374,7 +354,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_allow_chaining_typed_entities()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("AssociatedInstances.trig");
 
@@ -390,7 +369,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Creating_entity_should_populate_changeset_with_entity_type()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             var entityUri=new Uri("http://magi/people/Tomasz");
             var entityId=new EntityId(entityUri);
@@ -413,7 +391,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_only_return_triples_from_the_selected_named_graph()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInUnmappedGraphs.trig");
 
@@ -428,7 +405,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Given_new_entity_should_allow_adding_entity_to_collection()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             var tomasz = EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
             var gniewo = EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
@@ -444,7 +420,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapped_collection_of_entites_should_allow_removing_members()
         {
             // given
-            Mappings.Add(new DefaultGraphTypeMapping());
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("LooseCollections.trig");
 

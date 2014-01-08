@@ -10,6 +10,6 @@ namespace RomanticWeb.Converters
         object Convert(Node objectNode);
 
         /// <summary>Check if a converter can convert the given RDF data type.</summary>
-        bool CanConvert(Uri dataType);
+        LiteralConversionMatch CanConvert(Node literalNode);
     }
 }

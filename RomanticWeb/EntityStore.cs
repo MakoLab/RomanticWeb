@@ -50,7 +50,7 @@ namespace RomanticWeb
 
             if (graph!=null)
             {
-                quads=quads.Where(triple => triple.Graph==Node.ForUri(graph));
+                quads=quads.Where(triple => GraphEquals(triple,graph));
             }
 
             return quads.Select(triple => triple.Object);
@@ -86,7 +86,7 @@ namespace RomanticWeb
 
             if (graphUri != null)
             {
-                quadsRemoved = quadsRemoved.Where(quad => quad.Graph == Node.ForUri(graphUri));
+                quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad,graphUri));
             }
 
             foreach (var entityTriple in quadsRemoved.ToList())
@@ -107,6 +107,11 @@ namespace RomanticWeb
         public void Delete(EntityId entityId)
         {
             _deletedEntites.Add(entityId);
+        }
+
+        private bool GraphEquals(EntityQuad triple,Uri graph)
+        {
+            return (triple.Subject.IsBlank?graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri):triple.Graph.Uri.AbsoluteUri==graph.AbsoluteUri);
         }
     }
 }

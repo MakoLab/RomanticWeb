@@ -9,7 +9,7 @@ using RomanticWeb.ComponentModel;
 namespace RomanticWeb.Entities
 {
     /// <summary>An Entity's identifier (URI or blank node).</summary>
-    [TypeConverter(typeof(EntityIdTypeConverter))]
+    [TypeConverter(typeof(EntityIdTypeConverter<EntityId>))]
     public class EntityId:IComparable,IComparable<EntityId>,IXmlSerializable
     {
         #region Fields

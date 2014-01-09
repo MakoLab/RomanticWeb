@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using NullGuard;
@@ -142,14 +141,5 @@ namespace RomanticWeb.ComponentModel
             return (TEntityId)constructorInfo.Invoke(new object[] { uri });
         }
         #endregion
-    }
-
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Reviewed. Suppression is OK here.")]
-    public class EntityIdTypeConverter:EntityIdTypeConverter<EntityId>
-    {
-        protected override EntityId CreateEntityId(Uri uri)
-        {
-            return new EntityId(uri);
-        }
     }
 }

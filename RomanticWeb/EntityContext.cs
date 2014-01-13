@@ -160,14 +160,14 @@ namespace RomanticWeb
         public Entity Create(EntityId entityId)
         {
             entityId=EnsureAbsolutEntityId(entityId);
-            LogTo.Debug("Creating entity {0}",entityId);
+            LogTo.Info("Creating entity {0}",entityId);
             return Create(entityId,true);
         }
 
         /// <inheritdoc />
         public void Commit()
         {
-            LogTo.Debug("Committing changes to triple store");
+            LogTo.Info("Committing changes to triple store");
             var changes=_entityStore.Changes;
             _entitySource.ApplyChanges(changes);
         }
@@ -176,7 +176,7 @@ namespace RomanticWeb
         public void Delete(EntityId entityId)
         {
             entityId=EnsureAbsolutEntityId(entityId);
-            LogTo.Debug("Deleting entity {0}",entityId);
+            LogTo.Info("Deleting entity {0}", entityId);
             _entityStore.Delete(entityId);
         }
 
@@ -215,7 +215,7 @@ namespace RomanticWeb
         private Entity Load(EntityId entityId,bool checkIfExist=true)
         {
             entityId = EnsureAbsolutEntityId(entityId);
-            LogTo.Debug("Loading entity {0}",entityId);
+            LogTo.Info("Loading entity {0}",entityId);
 
             if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
             {

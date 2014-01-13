@@ -62,7 +62,7 @@ namespace RomanticWeb.ComponentModel
             object result;
             if (value!=null)
             {
-                Uri uri=(Uri)UriTypeConverter.ConvertFrom(context,culture,value);
+                var uri=(Uri)UriTypeConverter.ConvertFrom(context,culture,value);
                 if (uri!=null)
                 {
                     result=CreateEntityId(uri);
@@ -127,12 +127,15 @@ namespace RomanticWeb.ComponentModel
         #endregion
 
         #region Non-public methods
+        /// <summary>
+        /// Tries to create a <typeparamref name="TEntityId"/> using a <see cref="Uri"/> constructor
+        /// </summary>
         protected virtual TEntityId CreateEntityId(Uri uri)
         {
-            ConstructorInfo constructorInfo=typeof(TEntityId).GetConstructor(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(Uri) },null);
+            ConstructorInfo constructorInfo=typeof(TEntityId).GetConstructor(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new[] { typeof(Uri) },null);
             if (constructorInfo==null)
             {
-                throw new NotImplementedException(System.String.Format(
+                throw new NotImplementedException(String.Format(
                     "Type '{0}' does not implement constructor that accepts single argument of type '{1}'.",
                     typeof(TEntityId),
                     typeof(Uri)));

@@ -3,10 +3,17 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb
 {
+    /// <summary>
+    /// Exposes methods to define how base <see cref="Uri"/>s
+    /// are selected for relative identifiers
+    /// </summary>
     public class BaseUriSelectorBuilder
     {
         private Uri _defaultBaseUri;
 
+        /// <summary>
+        /// Gets the builder for default base <see cref="Uri"/>.
+        /// </summary>
         public DefaultUriBuilder Default
         {
             get

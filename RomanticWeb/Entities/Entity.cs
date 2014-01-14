@@ -166,6 +166,11 @@ namespace RomanticWeb.Entities
             if (entity==null) { return false; }
             return Id.Equals(entity.Id);
         }
+
+        public override string ToString()
+        {
+            return _entityId.ToString();
+        }
         #endregion
 
         #region Non-public methods

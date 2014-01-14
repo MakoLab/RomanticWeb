@@ -173,7 +173,6 @@ namespace RomanticWeb.Entities
             ////else
             {
                 var newValues=_converter.ConvertBack(value,property);
-
                 _store.ReplacePredicateValues(_entity.Id,propertyUri,newValues,graphUri);
             }
 
@@ -186,7 +185,7 @@ namespace RomanticWeb.Entities
             var entity=obj as IEntity;
             if (entity==null) { return false; }
 
-            return entity.Equals(_entity);
+            return _entity.Equals(entity);
         }
 
         /// <inheritdoc />

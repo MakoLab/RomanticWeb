@@ -40,26 +40,18 @@ namespace RomanticWeb.Mapping.Attributes
         /// <summary>Gets the ontology prefix.</summary>
         public string Prefix { get { return _prefix; } }
 
-        /// <summary>
-        /// Gets the term.
-        /// </summary>
-        protected string Term
-        {
-            get
-            {
-                return _term;
-            }
-        }
-
+        /// <summary>Gets the term.</summary>
+        public string Term { get { return _term; } }
         #endregion
 
+        #region Non-public methods
         /// <summary>
         /// Gets the term URI.
         /// </summary>
         /// <exception cref="MappingException"></exception>
         protected Uri GetTermUri(MappingContext mappingContext)
         {
-            Uri uri = _uri??mappingContext.OntologyProvider.ResolveUri(Prefix,Term);
+            Uri uri=_uri??mappingContext.OntologyProvider.ResolveUri(Prefix,Term);
             if (uri==null)
             {
                 var message=string.Format("Cannot resolve QName {0}:{1}",Prefix,Term);
@@ -69,5 +61,6 @@ namespace RomanticWeb.Mapping.Attributes
 
             return uri;
         }
+        #endregion
     }
 }

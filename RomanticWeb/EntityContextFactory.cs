@@ -158,13 +158,13 @@ namespace RomanticWeb
         }
         #endregion
 
+        #region Non-public methods
         private static void DefaultMappings(MappingBuilder mappings)
         {
             mappings.Fluent.FromAssemblyOf<ITypedEntity>();
             mappings.Attributes.FromAssemblyOf<ITypedEntity>();
         }
 
-        #region Non-public methods
         private void EnsureInitialized()
         {
             LogTo.Info("Initializing entity context factory");

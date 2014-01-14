@@ -370,15 +370,15 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add(entityAccessor);
                 }
 
-                EntityConstrain constrain=new EntityConstrain(new Literal(RomanticWeb.Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
-                _lastComponent=constrain;
+                EntityTypeConstrain typeConstrain=this.CreateTypeConstrain(expression.TypeOperand);
+                _lastComponent=typeConstrain;
                 if ((_currentComponent.Count>0)&&(_currentComponent.Peek() is BinaryOperatorNavigator))
                 {
-                    HandleComponent(constrain);
+                    HandleComponent(typeConstrain);
                 }
-                else if (!entityAccessor.Elements.Contains(constrain))
+                else if (!entityAccessor.Elements.Contains(typeConstrain))
                 {
-                    entityAccessor.Elements.Add(constrain);
+                    entityAccessor.Elements.Add(typeConstrain);
                 }
             }
             else

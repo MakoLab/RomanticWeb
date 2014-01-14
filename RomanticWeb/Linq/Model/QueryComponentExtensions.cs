@@ -115,6 +115,17 @@ namespace RomanticWeb.Linq.Model
             Type entityType=sourceExpression.ItemType.FindEntityType();
             if ((entityType!=null)&&(entityType!=typeof(IEntity)))
             {
+                result=visitor.CreateTypeConstrain(entityType);
+            }
+
+            return result;
+        }
+
+        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor,Type entityType)
+        {
+            EntityTypeConstrain result=null;
+            if (entityType!=null)
+            {
                 var classMappings=visitor.MappingsRepository.FindClassMapping(entityType);
 
                 if (classMappings == null)
@@ -138,8 +149,8 @@ namespace RomanticWeb.Linq.Model
                                 throw new UnMappedTypeException(entityType);
                             }
 
-                if (classMappings.Any())
-                {
+                            if (classMappings.Any())
+                            {
                                 Uri inheritedTypeUri=classMappings.First().Uri;
                                 if ((primaryTypeUri.AbsoluteUri!=inheritedTypeUri.AbsoluteUri)&&(!inheritedTypeUris.Contains(inheritedTypeUri,AbsoluteUriComparer.Default)))
                                 {

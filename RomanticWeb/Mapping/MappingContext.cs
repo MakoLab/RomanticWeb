@@ -2,8 +2,6 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
 {
-    // todo: give a more descriptive name
-
     /// <summary>Provides a mapping context.</summary>
     public sealed class MappingContext
     {

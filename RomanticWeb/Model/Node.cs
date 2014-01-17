@@ -193,6 +193,8 @@ namespace RomanticWeb.Model
             return new Node(blankNodeId,graphUri,entityId);
         }
 
+        /// <summary>Factory method for creating nodes from <see cref="EntityId"/>.</summary>
+        /// <returns>A URI node or a Blank Node</returns>
         public static Node FromEntityId(EntityId entityId)
         {
             if (entityId is BlankId)

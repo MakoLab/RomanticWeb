@@ -36,7 +36,7 @@ namespace RomanticWeb.Converters
         /// <remarks>
         ///     <ul>
         ///         <li>Returns typed instances of <see cref="Entity"/> based on property's return value</li>
-        ///         <li>Doesn't check the type of literals against the property's return type (todo: implement this check)</li>
+        ///         <li>Doesn't check the type of literals against the property's return type</li>
         ///     </ul>
         /// </remarks>
         public IEnumerable<object> ConvertNodes(IEnumerable<Node> objects,[AllowNull] IPropertyMapping propertyMapping)

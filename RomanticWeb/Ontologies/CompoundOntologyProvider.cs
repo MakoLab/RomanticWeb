@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a base functionality for compoung ontology providers.</summary>
+    [DebuggerDisplay("{DebuggerString}")]
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public class CompoundOntologyProvider:OntologyProviderBase
     {
         #region Fields
-        private IList<IOntologyProvider> _ontologyProviders;
+        private readonly IList<IOntologyProvider> _ontologyProviders;
         #endregion
 
         #region Constructors
@@ -27,6 +30,14 @@ namespace RomanticWeb.Ontologies
 
         /// <summary>Gets a list of ontology proiders stored by this provider.</summary>
         internal IList<IOntologyProvider> OntologyProviders { get { return _ontologyProviders; } }
+
+        private string DebuggerString
+        {
+            get
+            {
+                return string.Format("Providers: {0}, Ontolgies: {1}",_ontologyProviders.Count,Ontologies.Count());
+            }
+        }
         #endregion
 
         #region Non-public methods
@@ -37,5 +48,24 @@ namespace RomanticWeb.Ontologies
             return new IOntologyProvider[0];
         }
         #endregion
+    
+        private class DebuggerViewProxy
+        {
+            private readonly CompoundOntologyProvider _provider;
+
+            public DebuggerViewProxy(CompoundOntologyProvider provider)
+            {
+                _provider=provider;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public IList<Ontology> Ontologies
+            {
+                get
+                {
+                    return _provider.Ontologies.ToList();
+                }
+            } 
+        }
     }
 }

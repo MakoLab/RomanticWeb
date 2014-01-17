@@ -77,7 +77,7 @@ namespace RomanticWeb
 
         public void ReplacePredicateValues(EntityId entityId,Node propertyUri,IEnumerable<Node> valueNodes,Uri graphUri)
         {
-            var subjectNode=Node.ForUri(entityId.Uri);
+            var subjectNode=Node.FromEntityId(entityId);
             var quadsRemoved = from quad in Quads
                                where quad.EntityId == entityId
                                && quad.Predicate == propertyUri

@@ -5,7 +5,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
@@ -132,7 +131,7 @@ namespace RomanticWeb.Converters
         {
             if (element is IEntity)
             {
-                return Node.ForUri(((IEntity)element).Id.Uri);
+                return Node.FromEntityId(((IEntity)element).Id);
             }
 
             // todo: this is a hack, and should be in a complex type converter

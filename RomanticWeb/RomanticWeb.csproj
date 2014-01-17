@@ -95,6 +95,7 @@
     <Compile Include="Entities\OntologyAccessor.cs" />
     <Compile Include="Entities\TypeEntityMap.cs" />
     <Compile Include="EntityContextFactory.cs" />
+    <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="EntityStoreExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
     <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />

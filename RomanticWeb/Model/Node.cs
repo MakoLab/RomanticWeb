@@ -193,6 +193,16 @@ namespace RomanticWeb.Model
             return new Node(blankNodeId,graphUri,entityId);
         }
 
+        public static Node FromEntityId(EntityId entityId)
+        {
+            if (entityId is BlankId)
+            {
+                return ((BlankId)entityId).ToNode();
+            }
+
+            return ForUri(entityId.Uri);
+        }
+
 #pragma warning disable 1591
         public static bool operator==([AllowNull]Node left,[AllowNull]Node right)
         {

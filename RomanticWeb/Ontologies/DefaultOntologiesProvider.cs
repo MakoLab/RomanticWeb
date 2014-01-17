@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -47,6 +48,8 @@ namespace RomanticWeb.Ontologies
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
+    [DebuggerDisplay("Ontologies count = {_ontologies.Count}")]
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public sealed class DefaultOntologiesProvider:OntologyProviderBase
     {
         private IList<Ontology> _ontologies;
@@ -211,6 +214,25 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithSIOC()
         {
             return Include(BuiltInOntologies.SIOC);
+        }
+        
+        private class DebuggerViewProxy
+        {
+            private readonly DefaultOntologiesProvider _provider;
+
+            public DebuggerViewProxy(DefaultOntologiesProvider provider)
+            {
+                _provider=provider;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public IList<Ontology> Ontologies
+            {
+                get
+                {
+                    return _provider.Ontologies.ToList();
+                }
+            } 
         }
     }
 }

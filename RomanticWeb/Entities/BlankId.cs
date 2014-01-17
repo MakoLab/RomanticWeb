@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
@@ -7,6 +8,7 @@ namespace RomanticWeb.Entities
 	/// A Blank Node identifier
 	/// </summary>
     /// <remarks>Internally it is stored as a node:// URI, similarily to the Virtuoso way</remarks>
+    [DebuggerDisplay("_:{_identifier,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
 	public sealed class BlankId:EntityId
 	{
@@ -24,9 +26,14 @@ namespace RomanticWeb.Entities
 	    private BlankId(Uri blankNodeUri, EntityId root)
             : base(blankNodeUri)
         {
-            if (_root is BlankId)
+	        while (root is BlankId)
+	        {
+	            root=((BlankId)root).RootEntityId;
+	        }
+
+            if (root==null)
             {
-                throw new ArgumentException("Root EntityId cannot be a BlankId","root");
+                throw new ArgumentException("No root EntityId found","root");
             }
 
             _root = root;
@@ -46,6 +53,11 @@ namespace RomanticWeb.Entities
         internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
         {
             return new Uri(string.Format("node://{0}/{1}", blankNodeId, graphUri));
+        }
+
+        internal Node ToNode()
+        {
+            return Node.ForBlank(_identifier,RootEntityId,_graph);
         }
 
         private class DebuggerViewProxy

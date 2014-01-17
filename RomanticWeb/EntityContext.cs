@@ -11,6 +11,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb
 {
@@ -29,6 +30,8 @@ namespace RomanticWeb
         private readonly IDictionary<string,Type> _classInterfacesMap;
         private readonly IList<string> _missingClassInterfacesMap;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
+        private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
+
         #endregion
 
         #region Constructors
@@ -74,6 +77,16 @@ namespace RomanticWeb
                 return Store.Changes.Any;
             }
         }
+
+        /// <inheritdoc />
+        public IBlankNodeIdGenerator BlankIdGenerator
+        {
+            get
+            {
+                return _blankIdGenerator;
+            }
+        }
+
         #endregion
 
         #region Public methods
@@ -261,6 +274,11 @@ namespace RomanticWeb
 
         private T EntityAs<T>(Entity entity,IEntityMapping mapping) where T:class,IEntity
         {
+            if (mapping==null)
+            {
+                LogTo.Warn("No mapping found for type {0}",typeof(T));
+            }
+
             var proxy=new EntityProxy(Store,entity,mapping,_nodeConverter);
             _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();

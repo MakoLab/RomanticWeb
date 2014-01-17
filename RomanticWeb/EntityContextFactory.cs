@@ -30,7 +30,7 @@ namespace RomanticWeb
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
         private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
-        private IGraphSelectionStrategy _defaultGraphSelector=new DefaultGraphSelector();
+        private GraphSelectionStrategyBase _defaultGraphSelector=new DefaultGraphSelector();
         private IMappingsRepository _actualMappingsRepository;
         private IOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
@@ -140,7 +140,7 @@ namespace RomanticWeb
         /// <summary>Exposes the method to register a default graph selector.</summary>
         /// <param name="graphSelector">Delegate method to be used for selecting graph names.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithDefaultGraphSelector(IGraphSelectionStrategy graphSelector)
+        public EntityContextFactory WithDefaultGraphSelector(GraphSelectionStrategyBase graphSelector)
         {
             _defaultGraphSelector=graphSelector;
             return this;

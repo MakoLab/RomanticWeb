@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Ontologies
 {
 	/// <summary>
 	/// Represents an RDF class
 	/// </summary>
-	[DebuggerDisplay("Class {Prefix}:{ClassName}")]
 	public class Class : Term
 	{
 		/// <summary>
@@ -21,6 +20,15 @@ namespace RomanticWeb.Ontologies
 		/// Gets the class name
 		/// </summary>
 		/// <remarks>See remarks under <see cref="Term.TermName"/></remarks>
-		public string ClassName { get { return TermName; } }
+        public string ClassName { get { return TermName; } }
+
+#pragma warning disable 1591
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            string prefix = Ontology == null ? "_" : Ontology.Prefix;
+            return string.Format("{0}:{1}", prefix, ClassName);
+        }
+#pragma warning restore
 	}
 }

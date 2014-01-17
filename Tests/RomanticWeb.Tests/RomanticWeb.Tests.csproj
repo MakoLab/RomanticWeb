@@ -129,6 +129,7 @@
     <Compile Include="NodeConverterTests.cs" />
     <Compile Include="NodeTests.cs" />
     <Compile Include="RdfNodeTests.cs" />
+    <Compile Include="Stubs\TestGraphSelector.cs" />
     <Compile Include="Stubs\TestMappingsRepository.cs" />
     <Compile Include="Linq\SparqlTests.cs" />
     <Compile Include="PredicateAccessorTests.cs" />

@@ -6,7 +6,7 @@ namespace RomanticWeb.Ontologies
 	/// <summary>
 	/// Represents a prefix-URI pair used for defining namespaces
 	/// </summary>
-	[DebuggerDisplay("PREFIX {Prefix}: <{BaseUri}>")]
+	[DebuggerDisplay("@prefix {Prefix,nq}: <{BaseUri,nq}>")]
 	public sealed class NamespaceSpecification
 	{
 		/// <summary>

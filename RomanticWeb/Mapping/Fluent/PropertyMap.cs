@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <inheritdoc />
-        IGraphSelectionStrategy INamedGraphSelectingMap.GraphSelector { get; set; }
+        GraphSelectionStrategyBase INamedGraphSelectingMap.GraphSelector { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this property is a collection

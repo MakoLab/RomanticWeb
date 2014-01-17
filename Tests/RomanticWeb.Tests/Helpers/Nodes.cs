@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Tests.Helpers
@@ -68,11 +69,11 @@ namespace RomanticWeb.Tests.Helpers
                 _createGraphUri=i => null;
             }
 
-            public IEnumerable<Node> GetNodes()
+            public IEnumerable<Node> GetNodes(EntityId entityId)
             {
                 return from i in Enumerable.Range(0, _count)
                        let blankId = _createNodeIdentifier(i)
-                       select Node.ForBlank(blankId, _createGraphUri(i));
+                       select Node.ForBlank(blankId,entityId,_createGraphUri(i));
             }
         }
 

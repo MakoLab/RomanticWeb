@@ -5,7 +5,8 @@
 {
 	<Tomasz> foaf:knows [
 		foaf:givenName "Karol" ;
-		foaf:familyName "Szczepański" 
+		foaf:familyName "Szczepański" ;
+		foaf:knows _:gniewko 
 	] .
 
 	_:gniewko

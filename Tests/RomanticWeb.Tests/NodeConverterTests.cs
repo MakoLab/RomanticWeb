@@ -52,7 +52,7 @@ namespace RomanticWeb.Tests
         {
             // given
             var converter = CreateConverter();
-            var objects = Nodes.Create(10).Blanks().GetNodes();
+            var objects = Nodes.Create(10).Blanks().GetNodes(new EntityId("urn:test:node"));
             _entityContext.Setup(ctx => ctx.Load<IEntity>(It.IsAny<EntityId>(), false)).Returns((EntityId id, bool b) => new Entity(id));
 
             // when

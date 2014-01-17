@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RomanticWeb.Ontologies
 {
@@ -26,7 +27,7 @@ namespace RomanticWeb.Ontologies
 		public override string ToString()
 		{
 			string prefix = Ontology == null ? "_" : Ontology.Prefix;
-			return string.Format("Property {0}:{1}", prefix, PropertyName);
+			return string.Format("{0}:{1}", prefix, PropertyName);
         }
 #pragma warning restore
 	}

@@ -15,7 +15,7 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>
         /// Gets the strategy for selecting named graph URIs
         /// </summary>
-		IGraphSelectionStrategy GraphSelector { get; }
+		GraphSelectionStrategyBase GraphSelector { get; }
 
         /// <summary>
         /// Gets the property name

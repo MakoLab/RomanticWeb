@@ -4,11 +4,11 @@ using RomanticWeb.Entities;
 namespace RomanticWeb.Mapping
 {
     /// <summary>
-    /// Implementation of <see cref="IGraphSelectionStrategy"/>, 
+    /// Implementation of <see cref="GraphSelectionStrategyBase"/>, 
     /// which allows the use of any arbitrary function
     /// to select named graph URI based on <see cref="EntityId"/>
     /// </summary>
-	public class FuncGraphSelector : IGraphSelectionStrategy
+	public class FuncGraphSelector : GraphSelectionStrategyBase
 	{
 		private readonly Func<EntityId, Uri> _createGraphUri;
 
@@ -18,7 +18,7 @@ namespace RomanticWeb.Mapping
 		}
 
         /// <inheritdoc />
-		public Uri SelectGraph(EntityId entityId)
+        protected override Uri GetGraphForEntityId(EntityId entityId)
 		{
 			return _createGraphUri(entityId);
 		}

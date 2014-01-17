@@ -10,7 +10,8 @@ namespace RomanticWeb.Entities
 {
     /// <summary>An RDF entity, which can be used to dynamically access RDF triples.</summary>
     [NullGuard(ValidationFlags.OutValues)]
-    [DebuggerDisplay("Entity <{Id}>")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+    [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
     public class Entity:DynamicObject,IEntity
     {
         #region Fields
@@ -66,6 +67,22 @@ namespace RomanticWeb.Entities
             get
             {
                 return (_entityId is BlankId)||_isInitialized;
+            }
+        }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get
+            {
+                var format = string.Format("Entity <{0}>", Id);
+
+                if (!IsInitialized)
+                {
+                    format += " (uninitialized)";
+                }
+
+                return format;
             }
         }
 
@@ -167,10 +184,13 @@ namespace RomanticWeb.Entities
             return Id.Equals(entity.Id);
         }
 
+#pragma warning disable
         public override string ToString()
         {
-            return _entityId.ToString();
+            return string.Format("<{0}>",Id);
         }
+#pragma warning restore
+
         #endregion
 
         #region Non-public methods
@@ -220,5 +240,47 @@ namespace RomanticWeb.Entities
             throw new AmbiguousPropertyException(binder.Name,matchedPropertiesQNames);
         }
         #endregion
+
+        private class DebuggerDisplayProxy
+        {
+            private readonly Entity _entity;
+
+            public DebuggerDisplayProxy(Entity entity)
+            {
+                _entity=entity;
+            }
+
+            public EntityId Id
+            {
+                get
+                {
+                    return _entity.Id;
+                }
+            }
+
+            public ICollection<string> KnownOntologies
+            {
+                get
+                {
+                    return _entity._ontologyAccessors.Keys;
+                }
+            }
+
+            public IEntityContext Context
+            {
+                get
+                {
+                    return _entity._entityContext;
+                }
+            }
+
+            public bool IsInitialized
+            {
+                get
+                {
+                    return _entity.IsInitialized;
+                }
+            }
+        }
     }
 }

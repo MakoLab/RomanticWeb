@@ -40,8 +40,8 @@ namespace RomanticWeb.Tests
             const string Id = "urn:test:identifier";
 
             // when
-            IComparable entityId1 = new EntityId(Id);
-            IComparable entityId2 = new BlankId(new Uri("http://blank/node"));
+            IComparable entityId1=new EntityId(Id);
+            IComparable entityId2=new BlankId("blank1",(EntityId)entityId1);
 
             Assert.That(entityId2.CompareTo(entityId1), Is.LessThan(0));
         }
@@ -53,8 +53,8 @@ namespace RomanticWeb.Tests
             const string Id = "urn:test:identifier";
 
             // when
-            IComparable entityId1 = new EntityId(Id);
-            IComparable entityId2 = new BlankId(new Uri("http://blank/node"));
+            IComparable entityId1=new EntityId(Id);
+            IComparable entityId2=new BlankId("blank1",(EntityId)entityId1);
 
             Assert.That(entityId1.CompareTo(entityId2), Is.GreaterThan(0));
         }

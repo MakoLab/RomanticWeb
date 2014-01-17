@@ -1,8 +1,7 @@
 ﻿using System;
-using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -10,26 +9,18 @@ namespace RomanticWeb.Tests.IntegrationTests
 	{
 		public DefaultGraphPersonMapping()
 		{
-            Class.Is("foaf","Person").NamedGraph.SelectedBy<TestSelector>();
-            Property(p => p.FirstName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName")).NamedGraph.SelectedBy<TestSelector>();
-			Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName")).NamedGraph.SelectedBy<TestSelector>();
-            Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage")).NamedGraph.SelectedBy<TestSelector>();
-            Property(p => p.Friend).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows")).NamedGraph.SelectedBy<TestSelector>();
-            Property(p => p.Entity).Term.Is("dummy","entity").NamedGraph.SelectedBy<TestSelector>();
+            Class.Is("foaf", "Person").NamedGraph.SelectedBy<TestGraphSelector>();
+            Property(p => p.FirstName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName")).NamedGraph.SelectedBy<TestGraphSelector>();
+            Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName")).NamedGraph.SelectedBy<TestGraphSelector>();
+            Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage")).NamedGraph.SelectedBy<TestGraphSelector>();
+            Property(p => p.Friend).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows")).NamedGraph.SelectedBy<TestGraphSelector>();
+            Property(p => p.Entity).Term.Is("dummy", "entity").NamedGraph.SelectedBy<TestGraphSelector>();
             Collection(p => p.Interests)
                 .Term.Is(new Uri("http://xmlns.com/foaf/0.1/topic_interest"))
-                .NamedGraph.SelectedBy<TestSelector>()
+                .NamedGraph.SelectedBy<TestGraphSelector>()
                 .StoreAs.SimpleCollection();
-            Collection(p => p.NickNames).Term.Is(new Uri("http://xmlns.com/foaf/0.1/nick")).NamedGraph.SelectedBy<TestSelector>();
-            Collection(p => p.Friends).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows")).NamedGraph.SelectedBy<TestSelector>();
+            Collection(p => p.NickNames).Term.Is(new Uri("http://xmlns.com/foaf/0.1/nick")).NamedGraph.SelectedBy<TestGraphSelector>();
+            Collection(p => p.Friends).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows")).NamedGraph.SelectedBy<TestGraphSelector>();
 		}
-
-	    public class TestSelector:IGraphSelectionStrategy
-	    {
-	        public Uri SelectGraph(EntityId entityId)
-	        {
-	            return new Uri(entityId.Uri.AbsoluteUri.Replace("magi","data.magi"));
-	        }
-	    }
 	}
 }

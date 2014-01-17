@@ -3,10 +3,11 @@ using System.Diagnostics;
 
 namespace RomanticWeb.Mapping.Model
 {
-    [DebuggerDisplay("Property {Name} => {Uri}")]
+    [DebuggerDisplay("Property {Name}")]
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     internal class PropertyMapping:IPropertyMapping
     {
-        public PropertyMapping(Type returnType,string name,Uri predicateUri,IGraphSelectionStrategy graphSelector)
+        public PropertyMapping(Type returnType,string name,Uri predicateUri,GraphSelectionStrategyBase graphSelector)
         {
             if (returnType == null) { throw new ArgumentNullException("returnType"); }
             if (name == null) { throw new ArgumentNullException("name"); }
@@ -21,7 +22,7 @@ namespace RomanticWeb.Mapping.Model
 
         public Uri Uri { get; private set; }
 
-        public IGraphSelectionStrategy GraphSelector { get; private set; }
+        public GraphSelectionStrategyBase GraphSelector { get; private set; }
 
         public string Name { get; private set; }
 
@@ -40,6 +41,47 @@ namespace RomanticWeb.Mapping.Model
             get
             {
                 return StorageStrategyOption.None;
+            }
+        }
+
+#pragma warning disable 1591
+        public override string ToString()
+        {
+            return Name;
+        }
+#pragma warning restore
+
+        private class DebuggerViewProxy
+        {
+            private readonly PropertyMapping _mapping;
+
+            public DebuggerViewProxy(PropertyMapping mapping)
+            {
+                _mapping=mapping;
+            }
+
+            public Uri Predicate
+            {
+                get
+                {
+                    return _mapping.Uri;
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return _mapping.Name;
+                }
+            }
+
+            public Type ReturnType
+            {
+                get
+                {
+                    return _mapping.ReturnType;
+                }
             }
         }
     }

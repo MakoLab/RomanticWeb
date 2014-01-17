@@ -10,7 +10,7 @@ namespace RomanticWeb.Tests
     {
         private readonly Node[] NonUriNodes = new[]
                                                 {
-                                                    Node.ForBlank("some_blank",null),
+                                                    Node.ForBlank("some_blank",new EntityId("urn:some:uri"),null),
                                                     Node.ForLiteral("literal")
                                                 };
 

@@ -54,10 +54,10 @@ namespace RomanticWeb.DotNetRDF
                                    .Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             sparql.Prefixes.Import(_namespaces);
             var triples=from result in ExecuteSelect(sparql.BuildQuery())
-                        let subject=result["s"].WrapNode()
-                        let predicate=result["p"].WrapNode()
-                        let @object=result["o"].WrapNode()
-                        let graph=result.HasBoundValue("g")?result["g"].WrapNode():null
+                        let subject=result["s"].WrapNode(entityId)
+                        let predicate=result["p"].WrapNode(entityId)
+                        let @object=result["o"].WrapNode(entityId)
+                        let graph=result.HasBoundValue("g")?result["g"].WrapNode(entityId):null
                         select new EntityQuad(entityId,subject,predicate,@object,graph);
 
             store.AssertEntity(entityId,triples);
@@ -83,10 +83,10 @@ namespace RomanticWeb.DotNetRDF
             var resultSet=ExecuteSelect(GetSparqlQuery(queryModel, out variables));
             return from result in resultSet
                    let id=new EntityId(((IUriNode)result[variables.Entity]).Uri)
-                   let s = result[variables.Subject].WrapNode()
-                   let p = result[variables.Predicate].WrapNode()
-                   let o = result[variables.Object].WrapNode()
-                   let g = result[variables.MetaGraph].WrapNode()
+                   let s = result[variables.Subject].WrapNode(id)
+                   let p = result[variables.Predicate].WrapNode(id)
+                   let o = result[variables.Object].WrapNode(id)
+                   let g = result[variables.MetaGraph].WrapNode(id)
                    select new EntityQuad(id,s,p,o,g);
         }
 

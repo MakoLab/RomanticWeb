@@ -63,8 +63,10 @@
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
     <Compile Include="Entities\ConstantBaseUri.cs" />
+    <Compile Include="Entities\DefaultBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\EntityIdExtensions.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
+    <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />
@@ -169,7 +171,7 @@
     <Compile Include="Mapping\Fluent\INamedGraphSelectingMap.cs" />
     <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
     <Compile Include="Mapping\Fluent\TermMap.cs" />
-    <Compile Include="Mapping\IGraphSelectionStrategy.cs" />
+    <Compile Include="Mapping\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
     <Compile Include="IO\HeadersContentTypeResolver.cs" />

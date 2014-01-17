@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using NullGuard;
 
 namespace RomanticWeb.Ontologies
 {
 	/// <summary>
 	/// Base class for RDF terms (properties and classes)
-	/// </summary>
+    /// </summary>
+    [DebuggerDisplay("{TermName}")]
 	public abstract class Term
 	{
         private Ontology _ontology;

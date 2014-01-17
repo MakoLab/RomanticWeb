@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
@@ -20,6 +21,8 @@ namespace RomanticWeb.Entities
     /// Proxy for exposing mapped entity members
     /// </summary>
     [NullGuard(ValidationFlags.OutValues)]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+    [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
     public class EntityProxy:DynamicObject,IEntity
     {
         #region Fields
@@ -62,6 +65,15 @@ namespace RomanticWeb.Entities
             get
             {
                 return _entity.Id;
+            }
+        }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get
+            {
+                return _entity.ToString();
             }
         }
 
@@ -216,5 +228,24 @@ namespace RomanticWeb.Entities
             return _entity;
         }
         #endregion
+
+        private class DebuggerDisplayProxy
+        {
+            private readonly EntityProxy _proxy;
+
+            public DebuggerDisplayProxy(EntityProxy proxy)
+            {
+                _proxy = proxy;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public Entity Entity
+            {
+                get
+                {
+                    return _proxy._entity;
+                }
+            }
+        }
     }
 }

@@ -69,7 +69,7 @@ namespace RomanticWeb.Tests
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _store = new Mock<IEntitySource>();
             _baseUriSelector=new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
-            var mappingContext = new MappingContext(_ontologyProvider, new Mock<IGraphSelectionStrategy>().Object);
+            var mappingContext = new MappingContext(_ontologyProvider, new Mock<GraphSelectionStrategyBase>().Object);
             _entityContext = new EntityContext(
                 _factory.Object, 
                 _mappings.Object, 

@@ -136,6 +136,24 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Should_read_nested_blank_node_associated_Entities()
+        {
+            // given
+            LoadTestFile("BlankNodes.trig");
+
+            // when
+            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+
+            // then
+            var entity = tomasz.foaf.single_knows.foaf.single_knows;
+            Assert.That(entity != null);
+            Assert.That(entity, Is.InstanceOf<Entity>());
+            Assert.That(entity.Id, Is.InstanceOf<BlankId>());
+            Assert.That(entity.foaf.single_givenName != null);
+            Assert.That(entity.foaf.single_givenName, Is.EqualTo("Gniewosław"));
+        }
+
+        [Test]
         public void Should_read_rdf_lists_as_collection_of_Entities()
         {
             // given

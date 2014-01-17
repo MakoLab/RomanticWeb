@@ -18,10 +18,10 @@ namespace RomanticWeb.Mapping.Fluent
 		}
 
         /// <summary>
-        /// Sets the implementation of <see cref="IGraphSelectionStrategy"/>
+        /// Sets the implementation of <see cref="GraphSelectionStrategyBase"/>
         /// to use when resolving named graphs for this term
         /// </summary>
-        public TParentMap SelectedBy<T>() where T : IGraphSelectionStrategy, new()
+        public TParentMap SelectedBy<T>() where T : GraphSelectionStrategyBase, new()
 		{
 		    _propertyMap.GraphSelector=new T();
 		    return _parentMap;

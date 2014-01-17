@@ -8,6 +8,6 @@
         /// <summary>
         /// Gets or sets the graph selector
         /// </summary>
-        IGraphSelectionStrategy GraphSelector { get; set; }
+        GraphSelectionStrategyBase GraphSelector { get; set; }
     }
 }

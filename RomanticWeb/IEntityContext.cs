@@ -13,6 +13,14 @@ namespace RomanticWeb
         /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
         bool HasChanges { get; }
 
+        /// <summary>
+        /// Gets the blank identifier generator.
+        /// </summary>
+        /// <value>
+        /// The blank identifier generator.
+        /// </value>
+        IBlankNodeIdGenerator BlankIdGenerator { get; }
+
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>
         IQueryable<IEntity> AsQueryable();

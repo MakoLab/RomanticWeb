@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace RomanticWeb.Mapping.Model
 {
-    [DebuggerDisplay("Collection {Name} => {Uri}")]
+    [DebuggerDisplay("Collection {Name}")]
     internal class CollectionMapping : PropertyMapping, IPropertyMapping
     {
         private readonly StorageStrategyOption _storageStrategy;
 
-        public CollectionMapping(Type returnType,string name,Uri predicateUri,IGraphSelectionStrategy graphSelector,StorageStrategyOption storageStrategy)
+        public CollectionMapping(Type returnType,string name,Uri predicateUri,GraphSelectionStrategyBase graphSelector,StorageStrategyOption storageStrategy)
             :base(returnType,name,predicateUri,graphSelector)
         {
             _storageStrategy=storageStrategy;

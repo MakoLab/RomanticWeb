@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Model
     {
         private static readonly AbsoluteUriComparer UriComparer=new AbsoluteUriComparer();
 
-        public ClassMapping(Uri uri,IGraphSelectionStrategy graphSelector)
+        public ClassMapping(Uri uri,GraphSelectionStrategyBase graphSelector)
         {
             GraphSelector=graphSelector;
             Uri=uri;
@@ -16,7 +16,7 @@ namespace RomanticWeb.Mapping.Model
 
         public Uri Uri { get; private set; }
 
-        public IGraphSelectionStrategy GraphSelector { get; private set; }
+        public GraphSelectionStrategyBase GraphSelector { get; private set; }
 
         public static bool operator ==(ClassMapping left,ClassMapping right)
         {

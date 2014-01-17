@@ -18,6 +18,15 @@ namespace RomanticWeb.Mapping.Attributes
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionAttribute"/> class.
+        /// </summary>
+        /// <param name="propertyUri">The property URI.</param>
+        public CollectionAttribute(string propertyUri)
+            :base(propertyUri)
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the storage strategy
         /// </summary>
         public StorageStrategyOption StorageStrategy { get; set; }

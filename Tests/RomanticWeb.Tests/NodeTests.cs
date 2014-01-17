@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Tests
@@ -44,7 +45,7 @@ namespace RomanticWeb.Tests
 
             // when
             IComparable left = Node.ForUri(uri);
-            IComparable right = Node.ForBlank("blank", new Uri("urn:some:graph"));
+            IComparable right = Node.ForBlank("blank",new EntityId("urn:test:node"),new Uri("urn:some:graph"));
 
             // then
             Assert.That(left.CompareTo(right), Is.GreaterThan(0));
@@ -55,7 +56,7 @@ namespace RomanticWeb.Tests
         public void Blank_node_should_be_more_than_literal_node()
         {
             // when
-            IComparable left = Node.ForBlank("blank",null);
+            IComparable left = Node.ForBlank("blank",new EntityId("urn:test:node"),null);
             IComparable right = Node.ForLiteral("some value");
 
             // then

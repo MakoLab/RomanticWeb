@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -9,6 +10,7 @@ using RomanticWeb.ComponentModel;
 namespace RomanticWeb.Entities
 {
     /// <summary>An Entity's identifier (URI or blank node).</summary>
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     [TypeConverter(typeof(EntityIdTypeConverter<EntityId>))]
     public class EntityId:IComparable,IComparable<EntityId>,IXmlSerializable
     {
@@ -177,5 +179,23 @@ namespace RomanticWeb.Entities
             return (other!=null)&&(Equals(_uri,other._uri));
         }
         #endregion
+
+        private class DebuggerViewProxy
+        {
+            private readonly EntityId _entityId;
+
+            public DebuggerViewProxy(EntityId entityId)
+            {
+                _entityId=entityId;
+            }
+
+            public Uri Uri
+            {
+                get
+                {
+                    return _entityId.Uri;
+                }
+            }
+        }
     }
 }

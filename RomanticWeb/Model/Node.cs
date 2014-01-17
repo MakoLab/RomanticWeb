@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -6,16 +7,23 @@ namespace RomanticWeb.Model
 {
     /// <summary>Represents an RDF node (URI or literal).</summary>
     /// <remarks>Blank nodes are not supported currently.</remarks>
+    [DebuggerDisplay("{DebuggerString,nq}")]
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public sealed class Node:IComparable,IComparable<Node>
     {
         #region Fields
         /// <summary>Gets a reference for node with rdf:type predicate usually shortened in Turtle syntax to 'a'.</summary>
-        public static readonly Node A=new Node(RomanticWeb.Vocabularies.Rdf.type);
+        public static readonly Node A=new Node(Vocabularies.Rdf.type);
 
         private readonly string _literal;
         private readonly string _language;
         private readonly Uri _dataType;
         private readonly Uri _uri;
+        private readonly BlankId _blankNodeId;
+        private readonly string _identifier;
+        private readonly Uri _graphUri;
+        private readonly EntityId _entityId;
+
         #endregion
 
         #region Constructors
@@ -35,17 +43,27 @@ namespace RomanticWeb.Model
             _language=language;
             _dataType=dataType;
         }
+
+        private Node(string identifier,Uri graphUri,EntityId entityId)
+        {
+            _identifier=identifier;
+            _graphUri=graphUri;
+            _entityId=entityId;
+            _blankNodeId=new BlankId(identifier,entityId,graphUri);
+            _uri=_blankNodeId.Uri;
+        }
+
         #endregion
 
         #region Properties
         /// <summary>Gets the value indicating that the node is a URI.</summary>
-        public bool IsUri { get { return (_uri!=null)&&(_uri.Scheme!="node"); } }
+        public bool IsUri { get { return (_uri!=null)&&(_blankNodeId==null); } }
 
         /// <summary>Gets the value indicating that the node is a literal.</summary>
         public bool IsLiteral { get { return _literal!=null; } }
 
         /// <summary>Gets the value indicating that the node is a blank node.</summary>
-        public bool IsBlank { get { return (_uri!=null)&&(_uri.Scheme=="node"); } }
+        public bool IsBlank { get { return _blankNodeId != null; } }
 
         /// <summary>Gets the URI of a URI node.</summary>
         /// <exception cref="InvalidOperationException">thrown when node is a literal.</exception>
@@ -53,9 +71,9 @@ namespace RomanticWeb.Model
         {
             get
             {
-                if (IsLiteral)
+                if (!IsUri)
                 {
-                    throw new InvalidOperationException("Literal nodes do not have a Uri");
+                    throw new InvalidOperationException("Only Uri nodes have a Uri");
                 }
 
                 return _uri;
@@ -108,6 +126,30 @@ namespace RomanticWeb.Model
                 return _language;
             }
         }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerString
+        {
+            get
+            {
+                if (IsUri)
+                {
+                    return Uri.ToString();
+                }
+                
+                if (IsLiteral)
+                {
+                    return Literal;
+                }
+                
+                if (IsBlank)
+                {
+                    return _identifier;
+                }
+                
+                return null;
+            }
+        }
         #endregion
 
         #region Public methods
@@ -119,7 +161,7 @@ namespace RomanticWeb.Model
                 throw new ArgumentOutOfRangeException("uri","Node URI must be absolute!");
             }
 
-            return (uri.AbsoluteUri==RomanticWeb.Vocabularies.Rdf.type.AbsoluteUri?A:new Node(uri));
+            return (uri.AbsoluteUri==Vocabularies.Rdf.type.AbsoluteUri?A:new Node(uri));
         }
 
         /// <summary>Factory method for creating simple literal nodes.</summary>
@@ -146,9 +188,9 @@ namespace RomanticWeb.Model
         }
 
         /// <summary>Factory method for creating blank nodes.</summary>
-        public static Node ForBlank(string blankNodeId,[AllowNull] Uri graphUri)
+        public static Node ForBlank(string blankNodeId,EntityId entityId,[AllowNull] Uri graphUri)
         {
-            return new Node(new Uri(string.Format("node://{0}/{1}",blankNodeId,graphUri)));
+            return new Node(blankNodeId,graphUri,entityId);
         }
 
 #pragma warning disable 1591
@@ -204,13 +246,25 @@ namespace RomanticWeb.Model
 
             if ((IsUri||IsBlank))
             {
-                if ((other.IsUri||other.IsBlank))
+                if ((IsUri)&&(other.IsUri))
                 {
                     return compare.By(n => n.Uri.AbsoluteUri).End();
                 }
+                
+                if ((IsBlank)&&(other.IsBlank))
+                {
+                    return compare.By(n => n._blankNodeId).End();
+                }
+
+                if (((IsUri)&&(!other.IsUri))||(IsBlank&&other.IsLiteral))
+                {
+                    // blank node is more than literal node
+                    // Uri node is more than blank node
+                    return 1;
+                }
 
                 // Literal node is always less then URI and blanks
-                return 1;
+                return -1;
             }
 
             if (other.IsLiteral)
@@ -233,9 +287,14 @@ namespace RomanticWeb.Model
                 return string.Format("\"{0}\"",Literal);
             }
 
-            if (IsUri||IsBlank)
+            if (IsUri)
             {
                 return Uri.ToString();
+            }
+
+            if (IsBlank)
+            {
+                return _blankNodeId.ToString();
             }
 
             throw new InvalidOperationException("Invalid node state");
@@ -246,7 +305,7 @@ namespace RomanticWeb.Model
         {
             if (IsBlank)
             {
-                return new BlankId(Uri);
+                return _blankNodeId;
             }
 
             if (IsUri)
@@ -259,6 +318,7 @@ namespace RomanticWeb.Model
         #endregion
 
         #region Non-public methods
+
         private bool Equals(Node other)
         {
             if (IsLiteral)
@@ -269,5 +329,42 @@ namespace RomanticWeb.Model
             return Uri.Compare(_uri,other._uri,UriComponents.AbsoluteUri,UriFormat.UriEscaped,StringComparison.Ordinal)==0;
         }
         #endregion
+
+        private class DebuggerViewProxy
+        {
+            private readonly string _displayString;
+
+            public DebuggerViewProxy(Node node)
+            {
+                if (node.IsUri)
+                {
+                    _displayString=string.Format("<{0}>",node.Uri);
+                }
+                else if (node.IsLiteral)
+                {
+                    _displayString=string.Format("\"{0}\"",node.Literal);
+                    if (!string.IsNullOrWhiteSpace(node.Language))
+                    {
+                        _displayString+=string.Format("@{0}",node.Language);
+                    }
+                    else if (node.DataType!=null)
+                    {
+                        _displayString+=string.Format("^^<{0}>",node.DataType);
+                    }
+                }
+                else
+                {
+                    _displayString=node._identifier;
+                }
+            }
+
+            public string Value
+            {
+                get
+                {
+                    return _displayString;
+                }
+            }
+        }
     }
 }

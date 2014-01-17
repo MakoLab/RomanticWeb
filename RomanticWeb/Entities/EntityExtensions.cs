@@ -108,6 +108,16 @@ namespace RomanticWeb.Entities
             return null;
         }
 
+        /// <summary>
+        /// Creates a blank identifier, which will be associated with this entity.
+        /// </summary>
+        /// <param name="entity">The root entity.</param>
+        public static BlankId CreateBlankId(this IEntity entity)
+        {
+            var blankIdGenerator=entity.GetContext().BlankIdGenerator;
+            return new BlankId(blankIdGenerator.Generate(),entity.Id);
+        }
+
         private static IEntity UnwrapProxy(IEntity entity)
         {
             if ((entity is IActLikeProxy)&&(((IActLikeProxy)entity).Original is IEntity))

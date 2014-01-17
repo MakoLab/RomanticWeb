@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
@@ -15,11 +16,13 @@ namespace RomanticWeb.Entities
 	/// <summary>
 	/// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
 	/// </summary>
-	/// todo: make a DynamicObject
+    /// todo: make a DynamicObject
+    [DebuggerDisplay("Ontology Accessor")]
     [NullGuard(ValidationFlags.OutValues)]
+    [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public sealed class OntologyAccessor:ImpromptuDictionary
 	{
-		private readonly IEntityStore _tripleSource;
+		private readonly IEntityStore _tripleStore;
 		private readonly Entity _entity;
 		private readonly Ontology _ontology;
 		private readonly INodeConverter _nodeConverter;
@@ -27,9 +30,9 @@ namespace RomanticWeb.Entities
 	    /// <summary>
 	    /// Creates a new instance of <see cref="OntologyAccessor"/>
 	    /// </summary>
-	    internal OntologyAccessor(IEntityStore tripleSource, Entity entity, Ontology ontology, INodeConverter nodeConverter)
+	    internal OntologyAccessor(IEntityStore tripleStore, Entity entity, Ontology ontology, INodeConverter nodeConverter)
 		{
-			_tripleSource = tripleSource;
+			_tripleStore = tripleStore;
 			_entity = entity;
 			_ontology = ontology;
 			_nodeConverter = nodeConverter;
@@ -47,10 +50,10 @@ namespace RomanticWeb.Entities
 	        }
 	    }
 
-        [ImportMany(typeof(IResultProcessingStrategy))]
+	    [ImportMany(typeof(IResultProcessingStrategy))]
         internal IEnumerable<Lazy<IResultProcessingStrategy, IResultProcessingStrategyMetadata>> ResultAggregations { get; private set; }
 
-	    /// <summary>
+        /// <summary>
 		/// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
 		/// </summary>
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
@@ -87,7 +90,7 @@ namespace RomanticWeb.Entities
 	    internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
         {
             LogTo.Trace("Reading property {0}", property.Uri);
-	        var objectValues=_tripleSource.GetObjectsForPredicate(entityId,property.Uri,null);
+	        var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
 	        var objects=_nodeConverter.ConvertNodes(objectValues);
 
 	        var aggregation=(from agg in ResultAggregations
@@ -102,5 +105,32 @@ namespace RomanticWeb.Entities
 
 	        return objects.ToList();
 	    }
+
+        private class DebuggerViewProxy
+        {
+            private readonly OntologyAccessor _accessor;
+
+            public DebuggerViewProxy(OntologyAccessor accessor)
+            {
+                _accessor=accessor;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public Ontology Ontology
+            {
+                get
+                {
+                    return _accessor.Ontology;
+                }
+            }
+
+            public IEntityStore EntityStore
+            {
+                get
+                {
+                    return _accessor._tripleStore;
+                }
+            }
+        }
 	}
 }

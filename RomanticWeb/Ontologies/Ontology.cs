@@ -9,17 +9,18 @@ namespace RomanticWeb.Ontologies
     /// <summary>
     /// Encapsulates metadata about an ontology (like Foaf, Dublin Core, Rdfs, etc.)
     /// </summary>
-    [DebuggerDisplay("Ontology {Prefix} (<{BaseUri}>)")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+    [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
     public sealed class Ontology
     {
         private readonly NamespaceSpecification _namespace;
-        private readonly string _displayName=System.String.Empty;
+        private readonly string _displayName=String.Empty;
 
         /// <summary>Creates a new <see cref="Ontology"/> specification.</summary>
         /// <param name="prefix">Prefix of the ontology's base Uri.</param>
         /// <param name="baseUri">Ontology base Uri.</param>
         /// <param name="terms">A collection of RDF classes and properties</param>
-        public Ontology(string prefix,string baseUri,params Term[] terms):this(System.String.Empty,prefix,baseUri,terms)
+        public Ontology(string prefix,string baseUri,params Term[] terms):this(String.Empty,prefix,baseUri,terms)
         {
         }
 
@@ -35,7 +36,7 @@ namespace RomanticWeb.Ontologies
         /// <summary>Creates a new <see cref="Ontology"/> specification.</summary>
         /// <param name="namespace">Namespace prefix and base URI</param>
         /// <param name="terms">A collection of RDF classes and properties</param>
-        public Ontology(NamespaceSpecification @namespace,params Term[] terms):this(System.String.Empty,@namespace,terms)
+        public Ontology(NamespaceSpecification @namespace,params Term[] terms):this(String.Empty,@namespace,terms)
         {
         }
 
@@ -45,7 +46,7 @@ namespace RomanticWeb.Ontologies
         /// <param name="terms">A collection of RDF classes and properties</param>
         public Ontology([AllowNull] string displayName,NamespaceSpecification @namespace,params Term[] terms)
         {
-            _displayName=(displayName??System.String.Empty);
+            _displayName=(displayName??String.Empty);
             Properties=terms.OfType<Property>().Select(property => property.InOntology(this)).ToList();
             _namespace=@namespace;
             Classes=terms.OfType<Class>().Select(@class => @class.InOntology(this)).ToList();
@@ -66,6 +67,15 @@ namespace RomanticWeb.Ontologies
 
         /// <summary>Gets the ontology's classes.</summary>
         public IEnumerable<Class> Classes { get; private set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(DisplayName)?BaseUri.ToString():DisplayName;
+            }
+        }
 
         /// <summary>Tests for equality of two ontologies.</summary>
         /// <param name="left">Left operand.</param>
@@ -113,6 +123,48 @@ namespace RomanticWeb.Ontologies
         private bool Equals([AllowNull] Ontology operand)
         {
             return Equals(_namespace,operand._namespace);
+        }
+
+        private class DebuggerDisplayProxy
+        {
+            private readonly Ontology _ontology;
+
+            public DebuggerDisplayProxy(Ontology ontology)
+            {
+                _ontology=ontology;
+            }
+
+            public string Prefix
+            {
+                get
+                {
+                    return _ontology.Prefix;
+                }
+            }
+
+            public Uri Uri
+            {
+                get
+                {
+                    return _ontology.BaseUri;
+                }
+            }
+
+            public IEnumerable<Class> Classes
+            {
+                get
+                {
+                    return _ontology.Classes.OrderBy(c=>c.ClassName).ToList();
+                }
+            }
+
+            public IEnumerable<Property> Properties
+            {
+                get
+                {
+                    return _ontology.Properties.OrderBy(c => c.PropertyName).ToList();
+                }
+            }
         }
     }
 }

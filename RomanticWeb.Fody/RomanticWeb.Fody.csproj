@@ -7,8 +7,8 @@
     <ProjectGuid>{4A3688AE-E29D-468E-806C-61D6447CC039}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weavers</RootNamespace>
-    <AssemblyName>Weavers</AssemblyName>
+    <RootNamespace>RomanticWeb.Fody</RootNamespace>
+    <AssemblyName>RomanticWeb.Fody</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -17,12 +17,15 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(MSBuildBinPath)\msbuild.exe</StartProgram>
+    <StartArguments>"$(SolutionDir)Magi.sln" /t:Rebuild</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Tools\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

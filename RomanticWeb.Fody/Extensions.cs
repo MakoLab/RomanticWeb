@@ -3,17 +3,27 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
-namespace Weavers
+namespace RomanticWeb.Fody
 {
     public static class Extensions
     {
         internal static bool HasEntityIdAncestor(this TypeDefinition childType)
         {
+            return childType.HasAncestorOfType("RomanticWeb.Entities.EntityId");
+        }
+
+        internal static bool HasNancyModuleAncestor(this TypeDefinition childType)
+        {
+            return childType.HasAncestorOfType("Nancy.NancyModule");
+        }
+
+        internal static bool HasAncestorOfType(this TypeDefinition childType, string typeName)
+        {
             var baseType=childType.BaseType;
 
             while (baseType!=null)
             {
-                if (baseType.FullName=="RomanticWeb.Entities.EntityId")
+                if (baseType.FullName==typeName)
                 {
                     return true;
                 }

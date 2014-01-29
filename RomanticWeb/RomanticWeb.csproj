@@ -238,6 +238,7 @@
     <Compile Include="Vocabularies\Foaf.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Rdfs.cs" />
+    <Compile Include="Vocabularies\Xhtml.cs" />
     <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>
   <ItemGroup>

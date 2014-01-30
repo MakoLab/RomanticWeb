@@ -95,6 +95,20 @@ namespace RomanticWeb.Model
             }
         }
 
+        /// <summary>Gets the string value of a blank node.</summary>
+        public string BlankNode
+        {
+            get
+            {
+                if (!IsBlank)
+                {
+                    throw new InvalidOperationException("Uri and literal nodes do not have a blank node value");
+                }
+
+                return _identifier;
+            }
+        }
+
         /// <summary>Gets the data type of a literal node.</summary>
         /// <exception cref="InvalidOperationException">thrown when node is URI.</exception>
         [AllowNull]

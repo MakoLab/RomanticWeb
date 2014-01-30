@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using NullGuard;
 
 namespace RomanticWeb
 {
+    [NullGuard(ValidationFlags.None)]
     public sealed class AbsoluteUriComparer:IComparer<Uri>,IEqualityComparer<Uri>
     {
         public static readonly AbsoluteUriComparer Default=new AbsoluteUriComparer();

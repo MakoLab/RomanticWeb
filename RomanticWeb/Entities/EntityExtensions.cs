@@ -50,7 +50,7 @@ namespace RomanticWeb.Entities
             }
             else
             {
-                result=entity.AsDynamic().ActLike<TInterface>();
+                result=Impromptu.ActLike<TInterface>(entity.AsDynamic());
             }
 
             return result;

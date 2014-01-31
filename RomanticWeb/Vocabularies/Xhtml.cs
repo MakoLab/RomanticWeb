@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RomanticWeb.Vocabularies
+﻿namespace RomanticWeb.Vocabularies
 {
+    /// <summary>
+    /// http://www.w3.org/1999/xhtml/
+    /// </summary>
     public static class Xhtml
     {
+        /// <summary>
+        /// The base URI
+        /// </summary>
         public const string BaseUri = "http://www.w3.org/1999/xhtml/";
     }
 }

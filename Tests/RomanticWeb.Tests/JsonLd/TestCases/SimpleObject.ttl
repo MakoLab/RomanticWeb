@@ -1,0 +1,7 @@
+﻿@prefix acme: <http://www.acme.com/#>.
+@prefix gr: <http://purl.org/goodrelations/v1#>.
+
+acme:store a gr:Location .
+acme:store gr:name "Hepp's Happy Burger Restaurant" .
+acme:store gr:category "Food/Fast" .
+acme:store gr:description "They serve massive, unhealthy burgers" . 

@@ -1,0 +1,15 @@
+﻿@prefix acme: <http://www.acme.com/#>.
+@prefix gr: <http://purl.org/goodrelations/v1#>.
+
+acme:store a gr:Location .
+acme:store gr:name "Hepp's Happy Burger Restaurant" .
+acme:store gr:hasOpeningHoursSpecification  acme:spec .
+
+acme:spec 	a gr:OpeningHoursSpecification ;
+	gr:opens "08:00:00" ;
+	gr:closes "20:00:00" ;
+	gr:hasOpeningHoursDayOfWeek gr:Wednesday ;
+	gr:hasOpeningHoursDayOfWeek gr:Thursday ;
+	gr:hasOpeningHoursDayOfWeek gr:Friday ;
+	gr:hasOpeningHoursDayOfWeek gr:Tuesday ;
+	gr:hasOpeningHoursDayOfWeek gr:Monday . 

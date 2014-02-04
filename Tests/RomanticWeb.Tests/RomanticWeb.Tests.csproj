@@ -17,7 +17,7 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <FodyPath>..\..\packages\Fody.1.17.4.0</FodyPath>
+    <FodyPath>..\..\packages\Fody.1.20.0.0</FodyPath>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -83,6 +83,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Remotion.Linq.1.15.7.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="Resourcer">
+      <HintPath>..\..\packages\Resourcer.Fody.1.1.1.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -121,6 +125,7 @@
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphsPersonMapping.cs" />
+    <Compile Include="JsonLd\JsonLdSerializerTests.cs" />
     <Compile Include="Linq\QueryableTests.cs" />
     <Compile Include="Linq\VisitorTests.cs" />
     <Compile Include="Mapping\AttributeMappingsRepositoryTests.cs" />
@@ -140,9 +145,16 @@
     <Compile Include="TripleTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.ttl" />
+    <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.ttl" />
+    <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.ttl" />
+    <Content Include="FodyWeavers.xml" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Fody.targets" />
+    <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.json" />
+    <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.json" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -155,6 +167,10 @@
     <EmbeddedResource Include="TestGraphs\Dictionary.trig" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\RomanticWeb.JsonLd\RomanticWeb.JsonLd.csproj">
+      <Project>{0BD5CF7B-5978-46F0-B7C6-A5D2B1C98F37}</Project>
+      <Name>RomanticWeb.JsonLd</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RomanticWeb.TestEntities\RomanticWeb.TestEntities.csproj">
       <Project>{AF4CCD1D-3FEF-4F5A-9A89-94D0E7E6D3B5}</Project>
       <Name>RomanticWeb.TestEntities</Name>
@@ -194,6 +210,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="Fody.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

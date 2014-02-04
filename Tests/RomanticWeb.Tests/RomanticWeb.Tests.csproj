@@ -55,9 +55,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Moq.4.2.1312.1622\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.core.dll</HintPath>
@@ -126,6 +126,7 @@
     <Compile Include="IntegrationTests\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphsPersonMapping.cs" />
     <Compile Include="JsonLd\JsonLdSerializerTests.cs" />
+    <Compile Include="JsonLd\JsonLdTestSuiteTests.cs" />
     <Compile Include="Linq\QueryableTests.cs" />
     <Compile Include="Linq\VisitorTests.cs" />
     <Compile Include="Mapping\AttributeMappingsRepositoryTests.cs" />
@@ -149,12 +150,130 @@
     <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.ttl" />
     <Content Include="FodyWeavers.xml" />
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0001-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0002-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0003-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0004-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0005-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0006-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0007-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0008-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0009-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0010-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0011-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0012-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0013-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0014-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0015-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0016-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0017-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0018-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0019-in.nq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Fody.targets" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.json" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.json" />
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0001-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0002-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0003-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0004-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0005-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0006-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0007-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0008-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0009-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0010-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0011-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0012-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0013-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0014-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0015-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0016-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0017-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0018-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-0019-out.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JsonLd\test-suite\tests\fromRdf-manifest.jsonld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.json" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

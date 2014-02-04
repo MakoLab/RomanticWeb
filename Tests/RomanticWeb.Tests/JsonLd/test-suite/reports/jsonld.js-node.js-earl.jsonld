@@ -1,0 +1,5116 @@
+{
+  "@context": {
+    "doap": "http://usefulinc.com/ns/doap#",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "dc": "http://purl.org/dc/terms/",
+    "earl": "http://www.w3.org/ns/earl#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "doap:homepage": {
+      "@type": "@id"
+    },
+    "doap:license": {
+      "@type": "@id"
+    },
+    "dc:creator": {
+      "@type": "@id"
+    },
+    "foaf:homepage": {
+      "@type": "@id"
+    },
+    "subjectOf": {
+      "@reverse": "earl:subject"
+    },
+    "earl:assertedBy": {
+      "@type": "@id"
+    },
+    "earl:mode": {
+      "@type": "@id"
+    },
+    "earl:test": {
+      "@type": "@id"
+    },
+    "earl:outcome": {
+      "@type": "@id"
+    },
+    "dc:date": {
+      "@type": "xsd:date"
+    }
+  },
+  "@id": "https://github.com/digitalbazaar/jsonld.js#node.js",
+  "@type": [
+    "doap:Project",
+    "earl:TestSubject",
+    "earl:Software"
+  ],
+  "doap:name": "jsonld.js node.js",
+  "dc:title": "jsonld.js node.js",
+  "doap:homepage": "https://github.com/digitalbazaar/jsonld.js",
+  "doap:license": "https://github.com/digitalbazaar/jsonld.js/blob/master/LICENSE",
+  "doap:description": "A JSON-LD processor for JavaScript",
+  "doap:programming-language": "JavaScript",
+  "dc:creator": "https://github.com/dlongley",
+  "doap:developer": {
+    "@id": "https://github.com/dlongley",
+    "@type": [
+      "foaf:Person",
+      "earl:Assertor"
+    ],
+    "foaf:name": "Dave Longley",
+    "foaf:homepage": "https://github.com/dlongley"
+  },
+  "dc:date": {
+    "@value": "2013-10-22",
+    "@type": "xsd:date"
+  },
+  "subjectOf": [
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.839Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.843Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.844Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.845Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.845Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.846Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.847Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.849Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.849Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.850Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.851Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.852Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.852Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.853Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.853Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.855Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.857Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.858Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.860Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.861Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.862Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.863Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.864Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.865Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.865Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.866Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.867Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.868Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.868Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.870Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.870Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.871Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.873Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.875Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.876Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.876Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0037",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.877Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0038",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.880Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0039",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.880Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0040",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.881Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.882Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.883Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.884Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0044",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.886Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0045",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.887Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0046",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.887Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0047",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.889Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0048",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.890Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0049",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.890Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0050",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.891Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0051",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.892Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0052",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.893Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0053",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.894Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0054",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.894Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0055",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.895Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0056",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.896Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0057",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.897Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0058",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.898Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0059",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.899Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0060",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.899Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0061",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.900Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0062",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.901Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0063",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.902Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0064",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.903Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0065",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.904Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0066",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.908Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0067",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.910Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0068",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.911Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0069",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.912Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0070",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.913Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/compact-manifest.jsonld#t0071",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.914Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.915Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.916Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.916Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.917Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.917Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.917Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.918Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.918Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.919Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.919Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.920Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.920Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.924Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.925Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.925Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.925Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.926Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.926Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.926Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.926Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.927Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.927Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.927Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.928Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.928Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.929Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.930Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.931Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.931Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.931Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.931Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.932Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.933Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.933Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.933Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.934Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0037",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.934Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0038",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.934Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0039",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.935Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0040",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.935Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.935Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.937Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/error-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.937Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.937Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.938Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.938Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.939Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.939Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.940Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.940Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.941Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.942Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.942Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.942Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.943Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.943Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.945Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.945Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.946Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.947Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.948Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.950Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.950Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.951Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.951Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.952Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.953Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.953Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.954Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.954Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.955Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.956Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.956Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.957Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.957Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.958Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.958Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.959Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.959Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0037",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.960Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0038",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.960Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0039",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.961Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0040",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.961Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.962Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.962Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.963Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0044",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.963Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0045",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.964Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0046",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.964Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0047",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.964Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0048",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.966Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0049",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.966Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0050",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.967Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0051",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.968Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0052",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.968Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0053",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.968Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0054",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.969Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0055",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.969Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0056",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.970Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0057",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.970Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0058",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.971Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0059",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.971Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0060",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.972Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0061",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.973Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0062",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.974Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0063",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.974Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0064",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.975Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0065",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.975Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0066",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.976Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0067",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.977Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0068",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.977Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0069",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.978Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0070",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.978Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0071",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.978Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0072",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.979Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0073",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.979Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0074",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.980Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0075",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.980Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0076",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.980Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/expand-manifest.jsonld#t0077",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.981Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.981Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.982Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.982Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.983Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.983Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.984Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.984Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.985Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.986Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.986Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.986Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.988Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.989Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.989Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.990Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.991Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.991Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.992Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.992Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.993Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.994Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.994Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.995Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.996Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.996Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.998Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.999Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:05.999Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.000Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.000Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.001Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.001Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.002Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.002Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.003Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.004Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0037",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.004Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0038",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.005Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0039",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.005Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0040",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.006Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.006Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.007Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.007Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0044",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.008Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/flatten-manifest.jsonld#t0045",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.009Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.011Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.013Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.013Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.014Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.015Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.016Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.017Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.018Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.022Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.023Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.024Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.025Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.026Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.026Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.031Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.032Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.034Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.035Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.035Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.037Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/frame-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.038Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.039Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.040Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.040Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.040Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.041Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.041Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.041Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.042Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.042Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.042Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.043Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.043Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.043Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.044Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.044Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.044Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.044Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.045Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/fromRdf-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.045Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.047Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.047Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.048Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.049Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.049Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.049Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.050Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.050Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.051Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.052Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.052Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.056Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.056Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.057Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.057Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.058Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.058Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.058Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.060Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.060Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0021",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.061Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.062Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.064Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.065Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.068Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.070Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.072Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.074Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.076Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.077Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.078Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.078Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.079Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.080Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.081Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.082Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0037",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.083Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0038",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.084Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0039",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.085Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0040",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.086Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.087Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.088Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.089Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0044",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.157Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0045",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.214Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0046",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.270Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0047",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.271Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0048",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.272Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0049",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.272Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0050",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.272Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0051",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.273Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0052",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.273Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0053",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.274Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0054",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.276Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0055",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.277Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0056",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.277Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/normalize-manifest.jsonld#t0057",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.278Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.651Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:06.903Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:07.152Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:07.346Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:07.592Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:07.829Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:08.084Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:08.337Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:08.576Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.063Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.541Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/remote-doc-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.786Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0001",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.788Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0002",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.789Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0003",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.790Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0004",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.790Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0005",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.791Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0006",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.792Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0007",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.793Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0008",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.793Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0009",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.794Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0010",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.795Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0011",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.796Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0012",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.797Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0013",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.798Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0014",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.799Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0015",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.799Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0016",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.800Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0017",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.801Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0018",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.802Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0019",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.805Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0020",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.806Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0022",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.807Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0023",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.808Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0024",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.809Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0025",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.810Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0026",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.811Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0027",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.812Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0028",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.812Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0029",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.813Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0030",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.813Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0031",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.814Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0032",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.814Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0033",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.815Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0034",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.815Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0035",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.816Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0036",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.816Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0041",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.816Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0042",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.817Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0043",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.818Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0044",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.818Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0045",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.819Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0046",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.819Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0047",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.820Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0048",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.820Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0049",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.821Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0050",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.821Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0051",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.822Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0052",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.822Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0053",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.823Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0054",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.823Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0055",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.824Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0056",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.825Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0057",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.826Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0058",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.827Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0059",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.828Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0060",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.828Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0061",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.829Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0062",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.830Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0063",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.830Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0064",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.831Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0065",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.831Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0066",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.831Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0067",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.832Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0068",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.832Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0069",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.833Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0070",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.834Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0071",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.834Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0072",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.835Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0073",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.835Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0074",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.836Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0075",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.836Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0076",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.837Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0077",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.838Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0078",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.838Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0079",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.839Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0080",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.839Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0081",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.840Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0082",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.840Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0083",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.841Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0084",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.841Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0085",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.841Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0086",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.842Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0087",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.843Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0088",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.843Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0089",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.844Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0090",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.845Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0091",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.845Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0092",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.846Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0093",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.846Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0094",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.846Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0095",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.847Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0096",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.847Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0097",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.848Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0098",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.848Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0099",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.849Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0100",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.850Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0101",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.850Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0102",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.851Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0103",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.852Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0104",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.852Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0105",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.853Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0106",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.853Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0107",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.854Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0108",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.854Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0109",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.855Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0110",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.855Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0111",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.855Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0112",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.856Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0113",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.856Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0114",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.857Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0115",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.857Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0116",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.859Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0117",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.860Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0118",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.860Z",
+        "earl:outcome": "earl:passed"
+      }
+    },
+    {
+      "@type": "earl:Assertion",
+      "earl:assertedBy": "https://github.com/dlongley",
+      "earl:mode": "earl:automatic",
+      "earl:test": "http://json-ld.org/test-suite/tests/toRdf-manifest.jsonld#t0119",
+      "earl:result": {
+        "@type": "earl:TestResult",
+        "dc:date": "2013-10-22T15:13:09.861Z",
+        "earl:outcome": "earl:passed"
+      }
+    }
+  ]
+}

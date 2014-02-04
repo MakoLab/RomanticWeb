@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <title>JSON-LD Test Suite</title>
+
+  <!-- Meta Tags -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+  <!-- Style Sheets -->
+  <link rel="stylesheet" type="text/css" href="../static/css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/bootstrap/bootstrap-responsive.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/bootstrap/font-awesome.css">
+  <link rel="shortcut icon" href="../favicon.ico" />
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0-rc.3/handlebars.min.js"></script>
+  <script id="manifest" tile="application/ld+json" src="manifest.jsonld"></script>
+  <script id="manifest-template" type="text/x-handlebars-template">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#manifest" href="#{{anchor}}">{{name}} tests</a>
+      </h3>
+    </div>
+    <div id="{{anchor}}" class="panel-collapse collapse {{in}}"><div class="panel-body">
+    <p>{{description}}</p>
+    <p>Raw manifest: <a href="{{id}}">{{id}}</a>.</p>
+    <dl class="test-description">
+      {{#each sequence}}
+      <dt>Test {{number this}}: {{this.name}}</dt>
+      <dd>
+        {{#if this.purpose}}
+        <div>Purpose: {{this.purpose}}</div>
+        {{/if}}
+        <div>Type: {{type this}}</div>
+        <div>Test input: <a href="tests/{{this.input}}">{{this.input}}</a></div>
+        {{#if this.context}}
+        <div>Context: <a href="tests/{{this.context}}">{{this.context}}</a></div>
+        {{/if}}
+        {{#if this.frame}}
+        <div>Frame: <a href="tests/{{this.frame}}">{{this.frame}}</a></div>
+        {{/if}}
+        {{#if this.option}}
+        <div>Options: {{options this}}</div>
+        {{/if}}
+        <div>Expected output: <a href="tests/{{this.input}}">{{this.input}}</a></div>
+      </dd>
+      {{/each}}
+    </dl>
+    </div></div>
+  </script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-42886053-1', 'json-ld.org');
+    ga('send', 'pageview');
+  </script>
+  <style>
+    li code, p code {display: inline;}
+
+    footer {text-align: center;}
+  </style>
+</head>
+<body onload="load_manifests();">
+  <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <div class="row-fluid">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand active" href="../"><img src="../images/json-ld-data-24.png" alt="JSON-LD logo"> JSON-LD</a>
+        <div class="nav-collapse">
+        <ul class="nav">
+          <li>
+            <a href="../playground/index.html"><span class="icon-beer"></span> Playground</a>
+          </li>
+          <li>
+            <a href="../learn.html"><span class="icon-book"></span> Documentation</a>
+          </li>
+          <!-- <li><a href="#"><span class="icon-beaker"></span> Developers</a></li> -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <span class="icon-folder-open"></span> Specifications <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="nav-header"><strong>Latest</strong></li>
+              <li><a href="../spec/latest/json-ld/">Syntax</a></li>
+              <li><a href="../spec/latest/json-ld-api/">API</a></li>
+              <li><a href="../spec/latest/json-ld-framing/">Framing</a></li>
+              <li><a href="../spec/latest/rdf-graph-normalization/">Normalization</a></li>
+              <li class="divider"></li>
+              <li class="nav-header"><strong>Previous Drafts</strong></li>
+              <li><a href="../spec#syntax">Syntax</a></li>
+              <li><a href="../spec#api">API</a></li>
+              <li><a href="../spec#framing">Framing</a></li>
+              <li><a href="../spec#normalization">Normalization</a></li>
+            </ul>
+          </li>
+          <li><a href="../images/index.html"><span class="icon-picture"></span> Branding</a></li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-unit">
+    <h1>JSON-LD Test Suite</h1>
+    <br>
+    <p>The JSON-LD Test Suite is a set of tests that can
+    be used to verify JSON-LD Processor conformance to the set of specifications
+    that constitute JSON-LD. The goal of the suite is to provide an easy and
+    comprehensive JSON-LD testing solution for developers creating JSON-LD Processors.</p>
+  </div>
+
+  <div id="container">
+     <div class="row">
+        <h2 id="design" class="span12" style="text-align: center;">Running the test suite</h2>
+      </div>
+      <div class="row">
+        <section class="offset2 span8">
+          <p>Tests are defined into <em>compact</em>, <em>expand</em>, <em>flatten</em>, <em>frame</em>, <em>normalize</em>, and <em>rdf</em> sections:</p>
+          <ul>
+          <li><em>compact</em> tests have <em>input</em>, <em>expected</em> and <em>context</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>error</em> tests have an <em>input</em> document, and
+            may have a <em>context</em>, <em>frame</em> and <em>options</em>. The <em>expected</em> result
+            is an exception matching an error code defined for <em>JsonLdErrorCode</em>.</li>
+          <li><em>expand</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>flatten</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>frame</em> tests have <em>input</em>, <em>frame</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>normalize</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using string comparison with the processor output.</li>
+          <li><em>fromRdf</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>remote-doc</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. These tests are setup somewhat differently, as they
+            depend on specific HTTP header results to invoke document loading behavior.
+            The <em>expected</em> results are either an expected error or result document,
+            depending on if the test type include <code>NegativeEvaluationTest</code> or <code>PositiveEvaluationTest</code>.
+            For negative tests, the <em>expected</em> result
+            is an exception matching an error code defined for <em>JsonLdErrorCode</em>.
+            For positive tests, the <em>expected</em> results
+            can be compared using JSON object comparison with the processor output.</li>
+          <li><em>toRdf</em> tests have <em>input</em> and <em>expected</em> documents, and
+            may have <em>options</em>. The <em>expected</em> results
+            can be compared using string comparison with the processor output.</li>
+          </ul>
+          <p>To run the tests, create a test runner which will run through each test manifest
+            and execute the tests defined within the manifest using the rules associated with
+            each <code>@type</code> defined for the test case as defined in <a href="vocab">the test vocabulary</a>.</p>
+          <p>Note that property values are typed, and those which are typed as <code>@id</code> must
+            be treated as IRIs relative to the manifest test base. In particular, this means that
+            <em>input</em>, </em>context</em>, <em>frame</em>, and <em>expandContext</em> are to be
+            passed as IRIs to the API methods being tested.</p>
+          <p>More details for running different types of tests are also defined in the test vocabulary.</p>
+        </section>
+      </div>
+
+      <div class="row">
+        <h2 id="contributing" class="span12" style="text-align: center;">Contributing</h2>
+      </div>
+      <div class="row">
+        <section class="offset2 span8">
+          <p>If you would like to contribute a new test or a fix to an existing test,
+            please follow these steps:</p>
+
+          <ol>
+            <li>Notify the JSON-LD mailing list, public-linked-json@w3.org, that
+              you will be creating a new test or fix and the purpose of the change.</li>
+            <li>Clone the git repository: git://github.com/json-ld/json-ld.org.git</li>
+            <li>Make your changes and submit them via GitHub, or via a &#8216;git format-patch&#8217;
+              to the <a href="mailto:public-linked-json@w3.org">JSON-LD mailing list</a>.</li>
+          </ol>
+
+          <p>Optionally, you can ask for direct access to the repository and may make
+            changes directly to the JSON-LD Test Suite source code. All updates to the test
+            suite go live within seconds of committing the changes to GitHub via a WebHook call.</p>
+        </section>
+      </div>
+
+      <div class="row">
+        <h2 id="how_to_add_a_unit_test" class="span12" style="text-align: center;">How to Add a Unit Test</h2>
+      </div>
+      <div class="row">
+        <section class="offset2 span8">
+          <p>In order to add a unit test, you must follow these steps:</p>
+
+          <ol>
+            <li>Pick a new unit test number. For example - 250. To be consistent, please use
+              the next available unit test number.</li>
+            <li>Create a the input file in the tests/ directory with a .jsonld extension.
+              For example: tests/expand-0250-in.jsonld</li>
+            <li>Create a file containing the expected result in the tests/ directory with a
+              .jsonld or .nq extension. For example: tests/expand-0250-out.jsonld</li>
+            <li>Add your test to the corresponding xxx-manifest.jsonld.</li>
+          </ol>
+
+          <p>The test suite is designed to empower JSON-LD processor maintainers to create
+            and add tests as they see fit. This may mean that the test suite may become
+            unstable from time to time, but this approach has been taken so that the
+            long-term goal of having a comprehensive test suite for JSON-LD can be achieved
+            by the JSON-LD community.</p>
+        </section>
+      </div>
+
+      <div class="row">
+        <h2 class="span12" style="text-align: center;">Test Manifests</h2>
+      </div>
+      <div class="row">
+        <section id="manifests" class="panel-group offset2 span8">
+        </section>
+      </div>
+      <footer id="copyright">
+        The JSON-LD test suite is released under a <a href="http://creativecommons.org/about/cc0">Creative Commons CC0 Public Domain Dedication</a>.
+      </footer>
+</div>
+
+<!-- Script tags -->
+<script type="text/javascript" src="../static/js/bootstrap/bootstrap.js"></script>
+<script type="text/javascript">
+function load_manifests() {
+  Handlebars.registerHelper('number', function(that) {
+    return that['@id'].substring(2);
+  });
+  Handlebars.registerHelper('type', function(that) {
+    return that['@type'].join(" ");
+  });
+  Handlebars.registerHelper('options', function(that) {
+    var pv = [];
+    for (var propt in that['option']) {
+      pv.push(propt + ': ' + that['option'][propt])
+    }
+    return pv.join(", ");
+  });
+  var man_tmpl = Handlebars.compile($("#manifest-template").html());
+  $.getJSON($("#manifest").attr("src"), null, function(data, status) {
+    data.sequence.forEach(function(man, index) {
+      $("#manifests").append($("<section id='" + index + "' class='panel panel-default'/>"));
+      $.getJSON(man, null, function(data, status, xhv) {
+        if (data.name == "Compaction") {data['in'] = 'in'}
+        data.anchor = data.name.replace(/\s+/g, '-');
+        $("#manifests section#" + index).append($(man_tmpl(data)));
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Newtonsoft.Json.Linq;
 using Resourcer;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
@@ -19,100 +20,55 @@ namespace RomanticWeb.Tests.JsonLd
     {
         private JsonLdSerializer _serializer;
 
-        private string _testsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"JsonLd\\test_cases");
-
         [SetUp]
         public void Setup()
         {
             _serializer = new JsonLdSerializer();
         }
 
-        [TestCaseSource("RdfToJsonTestCases")]
-        public void RDF_to_JSON_test_suite()
-        {
-            // given
-
-            // when
-
-            // then
-            Assert.Inconclusive();
-        }
-
         [Test]
-        public void Should_serialize_blank_node_as_top_level_object()
+        public void Should_serialize_graph_with_blank_nodes()
         {
             // given
             var storeId = new EntityId("http://www.acme.com/#store");
             Stream resource = Resource.AsStream("TestCases.AcmeStore.ttl");
+            object expected = JsonConvert.DeserializeObject(Resource.AsString("TestCases.AcmeStore.json"));
 
             // when
             var json = GetSerializedJson(storeId, resource);
 
             // then
-            Assert.That(json.Count, Is.EqualTo(2));
+            Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 
         [Test]
-        public void Should_serialize_simple_graph_with_properties()
+        public void Should_serialize_simple_graph()
         {
             // given
             var storeId = new EntityId("http://www.acme.com/#store");
             Stream resource = Resource.AsStream("TestCases.SimpleObject.ttl");
+            object expected = JsonConvert.DeserializeObject(Resource.AsString("TestCases.SimpleObject.json"));
 
             // when
             var json = GetSerializedJson(storeId, resource);
 
             // then
-            Assert.That(json.name.Value, Is.EqualTo("Hepp's Happy Burger Restaurant"));
-            Assert.That(json.category.Value, Is.EqualTo("Food/Fast"));
-            Assert.That(json.description.Value, Is.EqualTo("They serve massive, unhealthy burgers"));
+            Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 
         [Test]
-        public void Should_serialize_simple_graph_with_context()
+        public void Should_serialize_graph_with_nested_entity()
         {
             // given
             var storeId = new EntityId("http://www.acme.com/#store");
-            Stream resource = Resource.AsStream("TestCases.SimpleObject.ttl");
+            Stream resource = Resource.AsStream("TestCases.NestedEntity.ttl");
+            object expected = JsonConvert.DeserializeObject(Resource.AsString("TestCases.NestedEntity.json"));
 
             // when
-            dynamic json = GetSerializedJson(storeId, resource);
+            var json = GetSerializedJson(storeId, resource);
 
             // then
-            Assert.That(json["@context"], Is.Not.Null);
-            var context = json["@context"];
-            Assert.That(context.gr, Is.EqualTo("http://purl.org/goodrelations/v1#"));
-            Assert.That(context.name, Is.EqualTo("http://purl.org/goodrelations/v1#name"));
-            Assert.That(context.category, Is.EqualTo("http://purl.org/goodrelations/v1#category"));
-            Assert.That(context.description, Is.EqualTo("http://purl.org/goodrelations/v1#description"));
-        }
-
-        [Test]
-        public void Should_serialize_ids_for_URI_resources()
-        {
-            // given
-            var storeId = new EntityId("http://www.acme.com/#store");
-            Stream resource = Resource.AsStream("TestCases.SimpleObject.ttl");
-
-            // when
-            dynamic json = GetSerializedJson(storeId, resource);
-
-            // then
-            Assert.That(json["@id"], Is.EqualTo("http://www.acme.com/#store"));
-        }
-
-        [Test]
-        public void Should_serialize_nested_entity_as_top_level_object()
-        {
-            // given
-            var storeId = new EntityId("http://www.acme.com/#store");
-            Stream resource = Resource.AsStream("TestCases.SimpleObject.ttl");
-
-            // when
-            dynamic json = GetSerializedJson(storeId, resource);
-
-            // then
-            Assert.That(json[JsonLdSerializer.Graph].Count, Is.EqualTo(2));
+            Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 
         private dynamic GetSerializedJson(EntityId id, Stream resource)
@@ -145,11 +101,6 @@ namespace RomanticWeb.Tests.JsonLd
                        triple.Predicate.WrapNode(entityId),
                        triple.Object.WrapNode(entityId),
                        triple.Graph == null ? null : Node.ForUri(triple.Graph.BaseUri));
-        } 
-
-        private IEnumerable<object> RdfToJsonTestCases()
-        {
-            yield break;
         }
     }
 }

@@ -61,7 +61,16 @@ namespace RomanticWeb.Entities
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
-            return entity.AsEntity<ITypedEntity>().Types.Union(new EntityId[] { new EntityId(RomanticWeb.Vocabularies.Owl.Thing) });
+            return (entity!=null?entity.AsEntity<ITypedEntity>().Types.Union(new EntityId[] { new EntityId(RomanticWeb.Vocabularies.Owl.Thing) }):new EntityId[0]);
+        }
+
+        /// <summary>Determines if a given entity is of any of the types provided.</summary>
+        /// <param name="entity">Entity to operate on.</param>
+        /// <param name="types">Enumeration of types to check against.</param>
+        /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
+        public static bool Is(this IEntity entity,IEnumerable<EntityId> types)
+        {
+            return ((entity!=null)&&(types!=null)?entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any():false);
         }
 
         /// <summary>

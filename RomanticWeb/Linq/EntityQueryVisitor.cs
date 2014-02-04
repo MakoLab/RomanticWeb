@@ -193,6 +193,38 @@ namespace RomanticWeb.Linq
                     }
 
                     break;
+                case "Is":
+                    if ((expression.Method.DeclaringType==typeof(EntityExtensions))&&(expression.Arguments.Count==2)&&(expression.Arguments.Count==expression.Method.GetParameters().Length)&&
+                        (expression.Arguments[1] is System.Linq.Expressions.ConstantExpression))
+                    {
+                        object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
+                        if ((objectValue!=null)&&(typeof(IEnumerable).IsAssignableFrom(objectValue.GetType()))&&(objectValue.GetType().FindItemType()==typeof(EntityId)))
+                        {
+                            IEnumerable<EntityId> types=(IEnumerable<EntityId>)objectValue;
+                            int count=types.Count();
+                            if (count>0)
+                            {
+                                EntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                                if (entityAccessor!=null)
+                                {
+                                    EntityTypeConstrain constrain=new EntityTypeConstrain(types.Select(item => item.Uri).First(),(count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
+                                    entityAccessor.Elements.Add(constrain);
+                                    _lastComponent=constrain;
+                                    return expression;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return base.VisitMethodCallExpression(expression);
+                        }
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+
+                    break;
                 default:
                     return base.VisitMethodCallExpression(expression);
             }
@@ -478,6 +510,7 @@ namespace RomanticWeb.Linq
         {
             Remotion.Linq.Clauses.FromClauseBase result=null;
             System.Linq.Expressions.Expression currentExpression=expression;
+            bool isChange=false;
             while (currentExpression!=null)
             {
                 if (currentExpression is System.Linq.Expressions.MemberExpression)
@@ -489,6 +522,7 @@ namespace RomanticWeb.Linq
                     }
 
                     currentExpression=memberExpression.Expression;
+                    isChange=true;
                 }
                 else if (currentExpression is Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)
                 {
@@ -499,8 +533,18 @@ namespace RomanticWeb.Linq
                         _currentComponent=new Stack<IQueryComponentNavigator>();
                         VisitExpression(result.FromExpression);
                         _currentComponent=currentComponent;
+                        isChange=true;
                     }
 
+                    break;
+                }
+
+                if (isChange)
+                {
+                    isChange=false;
+                }
+                else
+                {
                     break;
                 }
             }

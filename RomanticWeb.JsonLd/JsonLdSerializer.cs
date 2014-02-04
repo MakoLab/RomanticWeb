@@ -16,11 +16,11 @@ namespace RomanticWeb.JsonLd
         internal const string Context = "@context";
         internal const string Graph = "@graph";
 
-        public string FromRdf(IEnumerable<EntityQuad> dataset)
+        public string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false)
         {
             return GetJsonStructure(dataset).ToString();
         }
-        
+
         private JObject GetJsonStructure(IEnumerable<EntityQuad> quads)
         {
             var root = new JObject();

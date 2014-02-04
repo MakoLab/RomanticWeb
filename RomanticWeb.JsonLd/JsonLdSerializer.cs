@@ -7,7 +7,7 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.JsonLd
 {
-    public class JsonLdSerializer
+    public class JsonLdSerializer:IJsonLdProcessor
     {
         internal const string Id = "@id";
         internal const string Type = "@type";
@@ -19,6 +19,26 @@ namespace RomanticWeb.JsonLd
         public string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false)
         {
             return GetJsonStructure(dataset).ToString();
+        }
+
+        public IEnumerable<EntityQuad> ToRdf(string json)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Compact(string json,string jsonLdContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Flatten(string json,string jsonLdContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Expand(string json)
+        {
+            throw new NotImplementedException();
         }
 
         private JObject GetJsonStructure(IEnumerable<EntityQuad> quads)

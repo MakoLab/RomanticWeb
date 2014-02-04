@@ -19,12 +19,12 @@ namespace RomanticWeb.Tests.JsonLd
     {
         private readonly string _testsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"JsonLd\test-suite\tests");
 
-        private JsonLdSerializer _serializer;
+        private JsonLdSerializer _processor;
 
         [SetUp]
         public void Setup()
         {
-            _serializer = new JsonLdSerializer();
+            _processor = new JsonLdSerializer();
         }
 
         [TestCaseSource("RdfToJsonTestCases")]
@@ -34,7 +34,7 @@ namespace RomanticWeb.Tests.JsonLd
             IEnumerable<EntityQuad> quads=GetQuads(input);
 
             // when
-            string output = _serializer.FromRdf(quads,userRdfType,useNativeTypes);
+            string output = _processor.FromRdf(quads);
             dynamic actualJson = JsonConvert.DeserializeObject(output);
             dynamic expectedJson = JsonConvert.DeserializeObject(File.ReadAllText(expected));
 

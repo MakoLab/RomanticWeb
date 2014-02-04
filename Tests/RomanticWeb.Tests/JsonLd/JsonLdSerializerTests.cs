@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using NUnit.Framework;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using Resourcer;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
@@ -18,12 +18,12 @@ namespace RomanticWeb.Tests.JsonLd
     [TestFixture]
     public class JsonLdSerializerTests
     {
-        private JsonLdSerializer _serializer;
+        private JsonLdSerializer _processor;
 
         [SetUp]
         public void Setup()
         {
-            _serializer = new JsonLdSerializer();
+            _processor = new JsonLdSerializer();
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests.JsonLd
 
         private dynamic GetSerializedJson(EntityId id, Stream resource)
         {
-            string json=_serializer.FromRdf(GetQuads(id, resource));
+            string json=_processor.FromRdf(GetQuads(id, resource));
 
             object deserializeObject = JsonConvert.DeserializeObject(json);
             Console.WriteLine("Result JSON:");

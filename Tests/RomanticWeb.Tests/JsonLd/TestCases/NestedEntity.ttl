@@ -1,34 +1,15 @@
-﻿[
-	{
-	  "@id": "http://www.acme.com/#store",
-	  "@type": "http://purl.org/goodrelations/v1#Location",
-	  "http://purl.org/goodrelations/v1#hasOpeningHoursSpecification": 
-	  {
-		"@id": "http://www.acme.com/#spec"
-	  },
-	  "http://purl.org/goodrelations/v1#name": "Hepp's Happy Burger Restaurant"
-	},
-	{
-	  "@id": "http://www.acme.com/#spec",
-	  "@type": "http://purl.org/goodrelations/v1#OpeningHoursSpecification",
-	  "http://purl.org/goodrelations/v1#closes": "20:00:00",
-	  "http://purl.org/goodrelations/v1#hasOpeningHoursDayOfWeek": [
-		{
-		  "@id": "http://purl.org/goodrelations/v1#Tuesday"
-		},
-		{
-			"@id": "http://purl.org/goodrelations/v1#Monday"
-		},
-		{
-			"@id": "http://purl.org/goodrelations/v1#Thursday"
-		},
-		{
-			"@id": "http://purl.org/goodrelations/v1#Wednesday"
-		}, 
-		{
-			"@id": "http://purl.org/goodrelations/v1#Friday"
-		}
-	  ],
-	  "http://purl.org/goodrelations/v1#opens" : "08:00:00"
-	}
-]
+﻿@prefix acme: <http://www.acme.com/#>.
+@prefix gr: <http://purl.org/goodrelations/v1#>.
+
+acme:store a gr:Location .
+acme:store gr:name "Hepp's Happy Burger Restaurant" .
+acme:store gr:hasOpeningHoursSpecification  acme:spec .
+
+acme:spec 	a gr:OpeningHoursSpecification ;
+	gr:opens "08:00:00" ;
+	gr:closes "20:00:00" ;
+	gr:hasOpeningHoursDayOfWeek gr:Wednesday ;
+	gr:hasOpeningHoursDayOfWeek gr:Thursday ;
+	gr:hasOpeningHoursDayOfWeek gr:Friday ; 
+	gr:hasOpeningHoursDayOfWeek gr:Tuesday ;
+	gr:hasOpeningHoursDayOfWeek gr:Monday . 

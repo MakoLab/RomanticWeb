@@ -1,28 +1,34 @@
-﻿{
-  "@id": "http://www.acme.com/#store",
-  "@type": "http://purl.org/goodrelations/v1#Location",
-  "http://purl.org/goodrelations/v1#hasOpeningHoursSpecification": {
-    "@type": "http://purl.org/goodrelations/v1#OpeningHoursSpecification",
-    "http://purl.org/goodrelations/v1#closes": "20:00:00",
-    "http://purl.org/goodrelations/v1#hasOpeningHoursDayOfWeek": [
-      {
-        "@id": "http://purl.org/goodrelations/v1#Tuesday"
-      },
-      {
-        "@id": "http://purl.org/goodrelations/v1#Monday"
-      },
-      {
-        "@id": "http://purl.org/goodrelations/v1#Thursday"
-      },
-      {
-        "@id": "http://purl.org/goodrelations/v1#Wednesday"
-      }, 
-      {
-        "@id": "http://purl.org/goodrelations/v1#Friday"
-      }
-    ],
-    "http://purl.org/goodrelations/v1#opens" : "08:00:00"
-  },
-  "http://purl.org/goodrelations/v1#name": "Hepp's Happy Burger Restaurant"
-}
-
+﻿[
+	{
+	  "@id": "http://www.acme.com/#store",
+	  "@type": "http://purl.org/goodrelations/v1#Location",
+	  "http://purl.org/goodrelations/v1#hasOpeningHoursSpecification": 
+	  {
+		"@id": "http://www.acme.com/#spec"
+	  },
+	  "http://purl.org/goodrelations/v1#name": "Hepp's Happy Burger Restaurant"
+	},
+	{
+	  "@id": "http://www.acme.com/#spec",
+	  "@type": "http://purl.org/goodrelations/v1#OpeningHoursSpecification",
+	  "http://purl.org/goodrelations/v1#closes": "20:00:00",
+	  "http://purl.org/goodrelations/v1#hasOpeningHoursDayOfWeek": [
+		{
+		  "@id": "http://purl.org/goodrelations/v1#Tuesday"
+		},
+		{
+			"@id": "http://purl.org/goodrelations/v1#Monday"
+		},
+		{
+			"@id": "http://purl.org/goodrelations/v1#Thursday"
+		},
+		{
+			"@id": "http://purl.org/goodrelations/v1#Wednesday"
+		}, 
+		{
+			"@id": "http://purl.org/goodrelations/v1#Friday"
+		}
+	  ],
+	  "http://purl.org/goodrelations/v1#opens" : "08:00:00"
+	}
+]

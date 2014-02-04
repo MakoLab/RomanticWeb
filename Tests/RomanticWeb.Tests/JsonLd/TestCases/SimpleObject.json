@@ -1,19 +1,10 @@
 ﻿{
-  "@context":{
-    "gr":"http://purl.org/goodrelations/v1#",
-	"opens":"gr:opens",
-	"name":"gr:name",
-	"Location":"gr:Location",
-	"hasOpeningHoursSpecification":"gr:hasOpeningHoursSpecification",
-	"closes":"gr:closes",
-	"hasOpeningHoursDayOfWeek":"gr:hasOpeningHoursDayOfWeek"
-  },
   "@id": "http://www.acme.com/#store",
-  "@type": "Location",
-  "hasOpeningHoursSpecification": {
+  "@type": "http://purl.org/goodrelations/v1#Location",
+  "http://purl.org/goodrelations/v1#hasOpeningHoursSpecification": {
     "@type": "http://purl.org/goodrelations/v1#OpeningHoursSpecification",
-    "closes": "20:00:00",
-    "hasOpeningHoursDayOfWeek": [
+    "http://purl.org/goodrelations/v1#closes": "20:00:00",
+    "http://purl.org/goodrelations/v1#hasOpeningHoursDayOfWeek": [
       {
         "@id": "http://purl.org/goodrelations/v1#Tuesday"
       },
@@ -30,8 +21,8 @@
         "@id": "http://purl.org/goodrelations/v1#Friday"
       }
     ],
-    "opens" : "08:00:00"
+    "http://purl.org/goodrelations/v1#opens" : "08:00:00"
   },
-  "name": "Hepp's Happy Burger Restaurant"
+  "http://purl.org/goodrelations/v1#name": "Hepp's Happy Burger Restaurant"
 }
 

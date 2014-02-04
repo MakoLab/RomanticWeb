@@ -18,13 +18,7 @@ namespace RomanticWeb.JsonLd
 
         public string FromRdf(IEnumerable<EntityQuad> dataset)
         {
-            string result="result";
-            var json = GetJsonStructure(dataset);
-            var serializer = new JsonSerializer();
-            //serializer.Serialize(stream, json);
-            //throw new NotImplementedException();
-
-            return result;
+            return GetJsonStructure(dataset).ToString();
         }
         
         private JObject GetJsonStructure(IEnumerable<EntityQuad> quads)
@@ -89,8 +83,7 @@ namespace RomanticWeb.JsonLd
 
         private string GetJsonPropertyForPredicate(JObject context, Node node)
         {
-            string predicate = "predicate";
-            return  predicate; ////node.Uri.GetFragmentOrLastSegment();
+            return node.Uri.ToString();
         }
 
         private JArray WrapChildrenInArray(IEnumerable<JToken> children)

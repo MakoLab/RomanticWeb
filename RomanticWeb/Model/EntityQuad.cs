@@ -16,10 +16,10 @@ namespace RomanticWeb.Model
         /// <summary>
         /// Creates a new instance of <see cref="EntityQuad"/> in named graph
         /// </summary>
-        public EntityQuad(EntityId entityId,Node s,Node p,Node o,Node graph)
+        public EntityQuad(EntityId entityId,Node s,Node p,Node o,[AllowNull]Node graph)
             :this(entityId,s,p,o)
         {
-            if (!graph.IsUri)
+            if ((graph!=null)&&(!graph.IsUri))
             {
                 throw new ArgumentOutOfRangeException("p", "Graph must be a URI");
             }

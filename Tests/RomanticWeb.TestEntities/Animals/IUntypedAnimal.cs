@@ -1,9 +1,9 @@
-﻿using RomanticWeb.Mapping.Attributes;
+﻿using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.Animals
 {
-    [Entity]
-    public interface IUntypedAnimal
+    public interface IUntypedAnimal:IEntity
     {
         [Property("life", "name")]
         string Name { get; }

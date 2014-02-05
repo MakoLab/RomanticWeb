@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 
@@ -30,7 +31,7 @@ namespace RomanticWeb.Mapping
         {
             return from type in Assembly.GetTypes()
                    let classAtributes = type.GetCustomAttributes<ClassAttribute>()
-                   where type.GetCustomAttributes<EntityAttribute>().Any() || classAtributes.Any()
+                   where type.FindInterfaces(FilterEntity,null).Any() || classAtributes.Any()
                    let parentTypes = type.GetInterfaces()
                    let inheritedMappings = parentTypes.SelectMany(iface => iface.GetCustomAttributes<ClassAttribute>()).Select(s=>s.GetMapping(mappingContext))
                    let classMappings = classAtributes.Select(s => s.GetMapping(mappingContext))
@@ -47,6 +48,11 @@ namespace RomanticWeb.Mapping
                    from mapping in property.GetCustomAttributes(typeof(PropertyAttribute), true).Cast<PropertyAttribute>()
                    let propertyMapping = mapping.GetMapping(property.PropertyType, property.Name, ontologyProvider)
                    select propertyMapping;
+        }
+
+        private static bool FilterEntity(Type type,object filterCriteria)
+        {
+            return type==typeof(IEntity);
         }
 
         #endregion

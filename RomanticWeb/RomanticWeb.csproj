@@ -164,7 +164,6 @@
     <Compile Include="Mapping\MappingFromFluent.cs" />
     <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
     <Compile Include="Mapping\Attributes\CollectionAttribute.cs" />
-    <Compile Include="Mapping\Attributes\EntityAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Extensions.cs" />
     <Compile Include="Mapping\FluentMappingsRepository.cs" />

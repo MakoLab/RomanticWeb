@@ -18,12 +18,12 @@ namespace RomanticWeb.Tests.JsonLd
     [TestFixture]
     public class JsonLdSerializerTests
     {
-        private JsonLdSerializer _processor;
+        private JsonLdProcessor _processor;
 
         [SetUp]
         public void Setup()
         {
-            _processor = new JsonLdSerializer();
+            _processor = new JsonLdProcessor();
         }
 
         [Test]

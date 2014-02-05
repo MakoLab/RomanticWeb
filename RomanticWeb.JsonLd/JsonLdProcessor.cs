@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.JsonLd
 {
-    public class JsonLdSerializer:IJsonLdProcessor
+    public class JsonLdProcessor:IJsonLdProcessor
     {
         internal const string Id = "@id";
         internal const string Type = "@type";

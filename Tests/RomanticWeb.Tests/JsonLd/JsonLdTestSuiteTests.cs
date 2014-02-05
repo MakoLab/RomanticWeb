@@ -19,12 +19,12 @@ namespace RomanticWeb.Tests.JsonLd
     {
         private readonly string _testsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"JsonLd\test-suite\tests");
 
-        private JsonLdSerializer _processor;
+        private JsonLdProcessor _processor;
 
         [SetUp]
         public void Setup()
         {
-            _processor = new JsonLdSerializer();
+            _processor = new JsonLdProcessor();
         }
 
         [TestCaseSource("RdfToJsonTestCases")]

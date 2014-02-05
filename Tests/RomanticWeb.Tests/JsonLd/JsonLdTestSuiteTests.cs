@@ -59,6 +59,7 @@ namespace RomanticWeb.Tests.JsonLd
             string manifest=File.ReadAllText(Path.Combine(_testsRoot,"fromRdf-manifest.jsonld"));
             dynamic manifestJson=JsonConvert.DeserializeObject(manifest);
 
+            int testIndex=1;
             foreach (var testManifest in manifestJson.sequence)
             {
                 bool? useRdfType=null;
@@ -74,7 +75,7 @@ namespace RomanticWeb.Tests.JsonLd
                 }
 
                 yield return new TestCaseData(input, expect,useRdfType.GetValueOrDefault(),useNativeTypes.GetValueOrDefault())
-                        .SetName((string)testManifest["name"])
+                        .SetName(string.Format("{0:00}: {1}",testIndex++,(string)testManifest["name"]))
                         .SetDescription((string)testManifest["purpose"]);
             }
         }

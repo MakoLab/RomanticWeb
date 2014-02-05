@@ -22,22 +22,22 @@ namespace RomanticWeb.JsonLd
 
         public IEnumerable<EntityQuad> ToRdf(string json)
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
         public string Compact(string json,string jsonLdContext)
         {
-            throw new NotImplementedException();
+            return json;
         }
 
         public string Flatten(string json,string jsonLdContext)
         {
-            throw new NotImplementedException();
+            return json;
         }
 
         public string Expand(string json)
         {
-            throw new NotImplementedException();
+            return json;
         }
 
         private JObject GetJsonStructure(IEnumerable<EntityQuad> quads)

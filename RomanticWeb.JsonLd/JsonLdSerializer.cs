@@ -76,15 +76,15 @@ namespace RomanticWeb.JsonLd
 
                 foreach (var obj in g.Objects)
                 {
-                    if (obj.IsLiteral || obj.IsUri)
+                    if (obj.IsLiteral)
                     {
                         if (obj.IsLiteral) children.Add(new JValue(obj.Literal));
-                        if (obj.IsUri) children.Add(new JValue(obj.Uri));
+                       
                     }
-                    //else if (obj.IsUri)
-                    //{ 
-                    
-                    //}
+                    else if (obj.IsUri)
+                    {
+                        children.Add(new JValue(obj.Uri));
+                    }
                     else
                     {
                         children.Add(SerializeEntity(obj, context, quads));

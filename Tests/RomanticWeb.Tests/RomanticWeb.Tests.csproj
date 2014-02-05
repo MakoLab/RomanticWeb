@@ -210,6 +210,9 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="Fody.targets" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.json" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.json" />

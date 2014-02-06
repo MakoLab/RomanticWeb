@@ -46,10 +46,10 @@ namespace RomanticWeb.JsonLd
         {
             var root = new JArray();
             var context = new JObject();
-            var blankNodes = new List<Node>(quads.Where(quad => quad.Subject.IsBlank).Join(quads, quad => quad.Subject, quad => quad.Object, (outer, inner) => inner.Object).Distinct());
+            var blankNodes = new List<Node>(quads.Where(quad => quad.Subject.IsBlank)
+                                                                        .Join(quads, quad => quad.Subject, quad => quad.Object, (outer, inner) => inner.Object).Distinct());
             var topLevelSubjects = quads.Where(quad => (!blankNodes.Contains(quad.Subject))).Select(x => x.Subject).Distinct();
              _distinctGrafs = quads.Where(graph=>graph.Graph!=null).Select(x => x.Graph).Distinct();
-
 
             var distinctSubjects = quads.Where(graph=>graph.Graph==null).OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() 
                                                                                                         : x.Subject.ToString()).Select(x => x.Subject).Distinct();
@@ -67,18 +67,6 @@ namespace RomanticWeb.JsonLd
                 }
             }
             
-            //foreach (var gr in distinctGrafs)
-            //{
-                
-                //////
-
-                ////root[Context] = context;
-                //if (gr != null)
-                //{
-                //    root[gr.ToString()]=new JArray(serialized)
-                //}
-            //}
-
             return root;        
         }
 
@@ -91,7 +79,8 @@ namespace RomanticWeb.JsonLd
                          {
                              Predicate = (g.Key.ToString() == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ? Node.ForLiteral(Type) : g.Key),
                              Objects = g
-                         } into selection
+                         } 
+                         into selection
                          orderby selection.Predicate
                          select selection;
 
@@ -117,6 +106,7 @@ namespace RomanticWeb.JsonLd
                     result.AddFirst(new JProperty(Id, subject.IsBlank ? "_:" + subject.BlankNode.ToString() : subject.ToString()));
                     i++;
                 }
+
                 result.Add(res);
             }
 

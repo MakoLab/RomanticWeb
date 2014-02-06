@@ -44,14 +44,24 @@ namespace RomanticWeb.Ontologies
         GR=1<<10,
 
         /// <summary>Points to a Semantically-Interlinked Online Communities ontology.</summary>
-        SIOC=1<<11
-    }
+        SIOC=1<<11,
+
+        /// <summary>Points to a WGS84 Geo Positioning: an RDF vocabulary.</summary>
+        GEO=1<<12
+}
 
     /// <summary>Provides default, built in ontologies.</summary>
     [DebuggerDisplay("Ontologies count = {_ontologies.Count}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public sealed class DefaultOntologiesProvider:OntologyProviderBase
     {
+        /// <summary>Provides map of supported OWL serialization and their file extensions.</summary>
+        public static readonly IDictionary<string,string> OwlSerializationExtensions=new Dictionary<string,string>
+        {
+            { "application/rdf+xml","rdf" },
+            { "application/owl+xml","owl" }
+        };
+
         private IList<Ontology> _ontologies;
         private IList<BuiltInOntologies> _includedOntologies;
 
@@ -70,13 +80,14 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.DCMIType|
                 BuiltInOntologies.FOAF|
                 BuiltInOntologies.Schema|
-                BuiltInOntologies.SIOC);
+                BuiltInOntologies.SIOC|
+                BuiltInOntologies.GEO);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO)
             {
             }
 
@@ -215,7 +226,14 @@ namespace RomanticWeb.Ontologies
         {
             return Include(BuiltInOntologies.SIOC);
         }
-        
+
+        /// <summary>Includes a WGS84 Geo Positioning: an RDF vocabulary.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithGEO()
+        {
+            return Include(BuiltInOntologies.GEO);
+        }
+
         private class DebuggerViewProxy
         {
             private readonly DefaultOntologiesProvider _provider;

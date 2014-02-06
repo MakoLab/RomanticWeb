@@ -144,6 +144,11 @@
     <Compile Include="Stubs\TestOntologyProvider.cs" />
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="TripleTests.cs" />
+    <Compile Include="TurtleGraphConversionTests.cs" />
+    <EmbeddedResource Include="TurtleGraphConversionTests.ttl">
+      <DependentUpon>TurtleGraphConversionTests.cs</DependentUpon>
+      <LogicalName>RomanticWeb.Tests.TurtleGraphConversionTests.ttl</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.ttl" />

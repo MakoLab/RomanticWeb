@@ -14,7 +14,6 @@ namespace RomanticWeb.JsonLd
         internal const string Value = "@value";
         internal const string Context = "@context";
         internal const string Graph = "@graph";
-
         
         public string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false)
         {
@@ -45,13 +44,8 @@ namespace RomanticWeb.JsonLd
         {
             var root = new JArray();
             var context = new JObject();
-
             var blankNodes = new List<Node>(quads.Where(quad => quad.Subject.IsBlank).Join(quads, quad => quad.Subject, quad => quad.Object, (outer, inner) => inner.Object).Distinct());
             var topLevelSubjects = quads.Where(quad => (!blankNodes.Contains(quad.Subject))).Select(x => x.Subject).Distinct();
-
-           ////// var serialized = topLevelSubjects.Select(subject => SerializeEntity(subject, context, quads)).ToList();
-
-            ////
             var distinctSubjects = quads.OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() : x.Subject.ToString()).Select(x => x.Subject).Distinct();
             var distinctGrafs = quads.Select(x => x.Graph).Distinct();
             //foreach (var gr in distinctGrafs)
@@ -67,7 +61,7 @@ namespace RomanticWeb.JsonLd
                 root = new JArray(serialized);
             //}
 
-            return root;
+            return root;        
         }
 
         private JObject SerializeEntity(Node subject, JObject context, IEnumerable<EntityQuad> quads)
@@ -81,75 +75,37 @@ namespace RomanticWeb.JsonLd
                              Objects = g
                          };
 
-            //JObject s = new JObject(new JProperty("@id", subject.ToString()));
             JObject result = new JObject();
             int i=0;
-            int p = 0;
-            
+                        
             foreach (var g in groups)
             {
-
-                JProperty  res = g.Predicate.ToString() == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ?
+                JProperty res = g.Predicate.ToString() == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ?
                             new JProperty(
                                 new JProperty(Type,
                                     new JArray(
                                          from o in g.Objects
-                                         select o.ToString()
-                                            )))
+                                         select o.ToString())))
                 :
                             new JProperty(
                                 new JProperty(g.Predicate.ToString(),
                                     new JArray(
                                          from o in g.Objects
-                                         select returnProperties(g.Predicate,o)
-                                            )));
+                                         select ReturnProperties(g.Predicate,o))));
 
-
-
-                if(i==0)   
+                if (i==0)   
                 {
                     result.AddFirst(new JProperty(Id, subject.IsBlank ? "_:" + subject.BlankNode.ToString() : subject.ToString()));
                     i++;
                 }
-
                 
                 result.Add(res);
-
-                //////IList<JToken> children = new List<JToken>();
-                //////string predicate = GetJsonPropertyForPredicate(context, g.Predicate);
-
-                //////foreach (var obj in g.Objects)
-                //////{
-                //////    if (obj.IsLiteral)
-                //////    {
-                //////        if (obj.IsLiteral) children.Add(new JValue(obj.Literal));
-
-                //////    }
-                //////    else if (obj.IsUri)
-                //////    {
-                //////        children.Add(new JValue(obj.Uri));
-                //////    }
-                //////    else
-                //////    {
-                //////        children.Add(SerializeEntity(obj, context, quads));
-                //////    }
-
-                //////    if (children.Count == 1)
-                //////    {
-                //////        result[predicate] = children.Single();
-                //////    }
-                //////    else
-                //////    {
-                //////        JArray array = WrapChildrenInArray(children);
-                //////        result[predicate] = array;
-                //////    }
-                //////}
             }
 
-            return result;
+        return result;
         }
 
-        private JObject  returnProperties(Node Predicate,Node Object)
+        private JObject ReturnProperties(Node Predicate,Node Object)
         {
                 JObject returnObject = new JObject();
                 JProperty Id = new JProperty(Object.IsLiteral ? "@value" : "@id", Object.IsBlank ? "_:" + Object.BlankNode.ToString() :
@@ -163,16 +119,13 @@ namespace RomanticWeb.JsonLd
                         JProperty Language = new JProperty("@language", Object.Language.ToString().Replace("\"", ""));
                         returnObject.Add(Language);
                     }
+
                     if (Object.DataType != null)
                     {
                         JProperty Type = new JProperty("@type", Object.DataType.ToString().Replace("\"", ""));
                         returnObject.Add(Type);
                     }
-                }
-
-
-            
-            
+                } 
 
             return returnObject;
         }

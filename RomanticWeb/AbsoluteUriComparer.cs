@@ -10,6 +10,7 @@ namespace RomanticWeb
     [NullGuard(ValidationFlags.None)]
     public sealed class AbsoluteUriComparer:IComparer<Uri>,IEqualityComparer<Uri>
     {
+        /// <summary>Provides an easy access to the default instance of the <see cref="AbsoluteUriComparer" />.</summary>
         public static readonly AbsoluteUriComparer Default=new AbsoluteUriComparer();
 
         /// <inheritdoc />

@@ -1,4 +1,5 @@
 ﻿using System;
+using NullGuard;
 
 namespace RomanticWeb.Model
 {
@@ -70,17 +71,17 @@ namespace RomanticWeb.Model
         }
 
 #pragma warning disable 1591    
-        public static bool operator ==(Triple left, Triple right)
+        public static bool operator==([AllowNull] Triple left,[AllowNull] Triple right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Triple left, Triple right)
+        public static bool operator!=([AllowNull] Triple left,[AllowNull] Triple right)
         {
             return !Equals(left, right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals([AllowNull] object obj)
         {
             if (ReferenceEquals(null,obj)) { return false; }
             if (ReferenceEquals(this,obj)) { return true; }

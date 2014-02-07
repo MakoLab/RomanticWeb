@@ -17,6 +17,8 @@ namespace RomanticWeb.Vocabularies
 
         public static readonly Uri Restriction=new Uri(BaseUri+"Restriction");
 
+        public static readonly Uri NamedIndividual=new Uri(BaseUri+"NamedIndividual");
+
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]

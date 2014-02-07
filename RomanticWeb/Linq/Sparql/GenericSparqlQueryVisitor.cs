@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Visitor;
 
@@ -334,7 +335,15 @@ namespace RomanticWeb.Linq.Sparql
             switch (literal.Value.GetType().FullName)
             {
                 default:
-                    valueString=String.Format("\"{0}\"",literal.Value);
+                    if (literal.Value is EntityId)
+                    {
+                        valueString=String.Format("<{0}>",literal.Value);
+                    }
+                    else
+                    {
+                        valueString=String.Format("\"{0}\"",literal.Value);
+                    }
+
                     break;
                 case "System.Byte":
                 case "System.SByte":
@@ -359,7 +368,6 @@ namespace RomanticWeb.Linq.Sparql
                     valueString=String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
                     break;
                 case "System.Uri":
-                case "RomanticWeb.Entities.EntityId":
                     valueString=String.Format("<{0}>",literal.Value);
                     break;
             }

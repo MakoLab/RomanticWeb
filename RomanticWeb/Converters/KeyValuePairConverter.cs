@@ -22,7 +22,7 @@ namespace RomanticWeb.Converters
         /// <param name="objectNode">The root node of the structure</param>
         /// <param name="entityStore">Store, from which relevant additional nodes are read</param>
         /// <param name="predicate">Predicate for this node.</param>
-        public virtual object Convert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public virtual object Convert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             dynamic asDynamic=objectNode.AsDynamic();
             return new DictionaryEntry(asDynamic.rdf.First_predicate,asDynamic.rdf.First_object);
@@ -32,7 +32,7 @@ namespace RomanticWeb.Converters
         /// <param name="objectNode">Node to be checked.</param>
         /// <param name="entityStore">Entity store.</param>
         /// <param name="predicate">Predicate for this node.</param>
-        public virtual bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public virtual bool CanConvert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             bool result=(objectNode!=null);
             if (predicate!=null)

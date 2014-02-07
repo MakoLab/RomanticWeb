@@ -12,13 +12,13 @@ namespace RomanticWeb.Converters
         /// <param name="objectNode">The root node of the structure</param>
         /// <param name="entityStore">Store, from which relevant additional nodes are read</param>
         /// <param name="predicate">Predicate for this node.</param>
-        object Convert(IEntity objectNode,IEntityStore entityStore,IPropertyMapping predicate);
+        object Convert(IEntity objectNode, IEntityStore entityStore, IPropertyMapping predicate);
 
         /// <summary>Checks whether a node can be converted.</summary>
         /// <param name="objectNode">Node to be checked.</param>
         /// <param name="entityStore">Entity store.</param>
         /// <param name="predicate">Predicate for this node.</param>
-        bool CanConvert(IEntity objectNode,IEntityStore entityStore,IPropertyMapping predicate);
+        bool CanConvert(IEntity objectNode, IEntityStore entityStore, IPropertyMapping predicate);
 
         /// <summary>Converts a value back to <see cref="Node"/>(s).</summary>
         /// <param name="obj">Object to be converted.</param>

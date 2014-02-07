@@ -12,7 +12,7 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class Entity:DynamicObject,IEntity
+    public class Entity : DynamicObject, IEntity
     {
         #region Fields
         private readonly EntityContext _entityContext;
@@ -179,7 +179,7 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals(object obj)
         {
-            var entity=obj as IEntity;
+            var entity = obj as IEntity;
             if (entity==null) { return false; }
             return Id.Equals(entity.Id);
         }

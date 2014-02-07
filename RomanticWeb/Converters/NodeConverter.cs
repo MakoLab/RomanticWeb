@@ -164,7 +164,7 @@ namespace RomanticWeb.Converters
             IEntity entity;
             if ((predicate==null)||(!typeof(EntityId).IsAssignableFrom(predicate.ReturnType.FindItemType())))
             {
-                entity=_entityContext.Load<IEntity>(objectNode.ToEntityId(),false);
+                entity = _entityContext.Load<IEntity>(objectNode.ToEntityId(), false);
             }
             else
             {

@@ -292,7 +292,7 @@ namespace RomanticWeb.Linq
             }
             else if (expression.Value is IEntity)
             {
-                HandleComponent(_lastComponent=new Literal(((IEntity)expression.Value).Id.Uri));
+                HandleComponent(_lastComponent = new Literal(((IEntity)expression.Value).Id.Uri));
             }
             else
             {

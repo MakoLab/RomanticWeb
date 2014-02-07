@@ -20,7 +20,7 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// Proxy for exposing mapped entity members
     /// </summary>
-    [NullGuard(ValidationFlags.OutValues)]
+    [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
     public class EntityProxy:DynamicObject,IEntity
@@ -76,28 +76,12 @@ namespace RomanticWeb.Entities
                 return _entity.ToString();
             }
         }
-
-        /// <inheritdoc />
-        public dynamic this[string member]
-        {
-            get
-            {
-                return _entity[member];
-            }
-        }
         #endregion
 
         #region Public methods
         /// <inheritdoc />
         public override bool TryGetMember(GetMemberBinder binder,out object result)
         {
-            if (_entityMappings==null)
-            {
-                // no mapping probably means that this is IEntity
-                result=null;
-                return false;
-            }
-
             _entity.EnsureIsInitialized();
 
             var property=_entityMappings.PropertyFor(binder.Name);

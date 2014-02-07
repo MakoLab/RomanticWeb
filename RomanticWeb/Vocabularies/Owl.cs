@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace RomanticWeb.Vocabularies
 {
     /// <summary>The Web Ontology Language vocabulary (http://www.w3.org/2002/07/owl#).</summary>
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "*", Justification = "Reviewed. Suppression is OK here.")]
     public static class Owl
     {
+        // ReSharper disable InconsistentNaming
 #pragma warning disable 1591
         public const string BaseUri="http://www.w3.org/2002/07/owl#";
 
@@ -19,25 +21,14 @@ namespace RomanticWeb.Vocabularies
 
         public static readonly Uri NamedIndividual=new Uri(BaseUri+"NamedIndividual");
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        public static readonly Uri disjointWith=new Uri(BaseUri+"disjointWith");
+         public static readonly Uri disjointWith=new Uri(BaseUri+"disjointWith");
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         public static readonly Uri onProperty=new Uri(BaseUri+"onProperty");
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         public static readonly Uri hasValue=new Uri(BaseUri+"hasValue");
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
         public static readonly Uri sameAs=new Uri(BaseUri+"sameAs");
 #pragma warning restore 1591
+        // ReSharper restore InconsistentNaming
     }
 }

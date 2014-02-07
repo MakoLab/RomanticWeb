@@ -35,7 +35,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <summary>Wraps the entity as a given statically typed type.</summary>
-        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface:class,IEntity
+        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface : class,IEntity
         {
             TInterface result=null;
             entity=UnwrapProxy(entity);
@@ -68,7 +68,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="types">Enumeration of types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity,IEnumerable<EntityId> types)
+        public static bool Is(this IEntity entity, IEnumerable<EntityId> types)
         {
             return ((entity!=null)&&(types!=null)?entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any():false);
         }

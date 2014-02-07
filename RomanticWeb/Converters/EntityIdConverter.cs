@@ -27,13 +27,13 @@ namespace RomanticWeb.Converters
     public abstract class EntityIdConverter<TEntityId>:IComplexTypeConverter where TEntityId:EntityId
     {
         /// <inheritdoc />
-        public object Convert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public object Convert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             return ConvertEntityId(objectNode.Id);
         }
 
         /// <inheritdoc />
-        public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public bool CanConvert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             return (predicate!=null)&&(typeof(TEntityId).IsAssignableFrom(predicate.ReturnType.FindItemType()))&&(!(objectNode.Id is BlankId));
         }

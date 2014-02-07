@@ -13,6 +13,8 @@ namespace RomanticWeb.Linq.Sparql
     public class GenericSparqlQueryVisitor:QueryVisitorBase
     {
         #region Fields
+        private readonly Stack<EntityAccessor> _currentEntityAccessor = new Stack<EntityAccessor>();
+       
         private StringBuilder _commandText;
 
         private string _metaGraphVariableName;
@@ -21,8 +23,6 @@ namespace RomanticWeb.Linq.Sparql
         private string _predicateVariableName;
         private string _objectVariableName;
         private string _scalarVariableName;
-
-        private Stack<EntityAccessor> _currentEntityAccessor=new Stack<EntityAccessor>();
         #endregion
 
         #region Properties

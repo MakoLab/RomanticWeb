@@ -5,8 +5,9 @@ namespace RomanticWeb.Tests.Stubs
 {
     internal class TestOntologyProvider : OntologyProviderBase
     {
-        private bool _includeFoaf=true;
-        public TestOntologyProvider()
+        private readonly bool _includeFoaf;
+
+        public TestOntologyProvider():this(true)
         {
         }
 

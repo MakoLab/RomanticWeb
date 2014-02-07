@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
-using RomanticWeb.Tests.IntegrationTests;
 using RomanticWeb.Tests.Stubs;
 using VDS.RDF;
-
 
 namespace RomanticWeb.Tests.Linq
 {
@@ -23,23 +23,14 @@ namespace RomanticWeb.Tests.Linq
     {
         private IEntityContext _entityContext;
         private TripleStore _store;
-        private Mock<IEntityMapping> _typeMappingMock;
-        private Mock<IClassMapping> _classTypeMappingMock;
-        private Mock<IPropertyMapping> _typesPropertyMappingMock;
-        private Mock<IClassMapping> _personTypeMappingMock;
-        private Mock<IPropertyMapping> _firstNamePropertyMappingMock;
-        private Mock<IPropertyMapping> _surnamePropertyMappingMock;
-        private Mock<IPropertyMapping> _knowsPropertyMappingMock;
-        private Mock<IEntityMapping> _personMappingMock;
-        private Mock<IMappingsRepository> _mappingsRepositoryMock;
-        private Mock<IOntologyProvider> _ontologyProviderMock;
+        private TestMappingsRepository _mappingsRepository;
         private Mock<IEntityContextFactory> _factory;
-        private GraphSelectionStrategyBase _grapheSelector=new TestGraphSelector();
         private CompositionContainer _container;
 
         public interface IPerson:IEntity
         {
             string FirstName { get; }
+         
             string Surname { get; }
 
             List<IPerson> Knows { get; }
@@ -50,56 +41,16 @@ namespace RomanticWeb.Tests.Linq
         {
             _container=new CompositionContainer(new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath()),true);
             _store=new TripleStore();
-            _store.LoadTestFile("TriplesWithLiteralSubjects.trig");
-            _classTypeMappingMock=new Mock<IClassMapping>(MockBehavior.Strict);
-            _classTypeMappingMock.SetupGet(classMapping => classMapping.Uri).Returns(RomanticWeb.Vocabularies.Rdfs.Class);
-            _typesPropertyMappingMock=new Mock<IPropertyMapping>(MockBehavior.Strict);
-            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(RomanticWeb.Vocabularies.Rdf.type);
-            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelector);
-            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.IsCollection).Returns(true);
-            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Name).Returns("Types");
-            _typesPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.ReturnType).Returns(typeof(IEnumerable<EntityId>));
-            _personTypeMappingMock=new Mock<IClassMapping>(MockBehavior.Strict);
-            _personTypeMappingMock.SetupGet(typeMapping => typeMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/Person"));
-            _typeMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
-            _typeMappingMock.SetupGet(mapping => mapping.Classes).Returns(new[] { _classTypeMappingMock.Object });
-            _typeMappingMock.Setup(mapping => mapping.PropertyFor("Types")).Returns(_typesPropertyMappingMock.Object);
-            _firstNamePropertyMappingMock=new Mock<IPropertyMapping>();
-            _firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/givenName"));
-            _firstNamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelector);
-            _surnamePropertyMappingMock=new Mock<IPropertyMapping>();
-            _surnamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/familyName"));
-            _surnamePropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelector);
-            _knowsPropertyMappingMock=new Mock<IPropertyMapping>();
-            _knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.Uri).Returns(new Uri("http://xmlns.com/foaf/0.1/knows"));
-            _knowsPropertyMappingMock.SetupGet(propertyMapping => propertyMapping.GraphSelector).Returns(_grapheSelector);
-            _personMappingMock=new Mock<IEntityMapping>(MockBehavior.Strict);
-            _personMappingMock.SetupGet(mapping => mapping.Classes).Returns(new []{_personTypeMappingMock.Object});
-            _personMappingMock.Setup(mapping => mapping.PropertyFor("Surname")).Returns(_surnamePropertyMappingMock.Object);
-            _personMappingMock.Setup(mapping => mapping.PropertyFor("FirstName")).Returns(_firstNamePropertyMappingMock.Object);
-            _personMappingMock.Setup(mapping => mapping.PropertyFor("Knows")).Returns(_knowsPropertyMappingMock.Object);
-            _mappingsRepositoryMock=new Mock<IMappingsRepository>(MockBehavior.Strict);
-            _mappingsRepositoryMock.Setup(m => m.RebuildMappings(It.IsAny<MappingContext>()));
-            _mappingsRepositoryMock.Setup(repository => repository.MappingFor<IPerson>()).Returns(_personMappingMock.Object);
-            _mappingsRepositoryMock.Setup(repository => repository.MappingFor(typeof(IPerson))).Returns(_personMappingMock.Object);
-            _mappingsRepositoryMock.Setup(repository => repository.MappingFor<ITypedEntity>()).Returns(_typeMappingMock.Object);
-            _mappingsRepositoryMock.Setup(repository => repository.MappingFor(typeof(ITypedEntity))).Returns(_typeMappingMock.Object);
-            _mappingsRepositoryMock.Setup(repository => repository.MappingFor(new Uri("http://xmlns.com/foaf/0.1/Person"))).Returns(typeof(IPerson));
-            _ontologyProviderMock=new Mock<IOntologyProvider>(MockBehavior.Strict);
-            _ontologyProviderMock.SetupGet(provider => provider.Ontologies).Returns(
-                new Ontology[] { new Ontology(
-                    new NamespaceSpecification("foaf","http://xmlns.com/foaf/0.1/"),
-                    new Class("Person"),
-                    new DatatypeProperty("givenName"),
-                    new DatatypeProperty("familyName"),
-                    new ObjectProperty("knows")),
-                new Ontology(
-                    new NamespaceSpecification("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
-                    new Property("type")) });
+            _store.LoadTestFile("TriplesWithLiteralSubjects.trig"); 
+            
             _factory=new Mock<IEntityContextFactory>();
-            _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => { _container.ComposeParts(component); });
-            MappingContext mappingContext=new MappingContext(_ontologyProviderMock.Object,new DefaultGraphSelector());
-            _entityContext=new EntityContext(_factory.Object,_mappingsRepositoryMock.Object,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),null);
+            _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => _container.ComposeParts(component));
+
+            var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
+            _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
+            var mappingContext = new MappingContext(ontologyProvider, new DefaultGraphSelector());
+            _mappingsRepository.RebuildMappings(mappingContext);
+            _entityContext=new EntityContext(_factory.Object,_mappingsRepository,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),null);
         }
 
         [Test]
@@ -147,7 +98,7 @@ namespace RomanticWeb.Tests.Linq
         [Repeat(5)]
         public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
         {
-            IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
+            IList<IEntity> entities = (from resources in _entityContext.AsQueryable<IEntity>()
                                      where resources is IPerson
                                      select resources).ToList();
             Assert.That(entities.Count,Is.EqualTo(2));
@@ -191,6 +142,41 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(entity,Is.InstanceOf<IPerson>());
             Assert.That(entity.FirstName,Is.EqualTo("Gniewosław"));
             Assert.That(entity.Surname,Is.EqualTo("Rzepka"));
+        }
+
+        [Test]
+        public void Selecting_generic_entities_by_relative_child_EntityId()
+        {
+            // given
+            var relativeId = new EntityId("/people/Tomasz");
+
+            // when
+            var tomasz = (from person in _entityContext.AsQueryable<IPerson>()
+                          where person.Id == relativeId
+                          select person).SingleOrDefault();
+
+            // then
+            tomasz.Should().NotBeNull();
+        }
+
+        private class TestPersonMap : EntityMap<IPerson>
+        {
+            public TestPersonMap()
+            {
+                Class.Is("foaf", "Person");
+                Property(p => p.Knows).Term.Is("foaf", "knows").NamedGraph.SelectedBy<TestGraphSelector>();
+                Property(p => p.FirstName).Term.Is("foaf", "givenName").NamedGraph.SelectedBy<TestGraphSelector>();
+                Property(p => p.Surname).Term.Is("foaf", "familyName").NamedGraph.SelectedBy<TestGraphSelector>();
+            }
+        }
+
+        private class TestTypedEntityMap : EntityMap<ITypedEntity>
+        {
+            public TestTypedEntityMap()
+            {
+                Class.Is(Vocabularies.Rdfs.Class);
+                Collection(p => p.Types).Term.Is(Vocabularies.Rdf.type).NamedGraph.SelectedBy<TestGraphSelector>();
+            }
         }
     }
 }

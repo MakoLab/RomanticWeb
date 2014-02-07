@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using NullGuard;
@@ -25,7 +24,7 @@ namespace RomanticWeb.Converters
         /// <param name="objectNode">The root node of the structure</param>
         /// <param name="entityStore">Store, from which relevant additional nodes are read</param>
         /// <param name="predicate">Predicate for this node.</param>
-        public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public bool CanConvert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             return (objectNode.AsDynamic().rdf.Has_first)&&(entityStore.EntityIsCollectionRoot(objectNode));
         }
@@ -49,7 +48,7 @@ namespace RomanticWeb.Converters
         /// <param name="blankNode">The root node of the structure</param>
         /// <param name="entityStore">Store, from which relevant additional nodes are read</param>
         /// <param name="predicate">Predicate for this node.</param>
-        public object Convert(IEntity blankNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public object Convert(IEntity blankNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             // todo: consider removing dynamic typing
             dynamic potentialList=blankNode.AsDynamic();

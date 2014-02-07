@@ -96,7 +96,7 @@ namespace RomanticWeb
             return new EntityQueryable<IEntity>(this,_entitySource,_mappings);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc />e
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
             return new EntityQueryable<T>(this,_entitySource,_mappings);
@@ -276,7 +276,7 @@ namespace RomanticWeb
         {
             if (mapping==null)
             {
-                LogTo.Warn("No mapping found for type {0}",typeof(T));
+                throw new ArgumentNullException("mapping", string.Format("Mappings not found for type {0}",typeof(T)));
             }
 
             var proxy=new EntityProxy(Store,entity,mapping,_nodeConverter);

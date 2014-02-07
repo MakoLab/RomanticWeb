@@ -16,13 +16,13 @@ namespace RomanticWeb.Converters
     public class DefaultUriConverter:IComplexTypeConverter
     {
         /// <inheritdoc />
-        public object Convert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public object Convert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             return objectNode.Id.Uri;
         }
 
         /// <inheritdoc />
-        public bool CanConvert(IEntity objectNode,IEntityStore entityStore,[AllowNull] IPropertyMapping predicate)
+        public bool CanConvert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
         {
             return (predicate!=null)&&(typeof(Uri).IsAssignableFrom(predicate.ReturnType.FindItemType()))&&(!(objectNode.Id is BlankId));
         }

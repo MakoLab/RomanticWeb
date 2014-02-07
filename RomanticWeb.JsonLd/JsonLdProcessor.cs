@@ -63,8 +63,8 @@ namespace RomanticWeb.JsonLd
             {
                 foreach (var dGraph in _distinctGrafs)
                 {
-                    var graphDistinctSubjects = quads.Where(graph => graph.Graph == dGraph).OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString()
-                                                                                                                     : x.Subject.ToString()).Select(x => x.Subject).Distinct();
+                    var graphDistinctSubjects = quads.Where(graph => graph.Graph == dGraph && graph.Predicate != First && graph.Predicate != Rest)
+                                    .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() : x.Subject.ToString()).Select(x => x.Subject).Distinct();
                     var graphSerialized = graphDistinctSubjects.Select(subject => SerializeEntity(subject, context, quads, dGraph)).ToList();
                     JObject resultGraph = new JObject(new JProperty(Id,dGraph.ToString()),new JProperty(Graph, graphSerialized));
                     root.Add(resultGraph);
@@ -119,8 +119,8 @@ namespace RomanticWeb.JsonLd
                 if (_distinctGrafs.Where(gr => gr.ToString() == subject.ToString()).Count() > 0)
                 {
                     List<JObject> localSerialized = new List<JObject>();
-                    var localDistinctSubjects = quads.Where(gr => gr.Graph == subject).OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString()
-                                                                                         : x.Subject.ToString()).Select(x => x.Subject).Distinct();
+                    var localDistinctSubjects = quads.Where(gr => gr.Graph == subject && gr.Predicate != First && gr.Predicate != Rest)
+                                           .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString(): x.Subject.ToString()).Select(x => x.Subject).Distinct();
                     localSerialized = localDistinctSubjects.Select(sub => SerializeEntity(sub, context, quads, subject)).ToList();
                     JProperty graph = new JProperty(Graph, localSerialized);
                     result.Add(graph);

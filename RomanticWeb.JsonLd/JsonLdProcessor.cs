@@ -57,15 +57,16 @@ namespace RomanticWeb.JsonLd
             var topLevelSubjects = quads.Where(quad => (!blankNodes.Contains(quad.Subject))).Select(x => x.Subject).Distinct();
              _distinctGrafs = quads.Where(graph=>graph.Graph!=null).Select(x => x.Graph).Distinct();
 
-            var distinctSubjects = quads.Where(graph=>(graph.Graph==null) && graph.Predicate != first && graph.Predicate != rest)
-                                    .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() : x.Subject.ToString()).Select(x => x.Subject).Distinct();
+             var distinctSubjects = quads.Where(graph => (graph.Graph == null) && (!(graph.Predicate == first && graph.Object.IsBlank))
+                                                                             && (!(graph.Subject.IsBlank && (graph.Predicate == rest || graph.Predicate == first))))
+                                     .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() : x.Subject.ToString()).Select(x => x.Subject).Distinct();
             var serialized = distinctSubjects.Select(subject => SerializeEntity(subject, context, quads, null)).ToList();
             if (listToInitiation.Count() > 0)
             {
-                List<Node> lokalListToInitiation = new List<Node>();
-                lokalListToInitiation.AddRange(listToInitiation.OrderBy(o=>o.ToString()));
+                List<Node> localListToInitiation = new List<Node>();
+                localListToInitiation.AddRange(listToInitiation.OrderBy(o=>o.ToString()).Distinct());
                 var localSerialized = serialized;
-                serialized = lokalListToInitiation.Select(o => SerializeEntity(o, context, quads, null)).ToList();
+                serialized = localListToInitiation.Select(o => SerializeEntity(o, context, quads, null)).ToList();
                 serialized.AddRange(localSerialized);
             }
             root = new JArray(serialized);
@@ -144,18 +145,41 @@ namespace RomanticWeb.JsonLd
         private List<Node> GetList(Node Graph, IEnumerable<EntityQuad> quads, IEnumerable<EntityQuad> localQuad)
         {
             List<Node> resultObject = new List<Node>();
-            Node restObject = localQuad.Where(q => q.Predicate == rest).Select(q => q.Object).First();
+            int isBlank=0;
 
-            resultObject.Add(localQuad.Where(q => q.Predicate == first).Select(q => q.Object).First());
-            if (restObject != nil)
+            if (localQuad.Where(q => q.Predicate == first).Count() > 0)
             {
-                var restQuads = quads.Where(q => q.Subject == restObject && q.Graph == Graph && (q.Predicate == first || q.Predicate == rest));
-                if (restQuads.Count() > 0)
+                Node firstObject = localQuad.Where(q => q.Predicate == first).Select(q => q.Object).First();
+                resultObject.Add(firstObject);
+                if (firstObject.IsBlank)
                 {
-                    resultObject.AddRange(GetList(Graph, quads, restQuads));
+                    isBlank++;
                 }
             }
-            
+            if (localQuad.Where(q => q.Predicate == rest).Count() > 0)
+            {
+                Node restObject = localQuad.Where(q => q.Predicate == rest).Select(q => q.Object).First();
+                if (restObject != nil)
+                {
+                    var restQuads = quads.Where(q => q.Subject == restObject && q.Graph == Graph && (q.Predicate == first || q.Predicate == rest));
+                    if (restQuads.Count() > 0)
+                    {
+                        resultObject.AddRange(GetList(Graph, quads, restQuads));
+                    }
+                }
+                if (restObject.IsBlank)
+                {
+                    isBlank++;
+                }
+            }
+
+            if (isBlank==2)
+            {
+                List<Node> list = new List<Node>(resultObject);
+                listToInitiation.AddRange(list.Where(o => o.IsBlank));
+
+            } 
+                                
             return resultObject;
         }
 
@@ -170,16 +194,15 @@ namespace RomanticWeb.JsonLd
                         returnObject.Add(listProperty);
                     }
                     else
-                    {  
-                        var localQuads = quads.Where(q => q.Subject == Object && q.Graph == Graph && (q.Predicate == first || q.Predicate == rest));
-                        if (localQuads.Count() > 0 && NestedList)
-                        {
-                            JProperty listProperty;
-                            List<Node> list = new List<Node>(GetList(Graph, quads, localQuads));
-                            listToInitiation.AddRange(list.Where(o => o.IsBlank));
-                            listProperty = new JProperty("@list", new JArray(list.Select(o => ReturnProperties(false,o, Graph, quads))));
-                            returnObject.Add(listProperty);
-                        }
+                    {
+                         var localQuads = quads.Where(q => q.Subject == Object && Object.IsBlank && q.Graph == Graph && (q.Predicate == first || q.Predicate == rest));
+                            if (localQuads.Count() > 0 && NestedList)
+                            {
+                                JProperty listProperty;
+                                List<Node> list = new List<Node>(GetList(Graph, quads, localQuads));
+                                listProperty = new JProperty("@list", new JArray(list.Select(o => ReturnProperties(false, o, Graph, quads))));
+                                returnObject.Add(listProperty);
+                            }
                         else
                         {
                             JProperty id = new JProperty(Id, Object.IsBlank ? "_:" + Object.BlankNode.ToString() : Object.ToString());

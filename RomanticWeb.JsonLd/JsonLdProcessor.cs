@@ -66,8 +66,7 @@ namespace RomanticWeb.JsonLd
             ReturnLists(quads);
             var root = new JArray();
             var context = new JObject();
-            var topLevelSubjects = quads.Where(quad => (!nodesInList.Contains(quad.Subject))).Select(x => x.Subject).Distinct();
-             _distinctGrafs = quads.Where(graph=>graph.Graph!=null).Select(x => x.Graph).Distinct();
+            _distinctGrafs = quads.Where(graph=>graph.Graph!=null).Select(x => x.Graph).Distinct();
             var distinctSubjects = quads.Where(graph => (graph.Graph == null && (!nodesInList.Contains(graph.Subject))))
                          .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString() : x.Subject.ToString()).Select(x => x.Subject).Distinct();
             var serialized = distinctSubjects.Select(subject => SerializeEntity(subject, context, quads, null)).ToList();

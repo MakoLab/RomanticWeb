@@ -28,12 +28,13 @@ namespace RomanticWeb.Linq
         /// <param name="entityContext">Entity factory to be used when creating objects.</param>
         /// <param name="entitySource">Entity source.</param>
         /// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
-        public EntityQueryExecutor(IEntityContext entityContext,IEntitySource entitySource,IMappingsRepository mappingsRepository)
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
+        public EntityQueryExecutor(IEntityContext entityContext,IEntitySource entitySource,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
         {
             _entityContext=entityContext;
             _entitySource=entitySource;
             _mappingsRepository=mappingsRepository;
-            _modelVisitor=new EntityQueryModelVisitor(_mappingsRepository);
+            _modelVisitor=new EntityQueryModelVisitor(_mappingsRepository,baseUriSelectionPolicy);
         }
         #endregion
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using NullGuard;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
@@ -20,8 +21,9 @@ namespace RomanticWeb.Linq
     public class EntityQueryVisitor:ThrowingExpressionTreeVisitor,IQueryVisitor
     {
         #region Fields
+        private readonly IMappingsRepository _mappingsRepository;
+        private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
         private Query _query;
-        private IMappingsRepository _mappingsRepository;
         private Stack<IQueryComponentNavigator> _currentComponent;
         private QueryComponent _lastComponent;
         private string _itemNameOverride;
@@ -31,9 +33,11 @@ namespace RomanticWeb.Linq
         /// <summary>Creates an instance of the query visitor.</summary>
         /// <param name="query">Query to be filled.</param>
         /// <param name="mappingsRepository">Mappings repository used to resolve strongly typed properties and types.</param>
-        internal EntityQueryVisitor(Query query,IMappingsRepository mappingsRepository):base()
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
+        internal EntityQueryVisitor(Query query,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy):base()
         {
             _mappingsRepository=mappingsRepository;
+            _baseUriSelectionPolicy=baseUriSelectionPolicy;
             _currentComponent=new Stack<IQueryComponentNavigator>();
             _query=query;
             _itemNameOverride=null;
@@ -285,18 +289,18 @@ namespace RomanticWeb.Linq
                 IEnumerable value=(IEnumerable)expression.Value;
                 foreach (object item in value)
                 {
-                    list.Values.Add(new Literal(item));
+                    list.Values.Add(new Literal(ResolveRelativeUriIfNecessery(item)));
                 }
 
                 _lastComponent=list;
             }
             else if (expression.Value is IEntity)
             {
-                HandleComponent(_lastComponent = new Literal(((IEntity)expression.Value).Id.Uri));
+                HandleComponent(_lastComponent=new Literal(((IEntity)expression.Value).Id.Uri));
             }
             else
             {
-                HandleComponent(_lastComponent=new Literal(expression.Value));
+                HandleComponent(_lastComponent=new Literal(ResolveRelativeUriIfNecessery(expression.Value)));
             }
 
             return expression;
@@ -317,7 +321,7 @@ namespace RomanticWeb.Linq
                     query.Elements.Add(entityAccessor);
                 }
 
-                EntityQueryModelVisitor queryModelVisitor=new EntityQueryModelVisitor(query,_mappingsRepository);
+                EntityQueryModelVisitor queryModelVisitor=new EntityQueryModelVisitor(query,_mappingsRepository,_baseUriSelectionPolicy);
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
                 HandleComponent(queryModelVisitor.Result);
                 CleanupComponent(_lastComponent);
@@ -550,6 +554,31 @@ namespace RomanticWeb.Linq
             }
 
             return result;
+        }
+
+        private object ResolveRelativeUriIfNecessery(object value)
+        {
+            if ((value!=null)&&(_baseUriSelectionPolicy!=null))
+            {
+                if (value is Uri)
+                {
+                    Uri uri=(Uri)value;
+                    if (!uri.IsAbsoluteUri)
+                    {
+                        value=new Uri(_baseUriSelectionPolicy.SelectBaseUri(new EntityId(uri)),uri);
+                    }
+                }
+                else if (value is EntityId)
+                {
+                    EntityId entityId=(EntityId)value;
+                    if (!entityId.Uri.IsAbsoluteUri)
+                    {
+                        value=entityId.MakeAbsolute(_baseUriSelectionPolicy.SelectBaseUri(entityId));
+                    }
+                }
+            }
+
+            return value;
         }
         #endregion
     }

@@ -93,13 +93,13 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<IEntity>(this,_entitySource,_mappings);
+            return new EntityQueryable<IEntity>(this,_entitySource,_mappings,_baseUriSelector);
         }
 
         /// <inheritdoc />e
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
-            return new EntityQueryable<T>(this,_entitySource,_mappings);
+            return new EntityQueryable<T>(this,_entitySource,_mappings,_baseUriSelector);
         }
 
         /// <inheritdoc />

@@ -26,6 +26,7 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntitySource> _entitySource;
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
+        private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
         private IOntologyProvider _ontologies;
 
         [SetUp]
@@ -35,6 +36,8 @@ namespace RomanticWeb.Tests.Linq
             MappingContext mappingContext=new MappingContext(_ontologies,new DefaultGraphSelector());
             _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
             _mappings.RebuildMappings(mappingContext);
+            _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
+            _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);
             
             _entityStore=new Mock<IEntityStore>(MockBehavior.Strict);
@@ -44,7 +47,7 @@ namespace RomanticWeb.Tests.Linq
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>(),false)).Returns((EntityId id,bool checkIfExists) => CreatePersonEntity(id));
             _entityContext.Setup(context => context.Store).Returns(_entityStore.Object);
 
-            persons=new EntityQueryable<IPerson>(_entityContext.Object,_entitySource.Object,_mappings);
+            persons=new EntityQueryable<IPerson>(_entityContext.Object,_entitySource.Object,_mappings,_baseUriSelectionPolicy.Object);
         }
 
         [TearDown]

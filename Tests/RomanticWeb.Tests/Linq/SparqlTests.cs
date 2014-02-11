@@ -25,6 +25,7 @@ namespace RomanticWeb.Tests.Linq
         private TripleStore _store;
         private TestMappingsRepository _mappingsRepository;
         private Mock<IEntityContextFactory> _factory;
+        private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
         private CompositionContainer _container;
 
         public interface IPerson:IEntity
@@ -46,11 +47,14 @@ namespace RomanticWeb.Tests.Linq
             _factory=new Mock<IEntityContextFactory>();
             _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => _container.ComposeParts(component));
 
+            _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
+            _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
+
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
             var mappingContext = new MappingContext(ontologyProvider, new DefaultGraphSelector());
             _mappingsRepository.RebuildMappings(mappingContext);
-            _entityContext=new EntityContext(_factory.Object,_mappingsRepository,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),null);
+            _entityContext=new EntityContext(_factory.Object,_mappingsRepository,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),_baseUriSelectionPolicy.Object);
         }
 
         [Test]

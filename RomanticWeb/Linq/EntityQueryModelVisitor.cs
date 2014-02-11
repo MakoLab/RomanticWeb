@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using NullGuard;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
@@ -22,6 +23,7 @@ namespace RomanticWeb.Linq
     {
         #region Fields
         private readonly IMappingsRepository _mappingsRepository;
+        private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
         private EntityQueryVisitor _visitor;
         private Query _query;
         private EntityAccessor _mainFromComponent;
@@ -32,13 +34,14 @@ namespace RomanticWeb.Linq
         #region Constructors
         /// <summary>Default constructor with mappings repository passed.</summary>
         /// <param name="mappingsRepository">Mappings repository to be used to resolve properties.</param>
-        public EntityQueryModelVisitor(IMappingsRepository mappingsRepository):this(new Query(),mappingsRepository)
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
+        public EntityQueryModelVisitor(IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy):this(new Query(),mappingsRepository,baseUriSelectionPolicy)
         {
         }
 
-        internal EntityQueryModelVisitor(Query query,IMappingsRepository mappingsRepository)
+        internal EntityQueryModelVisitor(Query query,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
         {
-            _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_mappingsRepository=mappingsRepository);
+            _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_mappingsRepository=mappingsRepository,_baseUriSelectionPolicy=baseUriSelectionPolicy);
             _subject=null;
         }
         #endregion

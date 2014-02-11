@@ -19,7 +19,7 @@
     ]
   },
   {
-    "@id": "http://example.com",
+    "@id": "http://example.com/",
     "http://example.com/property": [ { "@id": "_:a" } ]
   }
 ]

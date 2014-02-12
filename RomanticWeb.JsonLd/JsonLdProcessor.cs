@@ -71,6 +71,7 @@ namespace RomanticWeb.JsonLd
                 {
                     GetListsFromGraph(quads, dGraph);
                 }
+
             _distinctGrafs = _distinctGrafs.Where(g => g != null);
 
             var root = new JArray();
@@ -169,22 +170,19 @@ namespace RomanticWeb.JsonLd
         {
             var lists = quads.Where(q => (q.Graph == graph && q.Subject.IsBlank && q.Predicate == rest && q.Object == nil));
             Node localGraph = graph != null ? graph : Node.ForLiteral("default");
-            //if (lists.Count() > 0)
-            //{
-                JObject locList = new JObject();
-                foreach (var list in lists)
-                {
+            JObject locList = new JObject();
+            foreach (var list in lists)
+            {
                     listInGraph.Clear();
                     PrepareLists(list, quads);
                     string indexer = listInGraph.First().ToString();
                     listInGraph.First.Remove();
                     locList.Add(new JProperty(indexer, new JArray(listInGraph)));
                     listInGraph.Clear();
-                }
+             }
 
                 resLists[localGraph] = locList;
-            //}
-        }
+         }
         
         private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads)
         {

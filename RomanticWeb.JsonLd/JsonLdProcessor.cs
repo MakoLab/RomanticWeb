@@ -7,7 +7,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.JsonLd
 {
-    public class JsonLdProcessor:IJsonLdProcessor
+    public class JsonLdProcessor : IJsonLdProcessor
     {
         internal const string Id = "@id";
         internal const string Language = "@language";
@@ -22,14 +22,11 @@ namespace RomanticWeb.JsonLd
         private Node first = Node.ForUri(Rdf.first);
         private Node rest = Node.ForUri(Rdf.rest);
         private Node nil = Node.ForUri(Rdf.nil);
-        private IEnumerable<Node> _distinctGrafs;
-        private List<Node> listToInitiation = new List<Node>();
         private JArray listInGraph = new JArray();
         private bool nativeTypes = false;
-        private Dictionary<Node, JObject> resLists = new Dictionary<Node, JObject>();
         private List<Node> nodesInList = new List<Node>();
 
-        public string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false)
+        public string FromRdf(IEnumerable<EntityQuad> dataset, bool userRdfType = false, bool useNativeTypes = false)
         {
             nativeTypes = useNativeTypes;
             if (!userRdfType)
@@ -48,8 +45,8 @@ namespace RomanticWeb.JsonLd
         {
             yield break;
         }
- 
-        public string Flatten(string json,string jsonLdContext)
+
+        public string Flatten(string json, string jsonLdContext)
         {
             return json;
         }
@@ -66,64 +63,67 @@ namespace RomanticWeb.JsonLd
 
         private JArray GetJsonStructure(IEnumerable<EntityQuad> quads)
         {
-            _distinctGrafs = quads.Select(x => x.Graph).Distinct();
-            foreach (var dGraph in _distinctGrafs)
-                {
-                    GetListsFromGraph(quads, dGraph);
-                }
+            IDictionary<JToken, JObject> subjectMap = new Dictionary<JToken, JObject>();
+            var dataset = from triple in quads
+                          group triple by triple.Graph into g
+                          select g;
 
-            _distinctGrafs = _distinctGrafs.Where(g => g != null);
-
-            var root = new JArray();
-            var context = new JObject();
-            var distinctSubjects = quads.Where(q => (q.Graph == null && (!nodesInList.Contains(q.Subject))))
-                         .OrderBy(q => q.Subject.IsBlank ? "_:" + q.Subject.BlankNode.ToString() : q.Subject.ToString()).Select(q => q.Subject).Distinct();
-            var serialized = distinctSubjects.Select(subject => SerializeEntity(subject, context, quads, null)).ToList();
-
-            if (listToInitiation.Count() > 0)
+            foreach (var graph in dataset)
             {
-                List<Node> localListToInitiation = new List<Node>();
-                localListToInitiation.AddRange(listToInitiation.OrderBy(o=>o.ToString()).Distinct());
-                var localSerialized = serialized;
-                serialized = localListToInitiation.Select(o => SerializeEntity(o, context, quads, null)).ToList();
-                serialized.AddRange(localSerialized);
+                var lists = GetListsFromGraph(graph);
+
+                var graphLocal = graph;
+                var distinctSubjects = (from q in graph
+                                        where q.Graph == graphLocal.Key && (!nodesInList.Contains(q.Subject))
+                                        orderby q.Subject.IsBlank ? "_:" + q.Subject.BlankNode : q.Subject.ToString() // todo: remove ordering
+                                        select q.Subject).Distinct();
+
+                foreach (var subject in distinctSubjects)
+                {
+                    var entitySerialized = SerializeEntity(subject, graph, graph.Key, lists);
+
+                    if (graph.Key != null)
+                    {
+                        var namedGraph = new JObject();
+                        namedGraph[Id] = graph.Key.ToString();
+                        namedGraph[Graph] = new JArray(entitySerialized);
+                        entitySerialized = namedGraph;
+                    }
+
+                    if (subjectMap.ContainsKey(entitySerialized[Id]))
+                    {
+                        foreach (var property in entitySerialized.Properties())
+                        {
+                            subjectMap[entitySerialized[Id]][property.Name] = property.Value;
+                        }
+                    }
+                    else
+                    {
+                        subjectMap[entitySerialized[Id]] = entitySerialized;
+                    }
+                }
             }
 
-            root = new JArray(serialized);
-            if (_distinctGrafs.Count() > 0)
-            {
-                foreach (var dGraph in _distinctGrafs)
-                {
-                    var graphDistinctSubjects = quads.Where(q => q.Graph == dGraph && q.Predicate != first && q.Predicate != rest)
-                                    .OrderBy(q => q.Subject.IsBlank ? "_:" + q.Subject.BlankNode.ToString() : q.Subject.ToString()).Select(q => q.Subject).Distinct();
-                    var graphSerialized = graphDistinctSubjects.Select(subject => SerializeEntity(subject, context, quads, dGraph)).ToList();
-                    JObject resultGraph = new JObject(new JProperty(Id,dGraph.ToString()),new JProperty(Graph, graphSerialized));
-                    root.Add(resultGraph);
-                }
-            }
-            
-            return root;        
+            return new JArray(subjectMap.Values);
         }
 
-        private JObject SerializeEntity(Node subject, JObject context, IEnumerable<EntityQuad> quads, Node graphName)
+        private JObject SerializeEntity(Node subject, IEnumerable<EntityQuad> quads, Node graphName, JObject listsInGraph)
         {
-            Node serializeGraph = graphName != null ? graphName : Node.ForLiteral("default");
-            JObject listsInGraph = new JObject(resLists[serializeGraph]);
             var groups = from quad in quads
                          where quad.Subject == subject && quad.Graph == graphName
                          group quad.Object by quad.Predicate into g
                          select new
                          {
-                             Predicate =(g.Key == type ? rdfType : g.Key),
+                             Predicate = (g.Key == type ? rdfType : g.Key),
                              Objects = g
                          }
-                         into selection
-                         orderby selection.Predicate
-                         select selection;
+                             into selection
+                             orderby selection.Predicate
+                             select selection;
 
             JObject result = new JObject();
-            int i=0;
-                        
+            int i = 0;
+
             foreach (var g in groups)
             {
                 JProperty res = g.Predicate.ToString().Replace("\"", String.Empty) == Type ?
@@ -139,8 +139,8 @@ namespace RomanticWeb.JsonLd
                                               g.Predicate.ToString(),
                                               new JArray(
                                                      from o in g.Objects
-                                                     select ReturnProperties(true, o, graphName, quads, listsInGraph))));
-                if (i==0)   
+                                                     select ReturnProperties(o, listsInGraph))));
+                if (i == 0)
                 {
                     result.AddFirst(new JProperty(Id, subject.IsBlank ? "_:" + subject.BlankNode.ToString() : subject.ToString()));
                     i++;
@@ -149,250 +149,182 @@ namespace RomanticWeb.JsonLd
                 result.Add(res);
             }
 
-            if (graphName == null)
-            {
-                if (_distinctGrafs.Where(gr => gr.ToString() == subject.ToString()).Count() > 0)
-                {
-                    List<JObject> localSerialized = new List<JObject>();
-                    var localDistinctSubjects = quads.Where(gr => gr.Graph == subject && gr.Predicate != first && gr.Predicate != rest)
-                                           .OrderBy(x => x.Subject.IsBlank ? "_:" + x.Subject.BlankNode.ToString(): x.Subject.ToString()).Select(x => x.Subject).Distinct();
-                    localSerialized = localDistinctSubjects.Select(sub => SerializeEntity(sub, context, quads, subject)).ToList();
-                    JProperty graph = new JProperty(Graph, localSerialized);
-                    result.Add(graph);
-                    _distinctGrafs=_distinctGrafs.Where(g => g.ToString() != subject.ToString());
-                }
-            }
-
-        return result;
+            return result;
         }
 
-        private void GetListsFromGraph(IEnumerable<EntityQuad> quads, Node graph)
+        private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads)
         {
-            var lists = quads.Where(q => (q.Graph == graph && q.Subject.IsBlank && q.Predicate == rest && q.Object == nil));
-            Node localGraph = graph != null ? graph : Node.ForLiteral("default");
+            var lists = quads.Where(q => (q.Subject.IsBlank && q.Predicate == rest && q.Object == nil));
             JObject locList = new JObject();
             foreach (var list in lists)
             {
-                    listInGraph.Clear();
-                    PrepareLists(list, quads);
-                    string indexer = listInGraph.First().ToString();
-                    listInGraph.First.Remove();
-                    locList.Add(new JProperty(indexer, new JArray(listInGraph)));
-                    listInGraph.Clear();
-             }
+                listInGraph.Clear();
+                PrepareLists(list, quads);
+                string indexer = listInGraph.First().ToString();
+                listInGraph.First.Remove();
+                locList.Add(new JProperty(indexer, new JArray(listInGraph)));
+                listInGraph.Clear();
+            }
 
-                resLists[localGraph] = locList;
-         }
-        
+            return locList;
+        }
+
         private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads)
         {
-             JObject result = new JObject();
-             Node localSubject = list.Subject;
-             int anotherPropertyInList = quads.Where(q => q.Subject == localSubject && q.Predicate != type).Count();
-             var firstValues = quads.Where(q => (q.Subject == localSubject && q.Predicate == first)).Select(q => q.Object);
-             Node firstValue = firstValues.First();
-             Node restValue = list.Object;
-             listInGraph.AddFirst(ReturnListProperties(firstValue));
-             nodesInList.Add(localSubject);
-             
-             IEnumerable<EntityQuad> quad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == rest && q.Object == localSubject));
-                 if (anotherPropertyInList > 2 || firstValues.Count()>1)
-                 {
-                     if (listInGraph.Count() > 1)
-                     {
-                         listInGraph.First.Remove();
-                         nodesInList = nodesInList.Where(n => n != localSubject).ToList();
-                     }
+            JObject result = new JObject();
+            Node localSubject = list.Subject;
+            int anotherPropertyInList = quads.Where(q => q.Subject == localSubject && q.Predicate != type).Count();
+            var firstValues = quads.Where(q => (q.Subject == localSubject && q.Predicate == first)).Select(q => q.Object);
+            Node firstValue = firstValues.First();
+            Node restValue = list.Object;
+            listInGraph.AddFirst(ReturnListProperties(firstValue));
+            nodesInList.Add(localSubject);
 
-                     listInGraph.AddFirst(restValue.ToString());
-                 }
-                 else
-                 if (quad.Count() == 1)
-                 {
-                     PrepareLists(quad.First(), quads);
-                 }
-                 else
-                 {
-                     IEnumerable<EntityQuad> firstQuad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == first && q.Object == localSubject));
-                     if (firstQuad.Count() == 1)
-                     {
-                         listInGraph.First.Remove();
-                         nodesInList = nodesInList.Where(n => n != localSubject).ToList();
-                         listInGraph.AddFirst((restValue.IsBlank && firstValue.IsBlank) ? localSubject.ToString() : restValue.ToString());
-                     }
-                     else
-                     {
-                         listInGraph.AddFirst(localSubject.ToString());
-                     }
-                 }
-        }
-
-        private List<Node> GetList(Node Graph, IEnumerable<EntityQuad> quads, IEnumerable<EntityQuad> localQuad)
-        {
-            List<Node> resultObject = new List<Node>();
-            int isBlank=0;
-
-            if (localQuad.Where(q => q.Predicate == first).Count() > 0)
+            IEnumerable<EntityQuad> quad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == rest && q.Object == localSubject));
+            if (anotherPropertyInList > 2 || firstValues.Count() > 1)
             {
-                Node firstObject = localQuad.Where(q => q.Predicate == first).Select(q => q.Object).First();
-                resultObject.Add(firstObject);
-                if (firstObject.IsBlank)
+                if (listInGraph.Count() > 1)
                 {
-                    isBlank++;
+                    listInGraph.First.Remove();
+                    nodesInList = nodesInList.Where(n => n != localSubject).ToList();
                 }
-            }
 
-            if (localQuad.Where(q => q.Predicate == rest).Count() > 0)
-            {
-                Node restObject = localQuad.Where(q => q.Predicate == rest).Select(q => q.Object).First();
-                if (restObject != nil)
+                listInGraph.AddFirst(restValue.ToString());
+            }
+            else
+                if (quad.Count() == 1)
                 {
-                    var restQuads = quads.Where(q => q.Subject == restObject && q.Graph == Graph && (q.Predicate == first || q.Predicate == rest));
-                    if (restQuads.Count() > 0)
+                    PrepareLists(quad.First(), quads);
+                }
+                else
+                {
+                    IEnumerable<EntityQuad> firstQuad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == first && q.Object == localSubject));
+                    if (firstQuad.Count() == 1)
                     {
-                        resultObject.AddRange(GetList(Graph, quads, restQuads));
+                        listInGraph.First.Remove();
+                        nodesInList = nodesInList.Where(n => n != localSubject).ToList();
+                        listInGraph.AddFirst((restValue.IsBlank && firstValue.IsBlank) ? localSubject.ToString() : restValue.ToString());
+                    }
+                    else
+                    {
+                        listInGraph.AddFirst(localSubject.ToString());
                     }
                 }
-
-                if (restObject.IsBlank)
-                {
-                    isBlank++;
-                }
-            }
-
-            if (isBlank==2)
-            {
-                List<Node> list = new List<Node>(resultObject);
-                listToInitiation.AddRange(list.Where(o => o.IsBlank));
-            } 
-                                
-            return resultObject;
         }
 
-        private JObject ReturnListProperties(Node Object)
+        private JObject ReturnListProperties(Node @object)
         {
             JObject returnObject = new JObject();
-            if (!Object.IsLiteral)
+            if (!@object.IsLiteral)
             {
-                JProperty id = new JProperty(Id, Object.IsBlank ? "_:" + Object.BlankNode.ToString() : Object.ToString());
+                JProperty id = new JProperty(Id, @object.IsBlank ? "_:" + @object.BlankNode.ToString() : @object.ToString());
                 returnObject.Add(id);
             }
             else
             {
-                JProperty value = new JProperty(Value, Object.ToString().Replace("\"", String.Empty));
+                JProperty value = new JProperty(Value, @object.ToString().Replace("\"", String.Empty));
                 returnObject.Add(value);
 
-                if (Object.Language != null)
+                if (@object.Language != null)
                 {
-                    JProperty language = new JProperty(Language, Object.Language.ToString().Replace("\"", String.Empty));
+                    JProperty language = new JProperty(Language, @object.Language.ToString().Replace("\"", String.Empty));
                     returnObject.Add(language);
                 }
 
-                if (Object.DataType != null)
+                if (@object.DataType != null)
                 {
-                    JProperty localType = new JProperty(Type, Object.DataType.ToString().Replace("\"", String.Empty));
+                    JProperty localType = new JProperty(Type, @object.DataType.ToString().Replace("\"", String.Empty));
                     returnObject.Add(localType);
                 }
-            } 
+            }
 
             return returnObject;
         }
 
-        private JObject ReturnProperties(bool NestedList, Node Object, Node Graph, IEnumerable<EntityQuad> quads, JObject lists)
+        private JObject ReturnProperties(Node @object, JObject lists)
         {
-            Graph = Graph != null ? Graph : Node.ForLiteral("default");
             JObject returnObject = new JObject();
-            if (!Object.IsLiteral)
+            if (!@object.IsLiteral)
+            {
+                if (@object == nil)
                 {
-                    if (Object == nil)
+                    JProperty listProperty = new JProperty(List, new JArray());
+                    returnObject.Add(listProperty);
+                }
+                else
+                {
+                    if (lists.Property(@object.ToString()) != null)
                     {
-                        JProperty listProperty = new JProperty(List, new JArray());
-                        returnObject.Add(listProperty);
+                        var localList = lists.Property(@object.ToString());
+                        if ((object)localList != null)
+                        {
+                            returnObject.Add(new JProperty(List, localList.Value));
+                        }
                     }
                     else
                     {
-                        if (lists.Property(Object.ToString()) != null)
-                        {
-                            var localList = resLists[Graph].Property(Object.ToString());
-                            if ((object)localList != null)
-                            {
-                                returnObject.Add(new JProperty(List, localList.Value));
-                            }
-                        }
-                        else
-                        {
-                            JProperty id = new JProperty(Id, Object.IsBlank ? "_:" + Object.BlankNode.ToString() : Object.ToString());
-                            returnObject.Add(id);
-                        }
+                        JProperty id = new JProperty(Id, @object.IsBlank ? "_:" + @object.BlankNode.ToString() : @object.ToString());
+                        returnObject.Add(id);
+                    }
+                }
+            }
+            else
+            {
+                if (!nativeTypes)
+                {
+                    JProperty value = new JProperty(Value, @object.ToString().Replace("\"", String.Empty));
+                    returnObject.Add(value);
+
+                    if (@object.DataType != null)
+                    {
+                        JProperty localType = new JProperty(Type, @object.DataType.ToString().Replace("\"", String.Empty));
+                        returnObject.Add(localType);
                     }
                 }
                 else
                 {
-                    if (!nativeTypes)
+                    if (@object.DataType != null)
                     {
-                        JProperty value = new JProperty(Value, Object.ToString().Replace("\"", String.Empty));
-                        returnObject.Add(value);
-
-                        if (Object.DataType != null)
+                        object objectValue = new object();
+                        if (@object.DataType.ToString() == Xsd.Boolean.ToString())
                         {
-                            JProperty localType = new JProperty(Type, Object.DataType.ToString().Replace("\"", String.Empty));
+                            objectValue = Convert.ToBoolean(@object.Literal.ToString());
+                            JProperty value = new JProperty(Value, objectValue);
+                            returnObject.Add(value);
+                        }
+                        else if (@object.DataType.ToString() == Xsd.Integer.ToString())
+                        {
+                            objectValue = Convert.ToInt64(@object.Literal.ToString());
+                            JProperty value = new JProperty(Value, objectValue);
+                            returnObject.Add(value);
+                        }
+                        else if (@object.DataType.ToString() == Xsd.Double.ToString())
+                        {
+                            double doubleVal;
+                            double.TryParse(@object.Literal.ToString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out doubleVal).ToString();
+                            objectValue = doubleVal;
+                            JProperty value = new JProperty(Value, objectValue);
+                            returnObject.Add(value);
+                        }
+                        else
+                        {
+                            objectValue = @object.ToString().Replace("\"", String.Empty);
+                            JProperty value = new JProperty(Value, objectValue);
+                            returnObject.Add(value);
+                            JProperty localType = new JProperty(Type, @object.DataType.ToString());
                             returnObject.Add(localType);
                         }
                     }
-                    else
-                    {
-                        if (Object.DataType != null)
-                        {
-                            object objectValue = new object();
-                            if (Object.DataType.ToString()==Xsd.Boolean.ToString())
-                            {
-                                objectValue = Convert.ToBoolean(Object.Literal.ToString());
-                                JProperty value = new JProperty(Value, objectValue);
-                                returnObject.Add(value);                                
-                            }
-                            else if (Object.DataType.ToString() == Xsd.Integer.ToString())
-                            {
-                                objectValue = Convert.ToInt64(Object.Literal.ToString());
-                                JProperty value = new JProperty(Value, objectValue);
-                                returnObject.Add(value);
-                            }
-                            else if (Object.DataType.ToString() == Xsd.Double.ToString())
-                            {
-                                double doubleVal;
-                                double.TryParse(Object.Literal.ToString(), System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture, out doubleVal).ToString();
-                                objectValue = doubleVal;
-                                JProperty value = new JProperty(Value, objectValue);
-                                returnObject.Add(value);
-                            }
-                            else
-                            {
-                                objectValue = Object.ToString().Replace("\"", String.Empty);
-                                JProperty value = new JProperty(Value, objectValue);
-                                returnObject.Add(value);
-                                JProperty localType = new JProperty(Type, Object.DataType.ToString());
-                                returnObject.Add(localType);
-                            }
-                        }
-                    }
+                }
 
-                    if (Object.Language != null)
-                    {
-                        JProperty language = new JProperty(Language, Object.Language.ToString().Replace("\"", String.Empty));
-                        returnObject.Add(language);
-                    }
-                } 
+                if (@object.Language != null)
+                {
+                    JProperty language = new JProperty(Language, @object.Language.ToString().Replace("\"", String.Empty));
+                    returnObject.Add(language);
+                }
+            }
 
             return returnObject;
-        }
-
-        private string GetJsonPropertyForPredicate(JObject context, Node node)
-        {
-            return node.Uri.ToString();
-        }
-
-        private JArray WrapChildrenInArray(IEnumerable<JToken> children)
-        {
-            return new JArray(children.ToArray());
         }
     }
 }

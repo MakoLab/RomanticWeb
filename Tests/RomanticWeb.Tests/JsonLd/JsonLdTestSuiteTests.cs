@@ -19,7 +19,7 @@ namespace RomanticWeb.Tests.JsonLd
     {
         private readonly string _testsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"JsonLd\test-suite\tests");
 
-        private JsonLdProcessor _processor;
+        private IJsonLdProcessor _processor;
 
         [SetUp]
         public void Setup()
@@ -28,20 +28,29 @@ namespace RomanticWeb.Tests.JsonLd
         }
 
         [TestCaseSource("RdfToJsonTestCases")]
-        public void RDF_to_JSON_test_suite(string input, string expected,bool userRdfType,bool useNativeTypes)
+        public void RDF_to_JSON_test_suite(string input,string expected,bool userRdfType,bool useNativeTypes)
         {
             // given
             IEnumerable<EntityQuad> quads=GetQuads(input);
+            Func<IEnumerable<EntityQuad>,string> processDatasetFunc=q => _processor.FromRdf(q);
+            if (userRdfType)
+            {
+                processDatasetFunc=q => _processor.FromRdf(q,userRdfType:true);
+            }
+            else if (useNativeTypes)
+            {
+                processDatasetFunc=q => _processor.FromRdf(q,useNativeTypes:true);
+            }
 
             // when
-            string output = _processor.FromRdf(quads);
-            dynamic actualJson = JsonConvert.DeserializeObject(output);
-            dynamic expectedJson = JsonConvert.DeserializeObject(File.ReadAllText(expected));
+            string output = processDatasetFunc(quads);
+            dynamic actualJson=JsonConvert.DeserializeObject(output);
+            dynamic expectedJson=JsonConvert.DeserializeObject(File.ReadAllText(expected));
 
             LogExpectedAndActualJson(expectedJson.ToString(),actualJson.ToString());
 
             // then
-            Assert.That(JToken.DeepEquals(actualJson, expectedJson));
+            Assert.That(JToken.DeepEquals(actualJson,expectedJson));
         }
 
         private static void LogExpectedAndActualJson(string expectedJson,string actualJson)

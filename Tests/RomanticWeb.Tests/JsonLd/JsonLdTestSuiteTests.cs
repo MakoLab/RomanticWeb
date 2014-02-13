@@ -28,29 +28,49 @@ namespace RomanticWeb.Tests.JsonLd
         }
 
         [TestCaseSource("RdfToJsonTestCases")]
-        public void RDF_to_JSON_test_suite(string input,string expected,bool userRdfType,bool useNativeTypes)
+        public void RDF_to_JSON_test_suite(string input,string expectedPath,dynamic options)
         {
             // given
             IEnumerable<EntityQuad> quads=GetQuads(input);
-            Func<IEnumerable<EntityQuad>,string> processDatasetFunc=q => _processor.FromRdf(q);
-            if (userRdfType)
+            Func<string> processDatasetFunc=() => _processor.FromRdf(quads);
+            if (options!=null)
             {
-                processDatasetFunc=q => _processor.FromRdf(q,userRdfType:true);
+                if (((bool?)options.useRdfType).HasValue)
+                {
+                    processDatasetFunc=() => _processor.FromRdf(quads,userRdfType: true);
+                }
+                else if (((bool?)options.useNativeTypes).HasValue)
+                {
+                    processDatasetFunc=() => _processor.FromRdf(quads,useNativeTypes: true);
+                }
             }
-            else if (useNativeTypes)
-            {
-                processDatasetFunc=q => _processor.FromRdf(q,useNativeTypes:true);
-            }
+
+            // when, then
+            ExecuteTest(processDatasetFunc,expectedPath);
+        }
+
+        [TestCaseSource("ExpandTestsCases")]
+        public void Expand_test_suite(string input,string expectedPath,dynamic options)
+        {
+            // given
+            string inputJson=File.ReadAllText(input);
+            Func<string> expandTestFunc=() => _processor.Expand(inputJson);
+
+            // when, then
+            ExecuteTest(expandTestFunc,expectedPath);
+        }
+
+        private static void ExecuteTest(Func<string> getTestResult,string expectedPath)
+        {
+            // given
+            dynamic expectedJson = JsonConvert.DeserializeObject(File.ReadAllText(expectedPath));
 
             // when
-            string output = processDatasetFunc(quads);
-            dynamic actualJson=JsonConvert.DeserializeObject(output);
-            dynamic expectedJson=JsonConvert.DeserializeObject(File.ReadAllText(expected));
-
-            LogExpectedAndActualJson(expectedJson.ToString(),actualJson.ToString());
+            dynamic actualJson = JsonConvert.DeserializeObject(getTestResult());
 
             // then
-            Assert.That(JToken.DeepEquals(actualJson,expectedJson));
+            LogExpectedAndActualJson(expectedJson.ToString(), actualJson.ToString());
+            Assert.That(JToken.DeepEquals(actualJson, expectedJson));
         }
 
         private static void LogExpectedAndActualJson(string expectedJson,string actualJson)
@@ -62,30 +82,31 @@ namespace RomanticWeb.Tests.JsonLd
             Console.WriteLine(expectedJson);
         }
 
-        private IEnumerable<object> RdfToJsonTestCases()
+        private static IEnumerable<TestCaseData> ReadTestManifests(string manifestsPath, string rootManifestName)
         {
-            string manifest=File.ReadAllText(Path.Combine(_testsRoot,"fromRdf-manifest.jsonld"));
-            dynamic manifestJson=JsonConvert.DeserializeObject(manifest);
+            var manifest=File.ReadAllText(Path.Combine(manifestsPath,rootManifestName));
+            dynamic manifestJson=JObject.Parse(manifest);
 
-            int testIndex=1;
+            int testIndex = 1;
             foreach (var testManifest in manifestJson.sequence)
             {
-                bool? useRdfType=null;
-                bool? useNativeTypes=null;
-                string input=Path.Combine(_testsRoot,(string)testManifest.input);
-                string expect=Path.Combine(_testsRoot,(string)testManifest.expect);
+                string input=Path.Combine(manifestsPath,(string)testManifest.input);
+                string expect=Path.Combine(manifestsPath,(string)testManifest.expect);
 
-                dynamic option=testManifest.option;
-                if (option!=null)
-                {
-                    useNativeTypes=option.useNativeTypes;
-                    useRdfType=option.useRdfType;
-                }
-
-                yield return new TestCaseData(input, expect,useRdfType.GetValueOrDefault(),useNativeTypes.GetValueOrDefault())
-                        .SetName(string.Format("{0:00}: {1}",testIndex++,(string)testManifest["name"]))
+                yield return new TestCaseData(input, expect, testManifest.option)
+                        .SetName(string.Format("{0:00}: {1}", testIndex++, (string)testManifest["name"]))
                         .SetDescription((string)testManifest["purpose"]);
             }
+        } 
+
+        private IEnumerable<TestCaseData> ExpandTestsCases()
+        {
+            return ReadTestManifests(_testsRoot,"expand-manifest.jsonld");
+        }
+
+        private IEnumerable<TestCaseData> RdfToJsonTestCases()
+        {
+            return ReadTestManifests(_testsRoot, "fromRdf-manifest.jsonld");
         }
 
         private IEnumerable<EntityQuad> GetQuads(string fileName)

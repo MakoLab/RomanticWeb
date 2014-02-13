@@ -56,7 +56,7 @@ namespace RomanticWeb.JsonLd
             return json;
         }
 
-        public string Expand(string json)
+        public string Expand(string json, JsonLdOptions options)
         {
             return json;
         }

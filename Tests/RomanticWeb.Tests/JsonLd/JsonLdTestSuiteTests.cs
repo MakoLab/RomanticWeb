@@ -54,7 +54,21 @@ namespace RomanticWeb.Tests.JsonLd
         {
             // given
             string inputJson=File.ReadAllText(input);
-            Func<string> expandTestFunc=() => _processor.Expand(inputJson);
+            var jsonOptions=new JsonLdOptions();
+            Func<string> expandTestFunc=() => _processor.Expand(inputJson,jsonOptions);
+
+            if (options!=null)
+            {
+                if (options.@base!=null)
+                {
+                    jsonOptions.BaseUri=new Uri((string)options.@base);
+                }
+
+                if (options.expandContext!=null)
+                {
+                    jsonOptions.ExpandContext=File.ReadAllText(Path.Combine(_testsRoot,(string)options.expandContext));
+                }
+            }
 
             // when, then
             ExecuteTest(expandTestFunc,expectedPath);

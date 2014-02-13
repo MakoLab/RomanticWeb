@@ -13,6 +13,6 @@ namespace RomanticWeb.JsonLd
 
         string Flatten(string json,string jsonLdContext);
 
-        string Expand(string json);
+        string Expand(string json, JsonLdOptions options);
     }
 }

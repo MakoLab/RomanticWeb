@@ -75,7 +75,7 @@ namespace RomanticWeb.JsonLd
 
             foreach (var graph in dataset)
             {
-                var lists = GetListsFromGraph(graph,useNativeTypes);
+                var lists = GetListsFromGraph(graph, useNativeTypes);
                 IGrouping<Node, EntityQuad> graph1 = graph;
                 var distinctSubjects = (from q in graph
                                         where q.Graph == graph1.Key && (!_nodesInList.Contains(q.Subject))
@@ -97,10 +97,7 @@ namespace RomanticWeb.JsonLd
 
                     if (subjectMap.ContainsKey(entitySerialized[Id]))
                     {
-                        foreach (var property in entitySerialized.Properties())
-                        {
-                            subjectMap[entitySerialized[Id]][property.Name] = property.Value;
-                        }
+                        subjectMap[entitySerialized[Id]].Merge(entitySerialized);
                     }
                     else
                     {
@@ -180,14 +177,14 @@ namespace RomanticWeb.JsonLd
             return result;
         }
 
-        private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads,bool useNativeTypes)
+        private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads, bool useNativeTypes)
         {
             var lists = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == _rdfNil));
             var locList = new JObject();
             foreach (var list in lists)
             {
                 _listInGraph.Clear();
-                PrepareLists(list, quads,useNativeTypes);
+                PrepareLists(list, quads, useNativeTypes);
                 string indexer = _listInGraph.First().ToString();
                 _listInGraph.First.Remove();
                 locList.Add(new JProperty(indexer, new JArray(_listInGraph)));
@@ -197,17 +194,17 @@ namespace RomanticWeb.JsonLd
             return locList;
         }
 
-        private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads,bool useNativeTypes)
+        private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads, bool useNativeTypes)
         {
             Node localSubject = list.Subject;
-            int anotherPropertyInList=quads.Count(q => q.Subject == localSubject && q.Predicate != _rdfType);
-            var firstValues=quads.Where(q => (q.Subject == localSubject && q.Predicate == _rdfFirst)).Select(q => q.Object);
-            Node firstValue=firstValues.First();
-            Node restValue=list.Object;
-            _listInGraph.AddFirst(ReturnListProperties(firstValue,useNativeTypes));
+            int anotherPropertyInList = quads.Count(q => q.Subject == localSubject && q.Predicate != _rdfType);
+            var firstValues = quads.Where(q => (q.Subject == localSubject && q.Predicate == _rdfFirst)).Select(q => q.Object);
+            Node firstValue = firstValues.First();
+            Node restValue = list.Object;
+            _listInGraph.AddFirst(ReturnListProperties(firstValue, useNativeTypes));
             _nodesInList.Add(localSubject);
 
-            IEnumerable<EntityQuad> quad=quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == localSubject));
+            IEnumerable<EntityQuad> quad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == localSubject));
             if (anotherPropertyInList > 2 || firstValues.Count() > 1)
             {
                 if (_listInGraph.Count() > 1)
@@ -221,11 +218,11 @@ namespace RomanticWeb.JsonLd
             else
                 if (quad.Count() == 1)
                 {
-                    PrepareLists(quad.First(),quads,useNativeTypes);
+                    PrepareLists(quad.First(), quads, useNativeTypes);
                 }
                 else
                 {
-                    IEnumerable<EntityQuad> firstQuad=quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfFirst && q.Object == localSubject));
+                    IEnumerable<EntityQuad> firstQuad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfFirst && q.Object == localSubject));
                     if (firstQuad.Count() == 1)
                     {
                         _listInGraph.First.Remove();
@@ -239,7 +236,7 @@ namespace RomanticWeb.JsonLd
                 }
         }
 
-        private JObject ReturnListProperties(Node @object,bool useNativeTypes)
+        private JObject ReturnListProperties(Node @object, bool useNativeTypes)
         {
             var returnObject = new JObject();
             if (!@object.IsLiteral)
@@ -249,7 +246,7 @@ namespace RomanticWeb.JsonLd
             }
             else
             {
-                returnObject.Add(GetLiteralObjectProperties(@object,useNativeTypes));
+                returnObject.Add(GetLiteralObjectProperties(@object, useNativeTypes));
             }
 
             return returnObject;
@@ -259,30 +256,30 @@ namespace RomanticWeb.JsonLd
         {
             if (!@object.IsLiteral)
             {
-                return new JObject(GetNonLiteralObjectPreoperties(@object,lists));
+                return new JObject(GetNonLiteralObjectPreoperties(@object, lists));
             }
 
-            return new JObject(GetLiteralObjectProperties(@object,nativeTypes));
+            return new JObject(GetLiteralObjectProperties(@object, nativeTypes));
         }
 
-        private JProperty GetNonLiteralObjectPreoperties(Node @object,JObject lists)
+        private JProperty GetNonLiteralObjectPreoperties(Node @object, JObject lists)
         {
-            if (@object==_rdfNil)
+            if (@object == _rdfNil)
             {
-                return new JProperty(List,new JArray());
+                return new JProperty(List, new JArray());
             }
 
-            if (lists.Property(@object.ToString())!=null)
+            if (lists.Property(@object.ToString()) != null)
             {
-                var localList=lists.Property(@object.ToString());
-                if (localList!=null)
+                var localList = lists.Property(@object.ToString());
+                if (localList != null)
                 {
-                    return new JProperty(List,localList.Value);
+                    return new JProperty(List, localList.Value);
                 }
             }
             else
             {
-                return new JProperty(Id,@object.IsBlank?"_:"+@object.BlankNode:@object.ToString());
+                return new JProperty(Id, @object.IsBlank ? "_:" + @object.BlankNode : @object.ToString());
             }
 
             return null;
@@ -290,30 +287,30 @@ namespace RomanticWeb.JsonLd
 
         private IEnumerable<JProperty> GetLiteralObjectProperties(Node @object, bool useNativeTypes)
         {
-            IList<JProperty> literalProperties=new List<JProperty>(3);
-            object value=null;
-            Uri dataType=null;
+            IList<JProperty> literalProperties = new List<JProperty>(3);
+            object value = null;
+            Uri dataType = null;
 
-            if (@object.DataType!=null)
+            if (@object.DataType != null)
             {
-                dataType=@object.DataType;
+                dataType = @object.DataType;
                 if (useNativeTypes)
                 {
-                    value=TryConvertValueToNative(@object);
-                    if (value!=null)
+                    value = TryConvertValueToNative(@object);
+                    if (value != null)
                     {
-                        dataType=null;
+                        dataType = null;
                     }
                 }
             }
 
-            if (value==null)
+            if (value == null)
             {
-                value=@object.ToString();
+                value = @object.ToString();
             }
 
-            literalProperties.Add(new JProperty(Value,value));
-            if (dataType!=null)
+            literalProperties.Add(new JProperty(Value, value));
+            if (dataType != null)
             {
                 literalProperties.Add(new JProperty(Type, dataType.ToString()));
             }
@@ -328,21 +325,21 @@ namespace RomanticWeb.JsonLd
 
         private object TryConvertValueToNative(Node @object)
         {
-            object contverted=null;
+            object contverted = null;
 
             if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Boolean) == 0)
             {
-                 contverted=Convert.ToBoolean(@object.Literal);
+                contverted = Convert.ToBoolean(@object.Literal);
             }
             else if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Integer) == 0)
             {
-                 contverted=Convert.ToInt64(@object.Literal);
+                contverted = Convert.ToInt64(@object.Literal);
             }
             else if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Double) == 0)
             {
                 double doubleVal;
                 double.TryParse(@object.Literal, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out doubleVal);
-                contverted=doubleVal;
+                contverted = doubleVal;
             }
 
             return contverted;

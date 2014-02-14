@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IJsonLdProcessor.cs" />
+    <Compile Include="JsonExtensions.cs" />
     <Compile Include="JsonLdOptions.cs" />
     <Compile Include="JsonLdProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

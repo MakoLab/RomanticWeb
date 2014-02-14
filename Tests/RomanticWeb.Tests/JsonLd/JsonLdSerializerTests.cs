@@ -38,6 +38,8 @@ namespace RomanticWeb.Tests.JsonLd
             var json = GetSerializedJson(storeId, resource);
 
             // then
+            Console.WriteLine("Expected JSON:");
+            Console.WriteLine(expected.ToString());
             Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 
@@ -53,6 +55,8 @@ namespace RomanticWeb.Tests.JsonLd
             var json = GetSerializedJson(storeId, resource);
 
             // then
+            Console.WriteLine("Expected JSON:");
+            Console.WriteLine(expected.ToString());
             Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 
@@ -68,6 +72,8 @@ namespace RomanticWeb.Tests.JsonLd
             var json = GetSerializedJson(storeId, resource);
 
             // then
+            Console.WriteLine("Expected JSON:");
+            Console.WriteLine(expected.ToString());
             Assert.That(JToken.DeepEquals(json, (JToken)expected));
         }
 

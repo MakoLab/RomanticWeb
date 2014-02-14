@@ -223,7 +223,7 @@
     <Compile Include="Ontologies\OntologyProviderBase.cs" />
     <Compile Include="Ontologies\Term.cs" />
     <Compile Include="Ontologies\OntologyExtensions.cs" />
-    <Compile Include="Ontologies\OwlOntologyFactory.cs" />
+    <Compile Include="Ontologies\XmlOntologyFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\Class.cs" />

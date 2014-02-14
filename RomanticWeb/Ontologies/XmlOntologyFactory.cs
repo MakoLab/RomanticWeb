@@ -8,7 +8,7 @@ using System.Xml.Linq;
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Converts an OWL based ontology written with XML syntax into an object representation.</summary>
-    public class OwlOntologyFactory:IOntologyFactory
+    public class XmlOntologyFactory:IOntologyFactory
     {
         private static readonly string[] AcceptedMimeTypes=new string[] { "application/rdf+xml","application/owl+xml" };
         private static readonly string[] AcceptedNodeTypes=new string[] { "Class","Property","DatatypeProperty","ObjectProperty" };
@@ -68,10 +68,7 @@ namespace RomanticWeb.Ontologies
                     where AcceptedNodeTypes.Contains(element.Name.LocalName)
                     from attribute in element.Attributes()
                     where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
-                    select (Term)Type.GetType(
-                        System.String.Format("RomanticWeb.Ontologies.{0}, RomanticWeb",element.Name.LocalName)).GetConstructor(
-                            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(string) },null).Invoke(
-                            new object[] { attribute.Value.Substring(baseUri.AbsoluteUri.Length) }));
+                    select CreateTerm(element.Name.LocalName,attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
         }
 
         private IEnumerable<Term> CreateFromRDFXML(XDocument document,Uri baseUri)
@@ -84,10 +81,25 @@ namespace RomanticWeb.Ontologies
                     where (childAttribute.Name.LocalName=="resource")&&(AcceptedNodeTypes.Any(nodeName => childAttribute.Value.EndsWith(nodeName)))
                     from attribute in element.Attributes()
                     where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
-                    select (Term)Type.GetType(
-                        System.String.Format("RomanticWeb.Ontologies.{0}, RomanticWeb",AcceptedNodeTypes.First(nodeName => childAttribute.Value.EndsWith(nodeName)))).GetConstructor(
-                            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(string) },null).Invoke(
-                            new object[] { attribute.Value.Substring(baseUri.AbsoluteUri.Length) }));
+                    let typeName=AcceptedNodeTypes.First(nodeName => childAttribute.Value.EndsWith(nodeName))
+                    select CreateTerm(typeName,attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
+        }
+
+        private Term CreateTerm(string typeName,string termName)
+        {
+            switch (typeName)
+            {
+                case "Class":
+                    return new RomanticWeb.Ontologies.Class(termName);
+                case "Property":
+                    return new RomanticWeb.Ontologies.Property(termName);
+                case "DatatypeProperty":
+                    return new RomanticWeb.Ontologies.DatatypeProperty(termName);
+                case "ObjectProperty":
+                    return new RomanticWeb.Ontologies.ObjectProperty(termName);
+                default:
+                    throw new ArgumentNullException("typeName");
+            }
         }
     }
 }

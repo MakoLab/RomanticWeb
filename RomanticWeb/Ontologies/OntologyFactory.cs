@@ -12,11 +12,13 @@ namespace RomanticWeb.Ontologies
     /// <summary>Provides a centralized access to ontology provider factories.</summary>
     public class OntologyFactory
     {
-        private static IEnumerable<IOntologyFactory> OntologyFactories; 
+        private static IEnumerable<IOntologyFactory> OntologyFactories;
+        private static IDictionary<string,IOntologyFactory> OntologyFactoryMimeTypeMappingCache;
 
         static OntologyFactory()
         {
             OntologyFactories=ContainerFactory.GetInstancesImplementing<IOntologyFactory>();
+            OntologyFactoryMimeTypeMappingCache=new Dictionary<string,IOntologyFactory>();
         }
 
         /// <summary>Creates an ontology from given file path.</summary>
@@ -53,7 +55,7 @@ namespace RomanticWeb.Ontologies
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(Stream fileStream,string contentType)
         {
-            IOntologyFactory ontologyFactory=OntologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType==contentType)).FirstOrDefault();
+            IOntologyFactory ontologyFactory=GetOntologyFactory(contentType);
             if (ontologyFactory==null)
             {
                 throw new NotSupportedException(System.String.Format("MIME type of '{0}' is not supported.",contentType));
@@ -61,6 +63,24 @@ namespace RomanticWeb.Ontologies
 
             Ontology result=ontologyFactory.Create(fileStream);
             fileStream.Close();
+            return result;
+        }
+
+        private static IOntologyFactory GetOntologyFactory(string contentType)
+        {
+            IOntologyFactory result=null;
+            lock (OntologyFactoryMimeTypeMappingCache)
+            {
+                if (!OntologyFactoryMimeTypeMappingCache.ContainsKey(contentType))
+                {
+                    OntologyFactoryMimeTypeMappingCache[contentType]=result=OntologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType==contentType)).FirstOrDefault();
+                }
+                else
+                {
+                    result=OntologyFactoryMimeTypeMappingCache[contentType];
+                }
+            }
+
             return result;
         }
     }

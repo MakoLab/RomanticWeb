@@ -22,6 +22,8 @@ namespace RomanticWeb.Vocabularies
         public static readonly Uri range=new Uri(BaseUri+"range");
 
         public static readonly Uri isDefinedBy=new Uri(BaseUri+"isDefinedBy");
+
+        public static readonly Uri label=new Uri(BaseUri+"label");
 #pragma warning restore 1591
         // ReSharper restore InconsistentNaming
     }

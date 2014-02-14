@@ -31,7 +31,6 @@ namespace RomanticWeb
         private readonly IList<string> _missingClassInterfacesMap;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
-
         #endregion
 
         #region Constructors

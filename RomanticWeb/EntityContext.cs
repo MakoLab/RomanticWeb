@@ -244,7 +244,6 @@ namespace RomanticWeb
             foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
             {
                 var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter);
-                _factory.SatisfyImports(ontologyAccessor);
                 entity[ontology.Prefix]=ontologyAccessor;
             }
 

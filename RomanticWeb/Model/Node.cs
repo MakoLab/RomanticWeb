@@ -310,7 +310,7 @@ namespace RomanticWeb.Model
         {
             if (IsLiteral)
             {
-                return string.Format("\"{0}\"",Literal);
+                return Literal;
             }
 
             if (IsUri)

@@ -63,8 +63,8 @@ namespace RomanticWeb.JsonLd
         /// rdf:nil
         /// </summary>
         private readonly Node _rdfNil = Node.ForUri(Rdf.nil);
-        private JArray listInGraph = new JArray();
-        private List<Node> nodesInList = new List<Node>();
+        private readonly JArray _listInGraph = new JArray();
+        private List<Node> _nodesInList = new List<Node>();
 
         public string FromRdf(IEnumerable<EntityQuad> quads, bool userRdfType = false, bool useNativeTypes = false)
         {
@@ -75,11 +75,11 @@ namespace RomanticWeb.JsonLd
 
             foreach (var graph in dataset)
             {
-                var lists = GetListsFromGraph(graph);
+                var lists = GetListsFromGraph(graph,useNativeTypes);
                 IGrouping<Node, EntityQuad> graph1 = graph;
                 var distinctSubjects = (from q in graph
-                                        where q.Graph == graph1.Key && (!nodesInList.Contains(q.Subject))
-                                        orderby q.Subject.IsBlank ? "_:" + q.Subject.BlankNode : q.Subject.ToString() // todo: remove ordering
+                                        where q.Graph == graph1.Key && (!_nodesInList.Contains(q.Subject))
+                                        orderby q.Subject.IsBlank ? "_:" + q.Subject.BlankNode : q.Subject.ToString() // todo: remove ordering (will need to change tests)
                                         select q.Subject).Distinct();
 
                 foreach (var subject in distinctSubjects)
@@ -156,7 +156,7 @@ namespace RomanticWeb.JsonLd
                 {
                     if (useRdfType)
                     {
-                        res = new JProperty(new JProperty(_rdfType.ToString(), new JArray(from o in objectGroup.Objects select GetProperties(o, nativeTypes, listsInGraph))));
+                        res = new JProperty(new JProperty(_rdfType.ToString(), new JArray(from o in objectGroup.Objects select GetPropertyValue(o, nativeTypes, listsInGraph))));
                     }
                     else
                     {
@@ -165,7 +165,7 @@ namespace RomanticWeb.JsonLd
                 }
                 else
                 {
-                    res = new JProperty(new JProperty(objectGroup.Predicate.Uri.ToString(), new JArray(from o in objectGroup.Objects select GetProperties(o, nativeTypes, listsInGraph))));
+                    res = new JProperty(new JProperty(objectGroup.Predicate.Uri.ToString(), new JArray(from o in objectGroup.Objects select GetPropertyValue(o, nativeTypes, listsInGraph))));
                 }
 
                 if (i == 0)
@@ -180,67 +180,66 @@ namespace RomanticWeb.JsonLd
             return result;
         }
 
-        private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads)
+        private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads,bool useNativeTypes)
         {
             var lists = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == _rdfNil));
             var locList = new JObject();
             foreach (var list in lists)
             {
-                listInGraph.Clear();
-                PrepareLists(list, quads);
-                string indexer = listInGraph.First().ToString();
-                listInGraph.First.Remove();
-                locList.Add(new JProperty(indexer, new JArray(listInGraph)));
-                listInGraph.Clear();
+                _listInGraph.Clear();
+                PrepareLists(list, quads,useNativeTypes);
+                string indexer = _listInGraph.First().ToString();
+                _listInGraph.First.Remove();
+                locList.Add(new JProperty(indexer, new JArray(_listInGraph)));
+                _listInGraph.Clear();
             }
 
             return locList;
         }
 
-        private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads)
+        private void PrepareLists(EntityQuad list, IEnumerable<EntityQuad> quads,bool useNativeTypes)
         {
-            JObject result = new JObject();
             Node localSubject = list.Subject;
-            int anotherPropertyInList = quads.Where(q => q.Subject == localSubject && q.Predicate != _rdfType).Count();
-            var firstValues = quads.Where(q => (q.Subject == localSubject && q.Predicate == _rdfFirst)).Select(q => q.Object);
-            Node firstValue = firstValues.First();
-            Node restValue = list.Object;
-            listInGraph.AddFirst(ReturnListProperties(firstValue));
-            nodesInList.Add(localSubject);
+            int anotherPropertyInList=quads.Count(q => q.Subject == localSubject && q.Predicate != _rdfType);
+            var firstValues=quads.Where(q => (q.Subject == localSubject && q.Predicate == _rdfFirst)).Select(q => q.Object);
+            Node firstValue=firstValues.First();
+            Node restValue=list.Object;
+            _listInGraph.AddFirst(ReturnListProperties(firstValue,useNativeTypes));
+            _nodesInList.Add(localSubject);
 
-            IEnumerable<EntityQuad> quad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == localSubject));
+            IEnumerable<EntityQuad> quad=quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfRest && q.Object == localSubject));
             if (anotherPropertyInList > 2 || firstValues.Count() > 1)
             {
-                if (listInGraph.Count() > 1)
+                if (_listInGraph.Count() > 1)
                 {
-                    listInGraph.First.Remove();
-                    nodesInList = nodesInList.Where(n => n != localSubject).ToList();
+                    _listInGraph.First.Remove();
+                    _nodesInList = _nodesInList.Where(n => n != localSubject).ToList();
                 }
 
-                listInGraph.AddFirst(restValue.ToString());
+                _listInGraph.AddFirst(restValue.ToString());
             }
             else
                 if (quad.Count() == 1)
                 {
-                    PrepareLists(quad.First(), quads);
+                    PrepareLists(quad.First(),quads,useNativeTypes);
                 }
                 else
                 {
-                    IEnumerable<EntityQuad> firstQuad = quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfFirst && q.Object == localSubject));
+                    IEnumerable<EntityQuad> firstQuad=quads.Where(q => (q.Subject.IsBlank && q.Predicate == _rdfFirst && q.Object == localSubject));
                     if (firstQuad.Count() == 1)
                     {
-                        listInGraph.First.Remove();
-                        nodesInList = nodesInList.Where(n => n != localSubject).ToList();
-                        listInGraph.AddFirst((restValue.IsBlank && firstValue.IsBlank) ? localSubject.ToString() : restValue.ToString());
+                        _listInGraph.First.Remove();
+                        _nodesInList = _nodesInList.Where(n => n != localSubject).ToList();
+                        _listInGraph.AddFirst((restValue.IsBlank && firstValue.IsBlank) ? localSubject.ToString() : restValue.ToString());
                     }
                     else
                     {
-                        listInGraph.AddFirst(localSubject.ToString());
+                        _listInGraph.AddFirst(localSubject.ToString());
                     }
                 }
         }
 
-        private JObject ReturnListProperties(Node @object)
+        private JObject ReturnListProperties(Node @object,bool useNativeTypes)
         {
             var returnObject = new JObject();
             if (!@object.IsLiteral)
@@ -250,109 +249,103 @@ namespace RomanticWeb.JsonLd
             }
             else
             {
-                var value = new JProperty(Value, @object.ToString().Replace("\"", String.Empty));
-                returnObject.Add(value);
-
-                if (@object.Language != null)
-                {
-                    var language = new JProperty(Language, @object.Language.Replace("\"", String.Empty));
-                    returnObject.Add(language);
-                }
-
-                if (@object.DataType != null)
-                {
-                    var localType = new JProperty(Type, @object.DataType.ToString().Replace("\"", String.Empty));
-                    returnObject.Add(localType);
-                }
+                returnObject.Add(GetLiteralObjectProperties(@object,useNativeTypes));
             }
 
             return returnObject;
         }
 
-        private JObject GetProperties(Node @object, bool nativeTypes, JObject lists)
+        private JObject GetPropertyValue(Node @object, bool nativeTypes, JObject lists)
         {
-            var returnObject = new JObject();
             if (!@object.IsLiteral)
             {
-                if (@object == _rdfNil)
+                return new JObject(GetNonLiteralObjectPreoperties(@object,lists));
+            }
+
+            return new JObject(GetLiteralObjectProperties(@object,nativeTypes));
+        }
+
+        private JProperty GetNonLiteralObjectPreoperties(Node @object,JObject lists)
+        {
+            if (@object==_rdfNil)
+            {
+                return new JProperty(List,new JArray());
+            }
+
+            if (lists.Property(@object.ToString())!=null)
+            {
+                var localList=lists.Property(@object.ToString());
+                if (localList!=null)
                 {
-                    var listProperty = new JProperty(List, new JArray());
-                    returnObject.Add(listProperty);
-                }
-                else
-                {
-                    if (lists.Property(@object.ToString()) != null)
-                    {
-                        var localList = lists.Property(@object.ToString());
-                        if (localList != null)
-                        {
-                            returnObject.Add(new JProperty(List, localList.Value));
-                        }
-                    }
-                    else
-                    {
-                        var id = new JProperty(Id, @object.IsBlank ? "_:" + @object.BlankNode : @object.ToString());
-                        returnObject.Add(id);
-                    }
+                    return new JProperty(List,localList.Value);
                 }
             }
             else
             {
-                if (!nativeTypes)
-                {
-                    var value = new JProperty(Value, @object.ToString().Replace("\"", String.Empty));
-                    returnObject.Add(value);
+                return new JProperty(Id,@object.IsBlank?"_:"+@object.BlankNode:@object.ToString());
+            }
 
-                    if (@object.DataType != null)
-                    {
-                        var localType = new JProperty(Type, @object.DataType.ToString().Replace("\"", String.Empty));
-                        returnObject.Add(localType);
-                    }
-                }
-                else
-                {
-                    if (@object.DataType != null)
-                    {
-                        object objectValue;
-                        if (@object.DataType.ToString() == Xsd.Boolean.ToString())
-                        {
-                            objectValue = Convert.ToBoolean(@object.Literal);
-                            var value = new JProperty(Value, objectValue);
-                            returnObject.Add(value);
-                        }
-                        else if (@object.DataType.ToString() == Xsd.Integer.ToString())
-                        {
-                            objectValue = Convert.ToInt64(@object.Literal);
-                            var value = new JProperty(Value, objectValue);
-                            returnObject.Add(value);
-                        }
-                        else if (@object.DataType.ToString() == Xsd.Double.ToString())
-                        {
-                            double doubleVal;
-                            double.TryParse(@object.Literal, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out doubleVal);
-                            objectValue = doubleVal;
-                            var value = new JProperty(Value, objectValue);
-                            returnObject.Add(value);
-                        }
-                        else
-                        {
-                            objectValue = @object.ToString().Replace("\"", String.Empty);
-                            var value = new JProperty(Value, objectValue);
-                            returnObject.Add(value);
-                            var localType = new JProperty(Type, @object.DataType.ToString());
-                            returnObject.Add(localType);
-                        }
-                    }
-                }
+            return null;
+        }
 
-                if (@object.Language != null)
+        private IEnumerable<JProperty> GetLiteralObjectProperties(Node @object, bool useNativeTypes)
+        {
+            IList<JProperty> literalProperties=new List<JProperty>(3);
+            object value=null;
+            Uri dataType=null;
+
+            if (@object.DataType!=null)
+            {
+                dataType=@object.DataType;
+                if (useNativeTypes)
                 {
-                    var language = new JProperty(Language, @object.Language.Replace("\"", String.Empty));
-                    returnObject.Add(language);
+                    value=TryConvertValueToNative(@object);
+                    if (value!=null)
+                    {
+                        dataType=null;
+                    }
                 }
             }
 
-            return returnObject;
+            if (value==null)
+            {
+                value=@object.ToString();
+            }
+
+            literalProperties.Add(new JProperty(Value,value));
+            if (dataType!=null)
+            {
+                literalProperties.Add(new JProperty(Type, dataType.ToString()));
+            }
+
+            if (@object.Language != null)
+            {
+                literalProperties.Add(new JProperty(Language, @object.Language));
+            }
+
+            return literalProperties;
+        }
+
+        private object TryConvertValueToNative(Node @object)
+        {
+            object contverted=null;
+
+            if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Boolean) == 0)
+            {
+                 contverted=Convert.ToBoolean(@object.Literal);
+            }
+            else if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Integer) == 0)
+            {
+                 contverted=Convert.ToInt64(@object.Literal);
+            }
+            else if (AbsoluteUriComparer.Default.Compare(@object.DataType, Xsd.Double) == 0)
+            {
+                double doubleVal;
+                double.TryParse(@object.Literal, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out doubleVal);
+                contverted=doubleVal;
+            }
+
+            return contverted;
         }
     }
 }

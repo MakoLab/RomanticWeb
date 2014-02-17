@@ -21,9 +21,8 @@ namespace RomanticWeb.Entities
     [DebuggerDisplay("Ontology Accessor")]
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class OntologyAccessor:ImpromptuDictionary
+    public sealed class OntologyAccessor:ImpromptuDictionary,IResultProcessingStrategyClient
     {
-        private static IDictionary<ProcessingOperation,IResultProcessingStrategy> _resultAggregations;
         private readonly IEntityStore _tripleStore;
         private readonly Entity _entity;
         private readonly Ontology _ontology;
@@ -51,30 +50,7 @@ namespace RomanticWeb.Entities
             }
         }
 
-        internal IDictionary<ProcessingOperation,IResultProcessingStrategy> ResultAggregations
-        {
-            get
-            {
-                if (_resultAggregations==null)
-                {
-                    _resultAggregations=new Dictionary<ProcessingOperation,IResultProcessingStrategy>();
-                    lock (_resultAggregations)
-                    {
-                        foreach (IResultProcessingStrategy resultProcessingStrategy in ContainerFactory.GetInstancesImplementing<IResultProcessingStrategy>())
-                        {
-                            object[] attributes=resultProcessingStrategy.GetType().GetCustomAttributes(typeof(ResultProcessingStrategyAttribute),true);
-                            if (attributes.Length>0)
-                            {
-                                ResultProcessingStrategyAttribute resultProcessingStrategyAttribute=(ResultProcessingStrategyAttribute)attributes[0];
-                                _resultAggregations[resultProcessingStrategyAttribute.Operation]=resultProcessingStrategy;
-                            }
-                        }
-                    }
-                }
-
-                return _resultAggregations;
-            }
-        }
+        IDictionary<ProcessingOperation,IResultProcessingStrategy> IResultProcessingStrategyClient.ResultAggregations { get { return this.GetResultAggregations(); } }
 
         /// <summary>
         /// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
@@ -112,10 +88,11 @@ namespace RomanticWeb.Entities
 
         internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
         {
+            IResultProcessingStrategyClient resultProcessingStrategyClient=(IResultProcessingStrategyClient)this;
             LogTo.Trace("Reading property {0}", property.Uri);
             var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
             var objects=_nodeConverter.ConvertNodes(objectValues);
-            var aggregation=(ResultAggregations.ContainsKey(aggregate.Aggregation)?ResultAggregations[aggregate.Aggregation]:null);
+            var aggregation=(resultProcessingStrategyClient.ResultAggregations.ContainsKey(aggregate.Aggregation)?resultProcessingStrategyClient.ResultAggregations[aggregate.Aggregation]:null);
             if (aggregation!=null)
             {
                 LogTo.Trace("Performing operation {0} on result nodes", aggregate.Aggregation);

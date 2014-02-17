@@ -68,6 +68,7 @@
     <Compile Include="Entities\EntityIdExtensions.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
+    <Compile Include="Entities\IResultProcessingStrategyClient.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />

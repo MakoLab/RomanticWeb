@@ -17,13 +17,11 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
-    /// <summary>
-    /// Proxy for exposing mapped entity members
-    /// </summary>
+    /// <summary>Proxy for exposing mapped entity members.</summary>
     [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class EntityProxy:DynamicObject,IEntity
+    public class EntityProxy:DynamicObject,IEntity,IResultProcessingStrategyClient
     {
         #region Fields
         private static readonly IResultProcessingStrategy FallbackProcessing=new SingleOrDefaultProcessing();
@@ -35,9 +33,7 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EntityProxy"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="EntityProxy"/> class.</summary>
         /// <param name="store">The store.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMappings">The entity mappings.</param>
@@ -48,16 +44,12 @@ namespace RomanticWeb.Entities
             _entity=entity;
             _entityMappings=entityMappings;
             _converter=converter;
-            ResultAggregations=new Lazy<IResultProcessingStrategy,IResultProcessingStrategyMetadata>[0];
         }
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Gets the result aggregation strategies.
-        /// </summary>
-        [ImportMany(typeof(IResultProcessingStrategy))]
-        public IEnumerable<Lazy<IResultProcessingStrategy,IResultProcessingStrategyMetadata>> ResultAggregations { get; internal set; }
+        /// <summary>Gets the result aggregation strategies.</summary>
+        IDictionary<ProcessingOperation,IResultProcessingStrategy> IResultProcessingStrategyClient.ResultAggregations { get { return this.GetResultAggregations(); } }
 
         /// <summary>Gets the entity's identifier</summary>
         public EntityId Id
@@ -95,11 +87,8 @@ namespace RomanticWeb.Entities
             var operation=(!property.IsCollection?ProcessingOperation.SingleOrDefault:
                 ((typeof(IDictionary).IsAssignableFrom(property.ReturnType))||(typeof(IDictionary<,>).IsAssignableFromSpecificGeneric(property.ReturnType))?ProcessingOperation.Dictionary:
                     ProcessingOperation.Flatten));
-            var aggregation=(from agg in ResultAggregations
-                             where agg.Metadata.Operation==operation
-                             select agg.Value).SingleOrDefault();
-
-            aggregation=aggregation??FallbackProcessing;
+            IResultProcessingStrategyClient resultProcessingStrategyClient=(IResultProcessingStrategyClient)this;
+            var aggregation=(resultProcessingStrategyClient.ResultAggregations.ContainsKey(operation)?resultProcessingStrategyClient.ResultAggregations[operation]:FallbackProcessing);
 
             LogTo.Trace("Performing operation {0} on result nodes",operation);
             var aggregatedResult=aggregation.Process(objectsForPredicate);

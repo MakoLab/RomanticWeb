@@ -278,7 +278,6 @@ namespace RomanticWeb
             }
 
             var proxy=new EntityProxy(Store,entity,mapping,_nodeConverter);
-            _factory.SatisfyImports(proxy);
             return proxy.ActLike<T>();
         }
        

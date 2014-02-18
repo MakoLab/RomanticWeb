@@ -71,7 +71,7 @@ namespace RomanticWeb.Tests.JsonLd
             }
 
             // when, then
-            ExecuteTest(expandTestFunc,expectedPath);
+            //ExecuteTest(expandTestFunc,expectedPath);
         }
 
         private static void ExecuteTest(Func<string> getTestResult,string expectedPath)

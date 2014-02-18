@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using NullGuard;
 using RomanticWeb.Entities;
 
@@ -13,7 +14,28 @@ namespace RomanticWeb.Model
     {
         #region Fields
         /// <summary>Gets a reference for node with rdf:type predicate usually shortened in Turtle syntax to 'a'.</summary>
-        public static readonly Node A=new Node(Vocabularies.Rdf.type);
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        public static readonly Node a=new Node(Vocabularies.Rdf.type);
+
+        /// <summary>Gets a reference for node with rdf:first predicate usually used in formal lists syntax.</summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        public static readonly Node first=Node.ForUri(Vocabularies.Rdf.first);
+
+        /// <summary>Gets a reference for node with rdf:rest predicate usually used in formal lists syntax.</summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        public static readonly Node rest=Node.ForUri(Vocabularies.Rdf.rest);
+
+        /// <summary>Gets a reference for node with rdf:nil predicate usually used in formal lists syntax.</summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1311:StaticReadonlyFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules","SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter",Justification="Reviewed. Suppression is OK here.")]
+        public static readonly Node nil=Node.ForUri(Vocabularies.Rdf.nil);
 
         private readonly string _literal;
         private readonly string _language;
@@ -23,7 +45,6 @@ namespace RomanticWeb.Model
         private readonly string _identifier;
         private readonly Uri _graphUri;
         private readonly EntityId _entityId;
-
         #endregion
 
         #region Constructors
@@ -175,7 +196,7 @@ namespace RomanticWeb.Model
                 throw new ArgumentOutOfRangeException("uri","Node URI must be absolute!");
             }
 
-            return (uri.AbsoluteUri==Vocabularies.Rdf.type.AbsoluteUri?A:new Node(uri));
+            return (uri.AbsoluteUri==Vocabularies.Rdf.type.AbsoluteUri?a:new Node(uri));
         }
 
         /// <summary>Factory method for creating simple literal nodes.</summary>

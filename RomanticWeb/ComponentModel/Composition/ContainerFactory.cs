@@ -32,6 +32,7 @@ namespace RomanticWeb.ComponentModel.Composition
             }
 
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where !assembly.IsDynamic
                     from type in assembly.GetTypes()
                     where (type!=@interface)&&(@interface.IsAssignableFrom(type))&&(type.IsInterface)
                     select type);
@@ -44,19 +45,7 @@ namespace RomanticWeb.ComponentModel.Composition
         /// <returns>Enumeration of instances implementing given interface.</returns>
         public static IEnumerable<T> GetInstancesImplementing<T>(params object[] arguments)
         {
-            if (!typeof(T).IsInterface)
-            {
-                throw new ArgumentOutOfRangeException("T");
-            }
-
-            return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    from type in assembly.GetTypes()
-                    where (typeof(T).IsAssignableFrom(type))
-                    from constructor in type.GetConstructors(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance)
-                    let parameters=constructor.GetParameters()
-                    where ((arguments==null)||((parameters.Length==arguments.Length)&&(parameters.Where(
-                        (parameter,index) => (arguments[index]==null)||(parameter.ParameterType.IsAssignableFrom(arguments[index].GetType()))).Count()==parameters.Length)))
-                    select (T)constructor.Invoke(arguments));
+            return GetTypesImplementing<T>(arguments).Select(constructor => (T)constructor.Invoke(arguments));
         }
 
         /// <summary>Creates an enumeration of types implementing given interface.</summary>
@@ -72,8 +61,9 @@ namespace RomanticWeb.ComponentModel.Composition
             }
 
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where !assembly.IsDynamic
                     from type in assembly.GetTypes()
-                    where (typeof(T).IsAssignableFrom(type))
+                    where (type!=typeof(T))&&(!type.IsGenericTypeDefinition)&&(typeof(T).IsAssignableFrom(type))
                     from constructor in type.GetConstructors(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance)
                     let parameters=constructor.GetParameters()
                     where ((arguments==null)||((parameters.Length==arguments.Length)&&(parameters.Where(
@@ -93,6 +83,7 @@ namespace RomanticWeb.ComponentModel.Composition
             }
 
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where !assembly.IsDynamic
                     from type in assembly.GetTypes()
                     let attributes=type.GetCustomAttributes(typeof(T),true)
                     where (attributes.Length>0)

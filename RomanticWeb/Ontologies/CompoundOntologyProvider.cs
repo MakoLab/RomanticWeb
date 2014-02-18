@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using NullGuard;
 
 namespace RomanticWeb.Ontologies
 {
@@ -26,7 +28,7 @@ namespace RomanticWeb.Ontologies
 
         #region Properties
         /// <summary>Get ontologies' metadata.</summary>
-        public override IEnumerable<Ontology> Ontologies { get { return _ontologyProviders.SelectMany(item => item.Ontologies); } }
+        public override IEnumerable<Ontology> Ontologies { get { return _ontologyProviders.SelectMany(item => item.Ontologies).Distinct(); } }
 
         /// <summary>Gets a list of ontology proiders stored by this provider.</summary>
         internal IList<IOntologyProvider> OntologyProviders { get { return _ontologyProviders; } }
@@ -37,6 +39,15 @@ namespace RomanticWeb.Ontologies
             {
                 return string.Format("Providers: {0}, Ontolgies: {1}",_ontologyProviders.Count,Ontologies.Count());
             }
+        }
+        #endregion
+
+        #region Public methods
+        /// <summary>Gets a URI from a QName.</summary>
+        [return: AllowNull]
+        public override Uri ResolveUri(string prefix,string rdfTermName)
+        {
+            return OntologyProviders.Select(provider => provider.ResolveUri(prefix,rdfTermName)).Where(uri => uri!=null).FirstOrDefault();
         }
         #endregion
 

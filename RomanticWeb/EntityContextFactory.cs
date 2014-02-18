@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Anotar.NLog;
+using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
@@ -17,24 +18,21 @@ namespace RomanticWeb
     public class EntityContextFactory:IEntityContextFactory
     {
         #region Fields
-        private readonly MappingBuilder _mappingBuilder = new MappingBuilder();
+        private static IEnumerable<IOntologyProvider> _importedOntologies=null;
+        private static object _ontologiesLocker=new Object();
+        private static IEnumerable<IMappingsRepository> _importedMappings=null;
+        private static object _mappingsLocker=new Object();
+
+        private readonly MappingBuilder _mappingBuilder=new MappingBuilder();
         private readonly CompositionContainer _container;
         private bool _isInitialized;
-
-        [ImportMany(typeof(IOntologyProvider),AllowRecomposition=true)]
-        private IEnumerable<IOntologyProvider> _importedOntologies=new IOntologyProvider[0];
-
-        [ImportMany(typeof(IMappingsRepository),AllowRecomposition=true)]
-        private IEnumerable<IMappingsRepository> _importedMappings=new IMappingsRepository[0];
-
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
         private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
         private GraphSelectionStrategyBase _defaultGraphSelector=new DefaultGraphSelector();
-        private IMappingsRepository _actualMappingsRepository;
-        private IOntologyProvider _actualOntologyProvider;
+        private CompoundMappingsRepository _actualMappingsRepository;
+        private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
-
         #endregion
 
         #region Constructors
@@ -71,12 +69,42 @@ namespace RomanticWeb
                 return _actualMappingsRepository;
             }
         }
+
+        private IEnumerable<IOntologyProvider> ImportedOntologies
+        {
+            get
+            {
+                if (_importedOntologies==null)
+                {
+                    lock (_ontologiesLocker)
+                    {
+                        _importedOntologies=ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
+                    }
+                }
+
+                return _importedOntologies;
+            }
+        }
+
+        private IEnumerable<IMappingsRepository> ImportedMappings
+        {
+            get
+            {
+                if (_importedMappings==null)
+                {
+                    lock (_mappingsLocker)
+                    {
+                        _importedMappings=ContainerFactory.GetInstancesImplementing<IMappingsRepository>();
+                    }
+                }
+
+                return _importedMappings;
+            }
+        }
         #endregion
 
         #region Public methods
-        /// <summary>
-        /// Creates a new instance of entity context
-        /// </summary>
+        /// <summary>Creates a new instance of entity context.</summary>
         public IEntityContext CreateContext()
         {
             LogTo.Debug("Creating entity context");
@@ -109,7 +137,12 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithOntology(IOntologyProvider ontologyProvider)
         {
-            _container.ComposeExportedValue(ontologyProvider);
+            EnsureOntologyProvider();
+            if (!_actualOntologyProvider.OntologyProviders.Contains(ontologyProvider))
+            {
+                _actualOntologyProvider.OntologyProviders.Add(ontologyProvider);
+            }
+
             return this;
         }
 
@@ -128,10 +161,13 @@ namespace RomanticWeb
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
             var repositories=_mappingBuilder.BuildMappings(buildMappings);
-
+            EnsureMappingsRepository();
             foreach (var mappingsRepository in repositories)
             {
-                _container.ComposeExportedValue(mappingsRepository);
+                if (!_actualMappingsRepository.MappingsRepositories.Contains(mappingsRepository))
+                {
+                    _actualMappingsRepository.MappingsRepositories.Add(mappingsRepository);
+                }
             }
 
             return this;
@@ -173,14 +209,9 @@ namespace RomanticWeb
                 return;
             }
 
-            var batch=new CompositionBatch();
-            batch.AddPart(this);
-
-            _container.Compose(batch);
             EnsureOntologyProvider();
             EnsureMappingsRepository();
             EnsureMappingsRebuilt();
-
             _isInitialized=true;
         }
 
@@ -211,19 +242,18 @@ namespace RomanticWeb
 
         private void EnsureOntologyProvider()
         {
-            if (_importedOntologies.Count()==1)
+            if (_actualOntologyProvider==null)
             {
-                _actualOntologyProvider=_importedOntologies.Single();
-            }
-            else
-            {
-                _actualOntologyProvider=new CompoundOntologyProvider(_importedOntologies);
+                _actualOntologyProvider=new CompoundOntologyProvider(ImportedOntologies);
             }
         }
 
         private void EnsureMappingsRepository()
         {
-            _actualMappingsRepository=new CompoundMappingsRepository(_importedMappings);
+            if (_actualMappingsRepository==null)
+            {
+                _actualMappingsRepository=new CompoundMappingsRepository(ImportedMappings);
+            }
         }
 
         private void EnsureMappingsRebuilt()

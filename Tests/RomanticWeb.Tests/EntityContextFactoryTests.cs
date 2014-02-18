@@ -18,8 +18,7 @@ namespace RomanticWeb.Tests
         public void Setup()
         {
             _ontology=new Mock<IOntologyProvider>();
-            _ontology.Setup(op => op.ResolveUri(It.IsAny<string>(),It.IsAny<string>()))
-                     .Returns((string prefix,string name) => new Uri(new Uri("http://base/"),name));
+            _ontology.Setup(provider => provider.ResolveUri(It.IsAny<string>(),It.IsAny<string>())).Returns((string prefix,string name) => new Uri(new Uri("http://base/"),name));
             _entityContextFactory=new EntityContextFactory().WithOntology(_ontology.Object);
         }
 

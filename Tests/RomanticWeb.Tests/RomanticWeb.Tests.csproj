@@ -125,7 +125,7 @@
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphsPersonMapping.cs" />
-    <Compile Include="JsonLd\JsonLdSerializerTests.cs" />
+    <Compile Include="JsonLd\JsonLdProcessorTests.cs" />
     <Compile Include="JsonLd\JsonLdTestSuiteTests.cs" />
     <Compile Include="Linq\QueryableTests.cs" />
     <Compile Include="Linq\VisitorTests.cs" />

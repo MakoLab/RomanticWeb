@@ -16,7 +16,7 @@ using VDS.RDF.Parsing;
 namespace RomanticWeb.Tests.JsonLd
 {
     [TestFixture]
-    public class JsonLdSerializerTests
+    public class JsonLdProcessorTests
     {
         private JsonLdProcessor _processor;
 
@@ -90,10 +90,7 @@ namespace RomanticWeb.Tests.JsonLd
 
         private IEnumerable<EntityQuad> GetQuads(EntityId entityId, Stream resource)
         {
-            IGraph graph = new Graph
-            {
-                BaseUri = entityId.Uri
-            };
+            IGraph graph=new Graph();
             using (var streamReader=new StreamReader(resource))
             {
                 new TurtleParser().Load(graph, streamReader);
@@ -106,7 +103,7 @@ namespace RomanticWeb.Tests.JsonLd
                        triple.Subject.WrapNode(entityId),
                        triple.Predicate.WrapNode(entityId),
                        triple.Object.WrapNode(entityId),
-                       triple.Graph == null ? null : Node.ForUri(triple.Graph.BaseUri));
+                       triple.Graph.BaseUri == null ? null : Node.ForUri(triple.Graph.BaseUri));
         }
     }
 }

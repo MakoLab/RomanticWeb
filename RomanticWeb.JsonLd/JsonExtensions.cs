@@ -32,106 +32,88 @@ namespace RomanticWeb.JsonLd
 
         internal static bool ValueEquals(this JProperty property,object value)
         {
-            if (property==null)
-            {
-                return false;
-            }
+            JValue propertyValue=(property!=null?property.Value as JValue:null);
+            return propertyValue.ValueEquals(value);
+        }
 
+        internal static bool ValueEquals(this JValue propertyValue,object value)
+        {
             if (value==null)
             {
-                return (property.Value==null)||((property.Value is JValue)&&(((JValue)property.Value).Value==null));
+                return (propertyValue==null)||((propertyValue!=null)&&(propertyValue.Value==null));
             }
 
-            if (value is string)
+            switch (value.GetType().FullName)
             {
-                if (!(property.Value is JValue)) { return false; }
-                if (property.Value.Type!=JTokenType.String) { return false; }
-                return (string)((JValue)property.Value).Value==(string)value;
+                case "System.String":
+                    return (propertyValue.Type!=JTokenType.String?false:(string)propertyValue.Value==(string)value);
+                case "System.Boolean":
+                    return (propertyValue.Type!=JTokenType.Boolean?false:(bool)propertyValue.Value==(bool)value);
+                case "System.SByte":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(sbyte)(int)propertyValue.Value==(sbyte)value);
+                case "System.Byte":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(byte)(int)propertyValue.Value==(byte)value);
+                case "System.Int16":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(short)(int)propertyValue.Value==(short)value);
+                case "System.UInt16":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(ushort)(int)propertyValue.Value==(ushort)value);
+                case "System.Int32":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(int)propertyValue.Value==(int)value);
+                case "System.UInt32":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(uint)(int)propertyValue.Value==(uint)value);
+                case "System.Int64":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(long)(int)propertyValue.Value==(long)value);
+                case "System.UInt64":
+                    return (propertyValue.Type!=JTokenType.Integer?false:(long)(int)propertyValue.Value==(long)value);
+                case "System.Single":
+                    return (propertyValue.Type==JTokenType.Integer?(float)(int)propertyValue.Value==(float)value:(propertyValue.Type==JTokenType.Float?(float)propertyValue.Value==(float)value:false));
+                case "System.Double":
+                    return (propertyValue.Type==JTokenType.Integer?(double)(int)propertyValue.Value==(double)value:(propertyValue.Type==JTokenType.Float?(double)(float)propertyValue.Value==(double)value:false));
+                case "System.Decimal":
+                    return (propertyValue.Type==JTokenType.Integer?(decimal)(int)propertyValue.Value==(decimal)value:(propertyValue.Type==JTokenType.Float?(decimal)(float)propertyValue.Value==(decimal)value:false));
+                default:
+                    return false;
             }
-
-            if ((value is int)||(value is short)||(value is long)||(value is byte))
-            {
-                if (!(property.Value is JValue)) { return false; }
-                if (property.Value.Type!=JTokenType.Integer) { return false; }
-                if (value is int) { return (int)((JValue)property.Value).Value==(int)value; }
-                if (value is short) { return (short)(int)((JValue)property.Value).Value==(int)value; }
-                if (value is long) { return (long)(int)((JValue)property.Value).Value==(int)value; }
-                if (value is byte) { return (byte)(int)((JValue)property.Value).Value==(int)value; }
-            }
-
-            if ((value is float)||(value is double)||(value is decimal))
-            {
-                if (!(property.Value is JValue)) { return false; }
-                if (property.Value.Type==JTokenType.Float)
-                {
-                    if (value is float) { return (float)(double)((JValue)property.Value).Value==(int)value; }
-                    if (value is double) { return (double)((JValue)property.Value).Value==(int)value; }
-                    if (value is decimal) { return (decimal)(double)((JValue)property.Value).Value==(int)value; }
-                }
-                else if (property.Value.Type==JTokenType.Integer)
-                {
-                    if (value is float) { return (float)(int)((JValue)property.Value).Value==(int)value; }
-                    if (value is double) { return (double)(int)((JValue)property.Value).Value==(int)value; }
-                    if (value is decimal) { return (decimal)(int)((JValue)property.Value).Value==(int)value; }
-                }
-            }
-
-            if (value is bool)
-            {
-                if (!(property.Value is JValue)) { return false; }
-                if (property.Value.Type!=JTokenType.Boolean) { return false; }
-                return (bool)((JValue)property.Value).Value==(bool)value;
-            }
-
-            return false;
         }
 
         internal static bool ValueIs<T>(this JProperty property)
         {
-            if ((typeof(T)!=typeof(Uri))&&(typeof(T)!=typeof(string)))
-            {
-                if (!typeof(T).IsValueType)
-                {
-                    throw new InvalidOperationException(System.String.Format("Cannot confirm value of non-value type '{0}'.",typeof(T)));
-                }
+            JValue value=(property!=null?property.Value as JValue:null);
+            return value.ValueIs<T>();
+        }
 
-                if ((typeof(T)!=typeof(int))&&(typeof(T)!=typeof(byte))&&(typeof(T)!=typeof(long))&&(typeof(T)!=typeof(short))&&
-                    (typeof(T)!=typeof(float))&&(typeof(T)!=typeof(double))&&(typeof(T)!=typeof(decimal))&&(typeof(T)!=typeof(bool)))
-                {
-                    throw new InvalidOperationException(System.String.Format("Cannot confirm value of type '{0}'.",typeof(T)));
-                }
-            }
-
-            if ((property==null)||(property.Value==null)||(!(property.Value is JValue)))
+        internal static bool ValueIs<T>(this JValue value)
+        {
+            ValidateType(typeof(T));
+            if ((value==null)||(value.Value==null))
             {
                 return false;
             }
 
-            if (typeof(T)==typeof(string))
+            switch (value.Value.GetType().FullName)
             {
-                return (((JValue)property.Value).Type==JTokenType.String);
-            }
-
-            if ((typeof(T)==typeof(int))||(typeof(T)==typeof(byte))||(typeof(T)==typeof(long))||(typeof(T)==typeof(short)))
-            {
-                return (((JValue)property.Value).Type==JTokenType.Integer);
-            }
-
-            if ((typeof(T)==typeof(float))||(typeof(T)==typeof(double))||(typeof(T)==typeof(decimal))||(typeof(T)==typeof(short)))
-            {
-                return ((((JValue)property.Value).Type==JTokenType.Integer)||(((JValue)property.Value).Type==JTokenType.Float));
-            }
-
-            if (typeof(T)==typeof(bool))
-            {
-                return (((JValue)property.Value).Type==JTokenType.Boolean);
-            }
-
-            if (typeof(T)==typeof(Uri))
-            {
-                Uri uri;
-                return ((((JValue)property.Value).Type==JTokenType.String)&&(Regex.IsMatch(property.ValueAs<string>(),"[a-zA-Z0-9]+://.+"))&&
-                    (Uri.TryCreate(property.ValueAs<string>(),UriKind.Absolute,out uri))&&(uri!=null))||(((JValue)property.Value).Type==JTokenType.Uri);
+                case "System.String":
+                    return value.Type==JTokenType.String;
+                case "System.Boolean":
+                    return value.Type==JTokenType.Boolean;
+                case "System.SByte":
+                case "System.Byte":
+                case "System.Int16":
+                case "System.UInt16":
+                case "System.Int32":
+                case "System.UInt32":
+                case "System.Int64":
+                case "System.UInt64":
+                    return value.Type==JTokenType.Integer;
+                case "System.Single":
+                case "System.Double":
+                case "System.Decimal":
+                    return (value.Type==JTokenType.Float)||(value.Type==JTokenType.Integer);
+                case "System.Uri":
+                    Uri uri;
+                    string uriString;
+                    return (value.Type==JTokenType.Uri)||((value.Type==JTokenType.String)&&(Regex.IsMatch(uriString=value.ValueAs<string>(),"[a-zA-Z0-9]+://.+"))&&
+                        (Uri.TryCreate(uriString,UriKind.Absolute,out uri))&&(uri!=null));
             }
 
             return false;
@@ -139,68 +121,45 @@ namespace RomanticWeb.JsonLd
 
         internal static T ValueAs<T>(this JProperty property)
         {
-            if ((typeof(T)!=typeof(Uri))&&(typeof(T)!=typeof(string)))
-            {
-                if (!typeof(T).IsValueType)
-                {
-                    throw new InvalidCastException(System.String.Format("Cannot cast value to non-value type '{0}'.",typeof(T)));
-                }
+            JValue value=(property!=null?property.Value as JValue:null);
+            return value.ValueAs<T>();
+        }
 
-                if ((typeof(T)!=typeof(int))&&(typeof(T)!=typeof(byte))&&(typeof(T)!=typeof(long))&&(typeof(T)!=typeof(short))&&
-                    (typeof(T)!=typeof(float))&&(typeof(T)!=typeof(double))&&(typeof(T)!=typeof(decimal))&&(typeof(T)!=typeof(bool)))
-                {
-                    throw new InvalidCastException(System.String.Format("Cannot cast value to type '{0}'.",typeof(T)));
-                }
-            }
-
-            if (!(property.Value is JValue))
+        internal static T ValueAs<T>(this JValue value)
+        {
+            ValidateType(typeof(T));
+            if ((value==null)||(value.Value==null))
             {
                 return default(T);
             }
 
-            if ((property==null)||(property.Value==null)||(((JValue)property.Value).Value==null))
+            if (!value.ValueIs<T>())
             {
-                return default(T);
+                throw new InvalidCastException(System.String.Format("Cannot cast '{0}' as '{1}'.",value.Value.GetType(),typeof(T)));
             }
 
-            if (typeof(T)==typeof(string))
+            switch (value.Value.GetType().FullName)
             {
-                if (((JValue)property.Value).Type!=JTokenType.String)
-                {
-                    throw new InvalidCastException(System.String.Format("Cannot cast '{0}' as '{1}'.",((JValue)property.Value).Value.GetType(),typeof(T)));
-                }
-
-                return (T)((JValue)property.Value).Value;
+                case "System.String":
+                case "System.Boolean":
+                case "System.SByte":
+                case "System.Byte":
+                case "System.Int16":
+                case "System.UInt16":
+                case "System.Int32":
+                case "System.UInt32":
+                case "System.Int64":
+                case "System.UInt64":
+                    return (T)value.Value;
+                case "System.Single":
+                case "System.Double":
+                case "System.Decimal":
+                    return (value.Type==JTokenType.Integer?(T)(object)(float)(int)value.Value:(T)value.Value);
+                case "System.Uri":
+                    return (value.Type==JTokenType.Uri?(T)value.Value:(T)(object)new Uri(value.ValueAs<string>()));
+                default:
+                    throw new InvalidOperationException(System.String.Format("Cannot cast '{0}' as '{1}'.",value.Value,typeof(T)));
             }
-
-            if (((typeof(T)==typeof(int))||(typeof(T)==typeof(byte))||(typeof(T)==typeof(long))||(typeof(T)==typeof(short)))&&(((JValue)property.Value).Type==JTokenType.Integer))
-            {
-                return (T)((JValue)property.Value).Value;
-            }
-
-            if ((typeof(T)==typeof(float))||(typeof(T)==typeof(double))||(typeof(T)==typeof(decimal))||(typeof(T)==typeof(short)))
-            {
-                if (((JValue)property.Value).Type==JTokenType.Integer)
-                {
-                    return (T)(object)(decimal)(int)((JValue)property.Value).Value;
-                }
-                else if (((JValue)property.Value).Type==JTokenType.Float)
-                {
-                    return (T)((JValue)property.Value).Value;
-                }
-            }
-
-            if ((typeof(T)==typeof(bool))&&(((JValue)property.Value).Type==JTokenType.Boolean))
-            {
-                return (T)((JValue)property.Value).Value;
-            }
-
-            if ((typeof(T)==typeof(Uri))&&(((JValue)property.Value).Type== JTokenType.Uri))
-            {
-                return (T)((JValue)property.Value).Value;
-            }
-
-            throw new InvalidOperationException(System.String.Format("Cannot cast value to type '{0}'.",typeof(T)));
         }
 
         internal static JArray Merge(this JArray current,JToken toMerge)
@@ -219,6 +178,23 @@ namespace RomanticWeb.JsonLd
             }
 
             return current;
+        }
+
+        private static void ValidateType(Type type)
+        {
+            if ((type!=typeof(Uri))&&(type!=typeof(string)))
+            {
+                if (!type.IsValueType)
+                {
+                    throw new InvalidOperationException(System.String.Format("Cannot confirm value of non-value type '{0}'.",type));
+                }
+
+                if ((type!=typeof(int))&&(type!=typeof(byte))&&(type!=typeof(long))&&(type!=typeof(short))&&
+                    (type!=typeof(float))&&(type!=typeof(double))&&(type!=typeof(decimal))&&(type!=typeof(bool)))
+                {
+                    throw new InvalidOperationException(System.String.Format("Cannot confirm value of type '{0}'.",type));
+                }
+            }
         }
     }
 }

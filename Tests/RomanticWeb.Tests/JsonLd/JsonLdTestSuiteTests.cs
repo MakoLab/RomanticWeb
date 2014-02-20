@@ -54,7 +54,7 @@ namespace RomanticWeb.Tests.JsonLd
         {
             // given
             string inputJson=File.ReadAllText(input);
-            var jsonOptions=new JsonLdOptions();
+            var jsonOptions=new JsonLdOptions() { BaseUri=new Uri("http://json-ld.org/test-suite/tests/"+System.IO.Path.GetFileName(input)) };
             Func<string> expandTestFunc=() => _processor.Expand(inputJson,jsonOptions);
 
             if (options!=null)
@@ -71,7 +71,7 @@ namespace RomanticWeb.Tests.JsonLd
             }
 
             // when, then
-            //ExecuteTest(expandTestFunc,expectedPath);
+            ExecuteTest(expandTestFunc,expectedPath);
         }
 
         private static void ExecuteTest(Func<string> getTestResult,string expectedPath)

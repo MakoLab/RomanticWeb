@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.JsonLd
 {
-    public class JsonLdProcessor:IJsonLdProcessor
+    public partial class JsonLdProcessor:IJsonLdProcessor
     {
         private const string Id="@id";
         private const string Language="@language";
         private const string Value="@value";
+        private const string Vocab="@vocab";
         private const string Context="@context";
         private const string Graph="@graph";
         private const string Type="@type";
         private const string List="@list";
+        private const string Reverse="@reverse";
+        private const string Container="@container";
+        private const string Set="@set";
+        private const string Index="@index";
+        private const string Base="@base";
 
         private readonly JArray _listInGraph=new JArray();
         private List<Node> _nodesInList=new List<Node>();
@@ -74,11 +81,6 @@ namespace RomanticWeb.JsonLd
         }
 
         public string Compact(string json,string jsonLdContext)
-        {
-            return json;
-        }
-
-        public string Expand(string json,JsonLdOptions options)
         {
             return json;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -81,7 +82,7 @@ namespace RomanticWeb.Tests.JsonLd
         {
             string json=_processor.FromRdf(GetQuads(id, resource));
 
-            object deserializeObject = JsonConvert.DeserializeObject(json);
+            object deserializeObject = JsonConvert.DeserializeObject(Regex.Replace(json,"\"_:autos[0-9]+\"","\"_:blank\""));
             Console.WriteLine("Result JSON:");
             Console.WriteLine(deserializeObject.ToString());
 

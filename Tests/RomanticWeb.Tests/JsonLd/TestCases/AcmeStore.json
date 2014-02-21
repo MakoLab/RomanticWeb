@@ -1,6 +1,6 @@
 ﻿[
 	{
-		"@id": "_:autos1",
+		"@id": "_:blank",
 		"@type": [
 			"http://purl.org/goodrelations/v1#OpeningHoursSpecification"
 		],
@@ -39,7 +39,7 @@
 		],
 		"http://purl.org/goodrelations/v1#hasOpeningHoursSpecification": [
 			{
-				"@id": "_:autos1"
+				"@id": "_:blank"
 			}
 		],
 		"http://purl.org/goodrelations/v1#name": [

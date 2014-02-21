@@ -53,11 +53,13 @@
   <ItemGroup>
     <Compile Include="Context.cs" />
     <Compile Include="ContextExtensions.cs" />
-    <Compile Include="JsonLdProcessor.expand.cs" />
     <Compile Include="IJsonLdProcessor.cs" />
     <Compile Include="JsonExtensions.cs" />
     <Compile Include="JsonLdOptions.cs" />
     <Compile Include="JsonLdProcessor.cs" />
+    <Compile Include="JsonLdProcessor.expand.cs">
+      <DependentUpon>JsonLdProcessor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TermDefinition.cs" />
   </ItemGroup>

@@ -142,66 +142,6 @@ namespace RomanticWeb.JsonLd
             return result;
         }
 
-        private JToken ExpandLanguageMap(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts)
-        {
-            JToken expandedValue=new JArray();
-            string key=_property.Name;
-            JToken value=_property.Value;
-            foreach (JProperty property in ((JObject)value).Properties().OrderBy(member => member.Name))
-            {
-                string language=property.Name;
-                JToken languageValue=property.Value;
-                if (!(languageValue is JArray))
-                {
-                    languageValue=new JArray(languageValue);
-                }
-
-                foreach (JValue item in (JArray)languageValue)
-                {
-                    if (item.Type!=JTokenType.String)
-                    {
-                        throw new InvalidOperationException("Invalid language map value.");
-                    }
-
-                    JObject languageMap=new JObject();
-                    ((JArray)expandedValue).Merge(languageMap);
-                    languageMap[Value]=item;
-                    languageMap[Language]=language.ToLower();
-                }
-            }
-
-            return expandedValue;
-        }
-
-        private JToken ExpandIndexMap(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts)
-        {
-            JToken expandedValue=new JArray();
-            string key=_property.Name;
-            JToken value=_property.Value;
-            foreach (JProperty property in ((JObject)value).Properties().OrderBy(member => member.Name))
-            {
-                string index=property.Name;
-                JToken indexValue=property.Value;
-                if (!(indexValue is JArray))
-                {
-                    indexValue=new JArray(indexValue);
-                }
-
-                indexValue=Expand(key,indexValue,activeContext,remoteContexts);
-                foreach (JObject item in (JArray)indexValue)
-                {
-                    if (item.Property(Index)==null)
-                    {
-                        item[Index]=index;
-                    }
-
-                    ((JArray)expandedValue).Merge(item);
-                }
-            }
-
-            return expandedValue;
-        }
-
         private JToken ValidateExpandedObject(string activeProperty,JObject result)
         {
             if (result.IsPropertySet(Value))
@@ -271,9 +211,7 @@ namespace RomanticWeb.JsonLd
 
                 if (IsKeyWord(expandedProperty))
                 {
-                    bool @continue;
-                    expandedValue=ExpandKeyword(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    if (@continue)
+                    if (ExpandKeyword(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out expandedValue))
                     {
                         continue;
                     }
@@ -324,21 +262,120 @@ namespace RomanticWeb.JsonLd
             return ValidateExpandedObject(activeProperty,result);
         }
 
-        private JToken ExpandId(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private JToken ExpandLanguageMap(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts)
         {
-            @continue=false;
+            JToken expandedValue=new JArray();
+            string key=_property.Name;
+            JToken value=_property.Value;
+            foreach (JProperty property in ((JObject)value).Properties().OrderBy(member => member.Name))
+            {
+                string language=property.Name;
+                JArray languageValue=property.Value.AsArray();
+                foreach (JValue item in languageValue)
+                {
+                    if (item.Type!=JTokenType.String)
+                    {
+                        throw new InvalidOperationException("Invalid language map value.");
+                    }
+
+                    ((JArray)expandedValue).Merge(new JObject(new JProperty(Value,item),new JProperty(Language,language.ToLower())));
+                }
+            }
+
+            return expandedValue;
+        }
+
+        private JToken ExpandIndexMap(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts)
+        {
+            JToken expandedValue=new JArray();
+            string key=_property.Name;
+            JToken value=_property.Value;
+            foreach (JProperty property in ((JObject)value).Properties().OrderBy(member => member.Name))
+            {
+                string index=property.Name;
+                JArray indexValue=property.Value.AsArray();
+                indexValue=(JArray)Expand(key,indexValue,activeContext,remoteContexts);
+                foreach (JObject item in indexValue)
+                {
+                    if (!item.IsPropertySet(Index))
+                    {
+                        item[Index]=index;
+                    }
+
+                    ((JArray)expandedValue).Merge(item);
+                }
+            }
+
+            return expandedValue;
+        }
+
+        private bool ExpandKeyword(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
+        {
+            bool @continue=false;
+            expandedValue=null;
+            string key=_property.Name;
+            JToken value=_property.Value;
+            if (activeProperty==Reverse)
+            {
+                throw new InvalidOperationException("Invalid reverse property map.");
+            }
+
+            if (result.IsPropertySet(expandedProperty))
+            {
+                throw new InvalidOperationException("Colliding keywords.");
+            }
+
+            switch (expandedProperty)
+            {
+                case Id:
+                case Type:
+                case Value:
+                case Language:
+                case Index:
+                case List:
+                    System.Reflection.MethodInfo expandMethodInfo=GetType().GetMethod("Expand"+Char.ToUpper(expandedProperty[1])+expandedProperty.Substring(2),System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                    object[] arguments={ result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,expandedValue };
+                    @continue=(bool)expandMethodInfo.Invoke(this,arguments);
+                    expandedValue=(JToken)arguments[arguments.Length-1];
+                    if (@continue)
+                    {
+                        return @continue;
+                    }
+
+                    break;
+                case Graph:
+                case Set:
+                    expandedValue=Expand((expandedProperty==Graph?Graph:activeProperty),value,activeContext,remoteContexts);
+                    break;
+                case Reverse:
+                    @continue=ExpandReverse(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out expandedValue);
+                    return @continue;
+            }
+
+            if (expandedValue!=null)
+            {
+                result[expandedProperty]=expandedValue;
+            }
+
+            return @continue=true;
+        }
+
+        private bool ExpandId(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
+        {
+            bool @continue=false;
             if (!_property.ValueIs<string>())
             {
                 throw new InvalidOperationException("Invalid @id value.");
             }
 
-            return ExpandIri(_property.ValueAs<string>(),activeContext,(JObject)null,true);
+            expandedValue=ExpandIri(_property.ValueAs<string>(),activeContext,(JObject)null,true);
+            return @continue;
         }
 
-        private JToken ExpandType(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandType(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
-            JToken expandedValue=null;
+            bool @continue=false;
+            expandedValue=null;
             string key=_property.Name;
             JToken value=_property.Value;
             if ((!_property.ValueIs<string>())&&((!(value is JArray))||(((JArray)value).Count(item => item.Type==JTokenType.String)!=((JArray)value).Count)))
@@ -359,13 +396,13 @@ namespace RomanticWeb.JsonLd
                 }
             }
 
-            return expandedValue;
+            return @continue;
         }
 
-        private JToken ExpandValue(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandValue(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
-            JToken expandedValue=null;
+            bool @continue=false;
+            expandedValue=null;
             string key=_property.Name;
             JToken value=_property.Value;
             if ((!(value is JValue))||(value==null))
@@ -378,44 +415,44 @@ namespace RomanticWeb.JsonLd
             {
                 result[Value]=null;
                 @continue=true;
-                return expandedValue;
             }
 
-            return expandedValue;
+            return @continue;
         }
 
-        private JToken ExpandLanguage(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandLanguage(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
+            bool @continue=false;
             if (!_property.ValueIs<string>())
             {
                 throw new InvalidOperationException("Invalid language-tagged string.");
             }
 
-            return _property.ValueAs<string>().ToLower();
+            expandedValue=_property.ValueAs<string>().ToLower();
+            return @continue;
         }
 
-        private JToken ExpandIndex(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandIndex(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
+            bool @continue=false;
             if (!_property.ValueIs<string>())
             {
                 throw new InvalidOperationException("Invalid @index value.");
             }
 
-            return _property.ValueAs<string>();
+            expandedValue=_property.ValueAs<string>();
+            return @continue;
         }
 
-        private JToken ExpandList(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandList(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
-            JToken expandedValue=null;
+            bool @continue=false;
+            expandedValue=null;
             string key=_property.Name;
             JToken value=_property.Value;
             if ((activeProperty==null)||(activeProperty==Graph))
             {
-                @continue=true;
-                return expandedValue;
+                return @continue=true;
             }
 
             expandedValue=Expand(activeProperty,value,activeContext,remoteContexts);
@@ -429,13 +466,12 @@ namespace RomanticWeb.JsonLd
                 expandedValue=new JArray(expandedValue);
             }
 
-            return expandedValue;
+            return @continue;
         }
 
-        private JToken ExpandReverse(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
+        private bool ExpandReverse(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out JToken expandedValue)
         {
-            @continue=false;
-            JToken expandedValue=null;
+            expandedValue=null;
             string key=_property.Name;
             JToken value=_property.Value;
             if (!(value is JObject))
@@ -496,63 +532,7 @@ namespace RomanticWeb.JsonLd
                 }
             }
 
-            @continue=true;
-            return expandedValue;
-        }
-
-        private JToken ExpandKeyword(JObject result,JProperty _property,string activeProperty,string expandedProperty,Context activeContext,IList<string> remoteContexts,out bool @continue)
-        {
-            @continue=false;
-            JToken expandedValue=null;
-            string key=_property.Name;
-            JToken value=_property.Value;
-            if (activeProperty==Reverse)
-            {
-                throw new InvalidOperationException("Invalid reverse property map.");
-            }
-
-            if (result.IsPropertySet(expandedProperty))
-            {
-                throw new InvalidOperationException("Colliding keywords.");
-            }
-
-            switch (expandedProperty)
-            {
-                case Id:
-                    expandedValue=ExpandId(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case Type:
-                    expandedValue=ExpandType(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case Graph:
-                    expandedValue=Expand(Graph,value,activeContext,remoteContexts);
-                    break;
-                case Value:
-                    expandedValue=ExpandValue(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case Language:
-                    expandedValue=ExpandLanguage(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case Index:
-                    expandedValue=ExpandIndex(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case List:
-                    expandedValue=ExpandList(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-                    break;
-                case Set:
-                    expandedValue=Expand(activeProperty,value,activeContext,remoteContexts);
-                    break;
-                case Reverse:
-                    return expandedValue=ExpandReverse(result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,out @continue);
-            }
-
-            if (expandedValue!=null)
-            {
-                result[expandedProperty]=expandedValue;
-            }
-
-            @continue=true;
-            return expandedValue;
+            return true;
         }
 
         private string ExpandIri(object value,Context context,Context localContext=null,bool documentRelative=false,bool vocab=false,IDictionary<string,bool> defined=null)

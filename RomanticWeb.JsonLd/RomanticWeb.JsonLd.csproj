@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
+    <Compile Include="ContextExtensions.cs" />
     <Compile Include="JsonLdProcessor.expand.cs" />
     <Compile Include="IJsonLdProcessor.cs" />
     <Compile Include="JsonExtensions.cs" />

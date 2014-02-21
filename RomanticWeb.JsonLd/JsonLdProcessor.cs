@@ -10,19 +10,19 @@ namespace RomanticWeb.JsonLd
 {
     public partial class JsonLdProcessor:IJsonLdProcessor
     {
-        private const string Id="@id";
-        private const string Language="@language";
-        private const string Value="@value";
-        private const string Vocab="@vocab";
-        private const string Context="@context";
-        private const string Graph="@graph";
-        private const string Type="@type";
-        private const string List="@list";
-        private const string Reverse="@reverse";
-        private const string Container="@container";
-        private const string Set="@set";
-        private const string Index="@index";
-        private const string Base="@base";
+        internal const string Id="@id";
+        internal const string Language="@language";
+        internal const string Value="@value";
+        internal const string Vocab="@vocab";
+        internal const string Context="@context";
+        internal const string Graph="@graph";
+        internal const string Type="@type";
+        internal const string List="@list";
+        internal const string Reverse="@reverse";
+        internal const string Container="@container";
+        internal const string Set="@set";
+        internal const string Index="@index";
+        internal const string Base="@base";
 
         private readonly JArray _listInGraph=new JArray();
         private List<Node> _nodesInList=new List<Node>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
@@ -28,6 +29,21 @@ namespace RomanticWeb.JsonLd
             }
 
             return current;
+        }
+
+        internal static bool IsPropertySet(this JObject @object,string propertyName)
+        {
+            return @object.Property(propertyName)!=null;
+        }
+
+        internal static int PropertyCount(this JObject @object)
+        {
+            return @object.Properties().Count();
+        }
+
+        internal static int PropertyCount(this JObject @object,Func<JProperty,bool> predicate)
+        {
+            return @object.Properties().Count(predicate);
         }
 
         internal static bool ValueEquals(this JProperty property,object value)
@@ -160,6 +176,11 @@ namespace RomanticWeb.JsonLd
                 default:
                     throw new InvalidOperationException(System.String.Format("Cannot cast '{0}' as '{1}'.",value.Value,typeof(T)));
             }
+        }
+
+        internal static JArray AsArray(this JToken token)
+        {
+            return (!(token is JArray)?new JArray(token):(JArray)token);
         }
 
         internal static JArray Merge(this JArray current,JToken toMerge)

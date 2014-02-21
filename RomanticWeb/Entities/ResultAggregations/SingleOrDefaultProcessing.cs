@@ -3,10 +3,17 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultProcessingStrategy(ProcessingOperation.SingleOrDefault)]
     internal class SingleOrDefaultProcessing : IResultProcessingStrategy
     {
         private readonly ResultFlatteningProcessing _flatten=new ResultFlatteningProcessing();
+
+        public ProcessingOperation Operation
+        {
+            get
+            {
+                return ProcessingOperation.SingleOrDefault;
+            }
+        }
 
         [Anotar.NLog.LogToErrorOnException]
         public object Process(IEnumerable<object> objects)

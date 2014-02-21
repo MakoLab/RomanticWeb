@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -12,7 +11,6 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Generic converter for any type of entity id
     /// </summary>
-    [Export(typeof(IComplexTypeConverter))]
     public class DefaultUriConverter:IComplexTypeConverter
     {
         /// <inheritdoc />

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
@@ -34,16 +33,14 @@ namespace RomanticWeb.Entities
 
         #region Constructors
         /// <summary>Initializes a new instance of the <see cref="EntityProxy"/> class.</summary>
-        /// <param name="store">The store.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMappings">The entity mappings.</param>
-        /// <param name="converter">The converter.</param>
-        public EntityProxy(IEntityStore store,Entity entity,IEntityMapping entityMappings,INodeConverter converter)
+        public EntityProxy(Entity entity,IEntityMapping entityMappings)
         {
-            _store=store;
+            _store=entity.Context.Store;
             _entity=entity;
             _entityMappings=entityMappings;
-            _converter=converter;
+            _converter=entity.Context.NodeConverter;
         }
         #endregion
 
@@ -57,6 +54,14 @@ namespace RomanticWeb.Entities
             get
             {
                 return _entity.Id;
+            }
+        }
+
+        public IEntityContext Context
+        {
+            get
+            {
+                return _entity.Context;
             }
         }
 
@@ -101,11 +106,7 @@ namespace RomanticWeb.Entities
                 IDictionary dictionary=aggregatedResult as IDictionary;
                 if (dictionary!=null)
                 {
-                    genericArguments=new Type[] { typeof(object),typeof(object) };
-                    if (typeof(IDictionary<,>).IsAssignableFromSpecificGeneric(dictionary.GetType()))
-                    {
-                        genericArguments=dictionary.GetType().GetGenericArguments().Take(2).ToArray();
-                    }
+                    genericArguments = property.ReturnType.GetGenericArguments();
 
                     observable=(INotifyCollectionChanged)typeof(ObservableDictionary<,>)
                         .MakeGenericType(genericArguments)
@@ -114,16 +115,20 @@ namespace RomanticWeb.Entities
                 }
                 else
                 {
-                    genericArguments=new Type[] { typeof(object) };
-                    if (typeof(IEnumerable<>).IsAssignableFromSpecificGeneric(collection.GetType()))
+                    genericArguments=property.ReturnType.GetGenericArguments();
+
+                    if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
                     {
-                        genericArguments=collection.GetType().GetGenericArguments().Take(1).ToArray();
+                        genericArguments=new[] { typeof(IEntity) };
                     }
 
+                    var castMethod=Info.OfMethod("System.Core","System.Linq.Enumerable","Cast","IEnumerable").MakeGenericMethod(genericArguments);
+
+                    var convertedCollection=castMethod.Invoke(null,new object[] { collection });
                     observable=(INotifyCollectionChanged)typeof(ObservableCollection<>)
                         .MakeGenericType(genericArguments)
                         .GetConstructor(new Type[] { typeof(IEnumerable<>).MakeGenericType(genericArguments) })
-                        .Invoke(new object[] { collection.Cast<object>() });
+                        .Invoke(new[] { convertedCollection });
                 }
 
                 observable.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Xml;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
@@ -10,7 +9,6 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Converts xsd:date and xsd:datetime to <see cref="DateTime"/>
     /// </summary>
-    [Export(typeof(ILiteralNodeConverter))]
     public class DateTimeConverter:XsdConverterBase
     {
         /// <summary>

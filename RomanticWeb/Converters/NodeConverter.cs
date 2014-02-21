@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -14,23 +13,16 @@ namespace RomanticWeb.Converters
     public sealed class NodeConverter:INodeConverter
     {
         private readonly IEntityContext _entityContext;
+        private readonly IConverterCatalog _converters;
 
         /// <summary>Constructor with entity context passed.</summary>
         /// <param name="entityContext">Entity context to be used.</param>
-        public NodeConverter(IEntityContext entityContext)
+        /// <param name="converters">Converter catalog</param>
+        public NodeConverter(IEntityContext entityContext,IConverterCatalog converters)
         {
             _entityContext=entityContext;
-            Converters=new List<ILiteralNodeConverter>();
-            ComplexTypeConverters=new List<IComplexTypeConverter>();
+            _converters=converters;
         }
-
-        /// <summary>Gets literal node converters.</summary>
-        [ImportMany]
-        public IEnumerable<ILiteralNodeConverter> Converters { get; internal set; }
-
-        /// <summary>Gets complex type converters.</summary>
-        [ImportMany]
-        public IEnumerable<IComplexTypeConverter> ComplexTypeConverters { get; internal set; }
 
         /// <summary>Converts <see cref="Node"/>s and checks for validity against destination property mapping.</summary>
         /// <remarks>
@@ -85,7 +77,7 @@ namespace RomanticWeb.Converters
                                      select obj;
                 foreach (var element in objectsToConvert)
                 {
-                    var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
+                    var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
                     if (converter!=null)
                     {
                         convertedNodes.AddRange(converter.ConvertBack(element));
@@ -150,7 +142,7 @@ namespace RomanticWeb.Converters
                 return objectNode.Literal;
             }
 
-            var converter=GetBestConverter(objectNode);
+            var converter=_converters.GetBestConverter(objectNode);
             if (converter!=null)
             {
                 return converter.Convert(objectNode);
@@ -171,7 +163,7 @@ namespace RomanticWeb.Converters
                 entity=new Entity(objectNode.ToEntityId());
             }
 
-            var converter=ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_entityContext.Store,predicate));
+            var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_entityContext.Store,predicate));
             if (converter!=null)
             {
                 return converter.Convert(entity,_entityContext.Store,predicate);
@@ -181,7 +173,7 @@ namespace RomanticWeb.Converters
             if (PredicateIsEntityOrCollectionThereof(predicate,out entityType))
             {
                 Type itemType=predicate.ReturnType.FindItemType();
-                if ((!entityType.IsAssignableFrom(itemType))||((itemType==entityType)&&(!entityType.IsAssignableFrom(entity.GetType()))))
+                if ((!entityType.IsAssignableFrom(itemType))||((itemType==entityType)&&(!entityType.IsInstanceOfType(entity))))
                 {
                     return Info.OfMethod("RomanticWeb","RomanticWeb.Entities.Entity","AsEntity").MakeGenericMethod(entityType).Invoke(entity,null);
                 }
@@ -192,18 +184,6 @@ namespace RomanticWeb.Converters
             }
 
             return entity;
-        }
-
-        private ILiteralNodeConverter GetBestConverter(Node literalNode)
-        {
-            var matches=from converter in Converters
-                        let match = converter.CanConvert(literalNode)
-                        where match.LiteralFormatMatches!=MatchResult.NoMatch
-                           && match.DatatypeMatches!=MatchResult.NoMatch
-                        orderby match
-                        select converter;
-
-            return matches.FirstOrDefault();
         }
     }
 }

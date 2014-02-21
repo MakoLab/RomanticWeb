@@ -7,6 +7,8 @@ namespace RomanticWeb.Entities.ResultAggregations
     /// </summary>
     public interface IResultProcessingStrategy
     {
+        ProcessingOperation Operation { get; }
+
         /// <summary>
         /// Processes nodes and returns the transformed value
         /// </summary>

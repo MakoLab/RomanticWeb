@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RomanticWeb.ComponentModel.Composition
 {
@@ -63,7 +61,7 @@ namespace RomanticWeb.ComponentModel.Composition
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
                     from type in assembly.GetTypes()
-                    where (type!=typeof(T))&&(!type.IsGenericTypeDefinition)&&(typeof(T).IsAssignableFrom(type))
+                    where (type!=typeof(T))&&(!type.IsGenericTypeDefinition)&&(typeof(T).IsAssignableFrom(type))&&(!type.IsAbstract)
                     from constructor in type.GetConstructors(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance)
                     let parameters=constructor.GetParameters()
                     where ((arguments==null)||((parameters.Length==arguments.Length)&&(parameters.Where(

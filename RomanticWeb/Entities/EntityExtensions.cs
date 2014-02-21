@@ -90,40 +90,13 @@ namespace RomanticWeb.Entities
             }
         }
 
-        // todo: maybe this should be reconsidered
-
-        /// <summary>Gets the entity context associated with that entity.</summary>
-        /// <param name="entity">Source entity</param>
-        /// <returns><see cref="IEntityContext" /> instance or null.</returns>
-        public static IEntityContext GetContext(this IEntity entity)
-        {
-            if (entity!=null)
-            {
-                entity=UnwrapProxy(entity);
-
-                if (entity is Entity)
-                {
-                    return ((Entity)entity).EntityContext;
-                }
-                
-                if (entity is EntityProxy)
-                {
-                    return ((EntityProxy)entity).AsDynamic().EntityContext;
-                }
-
-                return ((dynamic)entity).EntityContext;
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Creates a blank identifier, which will be associated with this entity.
         /// </summary>
         /// <param name="entity">The root entity.</param>
         public static BlankId CreateBlankId(this IEntity entity)
         {
-            var blankIdGenerator=entity.GetContext().BlankIdGenerator;
+            var blankIdGenerator=entity.Context.BlankIdGenerator;
             return new BlankId(blankIdGenerator.Generate(),entity.Id);
         }
 

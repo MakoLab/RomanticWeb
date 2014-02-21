@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
@@ -63,7 +64,7 @@ namespace RomanticWeb.Tests
             _typesMapping.SetupGet(map => map.ReturnType).Returns(typeof(IEnumerable<EntityId>));
             _typesMapping.SetupGet(map => map.GraphSelector).Returns(new FuncGraphSelector(entityId => entityId.Uri));
             _factory = new Mock<IEntityContextFactory>();
-            _factory.Setup(f => f.SatisfyImports(It.IsAny<EntityProxy>()));
+            _factory.Setup(cf => cf.Converters).Returns(new Mock<IConverterCatalog>().Object);
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);

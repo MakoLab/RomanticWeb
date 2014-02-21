@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
     /// <summary>Generic converter for all <see cref="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;" /> based dictionaries.</summary>
-    [Export(typeof(IComplexTypeConverter))]
     public class KeyValuePairConverter:IComplexTypeConverter
     {
         /// <summary>Converts nodes into a dictionary.</summary>

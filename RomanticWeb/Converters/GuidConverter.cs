@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
@@ -7,7 +6,6 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Converter for GUID literal nodes
     /// </summary>
-    [Export(typeof(ILiteralNodeConverter))]
     public class GuidConverter:ILiteralNodeConverter
     {
         /// <inheritdoc />

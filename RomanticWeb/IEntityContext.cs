@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -20,6 +22,10 @@ namespace RomanticWeb
         /// The blank identifier generator.
         /// </value>
         IBlankNodeIdGenerator BlankIdGenerator { get; }
+
+        IOntologyProvider Ontologies { get; }
+
+        INodeConverter NodeConverter { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>

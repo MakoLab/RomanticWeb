@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Mapping;
+﻿using RomanticWeb.Converters;
+using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -12,11 +13,9 @@ namespace RomanticWeb
         /// <summary>Gets the mappings.</summary>
         IMappingsRepository Mappings { get; }
 
+        IConverterCatalog Converters { get; }
+
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();
-
-        /// <summary>Satisfies imports for given object.</summary>
-        /// <param name="obj">Target object to be satisfied.</param>
-        void SatisfyImports(object obj);
     }
 }

@@ -9,7 +9,7 @@ namespace RomanticWeb.Entities
     public interface IBaseUriSelectionPolicy
     {
         /// <summary>
-        /// Selects the base URI for anthe given entity identifier
+        /// Selects the base URI for the given entity identifier
         /// </summary>
         Uri SelectBaseUri(EntityId entityId);
     }

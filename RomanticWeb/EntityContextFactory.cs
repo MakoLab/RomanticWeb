@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
 using Anotar.NLog;
 using RomanticWeb.ComponentModel.Composition;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
@@ -18,13 +16,13 @@ namespace RomanticWeb
     public class EntityContextFactory:IEntityContextFactory
     {
         #region Fields
-        private static IEnumerable<IOntologyProvider> _importedOntologies=null;
-        private static object _ontologiesLocker=new Object();
-        private static IEnumerable<IMappingsRepository> _importedMappings=null;
-        private static object _mappingsLocker=new Object();
+        private static readonly object MappingsLocker = new Object();
+        private static readonly object OntologiesLocker = new Object();
+        private static IEnumerable<IOntologyProvider> importedOntologies;
+        private static IEnumerable<IMappingsRepository> importedMappings;
 
+        private readonly ConverterCatalog _conveters=new ConverterCatalog();
         private readonly MappingBuilder _mappingBuilder=new MappingBuilder();
-        private readonly CompositionContainer _container;
         private bool _isInitialized;
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
@@ -33,6 +31,7 @@ namespace RomanticWeb
         private CompoundMappingsRepository _actualMappingsRepository;
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
+
         #endregion
 
         #region Constructors
@@ -41,9 +40,6 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory()
         {
-            var catalog=new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath());
-            _container=new CompositionContainer(catalog, true);
-            catalog.Changed+=CatalogChanged;
             WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
         }
@@ -70,19 +66,27 @@ namespace RomanticWeb
             }
         }
 
+        public IConverterCatalog Converters
+        {
+            get
+            {
+                return _conveters;
+            }
+        }
+
         private IEnumerable<IOntologyProvider> ImportedOntologies
         {
             get
             {
-                if (_importedOntologies==null)
+                if (importedOntologies==null)
                 {
-                    lock (_ontologiesLocker)
+                    lock (OntologiesLocker)
                     {
-                        _importedOntologies=ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
+                        importedOntologies=ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
                     }
                 }
 
-                return _importedOntologies;
+                return importedOntologies;
             }
         }
 
@@ -90,15 +94,15 @@ namespace RomanticWeb
         {
             get
             {
-                if (_importedMappings==null)
+                if (importedMappings==null)
                 {
-                    lock (_mappingsLocker)
+                    lock (MappingsLocker)
                     {
-                        _importedMappings=ContainerFactory.GetInstancesImplementing<IMappingsRepository>();
+                        importedMappings=ContainerFactory.GetInstancesImplementing<IMappingsRepository>();
                     }
                 }
 
-                return _importedMappings;
+                return importedMappings;
             }
         }
         #endregion
@@ -114,13 +118,6 @@ namespace RomanticWeb
             _mappingContext=new MappingContext(_actualOntologyProvider,_defaultGraphSelector);
 
             return new EntityContext(this,Mappings,_mappingContext,_entityStoreFactory(),_entitySourceFactory(),_baseUriSelector);
-        }
-
-        /// <summary>Satisfies imports for given object.</summary>
-        /// <param name="obj">Target object to be satisfied.</param>
-        public void SatisfyImports(object obj)
-        {
-            _container.ComposeParts(obj);
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
@@ -213,31 +210,6 @@ namespace RomanticWeb
             EnsureMappingsRepository();
             EnsureMappingsRebuilt();
             _isInitialized=true;
-        }
-
-        private void CatalogChanged(object sender,ComposablePartCatalogChangeEventArgs changeEventArgs)
-        {
-            LogTo.Info("MEF catalog has changed");
-            bool shouldRebuildMappings=false;
-            
-            if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IMappingsRepository>()))
-            {
-                LogTo.Info("Refreshing mapping repositories");
-                EnsureMappingsRepository();
-                shouldRebuildMappings=true;
-            }
-
-            if (changeEventArgs.AddedDefinitions.Any(def => def.Exports<IOntologyProvider>()))
-            {
-                LogTo.Info("Refreshing ontology providers");
-                EnsureOntologyProvider();
-                shouldRebuildMappings=true;
-            }
-
-            if (shouldRebuildMappings)
-            {
-                EnsureMappingsRebuilt();
-            }
         }
 
         private void EnsureOntologyProvider()

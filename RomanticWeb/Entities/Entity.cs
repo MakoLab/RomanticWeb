@@ -15,7 +15,7 @@ namespace RomanticWeb.Entities
     public class Entity : DynamicObject, IEntity
     {
         #region Fields
-        private readonly EntityContext _entityContext;
+        private readonly EntityContext _context;
         private readonly EntityId _entityId;
         private readonly dynamic _asDynamic;
         private readonly IDictionary<string,OntologyAccessor> _ontologyAccessors;
@@ -40,11 +40,11 @@ namespace RomanticWeb.Entities
 
         /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
         /// <param name="entityId">IRI of the entity.</param>
-        /// <param name="entityContext">Entity context to be attached to this entity.</param>
+        /// <param name="context">Entity context to be attached to this entity.</param>
         /// <param name="isInitialized">Sets the entiy to initialized or not initialized state.</param>
-        internal Entity(EntityId entityId,EntityContext entityContext,bool isInitialized=false):this(entityId)
+        internal Entity(EntityId entityId,EntityContext context,bool isInitialized=false):this(entityId)
         {
-            _entityContext=entityContext;
+            _context=context;
             _isInitialized=isInitialized;
         }
         #endregion
@@ -53,11 +53,11 @@ namespace RomanticWeb.Entities
         /// <summary>Gets an IRI of this entity.</summary>
         public EntityId Id { get { return _entityId; } }
 
-        internal EntityContext EntityContext
+        public IEntityContext Context
         {
             get
             {
-                return _entityContext;
+                return _context;
             }
         }
 
@@ -162,7 +162,7 @@ namespace RomanticWeb.Entities
         /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
         public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
         {
-            return EntityContext.EntityAs<TInterface>(this);
+            return _context.EntityAs<TInterface>(this);
         }
 
         /// <summary>Serves as the default hash function. </summary>
@@ -197,9 +197,9 @@ namespace RomanticWeb.Entities
         /// <summary>Ensures the entity is initialized and filled with data.</summary>
         internal void EnsureIsInitialized()
         {
-            if ((EntityContext!=null)&&!IsInitialized)
+            if ((Context!=null)&&!IsInitialized)
             {
-                EntityContext.InitializeEnitity(this);
+                _context.InitializeEnitity(this);
                 _isInitialized=true;
             }
         }
@@ -270,7 +270,7 @@ namespace RomanticWeb.Entities
             {
                 get
                 {
-                    return _entity._entityContext;
+                    return _entity._context;
                 }
             }
 

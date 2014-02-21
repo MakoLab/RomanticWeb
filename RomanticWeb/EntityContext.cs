@@ -11,7 +11,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Model;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
@@ -47,11 +47,10 @@ namespace RomanticWeb
             _entityStore=entityStore;
             _entitySource=entitySource;
             _baseUriSelector=baseUriSelector;
-            _nodeConverter=new NodeConverter(this);
+            _nodeConverter=new NodeConverter(this,factory.Converters);
             _mappings=mappings;
             _mappingContext=mappingContext;
             Cache=new DictionaryCache();
-            factory.SatisfyImports(_nodeConverter);
             _classInterfacesMap=new Dictionary<string,Type>();
             _missingClassInterfacesMap=new List<string>();
         }
@@ -83,6 +82,22 @@ namespace RomanticWeb
             get
             {
                 return _blankIdGenerator;
+            }
+        }
+
+        public IOntologyProvider Ontologies
+        {
+            get
+            {
+                return _factory.Ontologies;
+            }
+        }
+
+        public INodeConverter NodeConverter
+        {
+            get
+            {
+                return _nodeConverter;
             }
         }
 
@@ -277,7 +292,7 @@ namespace RomanticWeb
                 throw new ArgumentNullException("mapping", string.Format("Mappings not found for type {0}",typeof(T)));
             }
 
-            var proxy=new EntityProxy(Store,entity,mapping,_nodeConverter);
+            var proxy=new EntityProxy(entity,mapping);
             return proxy.ActLike<T>();
         }
        

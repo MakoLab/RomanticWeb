@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
@@ -9,7 +8,6 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Converts XSD numeric types to numbers
     /// </summary>
-    [Export(typeof(ILiteralNodeConverter))]
     public class IntegerConverter:XsdConverterBase
     {
         /// <summary>

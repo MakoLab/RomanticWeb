@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using NullGuard;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
     /// <summary>Statically typed converter for <see cref="EntityId"/>.</summary>
-    [Export(typeof(IComplexTypeConverter))]
     public class EntityIdConverter:EntityIdConverter<EntityId>
     {
         /// <inheritdoc/>

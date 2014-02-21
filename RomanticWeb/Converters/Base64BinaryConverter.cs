@@ -23,7 +23,7 @@ namespace RomanticWeb.Converters
                            LiteralFormatMatches = MatchResult.DontCare
                        };
 
-            if (literalNode.DataType== Vocabularies.Xsd.Base64Binary)
+            if (new AbsoluteUriComparer().Equals(literalNode.DataType,Vocabularies.Xsd.Base64Binary))
             {
                 match.DatatypeMatches=MatchResult.ExactMatch;
             }

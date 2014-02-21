@@ -54,7 +54,10 @@
     <Compile Include="BaseUriSelectorBuilder.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
+    <Compile Include="Converters\CatalogConverterExtensions.cs" />
+    <Compile Include="Converters\ConverterCatalog.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
+    <Compile Include="Converters\IConverterCatalog.cs" />
     <Compile Include="Converters\KeyValuePairConverter.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
@@ -89,7 +92,6 @@
     <Compile Include="Entities\ResultAggregations\IResultProcessingStrategyMetadata.cs" />
     <Compile Include="Entities\ResultAggregations\IResultProcessingStrategy.cs" />
     <Compile Include="Entities\ResultAggregations\NoopProcessing.cs" />
-    <Compile Include="Entities\ResultAggregations\ResultProcessingStrategyAttribute.cs" />
     <Compile Include="Entities\ResultAggregations\ResultFlatteningProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\SingleOrDefaultProcessing.cs" />
     <Compile Include="Entities\ResultAggregations\SingleResultProcessing.cs" />
@@ -288,7 +290,6 @@
       <HintPath>..\packages\Remotion.Linq.1.15.7.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>

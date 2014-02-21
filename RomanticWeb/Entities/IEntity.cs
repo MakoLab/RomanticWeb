@@ -7,5 +7,7 @@ namespace RomanticWeb.Entities
     {
         /// <summary>Gets the entity's identifier</summary>
         EntityId Id { get; }
+
+        IEntityContext Context { get; }
     }
 }

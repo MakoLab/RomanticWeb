@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Xml;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
@@ -8,9 +7,8 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>
-    /// Convert CSD floatign point numbers to doubles
+    /// Convert XSD floating point numbers to doubles
     /// </summary>
-    [Export(typeof(ILiteralNodeConverter))]
     public class DoubleConverter:XsdConverterBase
     {
         /// <summary>

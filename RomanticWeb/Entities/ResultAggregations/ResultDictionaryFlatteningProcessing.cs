@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultProcessingStrategy(ProcessingOperation.Dictionary)]
     internal class ResultDictionaryFlatteningProcessing:IResultProcessingStrategy
     {
+        public ProcessingOperation Operation
+        {
+            get
+            {
+                return ProcessingOperation.Dictionary;
+            }
+        }
+
         public object Process(IEnumerable<object> objects)
         {
             IDictionary dictionary=new Hashtable();

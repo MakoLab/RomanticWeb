@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
+using System.Collections.ObjectModel;
 using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -26,7 +26,6 @@ namespace RomanticWeb.Tests.Linq
         private TestMappingsRepository _mappingsRepository;
         private Mock<IEntityContextFactory> _factory;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private CompositionContainer _container;
 
         public interface IPerson:IEntity
         {
@@ -40,12 +39,11 @@ namespace RomanticWeb.Tests.Linq
         [SetUp]
         public void Setup()
         {
-            _container=new CompositionContainer(new DirectoryCatalog(AppDomain.CurrentDomain.GetPrimaryAssemblyPath()),true);
             _store=new TripleStore();
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig"); 
             
             _factory=new Mock<IEntityContextFactory>();
-            _factory.Setup(factory => factory.SatisfyImports(It.IsNotNull<object>())).Callback<object>(component => _container.ComposeParts(component));
+            _factory.Setup(cf => cf.Converters).Returns(new ConverterCatalog());
 
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));

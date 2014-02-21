@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
@@ -9,7 +8,6 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converts a RDF list to a collection.</summary>
-    [Export(typeof(IComplexTypeConverter))]
     public class RdfListConverter:IComplexTypeConverter
     {
         private readonly EntityId _listNilId;

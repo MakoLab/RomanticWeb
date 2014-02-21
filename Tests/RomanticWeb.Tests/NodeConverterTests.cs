@@ -120,11 +120,12 @@ namespace RomanticWeb.Tests
 
         private NodeConverter CreateConverter(params object[] converters)
         {
-            return new NodeConverter(_entityContext.Object)
-                       {
-                           Converters=converters.OfType<ILiteralNodeConverter>(),
-                           ComplexTypeConverters=converters.OfType<IComplexTypeConverter>()
-                       };
+            var literalConverters=converters.OfType<ILiteralNodeConverter>().ToList();
+            var complexConverters=converters.OfType<IComplexTypeConverter>().ToList();
+            var catalog=new Mock<IConverterCatalog>();
+            catalog.Setup(cc => cc.ComplexTypeConverters).Returns(complexConverters);
+            catalog.Setup(cc => cc.LiteralNodeConverters).Returns(literalConverters);
+            return new NodeConverter(_entityContext.Object,catalog.Object);
         }
     }
 }

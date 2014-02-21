@@ -3,9 +3,16 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    [ResultProcessingStrategy(ProcessingOperation.Flatten)]
     internal class ResultFlatteningProcessing:IResultProcessingStrategy
     {
+        public ProcessingOperation Operation
+        {
+            get
+            {
+                return ProcessingOperation.Flatten;
+            }
+        }
+
         public object Process(IEnumerable<object> objects)
         {
             return FlattenResults(objects).ToList();

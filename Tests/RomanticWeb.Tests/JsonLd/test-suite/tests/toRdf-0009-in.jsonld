@@ -1,4 +1,4 @@
 {
   "@context": {"foo": "http://example.com/default#"},
-  "foo:": "bar"
+  "foo": "bar"
 }

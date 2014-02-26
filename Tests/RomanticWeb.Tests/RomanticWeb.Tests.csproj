@@ -143,7 +143,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\TestOntologyProvider.cs" />
     <Compile Include="Stubs\TestPropertyMapping.cs" />
-    <Compile Include="TripleTests.cs" />
+    <Compile Include="EntityTripleTests.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">
       <DependentUpon>TurtleGraphConversionTests.cs</DependentUpon>

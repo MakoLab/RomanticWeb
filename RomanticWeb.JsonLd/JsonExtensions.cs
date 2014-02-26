@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
@@ -106,8 +107,13 @@ namespace RomanticWeb.JsonLd
                 return false;
             }
 
-            switch (value.Value.GetType().FullName)
+            switch (typeof(T).FullName)
             {
+                case "System.DateTime":
+                    DateTime dateTime;
+                    return (value.Type==JTokenType.Date)||((value.Type==JTokenType.String)&&(DateTime.TryParse((string)value.Value,CultureInfo.InvariantCulture,DateTimeStyles.None,out dateTime)));
+                case "System.TimeSpan":
+                    return value.Type==JTokenType.TimeSpan;
                 case "System.String":
                     return value.Type==JTokenType.String;
                 case "System.Boolean":
@@ -154,23 +160,38 @@ namespace RomanticWeb.JsonLd
                 throw new InvalidCastException(System.String.Format("Cannot cast '{0}' as '{1}'.",value.Value.GetType(),typeof(T)));
             }
 
-            switch (value.Value.GetType().FullName)
+            switch (typeof(T).FullName)
             {
+                case "System.DateTime":
+                    return (T)(object)(value.Type==JTokenType.String?Convert.ToDateTime((string)value.Value):value.Value);
+                case "System.TimeSpan":
+                    return (T)(object)value.Value;
                 case "System.String":
+                    return (T)(object)value.Value.ToString();
                 case "System.Boolean":
+                    return (T)(object)value.Value;
                 case "System.SByte":
+                    return (T)(object)Convert.ToSByte((long)value.Value);
                 case "System.Byte":
+                    return (T)(object)Convert.ToByte((long)value.Value);
                 case "System.Int16":
+                    return (T)(object)Convert.ToInt16((long)value.Value);
                 case "System.UInt16":
+                    return (T)(object)Convert.ToUInt16((long)value.Value);
                 case "System.Int32":
+                    return (T)(object)Convert.ToInt32((long)value.Value);
                 case "System.UInt32":
+                    return (T)(object)Convert.ToUInt32((long)value.Value);
                 case "System.Int64":
-                case "System.UInt64":
                     return (T)value.Value;
+                case "System.UInt64":
+                    return (T)(object)Convert.ToUInt64((long)value.Value);
                 case "System.Single":
+                    return (T)(object)Convert.ToSingle((value.Type==JTokenType.Integer?(long)value.Value:(double)value.Value));
                 case "System.Double":
+                    return (T)((value.Type==JTokenType.Integer?(object)Convert.ToDouble((long)value.Value):(double)value.Value));
                 case "System.Decimal":
-                    return (value.Type==JTokenType.Integer?(T)(object)(float)(int)value.Value:(T)value.Value);
+                    return (T)(object)Convert.ToDecimal((value.Type==JTokenType.Integer?(long)value.Value:(double)value.Value));
                 case "System.Uri":
                     return (value.Type==JTokenType.Uri?(T)value.Value:(T)(object)new Uri(value.ValueAs<string>()));
                 default:
@@ -211,7 +232,8 @@ namespace RomanticWeb.JsonLd
                 }
 
                 if ((type!=typeof(int))&&(type!=typeof(byte))&&(type!=typeof(long))&&(type!=typeof(short))&&
-                    (type!=typeof(float))&&(type!=typeof(double))&&(type!=typeof(decimal))&&(type!=typeof(bool)))
+                    (type!=typeof(float))&&(type!=typeof(double))&&(type!=typeof(decimal))&&(type!=typeof(bool))&&
+                    (type!=typeof(DateTime))&&(type!=typeof(TimeSpan)))
                 {
                     throw new InvalidOperationException(System.String.Format("Cannot confirm value of type '{0}'.",type));
                 }

@@ -7,7 +7,7 @@ namespace RomanticWeb.JsonLd
     {
         string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false);
 
-        IEnumerable<EntityQuad> ToRdf(string json);
+        IEnumerable<EntityQuad> ToRdf(string json,JsonLdOptions options,bool produceGeneralizedRdf=false);
 
         string Compact(string json,string jsonLdContext);
 

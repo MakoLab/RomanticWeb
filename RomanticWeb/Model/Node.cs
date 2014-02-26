@@ -65,7 +65,7 @@ namespace RomanticWeb.Model
             _dataType=dataType;
         }
 
-        private Node(string identifier,Uri graphUri,EntityId entityId)
+        private Node(string identifier,Uri graphUri,[AllowNull]EntityId entityId)
         {
             _identifier=identifier;
             _graphUri=graphUri;
@@ -73,7 +73,6 @@ namespace RomanticWeb.Model
             _blankNodeId=new BlankId(identifier,entityId,graphUri);
             _uri=_blankNodeId.Uri;
         }
-
         #endregion
 
         #region Properties
@@ -223,7 +222,7 @@ namespace RomanticWeb.Model
         }
 
         /// <summary>Factory method for creating blank nodes.</summary>
-        public static Node ForBlank(string blankNodeId,EntityId entityId,[AllowNull] Uri graphUri)
+        public static Node ForBlank(string blankNodeId,[AllowNull]EntityId entityId,[AllowNull] Uri graphUri)
         {
             return new Node(blankNodeId,graphUri,entityId);
         }

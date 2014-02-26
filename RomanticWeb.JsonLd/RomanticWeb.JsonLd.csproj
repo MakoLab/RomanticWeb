@@ -60,6 +60,7 @@
     <Compile Include="JsonLdProcessor.expand.cs">
       <DependentUpon>JsonLdProcessor.cs</DependentUpon>
     </Compile>
+    <Compile Include="JsonLdProcessor.toRdf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TermDefinition.cs" />
   </ItemGroup>

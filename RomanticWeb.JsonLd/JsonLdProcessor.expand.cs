@@ -14,8 +14,9 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.JsonLd
 {
     // TODO: Confirm that Unit test #004 should have 'http://example.org/set2' instead of second 'http://example.org/set1'.
-    // TODO: Confirm that JSON-LN expansion algorithm in point 7.10 has unwanted 'Otherwise' at the beginning.
+    // TODO: Confirm that JSON-LD expansion algorithm in point 7.10 has unwanted 'Otherwise' at the beginning.
     // TODO: Confirm that JSON-LD expansion algorithm has unwanted point 10.1.
+    // TODO: Confirm that JSON-LD expansion algorithm has issues as not all parts of the it output an array of values (i.e. @type keyword expansion).
     public partial class JsonLdProcessor:IJsonLdProcessor
     {
         /// <summary>Expands given JSON-LD string.</summary>
@@ -868,7 +869,7 @@ namespace RomanticWeb.JsonLd
 
         private bool IsKeyWord(string token)
         {
-            return ((token==Id)||(token==Language)||(token==Value)||(token==Context)||(token==Graph)||(token==Type)||(token==List)||(token==Vocab)||(token==Reverse)||(token==Container)||(token==Base)||(token==Set)||(token==Index));
+            return ((token==Id)||(token==Language)||(token==Value)||(token==Context)||(token==Graph)||(token==Type)||(token==List)||(token==Vocab)||(token==Reverse)||(token==Container)||(token==Base)||(token==Set)||(token==Index)||(token==Default));
         }
 
         internal static string MakeAbsoluteUri(string baseUriString,string relativeUriString)
@@ -884,7 +885,7 @@ namespace RomanticWeb.JsonLd
             }
 
             Uri baseUri=new Uri(baseUriString,UriKind.Absolute);
-            if ((baseUri.Fragment.Length>1)||(relativeUriString.StartsWith("#"))||(relativeUriString.StartsWith("?"))||(relativeUriString.StartsWith("/")))
+            if ((baseUri.Fragment.Length>1)||(relativeUriString.Length==0)||(relativeUriString.StartsWith("#"))||(relativeUriString.StartsWith("?"))||(relativeUriString.StartsWith("/")))
             {
                 return new Uri(baseUri,relativeUriString).ToString();
             }

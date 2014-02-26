@@ -23,6 +23,7 @@ namespace RomanticWeb.JsonLd
         internal const string Set="@set";
         internal const string Index="@index";
         internal const string Base="@base";
+        internal const string Default="@default";
 
         private readonly JArray _listInGraph=new JArray();
         private List<Node> _nodesInList=new List<Node>();
@@ -68,11 +69,6 @@ namespace RomanticWeb.JsonLd
             }
 
             return new JArray(subjectMap.Values).ToString();
-        }
-
-        public IEnumerable<EntityQuad> ToRdf(string json)
-        {
-            yield break;
         }
 
         public string Flatten(string json,string jsonLdContext)

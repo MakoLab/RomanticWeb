@@ -50,7 +50,6 @@ namespace RomanticWeb.Tests.JsonLd
             ExecuteTest(processDatasetFunc,expectedPath);
         }
 
-        [Ignore]
         [TestCaseSource("ExpandTestsCases")]
         public void Expand_test_suite(string input,string expectedPath,JObject options)
         {

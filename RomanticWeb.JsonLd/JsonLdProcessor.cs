@@ -86,14 +86,10 @@ namespace RomanticWeb.JsonLd
             var groups=from quad in quads
                        where quad.Subject==subject&&quad.Graph==graphName
                        group quad.Object by quad.Predicate into g
-                       select new
-                       {
-                           Predicate=(g.Key==Node.a?useRdfType?Node.a:Node.ForLiteral(Type):g.Key),
-                           Objects=g
-                       }
-                           into selection
-                           orderby selection.Predicate
-                           select selection;
+                       select new { Predicate=(g.Key==Node.a?useRdfType?Node.a:Node.ForLiteral(Type):g.Key), Objects=g } 
+                       into selection
+                        orderby selection.Predicate
+                        select selection;
 
             var result=new JObject();
             int i=0;

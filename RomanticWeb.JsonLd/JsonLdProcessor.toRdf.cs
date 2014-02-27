@@ -19,7 +19,6 @@ namespace RomanticWeb.JsonLd
         // TODO: Confirm that Object to RDF conversion algorithm misses an xsd:dateTime, xsd:date and xsd:time datatypes related steps.
         // TODO: Confirm that Node map generation algorithm should have a 'reference' instead of 'element' in the step 6.6.3.
         // TODO: Confirm that Unit test #044 should have 'http://example.org/set2' instead of second 'http://example.org/set1'.
-
         public IEnumerable<EntityQuad> ToRdf(string json,JsonLdOptions options,bool produceGeneralizedRdf=false)
         {
             json=Expand(json,options);
@@ -143,6 +142,7 @@ namespace RomanticWeb.JsonLd
             {
                 nodeMap[activeGraph]=graph=new JObject();
             }
+
             JObject node=null;
             if (activeSubject!=null)
             {
@@ -400,7 +400,7 @@ namespace RomanticWeb.JsonLd
                 }
                 else if ((value.ValueIs<DateTime>())||(datatype==RomanticWeb.Vocabularies.Xsd.DateTime.AbsoluteUri))
                 {
-                    value=new JValue(value.ValueAs<DateTime>().ToString("yyyy\\-MM\\-dd"+((datatype==RomanticWeb.Vocabularies.Xsd.DateTime.AbsoluteUri)||(datatype!=RomanticWeb.Vocabularies.Xsd.Date.AbsoluteUri)?"\\THH\\:mm\\:ssZ":"")));
+                    value=new JValue(value.ValueAs<DateTime>().ToString("yyyy\\-MM\\-dd"+((datatype==RomanticWeb.Vocabularies.Xsd.DateTime.AbsoluteUri)||(datatype!=RomanticWeb.Vocabularies.Xsd.Date.AbsoluteUri)?"\\THH\\:mm\\:ssZ":string.Empty)));
                     if (datatype==null)
                     {
                         datatype=RomanticWeb.Vocabularies.Xsd.DateTime.AbsoluteUri;
@@ -414,10 +414,10 @@ namespace RomanticWeb.JsonLd
                         datatype=RomanticWeb.Vocabularies.Xsd.DateTime.AbsoluteUri;
                     }
                 }
-                //else if (datatype==null)
-                //{
-                //    datatype=(@object.IsPropertySet(Language)?"http://www.w3.org/2001/XMLSchema#langString":"http://www.w3.org/2001/XMLSchema#string");
-                //}
+                ////else if (datatype==null)
+                ////{
+                ////    datatype=(@object.IsPropertySet(Language)?"http://www.w3.org/2001/XMLSchema#langString":"http://www.w3.org/2001/XMLSchema#string");
+                ////}
 
                 if (@object.IsPropertySet(Language))
                 {

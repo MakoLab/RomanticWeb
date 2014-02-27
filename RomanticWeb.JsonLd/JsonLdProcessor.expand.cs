@@ -58,6 +58,50 @@ namespace RomanticWeb.JsonLd
             return JsonConvert.SerializeObject(result);
         }
 
+        internal static string MakeAbsoluteUri(string baseUriString, string relativeUriString)
+        {
+            if (baseUriString == null)
+            {
+                return relativeUriString;
+            }
+
+            if (baseUriString.StartsWith("_:"))
+            {
+                return "_:" + baseUriString.Substring(2) + relativeUriString;
+            }
+
+            Uri baseUri = new Uri(baseUriString, UriKind.Absolute);
+            if ((baseUri.Fragment.Length > 1) || (relativeUriString.Length == 0) || (relativeUriString.StartsWith("#")) || (relativeUriString.StartsWith("?")) || (relativeUriString.StartsWith("/")))
+            {
+                return new Uri(baseUri, relativeUriString).ToString();
+            }
+            else
+            {
+                if (baseUri.Fragment.Length == 0)
+                {
+                    UriBuilder uriBuilder = new UriBuilder(baseUri);
+                    if (!baseUri.Segments.Last().EndsWith("/"))
+                    {
+                        uriBuilder.Path = System.String.Join(string.Empty, baseUri.Segments, 0, baseUri.Segments.Length - 1);
+                        baseUri = uriBuilder.Uri;
+                    }
+                }
+
+                return new Uri(baseUri.ToString() + relativeUriString, UriKind.Absolute).ToString();
+            }
+        }
+
+        private static JToken LoadRemoteContext(Uri remoteContextUri, IList<string> remoteContexts)
+        {
+            remoteContexts.Add(remoteContextUri.ToString());
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(remoteContextUri);
+            request.CookieContainer = new CookieContainer();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            JToken remoteContext = (JToken)JsonConvert.DeserializeObject(new StreamReader(response.GetResponseStream()).ReadToEnd());
+            response.Close();
+            return remoteContext;
+        }
+
         private JToken Expand(string activeProperty,JToken element,Context activeContext,IList<string> remoteContexts)
         {
             if (element==null)
@@ -335,7 +379,7 @@ namespace RomanticWeb.JsonLd
                 case Index:
                 case List:
                     System.Reflection.MethodInfo expandMethodInfo=GetType().GetMethod("Expand"+Char.ToUpper(expandedProperty[1])+expandedProperty.Substring(2),System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
-                    object[] arguments={ result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,expandedValue };
+                    object[] arguments= { result,_property,activeProperty,expandedProperty,activeContext,remoteContexts,expandedValue };
                     @continue=(bool)expandMethodInfo.Invoke(this,arguments);
                     expandedValue=(JToken)arguments[arguments.Length-1];
                     if (@continue)
@@ -702,6 +746,7 @@ namespace RomanticWeb.JsonLd
 
                 definition.Type=result;
             }
+
             if (((JObject)value).Property(Reverse)!=null)
             {
                 JProperty reverse=((JObject)value).Property(Reverse);
@@ -870,49 +915,6 @@ namespace RomanticWeb.JsonLd
         private bool IsKeyWord(string token)
         {
             return ((token==Id)||(token==Language)||(token==Value)||(token==Context)||(token==Graph)||(token==Type)||(token==List)||(token==Vocab)||(token==Reverse)||(token==Container)||(token==Base)||(token==Set)||(token==Index)||(token==Default));
-        }
-
-        internal static string MakeAbsoluteUri(string baseUriString,string relativeUriString)
-        {
-            if (baseUriString==null)
-            {
-                return relativeUriString;
-            }
-
-            if (baseUriString.StartsWith("_:"))
-            {
-                return "_:"+baseUriString.Substring(2)+relativeUriString;
-            }
-
-            Uri baseUri=new Uri(baseUriString,UriKind.Absolute);
-            if ((baseUri.Fragment.Length>1)||(relativeUriString.Length==0)||(relativeUriString.StartsWith("#"))||(relativeUriString.StartsWith("?"))||(relativeUriString.StartsWith("/")))
-            {
-                return new Uri(baseUri,relativeUriString).ToString();
-            }
-            else
-            {
-                if (baseUri.Fragment.Length==0)
-                {
-                    UriBuilder uriBuilder=new UriBuilder(baseUri);
-                    if (!baseUri.Segments.Last().EndsWith("/"))
-                    {
-                        uriBuilder.Path=System.String.Join("",baseUri.Segments,0,baseUri.Segments.Length-1);
-                        baseUri=uriBuilder.Uri;
-                    }
-                }
-                return new Uri(baseUri.ToString()+relativeUriString,UriKind.Absolute).ToString();
-            }
-        }
-
-        private static JToken LoadRemoteContext(Uri remoteContextUri,IList<string> remoteContexts)
-        {
-            remoteContexts.Add(remoteContextUri.ToString());
-            HttpWebRequest request=(HttpWebRequest)HttpWebRequest.Create(remoteContextUri);
-            request.CookieContainer=new CookieContainer();
-            HttpWebResponse response=(HttpWebResponse)request.GetResponse();
-            JToken remoteContext=(JToken)JsonConvert.DeserializeObject(new StreamReader(response.GetResponseStream()).ReadToEnd());
-            response.Close();
-            return remoteContext;
         }
     }
 }

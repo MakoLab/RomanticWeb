@@ -1,19 +1,29 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RomanticWeb.JsonLd
 {
     internal class Context:IDictionary<string,TermDefinition>,ICloneable
     {
         #region Fields
-        private IDictionary<string,TermDefinition> _termDefinitions=new Dictionary<string,TermDefinition>();
+        private readonly IDictionary<string,TermDefinition> _termDefinitions=new Dictionary<string,TermDefinition>();
         #endregion
 
         #region Properties
+
+        #region ICollection<KeyValuePair<string,TermDefinition>> properties
+        bool ICollection<KeyValuePair<string, TermDefinition>>.IsReadOnly { get { return _termDefinitions.IsReadOnly; } }
+
+        int ICollection<KeyValuePair<string, TermDefinition>>.Count { get { return _termDefinitions.Count; } }
+        #endregion
+
+        #region IDictionary<string,TermDefinition> properties
+        ICollection<string> IDictionary<string, TermDefinition>.Keys { get { return _termDefinitions.Keys; } }
+
+        ICollection<TermDefinition> IDictionary<string, TermDefinition>.Values { get { return _termDefinitions.Values; } }
+        #endregion
+
         public int TermsCount { get { return _termDefinitions.Count; } }
 
         public IEnumerable<string> TermNames { get { return _termDefinitions.Keys; } }
@@ -40,18 +50,6 @@ namespace RomanticWeb.JsonLd
                 _termDefinitions[termName]=value;
             }
         }
-
-        #region ICollection<KeyValuePair<string,TermDefinition>> properties
-        bool ICollection<KeyValuePair<string,TermDefinition>>.IsReadOnly { get { return _termDefinitions.IsReadOnly; } }
-
-        int ICollection<KeyValuePair<string,TermDefinition>>.Count { get { return _termDefinitions.Count; } }
-        #endregion
-
-        #region IDictionary<string,TermDefinition> properties
-        ICollection<string> IDictionary<string,TermDefinition>.Keys { get { return _termDefinitions.Keys; } }
-
-        ICollection<TermDefinition> IDictionary<string,TermDefinition>.Values { get { return _termDefinitions.Values; } }
-        #endregion
         #endregion
 
         #region Public methods
@@ -86,7 +84,7 @@ namespace RomanticWeb.JsonLd
             {
                 foreach (KeyValuePair<string,TermDefinition> term in localContext)
                 {
-                    if (!this.ContainsKey(term.Key))
+                    if (!ContainsKey(term.Key))
                     {
                         this[term.Key]=term.Value;
                     }
@@ -128,7 +126,7 @@ namespace RomanticWeb.JsonLd
 
         public Context Clone()
         {
-            Context result=new Context();
+            var result=new Context();
             result.BaseIri=BaseIri;
             result.DocumentUri=DocumentUri;
             result.Vocabulary=Vocabulary;

@@ -1,7 +1,7 @@
 namespace RomanticWeb.Entities
 {
     /// <summary>
-    /// Genreates ids in a sequence nagi1, magi2, magi3, etc.
+    /// Genreates ids in a sequence magi1, magi2, magi3, etc.
     /// </summary>
     internal class DefaultBlankNodeIdGenerator:IBlankNodeIdGenerator
     {

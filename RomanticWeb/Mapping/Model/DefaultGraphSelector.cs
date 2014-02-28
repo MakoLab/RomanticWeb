@@ -1,5 +1,6 @@
 ﻿using System;
 using RomanticWeb.Entities;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -10,7 +11,7 @@ namespace RomanticWeb.Mapping.Model
     {
         /// <inheritdoc />
         /// <returns>the <see cref="EntityId.Uri"/></returns>
-        protected override Uri GetGraphForEntityId(EntityId entityId)
+        protected override Uri GetGraphForEntityId(EntityId entityId,Uri predicate)
         {
             return entityId.Uri;
         }

@@ -8,15 +8,12 @@ namespace RomanticWeb.Mapping.Model
     {
         private static readonly AbsoluteUriComparer UriComparer=new AbsoluteUriComparer();
 
-        public ClassMapping(Uri uri,GraphSelectionStrategyBase graphSelector)
+        public ClassMapping(Uri uri)
         {
-            GraphSelector=graphSelector;
             Uri=uri;
         }
 
         public Uri Uri { get; private set; }
-
-        public GraphSelectionStrategyBase GraphSelector { get; private set; }
 
         public static bool operator ==(ClassMapping left,ClassMapping right)
         {

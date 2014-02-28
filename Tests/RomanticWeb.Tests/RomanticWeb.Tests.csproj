@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseUriSelectorBuilderTests.cs" />
+    <Compile Include="Collections\RdfListAdapterTests.cs" />
     <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\KeyValueConverterTests.cs" />
@@ -112,6 +113,8 @@
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="NamedGraphs\NamedGraphSelectorTests.cs" />
     <Compile Include="dotNetRDF\TripleStoreAdapterTests.cs" />
     <Compile Include="EntityContextFactoryTests.cs" />
     <Compile Include="EntityContextTests.cs" />
@@ -3097,12 +3100,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <EmbeddedResource Include="TestGraphs\RdfLists\meta.ttl" />
-    <EmbeddedResource Include="TestGraphs\RdfLists\tomasz.ttl" />
     <EmbeddedResource Include="TestGraphs\Collections.trig" />
     <EmbeddedResource Include="TestGraphs\MixedCollections.trig" />
     <EmbeddedResource Include="TestGraphs\TriplesInUnmappedGraphs.trig" />
     <EmbeddedResource Include="TestGraphs\Dictionary.trig" />
+    <EmbeddedResource Include="TestGraphs\BlankNodes2.trig" />
+    <EmbeddedResource Include="TestGraphs\RdfLists.trig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RomanticWeb.JsonLd\RomanticWeb.JsonLd.csproj">
@@ -3136,9 +3139,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestGraphs\BlankNodes.trig" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TestGraphs\RdfLists\math.ttl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestGraphs\BasicDatatypes.trig" />

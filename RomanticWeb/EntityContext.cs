@@ -11,6 +11,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -40,7 +41,8 @@ namespace RomanticWeb
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            IBaseUriSelectionPolicy baseUriSelector)
+            IBaseUriSelectionPolicy baseUriSelector,
+            INamedGraphSelector namedGraphSelector)
         {
             LogTo.Info("Creating entity context");
             _factory=factory;
@@ -53,6 +55,7 @@ namespace RomanticWeb
             Cache=new DictionaryCache();
             _classInterfacesMap=new Dictionary<string,Type>();
             _missingClassInterfacesMap=new List<string>();
+            GraphSelector=namedGraphSelector;
         }
         #endregion
 
@@ -100,6 +103,8 @@ namespace RomanticWeb
                 return _nodeConverter;
             }
         }
+
+        public INamedGraphSelector GraphSelector { get; private set; }
 
         #endregion
 
@@ -176,7 +181,7 @@ namespace RomanticWeb
             var classMappings=entityMapping.Classes;
             foreach (var classMapping in classMappings)
             {
-                var typedEntity=AsTypedEntity(entity,classMapping);
+                var typedEntity=entity.AsEntity<ITypedEntity>();
                 typedEntity.Types=new[] { new EntityId(classMapping.Uri) };
             }
 
@@ -186,7 +191,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public Entity Create(EntityId entityId)
         {
-            entityId=EnsureAbsolutEntityId(entityId);
+            entityId=EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Creating entity {0}",entityId);
             return Create(entityId,true);
         }
@@ -202,7 +207,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
-            entityId=EnsureAbsolutEntityId(entityId);
+            entityId=EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Deleting entity {0}", entityId);
             _entityStore.Delete(entityId);
         }
@@ -211,37 +216,37 @@ namespace RomanticWeb
         {
             // todo: implement
         }
-        #endregion
 
         #region Non-public methods
         /// <summary>Initializes given entity with data.</summary>
         /// <param name="entity">Entity to be initialized</param>
-        internal void InitializeEnitity(IEntity entity)
+        public void InitializeEnitity(IEntity entity)
         {
-            LogTo.Debug("Initializing entity {0}",entity.Id);
-            _entitySource.LoadEntity(Store,entity.Id);
+            LogTo.Debug("Initializing entity {0}", entity.Id);
+            _entitySource.LoadEntity(Store, entity.Id);
         }
 
         /// <summary>Transforms given entity into a strongly typed interface.</summary>
         /// <typeparam name="T">Type of the interface to transform given entity to.</typeparam>
         /// <param name="entity">Entity to be transformed.</param>
         /// <returns>Passed entity beeing a given interface.</returns>
-        internal T EntityAs<T>(Entity entity) where T:class,IEntity
+        public T EntityAs<T>(IEntity entity) where T : class,IEntity
         {
-            if (typeof(T)==typeof(IEntity))
+            if (typeof(T) == typeof(IEntity))
             {
-                return (T)(IEntity)entity;
+                return (T)entity;
             }
 
-            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,typeof(T));
-            return EntityAs<T>(entity,_mappings.MappingFor<T>());
+            LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
+            return EntityAs<T>((Entity)entity, _mappings.MappingFor<T>());
         }
+        #endregion
 
         [Cache]
         [return: AllowNull]
         private Entity Load(EntityId entityId,bool checkIfExist=true)
         {
-            entityId = EnsureAbsolutEntityId(entityId);
+            entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Loading entity {0}",entityId);
 
             if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
@@ -265,7 +270,7 @@ namespace RomanticWeb
             return entity;
         }
 
-        private EntityId EnsureAbsolutEntityId(EntityId entityId)
+        private EntityId EnsureAbsoluteEntityId(EntityId entityId)
         {
             if (!entityId.Uri.IsAbsoluteUri)
             {
@@ -273,16 +278,6 @@ namespace RomanticWeb
             }
 
             return entityId;
-        }
-
-        /// <summary>
-        /// Creates an instance of ITypedEntity with custom mapping 
-        /// to place rdf:type triple in correct named graph as declared by the parent mapping
-        /// </summary>
-        private ITypedEntity AsTypedEntity(Entity entity,IClassMapping classMapping)
-        {
-            var map=new TypeEntityMap(classMapping.GraphSelector.SelectGraph(entity.Id));
-            return EntityAs<ITypedEntity>(entity,map.CreateMapping(_mappingContext));
         }
 
         private T EntityAs<T>(Entity entity,IEntityMapping mapping) where T:class,IEntity

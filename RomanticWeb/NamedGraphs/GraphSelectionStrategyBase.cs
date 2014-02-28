@@ -1,34 +1,34 @@
 ﻿using System;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.NamedGraphs
 {
     /// <summary>
     /// Defines method for selecting named graph URI based on <see cref="EntityId"/> 
     /// </summary>
     public abstract class GraphSelectionStrategyBase
     {
-        internal Uri SelectGraph(EntityId entityId)
+        internal Uri SelectGraph(EntityId entityId,Uri predicate)
         {
-            if (entityId is BlankId)
+            var nonBlankId=entityId;
+            while (nonBlankId is BlankId)
             {
-                var parentEntityId=((BlankId)entityId).RootEntityId;
+                nonBlankId = ((BlankId)entityId).RootEntityId;
 
-                if (parentEntityId==null)
+                if (nonBlankId == null)
                 {
                     throw new ArgumentException("Blank node must have parent id","entityId");
                 }
-
-                return SelectGraph(parentEntityId);
             }
 
-            return GetGraphForEntityId(entityId);
+            return GetGraphForEntityId(nonBlankId,predicate);
         }
 
         /// <summary>
         /// Gets a named graph URI for a given entity
         /// </summary>
         /// <param name="entityId">Entity's identifier</param>
-        protected abstract Uri GetGraphForEntityId(EntityId entityId);
+        /// <param name="predicate"></param>
+        protected abstract Uri GetGraphForEntityId(EntityId entityId,Uri predicate);
     }
 }

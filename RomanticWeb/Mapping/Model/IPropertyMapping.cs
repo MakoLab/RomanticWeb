@@ -13,11 +13,6 @@ namespace RomanticWeb.Mapping.Model
 		Uri Uri { get; }
 
         /// <summary>
-        /// Gets the strategy for selecting named graph URIs
-        /// </summary>
-		GraphSelectionStrategyBase GraphSelector { get; }
-
-        /// <summary>
         /// Gets the property name
         /// </summary>
         string Name { get; }

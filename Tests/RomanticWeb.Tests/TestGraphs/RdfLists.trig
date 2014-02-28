@@ -1,0 +1,60 @@
+﻿@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix people: <http://magi/people/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix math: <http://example/maths/>.
+@prefix temp: <http://example/temp/>.
+@prefix test: <http://magi/math/> .
+
+<http://data.magi/people/Tomasz> 
+{
+	_:autos81 rdf:first people:Karol;
+			  rdf:rest _:autos82.
+	_:autos82 rdf:first people:Gniewko;
+			  rdf:rest _:autos83.
+	_:autos83 rdf:first people:Monika;
+			  rdf:rest _:autos84.
+	_:autos84 rdf:first people:Dominik;
+			  rdf:rest _:autos85.
+	_:autos85 rdf:first people:Przemek;
+			  rdf:rest rdf:nil.
+	_:autos86 rdf:first "tomasz.pluskiewicz@makolab.net";
+			  rdf:rest _:autos87.
+	_:autos87 rdf:first "tomasz.pluskiewicz@makolab.pl";
+			  rdf:rest rdf:nil.
+	temp:nicks1 rdf:first "Tomasz";
+				rdf:rest temp:nicks2.
+	temp:nicks2 rdf:first "Tomek";
+				rdf:rest rdf:nil.
+	people:Tomasz foaf:knows _:autos81;
+				  foaf:mbox _:autos86;
+				  foaf:nick temp:nicks1.
+}
+
+<urn:test:array>
+{
+	_:autos73 rdf:first _:autos74;
+			rdf:rest _:autos77.
+	_:autos74 rdf:first 0 ;
+			rdf:rest _:autos75.
+	_:autos75 rdf:first 1 ;
+			rdf:rest _:autos76.
+	_:autos76 rdf:first 2 ;
+			rdf:rest rdf:nil.
+	_:autos77 rdf:first _:autos78;
+			rdf:rest rdf:nil.
+	_:autos78 rdf:first 3 ;
+			rdf:rest _:autos79.
+	_:autos79 rdf:first 4 ;
+			rdf:rest _:autos80.
+	_:autos80 rdf:first 5 ;
+			rdf:rest rdf:nil.
+	<http://magi/math/array> <http://example/maths/matrix> _:autos73.
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+	<urn:test:array> foaf:primaryTopic test:array.
+}

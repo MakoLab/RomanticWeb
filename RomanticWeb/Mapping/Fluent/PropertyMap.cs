@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for properties
     /// </summary>
-    public class PropertyMap:TermMap,INamedGraphSelectingMap
+    public class PropertyMap:TermMap
     {
 		private readonly PropertyInfo _propertyInfo;
 
@@ -26,17 +26,6 @@ namespace RomanticWeb.Mapping.Fluent
 				return new TermPart<PropertyMap>(this);
 			}
 		}
-
-        /// <summary>
-        /// Gets a named graph mapping part
-        /// </summary>
-        public NamedGraphPart<PropertyMap> NamedGraph
-        {
-            get { return new NamedGraphPart<PropertyMap>(this); }
-        }
-
-        /// <inheritdoc />
-        GraphSelectionStrategyBase INamedGraphSelectingMap.GraphSelector { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this property is a collection
@@ -80,8 +69,7 @@ namespace RomanticWeb.Mapping.Fluent
             return new PropertyMapping(
                 PropertyInfo.PropertyType,
                 PropertyInfo.Name,
-                GetTermUri(mappingContext.OntologyProvider),
-                ((INamedGraphSelectingMap)this).GraphSelector ?? mappingContext.DefaultGraphSelector);
+                GetTermUri(mappingContext.OntologyProvider));
         }
     }
 }

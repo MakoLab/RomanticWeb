@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using FluentAssertions;
 using Moq;
@@ -10,7 +9,6 @@ using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
@@ -47,12 +45,19 @@ namespace RomanticWeb.Tests.Linq
 
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
-
+            
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
-            var mappingContext = new MappingContext(ontologyProvider, new DefaultGraphSelector());
+            var mappingContext = new MappingContext(ontologyProvider);
             _mappingsRepository.RebuildMappings(mappingContext);
-            _entityContext=new EntityContext(_factory.Object,_mappingsRepository,mappingContext,new EntityStore(),new TripleStoreAdapter(_store),_baseUriSelectionPolicy.Object);
+            _entityContext=new EntityContext(
+                _factory.Object,
+                _mappingsRepository,
+                mappingContext,
+                new EntityStore(),
+                new TripleStoreAdapter(_store),
+                _baseUriSelectionPolicy.Object,
+                new TestGraphSelector());
         }
 
         [Test]
@@ -166,9 +171,9 @@ namespace RomanticWeb.Tests.Linq
             public TestPersonMap()
             {
                 Class.Is("foaf", "Person");
-                Property(p => p.Knows).Term.Is("foaf", "knows").NamedGraph.SelectedBy<TestGraphSelector>();
-                Property(p => p.FirstName).Term.Is("foaf", "givenName").NamedGraph.SelectedBy<TestGraphSelector>();
-                Property(p => p.Surname).Term.Is("foaf", "familyName").NamedGraph.SelectedBy<TestGraphSelector>();
+                Property(p => p.Knows).Term.Is("foaf","knows");
+                Property(p => p.FirstName).Term.Is("foaf","givenName");
+                Property(p => p.Surname).Term.Is("foaf","familyName");
             }
         }
 
@@ -177,7 +182,7 @@ namespace RomanticWeb.Tests.Linq
             public TestTypedEntityMap()
             {
                 Class.Is(Vocabularies.Rdfs.Class);
-                Collection(p => p.Types).Term.Is(Vocabularies.Rdf.type).NamedGraph.SelectedBy<TestGraphSelector>();
+                Collection(p => p.Types).Term.Is(Vocabularies.Rdf.type);
             }
         }
     }

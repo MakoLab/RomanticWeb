@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -8,6 +9,11 @@ namespace RomanticWeb.Mapping.Model
     /// </summary>
 	public interface IEntityMapping
 	{
+        /// <summary>
+        /// Gets the type of the mapped entity.
+        /// </summary>
+        Type EntityType { get; }
+
         /// <summary>
         /// Gets the RDF type mapping
         /// </summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,6 +8,7 @@ using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
 using NullGuard;
+using RomanticWeb.Collections;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
@@ -27,19 +27,21 @@ namespace RomanticWeb.Entities
 
         private readonly IEntityStore _store;
         private readonly Entity _entity;
-        private readonly IEntityMapping _entityMappings;
+        private readonly IEntityMapping _entityMapping;
         private readonly INodeConverter _converter;
+
+        private NamedGraphSelectionOverride _namedGraphSelectionOverride;
         #endregion
 
         #region Constructors
         /// <summary>Initializes a new instance of the <see cref="EntityProxy"/> class.</summary>
         /// <param name="entity">The entity.</param>
-        /// <param name="entityMappings">The entity mappings.</param>
-        public EntityProxy(Entity entity,IEntityMapping entityMappings)
+        /// <param name="entityMapping">The entity mappings.</param>
+        public EntityProxy(Entity entity,IEntityMapping entityMapping)
         {
             _store=entity.Context.Store;
             _entity=entity;
-            _entityMappings=entityMappings;
+            _entityMapping=entityMapping;
             _converter=entity.Context.NodeConverter;
         }
         #endregion
@@ -48,7 +50,7 @@ namespace RomanticWeb.Entities
         /// <summary>Gets the result aggregation strategies.</summary>
         IDictionary<ProcessingOperation,IResultProcessingStrategy> IResultProcessingStrategyClient.ResultAggregations { get { return this.GetResultAggregations(); } }
 
-        /// <summary>Gets the entity's identifier</summary>
+        /// <inheritdoc/>
         public EntityId Id
         {
             get
@@ -57,6 +59,7 @@ namespace RomanticWeb.Entities
             }
         }
 
+        /// <inheritdoc/>
         public IEntityContext Context
         {
             get
@@ -81,39 +84,27 @@ namespace RomanticWeb.Entities
         {
             _entity.EnsureIsInitialized();
 
-            var property=_entityMappings.PropertyFor(binder.Name);
-            var graph=property.GraphSelector.SelectGraph(_entity.Id);
+            var property=_entityMapping.PropertyFor(binder.Name);
+            var aggregatedResult=GetValues(property);
 
-            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
-
-            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-            var objectsForPredicate=_converter.ConvertNodes(objects,property);
-
-            var operation=(!property.IsCollection?ProcessingOperation.SingleOrDefault:
-                ((typeof(IDictionary).IsAssignableFrom(property.ReturnType))||(typeof(IDictionary<,>).IsAssignableFromSpecificGeneric(property.ReturnType))?ProcessingOperation.Dictionary:
-                    ProcessingOperation.Flatten));
-            IResultProcessingStrategyClient resultProcessingStrategyClient=(IResultProcessingStrategyClient)this;
-            var aggregation=(resultProcessingStrategyClient.ResultAggregations.ContainsKey(operation)?resultProcessingStrategyClient.ResultAggregations[operation]:FallbackProcessing);
-
-            LogTo.Trace("Performing operation {0} on result nodes",operation);
-            var aggregatedResult=aggregation.Process(objectsForPredicate);
-
-            var collection=aggregatedResult as ICollection;
-            if (collection!=null)
+            if (property.IsCollection)
             {
-                INotifyCollectionChanged observable;
+                ////INotifyCollectionChanged observable;
                 Type[] genericArguments=null;
-                IDictionary dictionary=aggregatedResult as IDictionary;
-                if (dictionary!=null)
-                {
-                    genericArguments = property.ReturnType.GetGenericArguments();
+                ////IDictionary dictionary=aggregatedResult as IDictionary;
+                ////if (dictionary!=null)
+                ////{
+                ////    genericArguments = property.ReturnType.GetGenericArguments();
 
-                    observable=(INotifyCollectionChanged)typeof(ObservableDictionary<,>)
-                        .MakeGenericType(genericArguments)
-                        .GetConstructor(new Type[] { typeof(IDictionary) })
-                        .Invoke(new object[] { dictionary });
-                }
-                else
+                ////    observable=(INotifyCollectionChanged)typeof(ObservableDictionary<,>)
+                ////        .MakeGenericType(genericArguments)
+                ////        .GetConstructor(new Type[] { typeof(IDictionary) })
+                ////        .Invoke(new object[] { dictionary });
+                ////    observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
+                ////    result = observable;
+                ////}
+                ////else
+                if (property.StorageStrategy==StorageStrategyOption.RdfList)
                 {
                     genericArguments=property.ReturnType.GetGenericArguments();
 
@@ -122,20 +113,48 @@ namespace RomanticWeb.Entities
                         genericArguments=new[] { typeof(IEntity) };
                     }
 
-                    var castMethod=Info.OfMethod("System.Core","System.Linq.Enumerable","Cast","IEnumerable").MakeGenericMethod(genericArguments);
+                    var ctor=
+                        typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
+                                                .GetConstructor(new[] { typeof(IEntityContext),typeof(IRdfListNode) });
 
-                    var convertedCollection=castMethod.Invoke(null,new object[] { collection });
-                    observable=(INotifyCollectionChanged)typeof(ObservableCollection<>)
-                        .MakeGenericType(genericArguments)
-                        .GetConstructor(new Type[] { typeof(IEnumerable<>).MakeGenericType(genericArguments) })
-                        .Invoke(new[] { convertedCollection });
+                    IRdfListNode head=((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
+                    EnsureNamedGraphOverrideInChildEntity((EntityProxy)head.UnwrapProxy(),property);
+
+                    result=ctor.Invoke(new object[] { Context,head });
                 }
+                else
+                {
+                    genericArguments=property.ReturnType.GetGenericArguments();
+                    if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
+                    {
+                        genericArguments=new[] { typeof(IEntity) };
+                    }
 
-                observable.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
-                result=observable;
+                    var castMethod=
+                        Info.OfMethod("System.Core","System.Linq.Enumerable","Cast","IEnumerable")
+                            .MakeGenericMethod(genericArguments);
+
+                    var convertedCollection=castMethod.Invoke(null,new[] { aggregatedResult });
+                    var observable=(INotifyCollectionChanged)
+                                                        typeof(ObservableCollection<>).MakeGenericType(genericArguments)
+                                                                                      .GetConstructor(
+                                                                                          new Type[]
+                                                                                              {
+                                                                                                  typeof(IEnumerable<>).MakeGenericType(genericArguments)
+                                                                                              })
+                                                                                      .Invoke(new[] { convertedCollection });
+
+                    observable.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
+                    result=observable;
+                }
             }
             else
             {
+                if (aggregatedResult is IRdfListNode)
+                {
+                    EnsureNamedGraphOverrideInChildEntity((EntityProxy)((IRdfListNode)aggregatedResult).UnwrapProxy(),property);
+                }
+
                 result=aggregatedResult;
             }
 
@@ -147,12 +166,12 @@ namespace RomanticWeb.Entities
         {
             _entity.EnsureIsInitialized();
 
-            var property=_entityMappings.PropertyFor(binder.Name);
+            var property=_entityMapping.PropertyFor(binder.Name);
 
             LogTo.Trace("Setting property {0}",property.Uri);
 
             var propertyUri=Node.ForUri(property.Uri);
-            var graphUri=property.GraphSelector.SelectGraph(_entity.Id);
+            var graphUri=Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
 
             ////if (property.IsCollection)
             ////{
@@ -206,6 +225,104 @@ namespace RomanticWeb.Entities
             return _entity;
         }
         #endregion
+
+        #region Private methods
+
+        internal void OverrideNamedGraphSelection(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping propertyMapping)
+        {
+            OverrideNamedGraphSelection(new NamedGraphSelectionOverride(entityId,entityMapping,propertyMapping));
+        }
+
+        private void OverrideNamedGraphSelection(NamedGraphSelectionOverride @override)
+        {
+            _namedGraphSelectionOverride=@override;
+        }
+
+        private void EnsureNamedGraphOverrideInChildEntity(EntityProxy proxy,IPropertyMapping property)
+        {
+            if (_namedGraphSelectionOverride!=null)
+            {
+                proxy.OverrideNamedGraphSelection(_namedGraphSelectionOverride);
+            }
+            else
+            {
+                proxy.OverrideNamedGraphSelection(Id,_entityMapping,property);
+            }
+        }
+        
+        [return:AllowNull]
+        private object GetValues(IPropertyMapping property)
+        {
+            var graph=SelectNamedGraph(property);
+
+            LogTo.Trace("Reading property {0} from graph {1}", property.Uri, graph);
+
+            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
+            var objectsForPredicate= _converter.ConvertNodes(objects,property);
+
+            var operation = ProcessingOperation.SingleOrDefault;
+            if ((property.IsCollection) && (property.StorageStrategy != StorageStrategyOption.RdfList))
+            {
+                operation = ProcessingOperation.Flatten;
+            }
+
+            IResultProcessingStrategyClient resultProcessingStrategyClient = this;
+            var aggregation = (resultProcessingStrategyClient.ResultAggregations.ContainsKey(operation)
+                                 ? resultProcessingStrategyClient.ResultAggregations[operation]
+                                 : FallbackProcessing);
+
+            LogTo.Trace("Performing operation {0} on result nodes", operation);
+            var aggregatedResult = aggregation.Process(objectsForPredicate);
+            return aggregatedResult;
+        }
+
+        private object SetNamedGraphOverride(object result)
+        {
+            ////var proxy=result as EntityProxy;
+            ////if (proxy!=null)
+            ////{
+            ////    if (proxy.Id is BlankId || proxy._entityMapping.EntityType==typeof(IRdfListNode))
+            ////    {
+            ////        proxy.OverrideNamedGraphSelection(_namedGraphSelectionOverride);
+            ////    }
+            ////}
+
+            return result;
+        }
+
+        private Uri SelectNamedGraph(IPropertyMapping property)
+        {
+            var entityId=Id;
+            var mapping=_entityMapping;
+            var propertyMapping=property;
+
+            if (_namedGraphSelectionOverride!=null)
+            {
+                entityId=_namedGraphSelectionOverride.EntityId;
+                mapping=_namedGraphSelectionOverride.EntityMapping;
+                propertyMapping=_namedGraphSelectionOverride.PropertyMapping;
+            }
+
+            return Context.GraphSelector.SelectGraph(entityId,mapping,propertyMapping);
+        }
+
+        #endregion
+
+        private class NamedGraphSelectionOverride
+        {
+            public NamedGraphSelectionOverride(EntityId entityId, IEntityMapping entityMapping, IPropertyMapping propertyMapping)
+            {
+                EntityId = entityId;
+                EntityMapping = entityMapping;
+                PropertyMapping = propertyMapping;
+            }
+
+            public EntityId EntityId { get; private set; }
+
+            public IEntityMapping EntityMapping { get; private set; }
+
+            public IPropertyMapping PropertyMapping { get; private set; }
+        }
 
         private class DebuggerDisplayProxy
         {

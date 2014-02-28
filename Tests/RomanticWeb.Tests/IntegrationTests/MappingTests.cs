@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
@@ -43,6 +44,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 		public void Mapping_property_to_specific_graph_should_be_possible()
 		{
 			// given
+		    Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
             Mappings.Add(new NamedGraphsPersonMapping());
 			LoadTestFile("TriplesInNamedGraphs.trig");
 
@@ -74,10 +76,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Mapping_rdflist_of_entites_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            Mappings.Add(new DefaultGraphPersonMapping(true));
+            LoadTestFile("RdfLists.trig");
 
             // when
             var friends = Entity.Friends;
@@ -161,34 +161,11 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Mapping_blank_node_rdf_collection_of_entities_should_be_possible()
-        {
-            // given
-            Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
-
-            // when
-            var friends = Entity.Friends;
-
-            // then
-            Assert.That(friends, Has.Count.EqualTo(5));
-            friends.Should()
-                   .ContainInOrder(
-                       new Entity(new EntityId("http://magi/people/Karol")),
-                       new Entity(new EntityId("http://magi/people/Gniewko")),
-                       new Entity(new EntityId("http://magi/people/Monika")),
-                       new Entity(new EntityId("http://magi/people/Dominik")),
-                       new Entity(new EntityId("http://magi/people/Przemek")));
-        }
-
-        [Test]
         public void Mapping_URI_node_rdf_collection_of_entities_should_be_possible()
         {
             // given
-            Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            Mappings.Add(new DefaultGraphPersonMapping(true));
+            LoadTestFile("RdfLists.trig");
 
             // when
             var friends = Entity.NickNames;
@@ -196,16 +173,6 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(friends, Has.Count.EqualTo(2));
             friends.Should().Contain("Tomek", "Tomasz");
-        }
-
-        [Test]
-        public void Should_throw_if_a_property_returns_an_rdf_collection()
-        {
-            Mappings.Add(new DefaultGraphPersonMapping());
-            LoadTestFile("Collections.trig");
-
-            // then
-            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
         }
 
         [Test]
@@ -229,7 +196,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.Homepage; });
             Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
-            Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(3));
+            Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(2));
         }
 
         [Test]
@@ -261,6 +228,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setting_property_should_be_possible_in_named_graph()
         {
             // given
+            Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
             Mappings.Add(new NamedGraphsPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
 
@@ -438,9 +406,39 @@ namespace RomanticWeb.Tests.IntegrationTests
             return new TestMappingsRepository();
         }
 
+        protected override void ChildSetup()
+        {
+            Factory.WithNamedGraphSelector(new TestGraphSelector());
+        }
+
         private string SerializeStore()
         {
             return String.Join(Environment.NewLine,EntityStore.Quads);
+        }
+
+        private class ProtocolReplaceGraphSelector:RomanticWeb.NamedGraphs.INamedGraphSelector
+        {
+            public Uri SelectGraph(EntityId id,IEntityMapping entityMapping,IPropertyMapping predicate)
+            {
+                string replacementProtocol="http";
+
+                switch (predicate.Uri.ToString())
+                {
+                    case "http://xmlns.com/foaf/0.1/familyName":
+                    case "http://xmlns.com/foaf/0.1/givenName":
+                        replacementProtocol="personal";
+                        break;
+                    case "http://xmlns.com/foaf/0.1/knows":
+                        replacementProtocol = "friendsOf";
+                        break;
+                    case "http://xmlns.com/foaf/0.1/homePage":
+                    case "http://xmlns.com/foaf/0.1/interest":
+                        replacementProtocol = "interestsOf";
+                        break;
+                }
+
+                return new Uri(id.ToString().Replace("http",replacementProtocol));
+            }
         }
     }
 }

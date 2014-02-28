@@ -25,14 +25,6 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <summary>
-        /// Gets a named graph mapping part
-        /// </summary>
-        public new NamedGraphPart<CollectionMap> NamedGraph
-        {
-            get { return new NamedGraphPart<CollectionMap>(this); }
-        }
-
-        /// <summary>
         /// Gets options for setting how this collection will be persisted
         /// </summary>
         public StorageStrategyPart StoreAs
@@ -62,7 +54,6 @@ namespace RomanticWeb.Mapping.Fluent
                 PropertyInfo.PropertyType,
                 PropertyInfo.Name,
                 GetTermUri(mappingContext.OntologyProvider),
-                ((INamedGraphSelectingMap)this).GraphSelector??mappingContext.DefaultGraphSelector,
                 StorageStrategy);
         }
 	}

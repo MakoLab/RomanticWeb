@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
@@ -157,8 +156,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_read_rdf_lists_as_collection_of_Entities()
         {
             // given
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            LoadTestFile("RdfLists.trig");
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -177,8 +175,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_read_rdf_lists_as_collection_of_literals()
         {
             // given
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            LoadTestFile("RdfLists.trig");
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -195,8 +192,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_allow_reading_nested_rdf_lists_as_collection_of_lists()
         {
             // given
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.math.ttl", new Uri("urn:test:array"));
+            LoadTestFile("RdfLists.trig");
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
@@ -213,8 +209,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_read_rdf_lists_which_dont_use_blank_nodes()
         {
             // given
-            LoadTestFile("RdfLists.meta.ttl", new Uri("http://app.magi/graphs"));
-            LoadTestFile("RdfLists.tomasz.ttl", new Uri("http://data.magi/people/Tomasz"));
+            LoadTestFile("RdfLists.trig");
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -224,6 +219,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(nicks.Count, Is.EqualTo(2));
             Assert.That(nicks[0], Is.EqualTo("Tomasz"));
             Assert.That(nicks[1], Is.EqualTo("Tomek"));
+        }
+        
+        protected override void ChildSetup()
+        {
+            Factory.WithNamedGraphSelector(new TestGraphSelector()); 
         }
 
         protected override IMappingsRepository SetupMappings()

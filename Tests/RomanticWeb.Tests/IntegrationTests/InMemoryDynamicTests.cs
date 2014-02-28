@@ -26,11 +26,13 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected override void LoadTestFile(string fileName)
         {
+            Console.WriteLine("Reading dataset file '{0}'",fileName);
             Store.LoadTestFile(fileName);
         }
 
         protected override void LoadTestFile(string fileName,Uri graphUri)
         {
+            Console.WriteLine("Reading dataset file '{0}' to graph {1}", fileName, graphUri);
             Store.LoadTestFile(fileName,graphUri);
         }
 

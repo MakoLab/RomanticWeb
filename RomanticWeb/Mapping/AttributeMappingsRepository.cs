@@ -27,7 +27,7 @@ namespace RomanticWeb.Mapping
         /// <summary>
         /// Finds all types annotated with mapping attributes and build mappings
         /// </summary>
-        protected override IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext)
+        protected override IEnumerable<IEntityMapping> BuildTypeMappings(MappingContext mappingContext)
         {
             return from type in Assembly.GetTypes()
                    let classAtributes = type.GetCustomAttributes<ClassAttribute>()
@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping
                    let inheritedMappings = parentTypes.SelectMany(iface => iface.GetCustomAttributes<ClassAttribute>()).Select(s=>s.GetMapping(mappingContext))
                    let classMappings = classAtributes.Select(s => s.GetMapping(mappingContext))
                    let propertyMappings = BuildPropertyMappings(type,mappingContext).ToList()
-                   select new Tuple<Type, IEntityMapping>(type, new EntityMapping(classMappings.Union(inheritedMappings).Distinct(), propertyMappings));
+                   select new EntityMapping(type,classMappings.Union(inheritedMappings).Distinct(), propertyMappings);
         }
 
         private static IEnumerable<IPropertyMapping> BuildPropertyMappings(Type type, MappingContext ontologyProvider)

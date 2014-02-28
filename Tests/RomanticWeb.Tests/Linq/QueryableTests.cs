@@ -9,7 +9,6 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
@@ -33,7 +32,7 @@ namespace RomanticWeb.Tests.Linq
         public void SetUp()
         {
             _ontologies=new TestOntologyProvider();
-            MappingContext mappingContext=new MappingContext(_ontologies,new DefaultGraphSelector());
+            MappingContext mappingContext=new MappingContext(_ontologies);
             _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
             _mappings.RebuildMappings(mappingContext);
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();

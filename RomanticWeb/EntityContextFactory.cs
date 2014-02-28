@@ -5,7 +5,7 @@ using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -16,8 +16,8 @@ namespace RomanticWeb
     public class EntityContextFactory:IEntityContextFactory
     {
         #region Fields
-        private static readonly object MappingsLocker = new Object();
-        private static readonly object OntologiesLocker = new Object();
+        private static readonly object MappingsLocker=new Object();
+        private static readonly object OntologiesLocker=new Object();
         private static IEnumerable<IOntologyProvider> importedOntologies;
         private static IEnumerable<IMappingsRepository> importedMappings;
 
@@ -27,10 +27,10 @@ namespace RomanticWeb
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
         private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
-        private GraphSelectionStrategyBase _defaultGraphSelector=new DefaultGraphSelector();
         private CompoundMappingsRepository _actualMappingsRepository;
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
+        private INamedGraphSelector _namedGraphSelector;
 
         #endregion
 
@@ -115,9 +115,16 @@ namespace RomanticWeb
 
             EnsureComplete();
             EnsureInitialized();
-            _mappingContext=new MappingContext(_actualOntologyProvider,_defaultGraphSelector);
+            _mappingContext=new MappingContext(_actualOntologyProvider);
 
-            return new EntityContext(this,Mappings,_mappingContext,_entityStoreFactory(),_entitySourceFactory(),_baseUriSelector);
+            return new EntityContext(
+                this,
+                Mappings,
+                _mappingContext,
+                _entityStoreFactory(),
+                _entitySourceFactory(),
+                _baseUriSelector,
+                _namedGraphSelector);
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
@@ -170,15 +177,6 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>Exposes the method to register a default graph selector.</summary>
-        /// <param name="graphSelector">Delegate method to be used for selecting graph names.</param>
-        /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithDefaultGraphSelector(GraphSelectionStrategyBase graphSelector)
-        {
-            _defaultGraphSelector=graphSelector;
-            return this;
-        }
-
         /// <summary>
         /// Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s
         /// </summary>
@@ -187,6 +185,12 @@ namespace RomanticWeb
             var builder=new BaseUriSelectorBuilder();
             setupPolicy(builder);
             _baseUriSelector=builder.Build();
+            return this;
+        }
+
+        public IEntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
+        {
+            _namedGraphSelector=namedGraphSelector;
             return this;
         }
         #endregion
@@ -230,7 +234,7 @@ namespace RomanticWeb
 
         private void EnsureMappingsRebuilt()
         {
-            _actualMappingsRepository.RebuildMappings(new MappingContext(_actualOntologyProvider,_defaultGraphSelector));
+            _actualMappingsRepository.RebuildMappings(new MappingContext(_actualOntologyProvider));
         }
 
         private void EnsureComplete()

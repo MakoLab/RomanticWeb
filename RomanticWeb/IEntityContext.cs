@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -26,6 +27,8 @@ namespace RomanticWeb
         IOntologyProvider Ontologies { get; }
 
         INodeConverter NodeConverter { get; }
+
+        INamedGraphSelector GraphSelector { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>
@@ -61,5 +64,9 @@ namespace RomanticWeb
         /// Marks an entity for deletion
         /// </summary>
         void Delete(EntityId entityId);
+
+        void InitializeEnitity(IEntity entity);
+
+        T EntityAs<T>(IEntity entity)where T:class,IEntity;
     }
 }

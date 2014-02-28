@@ -8,27 +8,21 @@ namespace RomanticWeb.Tests.IntegrationTests
     {
         public NamedGraphsPersonMapping()
         {
-            // todo: add helper method to facilitate protocol replacement operation
-            this.Property(p => p.FirstName)
-                .Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"))
-                .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "personal")));
+            Property(p => p.FirstName)
+                .Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"));
 
-            this.Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"))
-                                     .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "personal")));
+            Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"));
 
-            this.Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"))
-                                     .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "interestsOf")));
+            Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
 
-            this.Property(p => p.Friend).Term.Is("foaf", "knows")
-                                     .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http","friendsOf")));
+            Property(p => p.Friend).Term.Is("foaf","knows");
 
-            this.Property(p => p.Friends).Term.Is("foaf", "friends");
+            Property(p => p.Friends).Term.Is("foaf", "friends");
 
-            this.Class.Is("foaf","Person");
+            Class.Is("foaf","Person");
 
             Collection(p => p.Interests)
                 .Term.Is("foaf", "interest")
-                .NamedGraph.SelectedBy(id => new Uri(id.ToString().Replace("http", "interestsOf")))
                 .StoreAs.RdfList();
         }
     }

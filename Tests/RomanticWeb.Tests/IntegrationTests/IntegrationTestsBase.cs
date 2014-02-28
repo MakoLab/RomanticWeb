@@ -9,31 +9,19 @@ namespace RomanticWeb.Tests.IntegrationTests
 {
     public abstract class IntegrationTestsBase
     {
-        private IMappingsRepository _mappings;
-
         private EntityStore _entityStore;
-
-        private IEntityContextFactory _factory;
-
         private IEntityContext _entityContext;
-
-        private bool _includeFoaf=false;
+        private IEntityContextFactory _factory;
 
         public virtual bool IncludeFoaf
         {
             get
             {
-                return _includeFoaf;
+                return false;
             }
         }
 
-        public IMappingsRepository Mappings
-        {
-            get
-            {
-                return _mappings;
-            }
-        }
+        public IMappingsRepository Mappings { get; private set; }
 
         protected IEntityContext EntityContext
         {
@@ -41,7 +29,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             {
                 if (_entityContext==null)
                 {
-                    _entityContext= _factory.CreateContext();
+                    _entityContext= Factory.CreateContext();
                 }
 
                 return _entityContext;
@@ -56,17 +44,25 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
+        protected EntityContextFactory Factory
+        {
+            get
+            {
+                return (EntityContextFactory)_factory;
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
-            _mappings = SetupMappings();
-            _entityStore = new EntityStore();
+            Mappings=SetupMappings();
+            _entityStore=new EntityStore();
 
-            _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
-                                                 .WithOntology(new DefaultOntologiesProvider())
-                                                 .WithOntology(new TestOntologyProvider(_includeFoaf))
-                                                 .WithMappings(m=>m.AddMapping(GetType().Assembly,_mappings))
-                                                 .WithEntityStore(() => _entityStore);
+            _factory=new EntityContextFactory().WithEntitySource(CreateEntitySource)
+                                               .WithOntology(new DefaultOntologiesProvider())
+                                               .WithOntology(new TestOntologyProvider(IncludeFoaf))
+                                               .WithMappings(m=>m.AddMapping(GetType().Assembly,Mappings))
+                                               .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
 

@@ -58,6 +58,8 @@
     <Compile Include="Animals\OmnivoreMap.cs" />
     <Compile Include="Animals\PlantMap.cs" />
     <Compile Include="Animals\UntypedAnimalMap.cs" />
+    <Compile Include="BlankNodes\INested.cs" />
+    <Compile Include="BlankNodes\IRoot.cs" />
     <Compile Include="IPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,6 +69,7 @@
       <Name>RomanticWeb</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

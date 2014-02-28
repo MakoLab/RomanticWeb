@@ -1,14 +1,27 @@
 ﻿using System;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestGraphSelector : GraphSelectionStrategyBase
+    [Obsolete("Use configuration on ContextFactory when implemented")]
+    public class TestGraphSelector:INamedGraphSelector
     {
-        protected override Uri GetGraphForEntityId(EntityId entityId)
+        public Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
         {
-            return new Uri(entityId.Uri.AbsoluteUri.Replace("magi","data.magi"));
+            var nonBlankId = entityId;
+            while (nonBlankId is BlankId)
+            {
+                nonBlankId = ((BlankId)entityId).RootEntityId;
+
+                if (nonBlankId == null)
+                {
+                    throw new ArgumentException("Blank node must have parent id", "entityId");
+                }
+            }
+
+            return new Uri(nonBlankId.Uri.AbsoluteUri.Replace("magi", "data.magi"));
         }
     }
 }

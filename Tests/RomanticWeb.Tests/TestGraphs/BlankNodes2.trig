@@ -1,0 +1,20 @@
+﻿@base <http://magi/people/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://data.magi/people/Tomasz>
+{
+	<Tomasz> foaf:knows [
+		foaf:givenName "Karol" ;
+		foaf:familyName "Szczepański" ;
+		foaf:knows _:gniewko 
+	] .
+
+	_:gniewko
+		foaf:knows <Tomasz>;
+		foaf:givenName "Gniewosław" .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic <Tomasz>.
+}

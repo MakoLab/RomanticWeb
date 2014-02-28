@@ -1,9 +1,0 @@
-﻿@prefix test: <http://magi/math/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix math: <http://example/maths/> .
-
-test:array math:matrix
-(
-	( 0 1 2 )
-	( 3 4 5 )
-) . 

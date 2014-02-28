@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Attributes
         /// </summary>
         protected override IPropertyMapping GetMappingInternal(Type propertyType, string propertyName, Uri uri, MappingContext mappingContext)
         {
-            return new CollectionMapping(propertyType, propertyName, uri, mappingContext.DefaultGraphSelector, StorageStrategy);
+            return new CollectionMapping(propertyType, propertyName, uri, StorageStrategy);
         }
     }
 }

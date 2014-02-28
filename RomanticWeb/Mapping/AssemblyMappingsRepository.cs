@@ -56,16 +56,16 @@ namespace RomanticWeb.Mapping
             _mappings = new Dictionary<Type, IEntityMapping>();
             foreach (var mapping in BuildTypeMappings(mappingContext))
             {
-                if (_mappings.ContainsKey(mapping.Item1))
+                if (_mappings.ContainsKey(mapping.EntityType))
                 {
-                    throw new MappingException(string.Format("Duplicate mapping for type {0}",mapping.Item1));
+                    throw new MappingException(string.Format("Duplicate mapping for type {0}",mapping.EntityType));
                 }
 
-                _mappings.Add(mapping.Item1, mapping.Item2);
+                _mappings.Add(mapping.EntityType, mapping);
             }
         }
 
         /// <summary>Builds mapping from the current <see cref="Assembly"/>.</summary>
-        protected abstract IEnumerable<Tuple<Type,IEntityMapping>> BuildTypeMappings(MappingContext mappingContext);
+        protected abstract IEnumerable<IEntityMapping> BuildTypeMappings(MappingContext mappingContext);
     }
 }

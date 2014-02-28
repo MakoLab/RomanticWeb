@@ -15,7 +15,7 @@ namespace RomanticWeb.Entities
     public class Entity : DynamicObject, IEntity
     {
         #region Fields
-        private readonly EntityContext _context;
+        private readonly IEntityContext _context;
         private readonly EntityId _entityId;
         private readonly dynamic _asDynamic;
         private readonly IDictionary<string,OntologyAccessor> _ontologyAccessors;
@@ -42,7 +42,7 @@ namespace RomanticWeb.Entities
         /// <param name="entityId">IRI of the entity.</param>
         /// <param name="context">Entity context to be attached to this entity.</param>
         /// <param name="isInitialized">Sets the entiy to initialized or not initialized state.</param>
-        internal Entity(EntityId entityId,EntityContext context,bool isInitialized=false):this(entityId)
+        internal Entity(EntityId entityId,IEntityContext context,bool isInitialized=false):this(entityId)
         {
             _context=context;
             _isInitialized=isInitialized;

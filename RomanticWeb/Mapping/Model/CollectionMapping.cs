@@ -8,8 +8,8 @@ namespace RomanticWeb.Mapping.Model
     {
         private readonly StorageStrategyOption _storageStrategy;
 
-        public CollectionMapping(Type returnType,string name,Uri predicateUri,GraphSelectionStrategyBase graphSelector,StorageStrategyOption storageStrategy)
-            :base(returnType,name,predicateUri,graphSelector)
+        public CollectionMapping(Type returnType,string name,Uri predicateUri,StorageStrategyOption storageStrategy)
+            :base(returnType,name,predicateUri)
         {
             _storageStrategy=storageStrategy;
         }

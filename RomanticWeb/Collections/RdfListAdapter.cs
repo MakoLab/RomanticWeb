@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using NullGuard;
 using RomanticWeb.Entities;
 
 namespace RomanticWeb.Collections
 {
+    [DebuggerDisplay("Count = {Count}")]
     [NullGuard(ValidationFlags.All)]
     internal class RdfListAdapter<T>:IEntity,IList<T>
     {
@@ -13,17 +15,7 @@ namespace RomanticWeb.Collections
         private IRdfListNode _head;
         private IRdfListNode _tail;
 
-        public RdfListAdapter(IEntityContext context,IEntity rdfListHead)
-            :this(context,rdfListHead.AsEntity<IRdfListNode>())
-        {
-        }
-
-        public RdfListAdapter(IEntityContext context)
-            :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false))
-        {
-        }
-
-        private RdfListAdapter(IEntityContext context,IRdfListNode head)
+        public RdfListAdapter(IEntityContext context,IRdfListNode head)
         {
             Count=0;
             _context=context;
@@ -31,7 +23,12 @@ namespace RomanticWeb.Collections
 
             Initialize();
         }
-            
+
+        public RdfListAdapter(IEntityContext context)
+            :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false))
+        {
+        }
+
         EntityId IEntity.Id
         {
             get

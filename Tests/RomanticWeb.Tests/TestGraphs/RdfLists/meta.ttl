@@ -1,7 +1,0 @@
-﻿@prefix test: <http://magi/math/> .
-@prefix people: <http://magi/people/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix math: <http://example/maths/> .
-
-<urn:test:array> foaf:primaryTopic test:array.
-<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.

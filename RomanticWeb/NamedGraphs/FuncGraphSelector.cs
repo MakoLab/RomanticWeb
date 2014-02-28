@@ -1,7 +1,7 @@
 ﻿using System;
 using RomanticWeb.Entities;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.NamedGraphs
 {
     /// <summary>
     /// Implementation of <see cref="GraphSelectionStrategyBase"/>, 
@@ -18,7 +18,7 @@ namespace RomanticWeb.Mapping
 		}
 
         /// <inheritdoc />
-        protected override Uri GetGraphForEntityId(EntityId entityId)
+        protected override Uri GetGraphForEntityId(EntityId entityId,Uri predicate)
 		{
 			return _createGraphUri(entityId);
 		}

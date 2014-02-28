@@ -33,7 +33,7 @@ namespace RomanticWeb.Mapping.Fluent
 		}
 
         /// <summary>
-        /// Gets a builder for mapping a collecition property
+        /// Gets a builder for mapping a collection property
         /// </summary>
         protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
 		{
@@ -88,7 +88,7 @@ namespace RomanticWeb.Mapping.Fluent
             var classMappings=_classes.Select(cs => cs.GetMapping(mappingContext));
             var propertyMappings=MappedProperties.Select(mp=>mp.GetMapping(mappingContext));
 
-            return new EntityMapping(classMappings,propertyMappings);
+            return new EntityMapping(EntityType,classMappings,propertyMappings);
 		}
 	}
 }

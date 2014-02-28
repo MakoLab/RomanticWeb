@@ -33,7 +33,7 @@ namespace RomanticWeb.Mapping.Attributes
         /// <returns>Class mapping or null.</returns>
         internal IClassMapping GetMapping(MappingContext mappingContext)
         {
-            return new ClassMapping(GetTermUri(mappingContext), mappingContext.DefaultGraphSelector);
+            return new ClassMapping(GetTermUri(mappingContext));
         }
         #endregion
     }

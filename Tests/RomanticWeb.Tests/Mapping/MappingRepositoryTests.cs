@@ -4,7 +4,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Animals;
 
@@ -24,7 +23,7 @@ namespace RomanticWeb.Tests.Mapping
                        .Returns((string p, string t) => GetUri(p, t));
 
             _mappingsRepository = CreateMappingsRepository();
-            _mappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object,new DefaultGraphSelector()));
+            _mappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object));
         }
 
         [Test]

@@ -52,6 +52,7 @@
     <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="Collections\ObjectModel\ObservableDictionary.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
+    <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\CatalogConverterExtensions.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Entities\EntityIdExtensions.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
+    <Compile Include="Entities\IRdfListNode.cs" />
     <Compile Include="Entities\IResultProcessingStrategyClient.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
@@ -97,7 +99,6 @@
     <Compile Include="Entities\ResultAggregations\SingleResultProcessing.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\OntologyAccessor.cs" />
-    <Compile Include="Entities\TypeEntityMap.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="EntityStoreExtensions.cs" />
@@ -172,10 +173,9 @@
     <Compile Include="Mapping\Extensions.cs" />
     <Compile Include="Mapping\FluentMappingsRepository.cs" />
     <Compile Include="Mapping\Fluent\ClassMap.cs" />
-    <Compile Include="Mapping\Fluent\INamedGraphSelectingMap.cs" />
     <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
     <Compile Include="Mapping\Fluent\TermMap.cs" />
-    <Compile Include="Mapping\GraphSelectionStrategyBase.cs" />
+    <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
     <Compile Include="IO\HeadersContentTypeResolver.cs" />
@@ -195,8 +195,7 @@
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
     <Compile Include="Mapping\Model\EntityMapping.cs" />
-    <Compile Include="Mapping\FuncGraphSelector.cs" />
-    <Compile Include="Mapping\Fluent\NamedGraphPart.cs" />
+    <Compile Include="NamedGraphs\FuncGraphSelector.cs" />
     <Compile Include="Mapping\Fluent\TermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\DefaultGraphSelector.cs" />
@@ -210,6 +209,10 @@
     <Compile Include="Mapping\TypeExtensions.cs" />
     <Compile Include="Mapping\UnMappedTypeException.cs" />
     <Compile Include="Model\Triple.cs" />
+    <Compile Include="NamedGraphs\INamedGraphSelector.cs" />
+    <Compile Include="NamedGraphs\NamedGraphSelector.cs" />
+    <Compile Include="NamedGraphs\NamedGraphMatch.cs" />
+    <Compile Include="NamedGraphs\NamedGraphSelectorBase.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />

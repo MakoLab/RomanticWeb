@@ -52,7 +52,7 @@ namespace RomanticWeb.Mapping.Attributes
         /// <summary>Creates a <see cref="PropertyMapping"/>.</summary>
         protected virtual IPropertyMapping GetMappingInternal(Type propertyType,string propertyName,Uri uri,MappingContext mappingContext)
         {
-            return new PropertyMapping(propertyType,propertyName,uri,mappingContext.DefaultGraphSelector);
+            return new PropertyMapping(propertyType,propertyName,uri);
         }
         #endregion
     }

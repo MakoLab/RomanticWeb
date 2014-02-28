@@ -10,7 +10,6 @@ using RomanticWeb.Linq;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
@@ -36,7 +35,7 @@ namespace RomanticWeb.Tests.Linq
         {
             _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
             _ontologies=new TestOntologyProvider();
-            _mappings.RebuildMappings(new MappingContext(_ontologies,new DefaultGraphSelector()));
+            _mappings.RebuildMappings(new MappingContext(_ontologies));
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);

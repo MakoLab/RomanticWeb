@@ -6,7 +6,7 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for rdf class
     /// </summary>
-    public sealed class ClassMap : TermMap,INamedGraphSelectingMap
+    public sealed class ClassMap : TermMap
     {
         private readonly TermPart<ClassMap> _termPart;
 
@@ -14,20 +14,6 @@ namespace RomanticWeb.Mapping.Fluent
         {
             _termPart=new TermPart<ClassMap>(this);
         }
-
-        /// <summary>
-        /// Gets a named graph mapping part
-        /// </summary>
-        public NamedGraphPart<ClassMap> NamedGraph
-        {
-            get
-            {
-                return new NamedGraphPart<ClassMap>(this); 
-            }
-        }
-
-        /// <inheritdoc />
-        GraphSelectionStrategyBase INamedGraphSelectingMap.GraphSelector { get; set; }
 
         /// <summary>
         /// Sets the class name 
@@ -47,9 +33,7 @@ namespace RomanticWeb.Mapping.Fluent
 
         internal IClassMapping GetMapping(MappingContext mappingContext)
         {
-            return new ClassMapping(
-                GetTermUri(mappingContext.OntologyProvider),
-                ((INamedGraphSelectingMap)this).GraphSelector ?? mappingContext.DefaultGraphSelector);
+            return new ClassMapping(GetTermUri(mappingContext.OntologyProvider));
         }
  }
 }

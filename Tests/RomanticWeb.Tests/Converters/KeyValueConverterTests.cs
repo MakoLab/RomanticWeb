@@ -15,7 +15,7 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests.Converters
 {
-    [TestFixture]
+    [TestFixture,Ignore,Obsolete]
     public class KeyValueConverterTests
     {
         private static readonly string BaseUri="http://magi/ontology#";

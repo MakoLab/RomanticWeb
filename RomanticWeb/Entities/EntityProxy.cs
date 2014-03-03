@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -20,7 +21,7 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class EntityProxy:DynamicObject,IEntity,IResultProcessingStrategyClient
+    public class EntityProxy:DynamicObject,IEntity,IResultProcessingStrategyClient,IEntityProxy
     {
         #region Fields
         private static readonly IResultProcessingStrategy FallbackProcessing=new SingleOrDefaultProcessing();
@@ -30,7 +31,7 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMapping;
         private readonly INodeConverter _converter;
 
-        private NamedGraphSelectionOverride _namedGraphSelectionOverride;
+        private NamedGraphSelectionParameters _namedGraphSelectionOverride;
         #endregion
 
         #region Constructors
@@ -68,6 +69,15 @@ namespace RomanticWeb.Entities
             }
         }
 
+        public NamedGraphSelectionParameters NamedGraphSelectionParameters
+        {
+            [return:AllowNull]
+            get
+            {
+                return _namedGraphSelectionOverride;
+            }
+        }
+
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay
         {
@@ -89,21 +99,20 @@ namespace RomanticWeb.Entities
 
             if (property.IsCollection)
             {
-                ////INotifyCollectionChanged observable;
                 Type[] genericArguments=null;
-                ////IDictionary dictionary=aggregatedResult as IDictionary;
-                ////if (dictionary!=null)
-                ////{
-                ////    genericArguments = property.ReturnType.GetGenericArguments();
+                IDictionary dictionary = aggregatedResult as IDictionary;
+                if (dictionary != null)
+                {
+                    genericArguments = property.ReturnType.GetGenericArguments();
 
-                ////    observable=(INotifyCollectionChanged)typeof(ObservableDictionary<,>)
-                ////        .MakeGenericType(genericArguments)
-                ////        .GetConstructor(new Type[] { typeof(IDictionary) })
-                ////        .Invoke(new object[] { dictionary });
-                ////    observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
-                ////    result = observable;
-                ////}
-                ////else
+                    var observable = (INotifyCollectionChanged)typeof(ObservableDictionary<,>)
+                        .MakeGenericType(genericArguments)
+                        .GetConstructor(new Type[] { typeof(IDictionary) })
+                        .Invoke(new object[] { dictionary });
+                    observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
+                    result = observable;
+                }
+                else
                 if (property.StorageStrategy==StorageStrategyOption.RdfList)
                 {
                     genericArguments=property.ReturnType.GetGenericArguments();
@@ -115,12 +124,13 @@ namespace RomanticWeb.Entities
 
                     var ctor=
                         typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                                .GetConstructor(new[] { typeof(IEntityContext),typeof(IRdfListNode) });
+                                                .GetConstructor(new[] { typeof(IEntityContext),typeof(IRdfListNode),typeof(NamedGraphSelectionParameters) });
 
                     IRdfListNode head=((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
-                    EnsureNamedGraphOverrideInChildEntity((EntityProxy)head.UnwrapProxy(),property);
 
-                    result=ctor.Invoke(new object[] { Context,head });
+                    var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+                    (head.UnwrapProxy() as IEntityProxy).OverrideNamedGraphSelection(paremeters);
+                    result=ctor.Invoke(new object[] { Context,head,paremeters });
                 }
                 else
                 {
@@ -152,7 +162,8 @@ namespace RomanticWeb.Entities
             {
                 if (aggregatedResult is IRdfListNode)
                 {
-                    EnsureNamedGraphOverrideInChildEntity((EntityProxy)((IRdfListNode)aggregatedResult).UnwrapProxy(),property);
+                    var paremeters=NamedGraphSelectionParameters??new NamedGraphSelectionParameters(Id,_entityMapping,property);
+                    ((IEntityProxy)((IRdfListNode)aggregatedResult).UnwrapProxy()).OverrideNamedGraphSelection(paremeters);
                 }
 
                 result=aggregatedResult;
@@ -171,18 +182,37 @@ namespace RomanticWeb.Entities
             LogTo.Trace("Setting property {0}",property.Uri);
 
             var propertyUri=Node.ForUri(property.Uri);
-            var graphUri=Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
+            var graphUri=SelectNamedGraph(property);
 
-            ////if (property.IsCollection)
-            ////{
-            ////    var newValue = Node.ForLiteral(value.ToString());
+            if (property.IsCollection && property.StorageStrategy==StorageStrategyOption.RdfList)
+            {
+                if (value is IRdfListAdapter)
+                {
+                    Node listHead=Node.FromEntityId((value as IRdfListAdapter).Head.Id);
+                    _store.ReplacePredicateValues(Id,propertyUri,new[] { listHead },graphUri);
+                }
+                else
+                {
+                    var genericArguments = property.ReturnType.GetGenericArguments();
+                    var ctor =
+                        typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
+                                                .GetConstructor(new[] { typeof(IEntityContext), typeof(NamedGraphSelectionParameters) });
+                    var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+                    var rdfList=(IRdfListAdapter)ctor.Invoke(new object[] { Context,paremeters });
 
-            ////    _store.ReplaceCollection(_entity.Id, propertyUri, newValue, graphUri);
-            ////}
-            ////else
+                    foreach (var item in (IEnumerable)value)
+                    {
+                        rdfList.Add(item);
+                    }
+
+                    Node listHead=Node.FromEntityId(rdfList.Head.Id);
+                    _store.ReplacePredicateValues(Id, propertyUri, new[] { listHead },graphUri);
+                }
+            }
+            else
             {
                 var newValues=_converter.ConvertBack(value,property);
-                _store.ReplacePredicateValues(_entity.Id,propertyUri,newValues,graphUri);
+                _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
             }
 
             return true;
@@ -224,32 +254,16 @@ namespace RomanticWeb.Entities
         {
             return _entity;
         }
+
+        public void OverrideNamedGraphSelection(NamedGraphSelectionParameters parametersOverride)
+        {
+            _namedGraphSelectionOverride = parametersOverride;
+        }
+
         #endregion
 
         #region Private methods
 
-        internal void OverrideNamedGraphSelection(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping propertyMapping)
-        {
-            OverrideNamedGraphSelection(new NamedGraphSelectionOverride(entityId,entityMapping,propertyMapping));
-        }
-
-        private void OverrideNamedGraphSelection(NamedGraphSelectionOverride @override)
-        {
-            _namedGraphSelectionOverride=@override;
-        }
-
-        private void EnsureNamedGraphOverrideInChildEntity(EntityProxy proxy,IPropertyMapping property)
-        {
-            if (_namedGraphSelectionOverride!=null)
-            {
-                proxy.OverrideNamedGraphSelection(_namedGraphSelectionOverride);
-            }
-            else
-            {
-                proxy.OverrideNamedGraphSelection(Id,_entityMapping,property);
-            }
-        }
-        
         [return:AllowNull]
         private object GetValues(IPropertyMapping property)
         {
@@ -307,22 +321,6 @@ namespace RomanticWeb.Entities
         }
 
         #endregion
-
-        private class NamedGraphSelectionOverride
-        {
-            public NamedGraphSelectionOverride(EntityId entityId, IEntityMapping entityMapping, IPropertyMapping propertyMapping)
-            {
-                EntityId = entityId;
-                EntityMapping = entityMapping;
-                PropertyMapping = propertyMapping;
-            }
-
-            public EntityId EntityId { get; private set; }
-
-            public IEntityMapping EntityMapping { get; private set; }
-
-            public IPropertyMapping PropertyMapping { get; private set; }
-        }
 
         private class DebuggerDisplayProxy
         {

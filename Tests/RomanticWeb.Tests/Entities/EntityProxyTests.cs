@@ -60,7 +60,7 @@ namespace RomanticWeb.Tests.Entities
                       .Returns(new object[0]);
 
             // when
-            _entityProxy.OverrideNamedGraphSelection(idToUse,entityMappingToUse,mappingToUse);
+            _entityProxy.OverrideNamedGraphSelection(new NamedGraphSelectionParameters(idToUse,entityMappingToUse,mappingToUse));
             Impromptu.InvokeGet(_entityProxy,"property");
 
             // then

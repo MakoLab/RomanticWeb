@@ -12,7 +12,7 @@ using RomanticWeb.Mapping;
 using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
-using RomanticWeb.Tests.IntegrationTests;
+using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.Linq

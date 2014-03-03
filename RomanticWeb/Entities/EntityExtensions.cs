@@ -100,8 +100,6 @@ namespace RomanticWeb.Entities
             return new BlankId(blankIdGenerator.Generate(),entity.Id);
         }
 
-        ////internal static IEntity 
-
         internal static IEntity UnwrapProxy(this IEntity entity)
         {
             if ((entity is IActLikeProxy)&&(((IActLikeProxy)entity).Original is IEntity))

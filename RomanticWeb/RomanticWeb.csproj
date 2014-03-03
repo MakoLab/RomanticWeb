@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
+    <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\ObjectModel\ObservableDictionary.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
@@ -59,7 +60,6 @@
     <Compile Include="Converters\ConverterCatalog.cs" />
     <Compile Include="Converters\DefaultUriConverter.cs" />
     <Compile Include="Converters\IConverterCatalog.cs" />
-    <Compile Include="Converters\KeyValuePairConverter.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
     <Compile Include="Converters\LiteralConversionMatch.cs" />
@@ -72,9 +72,11 @@
     <Compile Include="Entities\EntityIdExtensions.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
+    <Compile Include="Entities\IEntityProxy.cs" />
     <Compile Include="Entities\IRdfListNode.cs" />
     <Compile Include="Entities\IResultProcessingStrategyClient.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
+    <Compile Include="Entities\NamedGraphSelectionParameters.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheckProcessing.cs" />
     <Compile Include="Entities\CardinalityException.cs" />
     <Compile Include="Entities\ResultAggregations\ResultDictionaryFlatteningProcessing.cs" />
@@ -195,7 +197,6 @@
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
     <Compile Include="Mapping\Model\EntityMapping.cs" />
-    <Compile Include="NamedGraphs\FuncGraphSelector.cs" />
     <Compile Include="Mapping\Fluent\TermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\DefaultGraphSelector.cs" />

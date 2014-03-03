@@ -1,5 +1,4 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
@@ -89,8 +88,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         protected abstract void LoadTestFile(string fileName);
-
-        protected abstract void LoadTestFile(string fileName, Uri graphUri);
 
         protected abstract IEntitySource CreateEntitySource();
     }

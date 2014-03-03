@@ -42,6 +42,9 @@ namespace RomanticWeb
         {
             WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
+
+            // todo: change how default is set
+            _namedGraphSelector=new NamedGraphSelector();
         }
         #endregion
 

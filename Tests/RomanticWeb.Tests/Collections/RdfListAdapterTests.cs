@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Collections;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Collections
 {
@@ -12,10 +13,16 @@ namespace RomanticWeb.Tests.Collections
     {
         private Mock<IEntityContext> _contextMock;
         private IEntityContext _context;
+        private NamedGraphSelectionParameters _override;
 
         [SetUp]
         public void Setup()
         {
+            _override=new NamedGraphSelectionParameters(
+                "urn:actual:entity",
+                new Mock<IEntityMapping>().Object,
+                new Mock<IPropertyMapping>().Object);
+
             var rdfNilMock=new Mock<IRdfListNode>();
             rdfNilMock.SetupAllProperties();
             rdfNilMock.Setup(m => m.Id).Returns(Vocabularies.Rdf.nil);
@@ -30,7 +37,7 @@ namespace RomanticWeb.Tests.Collections
         public void Empty_list_should_have_count_zero()
         {
             // given
-            var list=new RdfListAdapter<int>(_context);
+            var list=new RdfListAdapter<int>(_context,_override);
 
             // then
             list.Count.Should().Be(0);
@@ -40,7 +47,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_adding_elements()
         {
             // given
-            var list=new RdfListAdapter<int>(_context);
+            var list=new RdfListAdapter<int>(_context,_override);
 
             // when
             list.Add(4);
@@ -57,7 +64,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_inserting_elements_at_index(int index,int[] expectedCollection)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,41,666 };
 
             // when
             list.Insert(index,5);
@@ -74,7 +81,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_inserting_elements_at_index_with_indexer(int index,int[] expectedCollection)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,41,666 };
 
             // when
             list[index]=5;
@@ -89,7 +96,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_throw_when_inserting_to_invalid_index([Values(-1,5,100)]int index)
         {
             // given
-            var list = new RdfListAdapter<int>(_context) { 4, 8, 41, 666 };
+            var list = new RdfListAdapter<int>(_context,_override) { 4, 8, 41, 666 };
 
             // then
             list.Invoking(l => l.Insert(index,10))
@@ -100,7 +107,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_initialize_with_type_initializer_in_correct_order()
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,41,666 };
 
             // then
             list.Should().ContainInOrder(4, 8, 41, 666);
@@ -111,7 +118,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_getting_elements_by_index()
         {
             // given
-            var list = new RdfListAdapter<int>(_context) { 4,8 };
+            var list = new RdfListAdapter<int>(_context,_override) { 4,8 };
 
             // then
             list[0].Should().Be(4);
@@ -123,7 +130,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_throw_when_getting_elements_by_invalid_index([Values(-1,4,666)]int index)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,41,666 };
 
             // then
             list.Invoking(l => { var i=l[index]; })
@@ -134,7 +141,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_calculate_count()
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,5,6,7,8 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,5,6,7,8 };
 
             // then
             list.Count.Should().Be(5);
@@ -147,7 +154,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_elements(int elementToRemove,int[] expectedResultCollection,bool expectedReturnValue)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,8,41,666 };
 
             // when
             var removeResult=list.Remove(elementToRemove);
@@ -169,7 +176,7 @@ namespace RomanticWeb.Tests.Collections
         public void Removing_last_element_and_adding_new_to_end_should_keep_list_linked()
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,8,41,666 };
             
             // when
             list.Remove(666);
@@ -183,7 +190,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_last_element()
         {
             // given
-            var list = new RdfListAdapter<int>(_context) { 666 };
+            var list = new RdfListAdapter<int>(_context,_override) { 666 };
 
             // when
             list.Remove(666);
@@ -196,7 +203,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_last_elements_and_add_new_afterwards()
         {
             // given
-            var list = new RdfListAdapter<int>(_context) { 666 };
+            var list = new RdfListAdapter<int>(_context,_override) { 666 };
 
             // when
             list.Remove(666);
@@ -213,7 +220,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_elements_by_index(int index,int[] expectedResultCollection)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,8,41,666 };
 
             // when
             list.RemoveAt(index);
@@ -229,7 +236,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_checking_item_existence(int item,bool expectedResult)
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,8,41,666 };
 
             // when
             var contains=list.Contains(item);
@@ -242,7 +249,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_clearing_entire_list()
         {
             // given
-            var list=new RdfListAdapter<int>(_context) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<int>(_context,_override) { 4,8,8,41,666 };
 
             // when
             list.Clear();

@@ -4,10 +4,10 @@ using RomanticWeb.DotNetRDF;
 using RomanticWeb.Tests.Helpers;
 using VDS.RDF;
 
-namespace RomanticWeb.Tests.IntegrationTests
+namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
     [TestFixture]
-    public class InMemoryMappingTests:MappingTests
+    public class MappingTests:MappingTestsBase
     {
         private TripleStore _store;
 
@@ -28,12 +28,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             Console.WriteLine("Reading dataset file '{0}'", fileName);
             Store.LoadTestFile(fileName);
-        }
-
-        protected override void LoadTestFile(string fileName, Uri graphUri)
-        {
-            Console.WriteLine("Reading dataset file '{0}' to graph {1}", fileName, graphUri);
-            Store.LoadTestFile(fileName, graphUri);
         }
 
         protected override IEntitySource CreateEntitySource()

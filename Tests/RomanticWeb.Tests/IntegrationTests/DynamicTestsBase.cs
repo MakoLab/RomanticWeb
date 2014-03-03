@@ -7,8 +7,7 @@ using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    [TestFixture]
-    public abstract class DynamicTests:IntegrationTestsBase
+    public abstract class DynamicTestsBase:IntegrationTestsBase
 	{
         private new TestMappingsRepository Mappings
         {
@@ -188,7 +187,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [Ignore("Must refactor RdfListConverter")]
         public void Should_allow_reading_nested_rdf_lists_as_collection_of_lists()
         {
             // given

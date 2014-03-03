@@ -8,13 +8,13 @@ using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    [TestFixture]
-    public abstract class MappingTests : IntegrationTestsBase
+    public abstract class MappingTestsBase : IntegrationTestsBase
     {
         protected IPerson Entity
         {
@@ -244,10 +244,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
         }
 
-        [Test,Ignore]
+        [Test]
         public void Setting_rdf_list_of_literals_should_be_possible()
         {
             // given
+            Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
             Mappings.Add(new NamedGraphsPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
 
@@ -255,10 +256,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             Entity.Interests = new[] { "semantic web", "linked data" };
 
             // then
-            Assert.That(Entity.Interests, Contains.Item("semantic web"));
-            Assert.That(Entity.Interests, Contains.Item("linked data"));
-            var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
-            Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
+            Entity.Interests.Should().ContainInOrder("semantic web","linked data");
+            var quads=EntityStore.Quads.Where(q => q.Graph==Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
+            Assert.That(quads.ToList(), Has.Count.EqualTo(5), "Actual triples were: {0}", SerializeStore());
         }
 
         [Test]
@@ -416,6 +416,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             return String.Join(Environment.NewLine,EntityStore.Quads);
         }
 
+        [Obsolete]
         private class ProtocolReplaceGraphSelector:RomanticWeb.NamedGraphs.INamedGraphSelector
         {
             public Uri SelectGraph(EntityId id,IEntityMapping entityMapping,IPropertyMapping predicate)

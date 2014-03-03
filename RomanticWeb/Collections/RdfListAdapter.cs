@@ -9,39 +9,33 @@ namespace RomanticWeb.Collections
 {
     [DebuggerDisplay("Count = {Count}")]
     [NullGuard(ValidationFlags.All)]
-    internal class RdfListAdapter<T>:IEntity,IList<T>
+    internal class RdfListAdapter<T>:IList<T>,IRdfListAdapter
     {
         private readonly IEntityContext _context;
+        private readonly NamedGraphSelectionParameters _namedGraphOverride;
         private IRdfListNode _head;
         private IRdfListNode _tail;
 
-        public RdfListAdapter(IEntityContext context,IRdfListNode head)
+        public RdfListAdapter(IEntityContext context,IRdfListNode head,NamedGraphSelectionParameters namedGraphOverride)
         {
             Count=0;
             _context=context;
+            _namedGraphOverride=namedGraphOverride;
             _head=_tail=head;
 
             Initialize();
         }
 
-        public RdfListAdapter(IEntityContext context)
-            :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false))
+        public RdfListAdapter(IEntityContext context,NamedGraphSelectionParameters namedGraphOverride)
+            :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
         {
         }
 
-        EntityId IEntity.Id
+        IRdfListNode IRdfListAdapter.Head
         {
             get
             {
-                return _head.Id;
-            }
-        }
-
-        IEntityContext IEntity.Context
-        {
-            get
-            {
-                return _context;
+                return _head;
             }
         }
 
@@ -83,6 +77,11 @@ namespace RomanticWeb.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        void IRdfListAdapter.Add(object item)
+        {
+            Add((T)item);
         }
 
         public void Add(T item)
@@ -231,7 +230,7 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode InsertNodeAfter(IRdfListNode existingNode,T item)
         {
-            var newNode=_context.Create<IRdfListNode>(new BlankId(_context.BlankIdGenerator.Generate()));
+            var newNode = CreateNode();
             newNode.First=item;
             newNode.Rest = existingNode.Rest;
             existingNode.Rest=newNode;
@@ -248,11 +247,25 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode InsertFirstNode(T item)
         {
-            var newNode=_context.Create<IRdfListNode>(new BlankId(_context.BlankIdGenerator.Generate()));
-            newNode.First = item;
-            newNode.Rest = _head;
+            var newNode=CreateNode();
+            newNode.First=item;
+            newNode.Rest=_head;
             _head = newNode;
             Count++;
+
+            return newNode;
+        }
+
+        private IRdfListNode CreateNode()
+        {
+            var nodeId=new BlankId(_context.BlankIdGenerator.Generate(),_namedGraphOverride.EntityId);
+            var newNode=_context.Create<IRdfListNode>(nodeId);
+            var proxy=newNode.UnwrapProxy() as IEntityProxy;
+
+            if (proxy!=null)
+            {
+                proxy.OverrideNamedGraphSelection(_namedGraphOverride);
+            }
 
             return newNode;
         }

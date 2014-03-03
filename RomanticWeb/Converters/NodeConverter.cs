@@ -42,7 +42,7 @@ namespace RomanticWeb.Converters
                 }
                 else
                 {
-                    yield return ConvertEntity(objectNode,propertyMapping);
+                    yield return ConvertUri(objectNode,propertyMapping);
                 }
             }
         }
@@ -97,50 +97,6 @@ namespace RomanticWeb.Converters
             return convertedNodes;
         }
 
-        private static bool PredicateIsEntityOrCollectionThereof(IPropertyMapping predicate,out Type entityType)
-        {
-            entityType=null;
-            if (predicate==null)
-            {
-                return false;
-            }
-
-            if (typeof(IEntity).IsAssignableFrom(predicate.ReturnType))
-            {
-                entityType=predicate.ReturnType;
-                return true;
-            }
-
-            if (typeof(IEnumerable<IEntity>).IsAssignableFrom(predicate.ReturnType))
-            {
-                entityType=predicate.ReturnType.GenericTypeArguments.Single();
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool PredicateIsSimpleTypeOrCollectionThereof(IPropertyMapping predicate,out Type type)
-        {
-            type=null;
-            if (predicate==null)
-            {
-                return false;
-            }
-
-            type=predicate.ReturnType.FindItemType();
-
-            if ((type.IsPrimitive)||(type==typeof(string)))
-            {
-                return true;
-            }
-            else
-            {
-                type=null;
-                return false;
-            }
-        }
-
         private Node ConvertOneBack(object element)
         {
             if (element is IEntity)
@@ -166,9 +122,9 @@ namespace RomanticWeb.Converters
             }
             else
             {
-                var converter=_converters.GetBestConverter(objectNode);
-                if (converter!=null)
-                {
+            var converter=_converters.GetBestConverter(objectNode);
+            if (converter!=null)
+            {
                     result=converter.Convert(objectNode);
                 }
                 else
@@ -180,36 +136,22 @@ namespace RomanticWeb.Converters
             return result;
         }
 
-        private object ConvertEntity(Node objectNode,IPropertyMapping predicate)
+        private object ConvertUri(Node uriNode,IPropertyMapping predicate)
         {
             IEntity entity;
             if ((predicate==null)||(!typeof(EntityId).IsAssignableFrom(predicate.ReturnType.FindItemType())))
             {
-                entity=_entityContext.Load<IEntity>(objectNode.ToEntityId(),false);
+                entity=_entityContext.Load<IEntity>(uriNode.ToEntityId(),false);
             }
             else
             {
-                entity=new Entity(objectNode.ToEntityId());
+                entity=new Entity(uriNode.ToEntityId());
             }
 
-            var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,_entityContext.Store,predicate));
+            var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,predicate));
             if (converter!=null)
             {
-                return converter.Convert(entity,_entityContext.Store,predicate);
-            }
-
-            Type entityType;
-            if (PredicateIsEntityOrCollectionThereof(predicate,out entityType))
-            {
-                Type itemType=predicate.ReturnType.FindItemType();
-                if ((!entityType.IsAssignableFrom(itemType))||((itemType==entityType)&&(!entityType.IsInstanceOfType(entity))))
-                {
-                    return Info.OfMethod("RomanticWeb","RomanticWeb.Entities.Entity","AsEntity").MakeGenericMethod(entityType).Invoke(entity,null);
-                }
-                else
-                {
-                    return entity;
-                }
+                return converter.Convert(entity,predicate);
             }
 
             return entity;

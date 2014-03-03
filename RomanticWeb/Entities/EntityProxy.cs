@@ -32,6 +32,7 @@ namespace RomanticWeb.Entities
         private readonly INodeConverter _converter;
 
         private NamedGraphSelectionParameters _namedGraphSelectionOverride;
+
         #endregion
 
         #region Constructors
@@ -57,6 +58,14 @@ namespace RomanticWeb.Entities
             get
             {
                 return _entity.Id;
+            }
+        }
+
+        public IEntityMapping EntityMapping
+        {
+            get
+            {
+                return _entityMapping;
             }
         }
 
@@ -99,71 +108,35 @@ namespace RomanticWeb.Entities
 
             if (property.IsCollection)
             {
-                Type[] genericArguments=null;
                 IDictionary dictionary = aggregatedResult as IDictionary;
                 if (dictionary != null)
                 {
-                    genericArguments = property.ReturnType.GetGenericArguments();
-
-                    var observable = (INotifyCollectionChanged)typeof(ObservableDictionary<,>)
-                        .MakeGenericType(genericArguments)
-                        .GetConstructor(new Type[] { typeof(IDictionary) })
-                        .Invoke(new object[] { dictionary });
-                    observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
-                    result = observable;
+                    result=WrapResultAsDictionary(binder,property,dictionary);
                 }
-                else
-                if (property.StorageStrategy==StorageStrategyOption.RdfList)
+                else if (property.StorageStrategy==StorageStrategyOption.RdfList)
                 {
-                    genericArguments=property.ReturnType.GetGenericArguments();
-
-                    if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
+                    if (aggregatedResult==null)
                     {
-                        genericArguments=new[] { typeof(IEntity) };
+                        aggregatedResult=Context.Create<IRdfListNode>(Vocabularies.Rdf.nil);
                     }
 
-                    var ctor=
-                        typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                                .GetConstructor(new[] { typeof(IEntityContext),typeof(IRdfListNode),typeof(NamedGraphSelectionParameters) });
-
-                    IRdfListNode head=((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
-
-                    var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
-                    (head.UnwrapProxy() as IEntityProxy).OverrideNamedGraphSelection(paremeters);
-                    result=ctor.Invoke(new object[] { Context,head,paremeters });
+                    result=WrapEntityAsRdfList(property,aggregatedResult);
                 }
                 else
                 {
-                    genericArguments=property.ReturnType.GetGenericArguments();
-                    if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
-                    {
-                        genericArguments=new[] { typeof(IEntity) };
-                    }
-
-                    var castMethod=
-                        Info.OfMethod("System.Core","System.Linq.Enumerable","Cast","IEnumerable")
-                            .MakeGenericMethod(genericArguments);
-
-                    var convertedCollection=castMethod.Invoke(null,new[] { aggregatedResult });
-                    var observable=(INotifyCollectionChanged)
-                                                        typeof(ObservableCollection<>).MakeGenericType(genericArguments)
-                                                                                      .GetConstructor(
-                                                                                          new Type[]
-                                                                                              {
-                                                                                                  typeof(IEnumerable<>).MakeGenericType(genericArguments)
-                                                                                              })
-                                                                                      .Invoke(new[] { convertedCollection });
-
-                    observable.CollectionChanged+=(sender,args) => Impromptu.InvokeSet(this,binder.Name,sender);
-                    result=observable;
+                    result=WrapResultsAsObservableCollection(binder,property,aggregatedResult);
                 }
             }
             else
             {
-                if (aggregatedResult is IRdfListNode)
+                if (aggregatedResult is IEntity)
                 {
-                    var paremeters=NamedGraphSelectionParameters??new NamedGraphSelectionParameters(Id,_entityMapping,property);
-                    ((IEntityProxy)((IRdfListNode)aggregatedResult).UnwrapProxy()).OverrideNamedGraphSelection(paremeters);
+                    var entityProxy=((IEntity)aggregatedResult).UnwrapProxy() as IEntityProxy;
+
+                    if (entityProxy!=null)
+                    {
+                        SetNamedGraphOverride(entityProxy,property);
+                    }
                 }
 
                 result=aggregatedResult;
@@ -269,15 +242,15 @@ namespace RomanticWeb.Entities
         {
             var graph=SelectNamedGraph(property);
 
-            LogTo.Trace("Reading property {0} from graph {1}", property.Uri, graph);
+            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
 
             IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-            var objectsForPredicate= _converter.ConvertNodes(objects,property);
+            var objectsForPredicate=_converter.ConvertNodes(objects,property);
 
             var operation = ProcessingOperation.SingleOrDefault;
             if ((property.IsCollection) && (property.StorageStrategy != StorageStrategyOption.RdfList))
             {
-                operation = ProcessingOperation.Flatten;
+                operation=ProcessingOperation.Flatten;
             }
 
             IResultProcessingStrategyClient resultProcessingStrategyClient = this;
@@ -285,23 +258,20 @@ namespace RomanticWeb.Entities
                                  ? resultProcessingStrategyClient.ResultAggregations[operation]
                                  : FallbackProcessing);
 
-            LogTo.Trace("Performing operation {0} on result nodes", operation);
-            var aggregatedResult = aggregation.Process(objectsForPredicate);
-            return aggregatedResult;
+            LogTo.Trace("Performing operation {0} on result nodes",operation);
+            return aggregation.Process(objectsForPredicate);
         }
 
-        private object SetNamedGraphOverride(object result)
+        private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
         {
-            ////var proxy=result as EntityProxy;
-            ////if (proxy!=null)
-            ////{
-            ////    if (proxy.Id is BlankId || proxy._entityMapping.EntityType==typeof(IRdfListNode))
-            ////    {
-            ////        proxy.OverrideNamedGraphSelection(_namedGraphSelectionOverride);
-            ////    }
-            ////}
-
-            return result;
+            var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+            if (proxy != null)
+            {
+                if (proxy.Id is BlankId || proxy.EntityMapping.EntityType == typeof(IRdfListNode))
+                {
+                    proxy.OverrideNamedGraphSelection(paremeters);
+                }
+            }
         }
 
         private Uri SelectNamedGraph(IPropertyMapping property)
@@ -318,6 +288,74 @@ namespace RomanticWeb.Entities
             }
 
             return Context.GraphSelector.SelectGraph(entityId,mapping,propertyMapping);
+        }
+
+        private object WrapResultsAsObservableCollection(
+            GetMemberBinder binder, IPropertyMapping property, object aggregatedResult)
+        {
+            object result;
+            var genericArguments = property.ReturnType.GetGenericArguments();
+            if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
+            {
+                genericArguments = new[] { typeof(IEntity) };
+            }
+
+            var castMethod =
+                Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable").MakeGenericMethod(genericArguments);
+
+            var convertedCollection = castMethod.Invoke(null, new[] { aggregatedResult });
+            var observable =
+                (INotifyCollectionChanged)
+                typeof(ObservableCollection<>).MakeGenericType(genericArguments)
+                                              .GetConstructor(
+                                                  new Type[] { typeof(IEnumerable<>).MakeGenericType(genericArguments) })
+                                              .Invoke(new[] { convertedCollection });
+
+            observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
+            result = observable;
+            return result;
+        }
+
+        private object WrapResultAsDictionary(GetMemberBinder binder, IPropertyMapping property, IDictionary dictionary)
+        {
+            object result;
+            var genericArguments = property.ReturnType.GetGenericArguments();
+
+            var observable =
+                (INotifyCollectionChanged)
+                typeof(ObservableDictionary<,>).MakeGenericType(genericArguments)
+                                               .GetConstructor(new Type[] { typeof(IDictionary) })
+                                               .Invoke(new object[] { dictionary });
+            observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
+            result = observable;
+            return result;
+        }
+
+        private object WrapEntityAsRdfList(IPropertyMapping property, object aggregatedResult)
+        {
+            object result;
+            var genericArguments = property.ReturnType.GetGenericArguments();
+
+            if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
+            {
+                genericArguments = new[] { typeof(IEntity) };
+            }
+
+            var ctor =
+                typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
+                                        .GetConstructor(
+                                            new[]
+                                                {
+                                                    typeof(IEntityContext),typeof(IRdfListNode),
+                                                    typeof(NamedGraphSelectionParameters)
+                                                });
+
+            IRdfListNode head = ((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
+
+            var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+            (head.UnwrapProxy() as IEntityProxy).OverrideNamedGraphSelection(paremeters);
+            result = ctor.Invoke(new object[] { Context, head, paremeters });
+            return result;
         }
 
         #endregion

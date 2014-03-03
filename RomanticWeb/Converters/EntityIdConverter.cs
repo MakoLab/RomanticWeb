@@ -21,16 +21,16 @@ namespace RomanticWeb.Converters
     /// <summary>Generic converter for any type of entity id.</summary>
     /// <typeparam name="TEntityId">Type of the entity identifier.</typeparam>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic nad non-generic class")]
-    public abstract class EntityIdConverter<TEntityId>:IComplexTypeConverter where TEntityId:EntityId
+    public abstract class EntityIdConverter<TEntityId>:IUriNodeConverter where TEntityId:EntityId
     {
         /// <inheritdoc />
-        public object Convert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
+        public object Convert(IEntity entity, [AllowNull] IPropertyMapping predicate)
         {
-            return ConvertEntityId(objectNode.Id);
+            return ConvertEntityId(entity.Id);
         }
 
         /// <inheritdoc />
-        public bool CanConvert(IEntity objectNode, IEntityStore entityStore, [AllowNull] IPropertyMapping predicate)
+        public bool CanConvert(IEntity objectNode, [AllowNull] IPropertyMapping predicate)
         {
             return (predicate!=null)&&(typeof(TEntityId).IsAssignableFrom(predicate.ReturnType.FindItemType()))&&(!(objectNode.Id is BlankId));
         }

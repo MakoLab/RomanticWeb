@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using RomanticWeb.Collections;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
@@ -6,19 +8,17 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Defines a contract for converts a complex RDF structure to an object.</summary>
-    public interface IComplexTypeConverter
+    public interface IUriNodeConverter
     {
         /// <summary>Converts the node (and additional nodes) into an object.</summary>
-        /// <param name="objectNode">The root node of the structure</param>
-        /// <param name="entityStore">Store, from which relevant additional nodes are read</param>
+        /// <param name="entity">The root node of the structure</param>
         /// <param name="predicate">Predicate for this node.</param>
-        object Convert(IEntity objectNode, IEntityStore entityStore, IPropertyMapping predicate);
+        object Convert(IEntity entity, IPropertyMapping predicate);
 
         /// <summary>Checks whether a node can be converted.</summary>
         /// <param name="objectNode">Node to be checked.</param>
-        /// <param name="entityStore">Entity store.</param>
         /// <param name="predicate">Predicate for this node.</param>
-        bool CanConvert(IEntity objectNode, IEntityStore entityStore, IPropertyMapping predicate);
+        bool CanConvert(IEntity objectNode, IPropertyMapping predicate);
 
         /// <summary>Converts a value back to <see cref="Node"/>(s).</summary>
         /// <param name="obj">Object to be converted.</param>

@@ -37,10 +37,14 @@ namespace RomanticWeb.Entities
         /// <summary>Wraps the entity as a given statically typed type.</summary>
         public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface : class,IEntity
         {
-            TInterface result=null;
+            TInterface result;
             entity=UnwrapProxy(entity);
 
-            if (entity is Entity)
+            if (entity is TInterface)
+            {
+                result=(TInterface)entity;
+            }
+            else if (entity is Entity)
             {
                 result=((Entity)entity).AsEntity<TInterface>();
             }

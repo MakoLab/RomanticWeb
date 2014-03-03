@@ -9,19 +9,19 @@ namespace RomanticWeb.Converters
     public sealed class ConverterCatalog:IConverterCatalog
     {
         private static readonly Lazy<IReadOnlyCollection<ILiteralNodeConverter>> LiteralConverters;
-        private static readonly Lazy<IReadOnlyCollection<IComplexTypeConverter>> ComplexConverters;
+        private static readonly Lazy<IReadOnlyCollection<IUriNodeConverter>> ComplexConverters;
 
         static ConverterCatalog()
         {
             LiteralConverters=new Lazy<IReadOnlyCollection<ILiteralNodeConverter>>(GetLiteralConverters);
-            ComplexConverters = new Lazy<IReadOnlyCollection<IComplexTypeConverter>>(GetComplexConverters);
+            ComplexConverters = new Lazy<IReadOnlyCollection<IUriNodeConverter>>(GetComplexConverters);
         }
 
         internal ConverterCatalog()
         {
         }
 
-        public IReadOnlyCollection<IComplexTypeConverter> ComplexTypeConverters
+        public IReadOnlyCollection<IUriNodeConverter> ComplexTypeConverters
         {
             get
             {
@@ -37,9 +37,9 @@ namespace RomanticWeb.Converters
             }
         }
 
-        private static IReadOnlyCollection<IComplexTypeConverter> GetComplexConverters()
+        private static IReadOnlyCollection<IUriNodeConverter> GetComplexConverters()
         {
-            return new ReadOnlyCollection<IComplexTypeConverter>(ContainerFactory.GetInstancesImplementing<IComplexTypeConverter>().ToList());
+            return new ReadOnlyCollection<IUriNodeConverter>(ContainerFactory.GetInstancesImplementing<IUriNodeConverter>().ToList());
         }
 
         private static IReadOnlyCollection<ILiteralNodeConverter> GetLiteralConverters()

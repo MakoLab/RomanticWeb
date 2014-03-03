@@ -4,7 +4,7 @@ namespace RomanticWeb.Converters
 {
     public interface IConverterCatalog
     {
-        IReadOnlyCollection<IComplexTypeConverter> ComplexTypeConverters { get; }
+        IReadOnlyCollection<IUriNodeConverter> ComplexTypeConverters { get; }
 
         IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
     }

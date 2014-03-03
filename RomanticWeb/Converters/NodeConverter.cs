@@ -35,9 +35,10 @@ namespace RomanticWeb.Converters
         {
             foreach (var objectNode in objects.ToList())
             {
-                if (objectNode.IsLiteral)
+                Type type=null;
+                if ((objectNode.IsLiteral)||((propertyMapping!=null)&&(((type=propertyMapping.ReturnType.FindItemType()).IsPrimitive)||(type==typeof(string)))&&(!objectNode.IsBlank)))
                 {
-                    yield return ConvertLiteral(objectNode,propertyMapping);
+                    yield return ConvertLiteral(objectNode,type);
                 }
                 else
                 {
@@ -119,6 +120,27 @@ namespace RomanticWeb.Converters
             return false;
         }
 
+        private static bool PredicateIsSimpleTypeOrCollectionThereof(IPropertyMapping predicate,out Type type)
+        {
+            type=null;
+            if (predicate==null)
+            {
+                return false;
+            }
+
+            type=predicate.ReturnType.FindItemType();
+
+            if ((type.IsPrimitive)||(type==typeof(string)))
+            {
+                return true;
+            }
+            else
+            {
+                type=null;
+                return false;
+            }
+        }
+
         private Node ConvertOneBack(object element)
         {
             if (element is IEntity)
@@ -135,20 +157,27 @@ namespace RomanticWeb.Converters
             return Node.ForLiteral(element.ToString());
         }
 
-        private object ConvertLiteral(Node objectNode,IPropertyMapping propertyMapping)
+        private object ConvertLiteral(Node objectNode,Type resultType)
         {
-            if ((propertyMapping != null)&&(propertyMapping.ReturnType==typeof(String)))
+            object result;
+            if (resultType==typeof(string))
             {
-                return objectNode.Literal;
+                result=(objectNode.IsUri?objectNode.Uri.ToString():objectNode.Literal);
+            }
+            else
+            {
+                var converter=_converters.GetBestConverter(objectNode);
+                if (converter!=null)
+                {
+                    result=converter.Convert(objectNode);
+                }
+                else
+                {
+                    result=objectNode.Literal;
+                }
             }
 
-            var converter=_converters.GetBestConverter(objectNode);
-            if (converter!=null)
-            {
-                return converter.Convert(objectNode);
-            }
-
-            return objectNode.Literal;
+            return result;
         }
 
         private object ConvertEntity(Node objectNode,IPropertyMapping predicate)

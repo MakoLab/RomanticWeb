@@ -47,8 +47,11 @@ namespace RomanticWeb.Ontologies
         SIOC=1<<11,
 
         /// <summary>Points to a WGS84 Geo Positioning: an RDF vocabulary.</summary>
-        GEO=1<<12
-}
+        GEO=1<<12,
+
+        /// <summary>Points to the W3C Linked Data Platform vocabulary.</summary>
+        LDP=1<<13
+    }
 
     /// <summary>Provides default, built in ontologies.</summary>
     [DebuggerDisplay("Ontologies count = {_ontologies.Count}")]
@@ -81,13 +84,14 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.FOAF|
                 BuiltInOntologies.Schema|
                 BuiltInOntologies.SIOC|
-                BuiltInOntologies.GEO);
+                BuiltInOntologies.GEO|
+                BuiltInOntologies.LDP);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO|BuiltInOntologies.LDP)
             {
             }
 
@@ -232,6 +236,13 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithGEO()
         {
             return Include(BuiltInOntologies.GEO);
+        }
+
+        /// <summary>Includes the W3C Linked Data Platform vocabulary.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithLDP()
+        {
+            return Include(BuiltInOntologies.LDP);
         }
 
         private class DebuggerViewProxy

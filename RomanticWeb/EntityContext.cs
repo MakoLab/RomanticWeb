@@ -71,41 +71,16 @@ namespace RomanticWeb
         public IEntityStore Store { get { return _entityStore; } }
 
         /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
-        public bool HasChanges
-        {
-            get
-            {
-                return Store.Changes.Any;
-            }
-        }
+        public bool HasChanges { get { return Store.Changes.Any; } }
 
         /// <inheritdoc />
-        public IBlankNodeIdGenerator BlankIdGenerator
-        {
-            get
-            {
-                return _blankIdGenerator;
-            }
-        }
+        public IBlankNodeIdGenerator BlankIdGenerator { get { return _blankIdGenerator; } }
 
-        public IOntologyProvider Ontologies
-        {
-            get
-            {
-                return _factory.Ontologies;
-            }
-        }
+        public IOntologyProvider Ontologies { get { return _factory.Ontologies; } }
 
-        public INodeConverter NodeConverter
-        {
-            get
-            {
-                return _nodeConverter;
-            }
-        }
+        public INodeConverter NodeConverter { get { return _nodeConverter; } }
 
         public INamedGraphSelector GraphSelector { get; private set; }
-
         #endregion
 
         #region Public methods

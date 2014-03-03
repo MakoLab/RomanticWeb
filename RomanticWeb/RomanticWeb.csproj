@@ -262,6 +262,7 @@
     <EmbeddedResource Include="Ontologies\GR.owl" />
     <EmbeddedResource Include="Ontologies\SIOC.rdf" />
     <None Include="Fody.targets" />
+    <EmbeddedResource Include="Ontologies\LDP.owl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

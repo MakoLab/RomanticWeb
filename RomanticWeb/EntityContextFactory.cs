@@ -31,7 +31,6 @@ namespace RomanticWeb
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
-
         #endregion
 
         #region Constructors
@@ -69,13 +68,7 @@ namespace RomanticWeb
             }
         }
 
-        public IConverterCatalog Converters
-        {
-            get
-            {
-                return _conveters;
-            }
-        }
+        public IConverterCatalog Converters { get { return _conveters; } }
 
         private IEnumerable<IOntologyProvider> ImportedOntologies
         {
@@ -180,9 +173,7 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>
-        /// Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s
-        /// </summary>
+        /// <summary>Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s.</summary>
         public EntityContextFactory WithBaseUri(Action<BaseUriSelectorBuilder> setupPolicy)
         {
             var builder=new BaseUriSelectorBuilder();
@@ -191,6 +182,7 @@ namespace RomanticWeb
             return this;
         }
 
+        /// <summary>Exposes a method to define how the default graph name should be obtained.</summary>
         public IEntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
         {
             _namedGraphSelector=namedGraphSelector;
@@ -216,6 +208,7 @@ namespace RomanticWeb
             EnsureOntologyProvider();
             EnsureMappingsRepository();
             EnsureMappingsRebuilt();
+            EnsureNamedGraphSelector();
             _isInitialized=true;
         }
 
@@ -240,11 +233,19 @@ namespace RomanticWeb
             _actualMappingsRepository.RebuildMappings(new MappingContext(_actualOntologyProvider));
         }
 
+        private void EnsureNamedGraphSelector()
+        {
+            if (_namedGraphSelector==null)
+            {
+                _namedGraphSelector=new NamedGraphSelector();
+            }
+        }
+
         private void EnsureComplete()
         {
             if (_entitySourceFactory==null)
             {
-                throw new InvalidOperationException("Entity source factory wasn't set");
+                throw new InvalidOperationException("Entity source factory wasn't set.");
             }
 
             if (_baseUriSelector==null)

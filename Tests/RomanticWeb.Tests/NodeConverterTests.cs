@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ImpromptuInterface;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.Tests.Helpers;
 
@@ -106,6 +109,32 @@ namespace RomanticWeb.Tests
             // then
             Assert.That(list, Has.Count.EqualTo(1));
             Assert.That(list[0], Is.EqualTo(5));
+            intConverter.VerifyAll();
+        }
+
+        [Test]
+        public void Should_convert_rdf_list_root_to_Entity()
+        {
+            // given
+            var mapping = new
+            {
+                ReturnType = typeof(IEnumerable<int>),
+                StorageStrategy = StorageStrategyOption.RdfList
+            }.ActLike<IPropertyMapping>();
+            var entity=new { }.ActLike<IEntity>();
+            _entityContext.Setup(c => c.Load<IEntity>(It.IsAny<EntityId>(),false)).Returns(entity);
+            var intConverter=new Mock<IUriNodeConverter>(MockBehavior.Strict);
+            intConverter.Setup(c => c.Convert(entity, mapping)).Returns(entity);
+            intConverter.Setup(c => c.CanConvert(entity, mapping)).Returns(true);
+
+            // when
+            var processor=CreateConverter(intConverter.Object);
+            var objects=Nodes.Create(1).Uris().GetNodes();
+            var list=processor.ConvertNodes(objects,mapping).ToList();
+
+            // then
+            Assert.That(list,Has.Count.EqualTo(1));
+            Assert.That(list,Contains.Item(entity));
             intConverter.VerifyAll();
         }
 

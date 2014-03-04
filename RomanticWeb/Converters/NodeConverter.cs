@@ -35,8 +35,9 @@ namespace RomanticWeb.Converters
         {
             foreach (var objectNode in objects.ToList())
             {
-                Type type=null;
-                if ((objectNode.IsLiteral)||((propertyMapping!=null)&&(((type=propertyMapping.ReturnType.FindItemType()).IsPrimitive)||(type==typeof(string)))&&(!objectNode.IsBlank)))
+                Type type=propertyMapping==null?null:propertyMapping.ReturnType.FindItemType();
+                ////if ((objectNode.IsLiteral)||(propertyMapping!=null&&ShouldConvertNodeToLiteral(propertyMapping)))
+                if (ShouldConvertNodeToLiteral(objectNode,propertyMapping))
                 {
                     yield return ConvertLiteral(objectNode,type);
                 }
@@ -95,6 +96,30 @@ namespace RomanticWeb.Converters
             }
 
             return convertedNodes;
+        }
+
+        private static bool ShouldConvertNodeToLiteral(Node objectNode,IPropertyMapping propertyMapping)
+        {
+            bool shouldConvert=false;
+
+            // convert literal node
+            shouldConvert|=objectNode.IsLiteral;
+            
+            if (propertyMapping!=null)
+            {
+                var propertyType=propertyMapping.ReturnType.FindItemType();
+                
+                // or convert primitive/string values
+                shouldConvert|=propertyType.IsPrimitive||propertyType==typeof(string);
+
+                // and don't convert rdf lists
+                shouldConvert&=propertyMapping.StorageStrategy!=StorageStrategyOption.RdfList;
+            }
+
+            ////return ((propertyMapping!=null)&&((elementType.IsPrimitive)||(elementType==typeof(string)))
+            ////        &&(!objectNode.IsBlank)&&propertyMapping.StorageStrategy!=StorageStrategyOption.RdfList)
+
+            return shouldConvert;
         }
 
         private Node ConvertOneBack(object element)

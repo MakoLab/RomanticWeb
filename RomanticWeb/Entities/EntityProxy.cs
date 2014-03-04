@@ -346,11 +346,12 @@ namespace RomanticWeb.Entities
                                         .GetConstructor(
                                             new[]
                                                 {
-                                                    typeof(IEntityContext),typeof(IRdfListNode),
+                                                    typeof(IEntityContext),
+                                                    typeof(IRdfListNode),
                                                     typeof(NamedGraphSelectionParameters)
                                                 });
 
-            IRdfListNode head = ((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
+            IRdfListNode head=((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
 
             var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
             (head.UnwrapProxy() as IEntityProxy).OverrideNamedGraphSelection(paremeters);

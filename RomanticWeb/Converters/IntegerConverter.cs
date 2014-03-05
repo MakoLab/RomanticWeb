@@ -38,7 +38,31 @@ namespace RomanticWeb.Converters
         /// </summary>
         public override object Convert(Node objectNode)
         {
-            return long.Parse(objectNode.Literal);
+            switch ((objectNode.DataType!=null?objectNode.DataType.AbsoluteUri:null))
+            {
+                case Xsd.BaseUri+"unsignedInt":
+                    return UInt32.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"int":
+                    return Int32.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"unsignedShort":
+                    return UInt16.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"short":
+                    return Int16.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"unsignedByte":
+                    return Byte.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"byte":
+                    return SByte.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"long":
+                case Xsd.BaseUri+"integer":
+                case Xsd.BaseUri+"nonPositiveInteger":
+                case Xsd.BaseUri+"negativeInteger":
+                default:
+                    return Int64.Parse(objectNode.Literal);
+                case Xsd.BaseUri+"unsignedLong":
+                case Xsd.BaseUri+"nonNegativeInteger":
+                case Xsd.BaseUri+"positiveInteger":
+                    return UInt64.Parse(objectNode.Literal);
+            }
         }
     }
 }

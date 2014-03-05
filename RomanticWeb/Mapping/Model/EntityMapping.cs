@@ -33,12 +33,12 @@ namespace RomanticWeb.Mapping.Model
         }
 
         public IEnumerable<IClassMapping> Classes
-		{
-		    get
-		    {
-		        return _classes;
-		    }
-		}
+        {
+            get
+            {
+                return _classes;
+            }
+        }
 
         internal IEnumerable<IPropertyMapping> Properties
         {
@@ -120,5 +120,5 @@ namespace RomanticWeb.Mapping.Model
                 return -1;
             }
         }
-	}
+    }
 }

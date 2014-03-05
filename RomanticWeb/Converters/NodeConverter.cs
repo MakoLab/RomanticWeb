@@ -104,11 +104,11 @@ namespace RomanticWeb.Converters
 
             // convert literal node
             shouldConvert|=objectNode.IsLiteral;
-            
+
             if (propertyMapping!=null)
             {
                 var propertyType=propertyMapping.ReturnType.FindItemType();
-                
+
                 // or convert primitive/string values
                 shouldConvert|=propertyType.IsPrimitive||propertyType==typeof(string);
 
@@ -145,12 +145,20 @@ namespace RomanticWeb.Converters
             {
                 result=(objectNode.IsUri?objectNode.Uri.ToString():objectNode.Literal);
             }
+            else if (resultType==typeof(Uri))
+            {
+                result=(objectNode.IsUri?objectNode.Uri:new Uri(objectNode.Literal,UriKind.RelativeOrAbsolute));
+            }
             else
             {
-            var converter=_converters.GetBestConverter(objectNode);
-            if (converter!=null)
-            {
+                var converter=_converters.GetBestConverter(objectNode);
+                if (converter!=null)
+                {
                     result=converter.Convert(objectNode);
+                    if ((resultType!=null)&&(resultType.IsGenericType)&&(resultType.GetGenericTypeDefinition()==typeof(Nullable<>)))
+                    {
+                        result=resultType.GetConstructors(System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.Instance).First().Invoke(new object[] { result });
+                    }
                 }
                 else
                 {

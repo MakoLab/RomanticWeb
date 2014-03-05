@@ -8,25 +8,37 @@ namespace System
     /// <summary>Exposes usefull <see cref="Type" /> extension methods.</summary>
     public static class TypeExtensions
     {
+        /// <summary>Checks if the type can be assigned to the <see cref="IEnumerable>" /> interface.</summary>
+        /// <remarks>This method will return false for type <see cref="System.String" />.</remarks>
+        /// <param name="type">Type to be checked.</param>
+        /// <returns><b>true</b> if the type is <see cref="System.Array" /> or is assignable to <see cref="IEnumerable" /> (except <see cref="System.String" />); otherwise <b>false</b>.</returns>
+        public static bool IsEnumerable(this Type type)
+        {
+            return (type!=null?(type.IsArray)||((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string))):false);
+        }
+
         /// <summary>Tries to resolve item type of complex types.</summary>
         /// <param name="type">Type to be resolved.</param>
         /// <returns>Collection item type or <b>null</b>.</returns>
         public static Type FindItemType(this Type type)
         {
             Type result=type;
-            if (type.IsArray)
+            if (type!=null)
             {
-                result=type.GetElementType();
-            }
-            else if (typeof(IEnumerable).IsAssignableFrom(type))
-            {
-                if (type.IsGenericType)
+                if (type.IsArray)
                 {
-                    result=type.GetGenericArguments()[0];
+                    result=type.GetElementType();
                 }
-                else
+                else if ((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))
                 {
-                    type=typeof(object);
+                    if (type.IsGenericType)
+                    {
+                        result=type.GetGenericArguments()[0];
+                    }
+                    else
+                    {
+                        type=typeof(object);
+                    }
                 }
             }
 
@@ -65,6 +77,28 @@ namespace System
             }
 
             return result.ToArray();
+        }
+
+        /// <summary>Changes item type in enumerable types.</summary>
+        /// <param name="type">Enumerable type to change item type in.</param>
+        /// <param name="newItemType">New item type.</param>
+        /// <returns>New type with changed item type.</returns>
+        public static Type ChangeItemType(this Type type,Type newItemType)
+        {
+            Type result=type;
+            if (type!=null)
+            {
+                if (type.IsArray)
+                {
+                    result=Array.CreateInstance(newItemType,0).GetType();
+                }
+                else if (((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))&&(type.IsGenericType))
+                {
+                    result=type.GetGenericTypeDefinition().MakeGenericType(new Type[] { newItemType }.Union(type.GetGenericArguments().Skip(1)).ToArray());
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using ImpromptuInterface;
 using Moq;
 using NUnit.Framework;
@@ -9,6 +10,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.Tests.Helpers;
+using VDS.RDF;
 
 namespace RomanticWeb.Tests
 {
@@ -112,14 +114,16 @@ namespace RomanticWeb.Tests
             intConverter.VerifyAll();
         }
 
-        [Test]
-        public void Should_convert_rdf_list_root_to_Entity()
+        [TestCase(typeof(IEnumerable<int>))]
+        [TestCase(typeof(IEnumerable<string>))]
+        [TestCase(typeof(IList<string>))]
+        public void Should_convert_rdf_list_root_to_Entity(Type collectionType)
         {
             // given
             var mapping = new
             {
-                ReturnType = typeof(IEnumerable<int>),
-                StorageStrategy = StorageStrategyOption.RdfList
+                ReturnType=collectionType,
+                StorageStrategy=StorageStrategyOption.RdfList
             }.ActLike<IPropertyMapping>();
             var entity=new { }.ActLike<IEntity>();
             _entityContext.Setup(c => c.Load<IEntity>(It.IsAny<EntityId>(),false)).Returns(entity);
@@ -136,6 +140,47 @@ namespace RomanticWeb.Tests
             Assert.That(list,Has.Count.EqualTo(1));
             Assert.That(list,Contains.Item(entity));
             intConverter.VerifyAll();
+        }
+
+        [TestCase(typeof(IEnumerable<int>))]
+        [TestCase(typeof(IEnumerable<string>))]
+        [TestCase(typeof(IList<string>))]
+        public void Should_not_convert_rdf_list_elements(Type collectionType)
+        {
+            // given
+            var mapping = new
+            {
+                ReturnType = collectionType,
+                StorageStrategy = StorageStrategyOption.RdfList
+            }.ActLike<IPropertyMapping>();
+
+            // when
+            var processor=CreateConverter();
+            var objects=Nodes.Create(1).Literals().GetNodes();
+            var list=processor.ConvertNodes(objects,mapping).ToList();
+
+            // then
+            list.Should().HaveCount(1);
+            list.Should().OnlyContain(el => el is string);
+        }
+
+        [Test]
+        public void Should_convert_Uri_to_string()
+        {
+            // given
+            var node=Node.ForUri(new Uri("urn:uri:node"));
+            var property = new
+                             {
+                                 ReturnType=typeof(string),
+                                 StorageStrategy=StorageStrategyOption.None
+                             }.ActLike<IPropertyMapping>();
+
+            // when
+            var processor=CreateConverter();
+            var converted=processor.ConvertNodes(node.AsEnumerable(),property);
+
+            // then
+            converted.Should().Equal(new object[] { "urn:uri:node" });
         }
 
         private static LiteralConversionMatch CreateSuccesfulMatch()

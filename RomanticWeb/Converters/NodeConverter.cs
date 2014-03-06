@@ -35,9 +35,8 @@ namespace RomanticWeb.Converters
         {
             foreach (var objectNode in objects.ToList())
             {
-                Type type=propertyMapping==null?null:propertyMapping.ReturnType.FindItemType();
-                ////if ((objectNode.IsLiteral)||(propertyMapping!=null&&ShouldConvertNodeToLiteral(propertyMapping)))
-                if (ShouldConvertNodeToLiteral(objectNode,propertyMapping))
+                Type type;
+                if (ShouldConvertNodeToLiteral(objectNode,propertyMapping,out type))
                 {
                     yield return ConvertLiteral(objectNode,type);
                 }
@@ -72,7 +71,7 @@ namespace RomanticWeb.Converters
                 convertedNodes.AddRange(convertedEntities);
             }
 
-            if (property.IsCollection)
+            if (value is IEnumerable && !(value is string))
             {
                 var objectsToConvert=from obj in ((IEnumerable)value).Cast<object>()
                                      where obj.GetType()==property.ReturnType.GetGenericArguments().First()
@@ -98,26 +97,24 @@ namespace RomanticWeb.Converters
             return convertedNodes;
         }
 
-        private static bool ShouldConvertNodeToLiteral(Node objectNode,IPropertyMapping propertyMapping)
+        private static bool ShouldConvertNodeToLiteral(Node objectNode,IPropertyMapping propertyMapping,out Type type)
         {
+            type=null;
             bool shouldConvert=false;
 
             // convert literal node
             shouldConvert|=objectNode.IsLiteral;
-
-            if (propertyMapping!=null)
+            
+            if ((!shouldConvert)&&(propertyMapping!=null))
             {
-                var propertyType=propertyMapping.ReturnType.FindItemType();
-
+                type = propertyMapping.ReturnType.FindItemType();
+                
                 // or convert primitive/string values
-                shouldConvert|=propertyType.IsPrimitive||propertyType==typeof(string);
+                shouldConvert|=type.IsPrimitive||type==typeof(string);
 
                 // and don't convert rdf lists
                 shouldConvert&=propertyMapping.StorageStrategy!=StorageStrategyOption.RdfList;
             }
-
-            ////return ((propertyMapping!=null)&&((elementType.IsPrimitive)||(elementType==typeof(string)))
-            ////        &&(!objectNode.IsBlank)&&propertyMapping.StorageStrategy!=StorageStrategyOption.RdfList)
 
             return shouldConvert;
         }
@@ -140,7 +137,7 @@ namespace RomanticWeb.Converters
 
         private object ConvertLiteral(Node objectNode,Type resultType)
         {
-            object result;
+            object result=objectNode.ToString();
             if (resultType==typeof(string))
             {
                 result=(objectNode.IsUri?objectNode.Uri.ToString():objectNode.Literal);
@@ -151,18 +148,14 @@ namespace RomanticWeb.Converters
             }
             else
             {
-                var converter=_converters.GetBestConverter(objectNode);
-                if (converter!=null)
-                {
+            var converter=_converters.GetBestConverter(objectNode);
+            if (converter!=null)
+            {
                     result=converter.Convert(objectNode);
                     if ((resultType!=null)&&(resultType.IsGenericType)&&(resultType.GetGenericTypeDefinition()==typeof(Nullable<>)))
                     {
                         result=resultType.GetConstructors(System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.Instance).First().Invoke(new object[] { result });
                     }
-                }
-                else
-                {
-                    result=objectNode.Literal;
                 }
             }
 

@@ -31,6 +31,7 @@ namespace RomanticWeb
         private readonly IDictionary<string,Type> _classInterfacesMap;
         private readonly IList<string> _missingClassInterfacesMap;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
+
         private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
         #endregion
 
@@ -121,7 +122,7 @@ namespace RomanticWeb
             Type entityType=GetEntityType(entity);
             if ((entityType!=null)&&(typeof(T).IsAssignableFrom(entityType)))
             {
-                result=(T)GetType().GetMethod("EntityAs",BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new Type[] { typeof(Entity) },null)
+                result=(T)GetType().GetMethod("EntityAs",BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance,null,new[] { typeof(Entity) },null)
                     .MakeGenericMethod(entityType)
                     .Invoke(this,new object[] { entity });
             }
@@ -238,7 +239,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
             {
-                var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter);
+                var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter,_factory.TransformerCatalog);
                 entity[ontology.Prefix]=ontologyAccessor;
             }
 
@@ -262,7 +263,7 @@ namespace RomanticWeb
                 throw new ArgumentNullException("mapping", string.Format("Mappings not found for type {0}",typeof(T)));
             }
 
-            var proxy=new EntityProxy(entity,mapping);
+            var proxy=new EntityProxy(entity,mapping,_factory.TransformerCatalog);
             return proxy.ActLike<T>();
         }
        

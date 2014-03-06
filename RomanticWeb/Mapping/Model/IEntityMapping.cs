@@ -19,6 +19,8 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
 		IEnumerable<IClassMapping> Classes { get; }
 
+        IEnumerable<IPropertyMapping> Properties { get; }
+
         /// <summary>
         /// Gets the property mapping for a property by name
         /// </summary>

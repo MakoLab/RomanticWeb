@@ -8,7 +8,7 @@ using RomanticWeb.Mapping.Model;
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>
-    /// Base class for fluently defining entity entityMappings
+    /// Base class for fluently defining entity mappings
     /// </summary>
     public abstract class EntityMap<TEntity> : EntityMap
 	{

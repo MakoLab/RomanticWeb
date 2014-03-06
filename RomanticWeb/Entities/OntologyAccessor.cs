@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
 using RomanticWeb.Converters;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Entities
@@ -18,22 +16,29 @@ namespace RomanticWeb.Entities
     [DebuggerDisplay("Ontology Accessor")]
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class OntologyAccessor:ImpromptuDictionary,IResultProcessingStrategyClient
+    public sealed class OntologyAccessor:ImpromptuDictionary
     {
         private readonly IEntityStore _tripleStore;
         private readonly Entity _entity;
         private readonly Ontology _ontology;
         private readonly INodeConverter _nodeConverter;
+        private readonly IResultTransformerCatalog _resultTransformers;
 
         /// <summary>
         /// Creates a new instance of <see cref="OntologyAccessor"/>
         /// </summary>
-        internal OntologyAccessor(IEntityStore tripleStore, Entity entity, Ontology ontology, INodeConverter nodeConverter)
+        internal OntologyAccessor(
+            IEntityStore tripleStore,
+            Entity entity, 
+            Ontology ontology, 
+            INodeConverter nodeConverter,
+            IResultTransformerCatalog resultTransformers)
         {
             _tripleStore = tripleStore;
             _entity = entity;
             _ontology = ontology;
             _nodeConverter = nodeConverter;
+            _resultTransformers=resultTransformers;
         }
 
         /// <summary>
@@ -46,8 +51,6 @@ namespace RomanticWeb.Entities
                 return _ontology;
             }
         }
-
-        IDictionary<ProcessingOperation,IResultProcessingStrategy> IResultProcessingStrategyClient.ResultAggregations { get { return this.GetResultAggregations(); } }
 
         /// <summary>
         /// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
@@ -83,20 +86,14 @@ namespace RomanticWeb.Entities
                     select prop).SingleOrDefault();
         }
 
-        internal object GetObjects(EntityId entityId, Property property, DynamicPropertyAggregate aggregate)
+        internal object GetObjects(EntityId entityId,Property property,DynamicPropertyAggregate aggregate)
         {
-            IResultProcessingStrategyClient resultProcessingStrategyClient=(IResultProcessingStrategyClient)this;
-            LogTo.Trace("Reading property {0}", property.Uri);
+            LogTo.Trace("Reading property {0}",property.Uri);
             var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
             var objects=_nodeConverter.ConvertNodes(objectValues);
-            var aggregation=(resultProcessingStrategyClient.ResultAggregations.ContainsKey(aggregate.Aggregation)?resultProcessingStrategyClient.ResultAggregations[aggregate.Aggregation]:null);
-            if (aggregation!=null)
-            {
-                LogTo.Trace("Performing operation {0} on result nodes", aggregate.Aggregation);
-                return aggregation.Process(objects);
-            }
-
-            return objects.ToList();
+            var aggregation=_resultTransformers.GetAggregator(aggregate.Aggregation);
+            LogTo.Trace("Performing operation {0} on result nodes",aggregate.Aggregation);
+            return aggregation.Aggregate(objects);
         }
 
         private class DebuggerViewProxy

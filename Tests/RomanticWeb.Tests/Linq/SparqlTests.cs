@@ -8,6 +8,7 @@ using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
@@ -42,13 +43,14 @@ namespace RomanticWeb.Tests.Linq
             
             _factory=new Mock<IEntityContextFactory>();
             _factory.Setup(cf => cf.Converters).Returns(new ConverterCatalog());
+            _factory.Setup(cf => cf.TransformerCatalog).Returns(new TestTransformerCatalog());
 
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
             
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
-            _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
-            var mappingContext = new MappingContext(ontologyProvider);
+            _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
+            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new SingleOrDefaultConvention(), new RdfListConvention(),new CollectionConvention() });
             _mappingsRepository.RebuildMappings(mappingContext);
             _entityContext=new EntityContext(
                 _factory.Object,
@@ -171,7 +173,7 @@ namespace RomanticWeb.Tests.Linq
             public TestPersonMap()
             {
                 Class.Is("foaf", "Person");
-                Property(p => p.Knows).Term.Is("foaf","knows");
+                Collection(p => p.Knows).Term.Is("foaf","knows");
                 Property(p => p.FirstName).Term.Is("foaf","givenName");
                 Property(p => p.Surname).Term.Is("foaf","familyName");
             }

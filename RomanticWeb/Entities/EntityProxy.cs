@@ -5,13 +5,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Dynamic;
-using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
 using NullGuard;
 using RomanticWeb.Collections;
 using RomanticWeb.Converters;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
@@ -21,16 +19,14 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class EntityProxy:DynamicObject,IEntity,IResultProcessingStrategyClient,IEntityProxy
+    public class EntityProxy:DynamicObject,IEntity,IEntityProxy
     {
         #region Fields
-        private static readonly IResultProcessingStrategy FallbackProcessing=new SingleOrDefaultProcessing();
-
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMapping;
+        private readonly IResultTransformerCatalog _resultTransformers;
         private readonly INodeConverter _converter;
-
         private NamedGraphSelectionParameters _namedGraphSelectionOverride;
 
         #endregion
@@ -39,18 +35,17 @@ namespace RomanticWeb.Entities
         /// <summary>Initializes a new instance of the <see cref="EntityProxy"/> class.</summary>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
-        public EntityProxy(Entity entity,IEntityMapping entityMapping)
+        public EntityProxy(Entity entity, IEntityMapping entityMapping,IResultTransformerCatalog resultTransformers)
         {
             _store=entity.Context.Store;
             _entity=entity;
             _entityMapping=entityMapping;
+            _resultTransformers=resultTransformers;
             _converter=entity.Context.NodeConverter;
         }
         #endregion
 
         #region Properties
-        /// <summary>Gets the result aggregation strategies.</summary>
-        IDictionary<ProcessingOperation,IResultProcessingStrategy> IResultProcessingStrategyClient.ResultAggregations { get { return this.GetResultAggregations(); } }
 
         /// <inheritdoc/>
         public EntityId Id
@@ -104,42 +99,25 @@ namespace RomanticWeb.Entities
             _entity.EnsureIsInitialized();
 
             var property=_entityMapping.PropertyFor(binder.Name);
-            var aggregatedResult=GetValues(property);
+            var graph=SelectNamedGraph(property);
 
-            if (property.IsCollection)
+            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
+
+            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
+            var objectsForPredicate=_converter.ConvertNodes(objects,property);
+            var aggregatedResult=AggregateResults(property,objectsForPredicate);
+            var resultTransformer=_resultTransformers.GetTransformer(property);
+
+            result=resultTransformer.GetTransformed(this,property,Context,aggregatedResult);
+
+            if (result is IEntity)
             {
-                IDictionary dictionary = aggregatedResult as IDictionary;
-                if (dictionary != null)
-                {
-                    result=WrapResultAsDictionary(binder,property,dictionary);
-                }
-                else if (property.StorageStrategy==StorageStrategyOption.RdfList)
-                {
-                    if (aggregatedResult==null)
-                    {
-                        aggregatedResult=Context.Create<IRdfListNode>(Vocabularies.Rdf.nil);
-                    }
+                var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
 
-                    result=WrapEntityAsRdfList(property,aggregatedResult);
-                }
-                else
+                if (entityProxy != null)
                 {
-                    result=WrapResultsAsObservableCollection(binder,property,aggregatedResult);
+                    SetNamedGraphOverride(entityProxy,property);
                 }
-            }
-            else
-            {
-                if (aggregatedResult is IEntity)
-                {
-                    var entityProxy=((IEntity)aggregatedResult).UnwrapProxy() as IEntityProxy;
-
-                    if (entityProxy!=null)
-                    {
-                        SetNamedGraphOverride(entityProxy,property);
-                    }
-                }
-
-                result=aggregatedResult;
             }
 
             return true;
@@ -157,7 +135,7 @@ namespace RomanticWeb.Entities
             var propertyUri=Node.ForUri(property.Uri);
             var graphUri=SelectNamedGraph(property);
 
-            if (property.IsCollection && property.StorageStrategy==StorageStrategyOption.RdfList)
+            if (property.StorageStrategy==StorageStrategyOption.RdfList)
             {
                 if (value is IRdfListAdapter)
                 {
@@ -238,28 +216,22 @@ namespace RomanticWeb.Entities
         #region Private methods
 
         [return:AllowNull]
-        private object GetValues(IPropertyMapping property)
+        private object AggregateResults(IPropertyMapping property,IEnumerable<object> objectsForPredicate)
         {
-            var graph=SelectNamedGraph(property);
-
-            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
-
-            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-            var objectsForPredicate=_converter.ConvertNodes(objects,property);
-
-            var operation = ProcessingOperation.SingleOrDefault;
-            if ((property.IsCollection) && (property.StorageStrategy != StorageStrategyOption.RdfList))
+            try
             {
-                operation=ProcessingOperation.Flatten;
+                var aggregator = _resultTransformers.GetAggregator(property.Aggregation.GetValueOrDefault());
+                return aggregator.Aggregate(objectsForPredicate);
             }
-
-            IResultProcessingStrategyClient resultProcessingStrategyClient = this;
-            var aggregation = (resultProcessingStrategyClient.ResultAggregations.ContainsKey(operation)
-                                 ? resultProcessingStrategyClient.ResultAggregations[operation]
-                                 : FallbackProcessing);
-
-            LogTo.Trace("Performing operation {0} on result nodes",operation);
-            return aggregation.Process(objectsForPredicate);
+            catch (CardinalityException e)
+            {
+                LogTo.Fatal(
+                    "Expected {0} but got {1} result(s) for property {2}",
+                    e.ExpectedCardinality,
+                    e.ActualCardinality,
+                    property);
+                throw;
+            }
         }
 
         private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
@@ -290,32 +262,6 @@ namespace RomanticWeb.Entities
             return Context.GraphSelector.SelectGraph(entityId,mapping,propertyMapping);
         }
 
-        private object WrapResultsAsObservableCollection(
-            GetMemberBinder binder, IPropertyMapping property, object aggregatedResult)
-        {
-            object result;
-            var genericArguments = property.ReturnType.GetGenericArguments();
-            if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
-            {
-                genericArguments = new[] { typeof(IEntity) };
-            }
-
-            var castMethod =
-                Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable").MakeGenericMethod(genericArguments);
-
-            var convertedCollection = castMethod.Invoke(null, new[] { aggregatedResult });
-            var observable =
-                (INotifyCollectionChanged)
-                typeof(ObservableCollection<>).MakeGenericType(genericArguments)
-                                              .GetConstructor(
-                                                  new Type[] { typeof(IEnumerable<>).MakeGenericType(genericArguments) })
-                                              .Invoke(new[] { convertedCollection });
-
-            observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
-            result = observable;
-            return result;
-        }
-
         private object WrapResultAsDictionary(GetMemberBinder binder, IPropertyMapping property, IDictionary dictionary)
         {
             object result;
@@ -328,34 +274,6 @@ namespace RomanticWeb.Entities
                                                .Invoke(new object[] { dictionary });
             observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
             result = observable;
-            return result;
-        }
-
-        private object WrapEntityAsRdfList(IPropertyMapping property, object aggregatedResult)
-        {
-            object result;
-            var genericArguments = property.ReturnType.GetGenericArguments();
-
-            if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
-            {
-                genericArguments = new[] { typeof(IEntity) };
-            }
-
-            var ctor =
-                typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                        .GetConstructor(
-                                            new[]
-                                                {
-                                                    typeof(IEntityContext),
-                                                    typeof(IRdfListNode),
-                                                    typeof(NamedGraphSelectionParameters)
-                                                });
-
-            IRdfListNode head=((IEntity)aggregatedResult).AsEntity<IRdfListNode>();
-
-            var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
-            (head.UnwrapProxy() as IEntityProxy).OverrideNamedGraphSelection(paremeters);
-            result = ctor.Invoke(new object[] { Context, head, paremeters });
             return result;
         }
 

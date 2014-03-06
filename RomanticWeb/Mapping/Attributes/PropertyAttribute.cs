@@ -7,12 +7,6 @@ namespace RomanticWeb.Mapping.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class PropertyAttribute:MappingAttribute
     {
-        #region Fields
-        private Uri[] _range=new Uri[0];
-        private int _cardinality=Int32.MaxValue;
-
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyAttribute"/> class.
@@ -23,10 +17,6 @@ namespace RomanticWeb.Mapping.Attributes
         {
         }
 
-        #endregion
-
-        #region Properties
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyAttribute"/> class.
         /// </summary>
@@ -34,12 +24,6 @@ namespace RomanticWeb.Mapping.Attributes
         public PropertyAttribute(string propertyUri):base(propertyUri)
         {
         }
-
-        /// <summary>Gets or sets an array of Uri's beeing a range of given predicate.</summary>
-        public Uri[] Range { get { return _range; } set { _range=(value??new Uri[0]); } }
-
-        /// <summary>Gets or sets cardinality of the predicate.</summary>
-        public int Cardinality { get { return _cardinality; } set { _cardinality = value; } }
 
         #endregion
 
@@ -52,8 +36,9 @@ namespace RomanticWeb.Mapping.Attributes
         /// <summary>Creates a <see cref="PropertyMapping"/>.</summary>
         protected virtual IPropertyMapping GetMappingInternal(Type propertyType,string propertyName,Uri uri,MappingContext mappingContext)
         {
-            return new PropertyMapping(propertyType,propertyName,uri);
+            return new PropertyMapping(propertyType, propertyName, uri);
         }
+
         #endregion
     }
 }

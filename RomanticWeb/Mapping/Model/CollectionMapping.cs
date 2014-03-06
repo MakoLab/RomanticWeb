@@ -1,33 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
+using NullGuard;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Collection {Name}")]
-    internal class CollectionMapping : PropertyMapping, IPropertyMapping
+    internal class CollectionMapping:PropertyMapping
     {
-        private readonly StorageStrategyOption _storageStrategy;
-
         public CollectionMapping(Type returnType,string name,Uri predicateUri,StorageStrategyOption storageStrategy)
             :base(returnType,name,predicateUri)
         {
-            _storageStrategy=storageStrategy;
+            StorageStrategy=storageStrategy;
         }
 
-        bool IPropertyMapping.IsCollection
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        StorageStrategyOption IPropertyMapping.StorageStrategy
-        {
-            get
-            {
-                return _storageStrategy;
-            }
-        }
+        public override StorageStrategyOption StorageStrategy { get; set; }
     }
 }

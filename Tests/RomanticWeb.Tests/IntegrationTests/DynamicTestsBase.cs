@@ -159,7 +159,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-            dynamic people=tomasz.foaf.knows;
+            dynamic people=tomasz.foaf.list_knows;
 
             // then
             Assert.That(people.Count, Is.EqualTo(5));

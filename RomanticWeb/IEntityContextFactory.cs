@@ -1,4 +1,5 @@
 ﻿using RomanticWeb.Converters;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 
@@ -14,6 +15,8 @@ namespace RomanticWeb
         IMappingsRepository Mappings { get; }
 
         IConverterCatalog Converters { get; }
+
+        IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

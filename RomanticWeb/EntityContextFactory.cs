@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Anotar.NLog;
 using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -21,6 +23,7 @@ namespace RomanticWeb
         private static IEnumerable<IOntologyProvider> importedOntologies;
         private static IEnumerable<IMappingsRepository> importedMappings;
 
+        private readonly IResultTransformerCatalog _transformerCatalog=new ResultTransformerCatalog();
         private readonly ConverterCatalog _conveters=new ConverterCatalog();
         private readonly MappingBuilder _mappingBuilder=new MappingBuilder();
         private bool _isInitialized;
@@ -31,6 +34,8 @@ namespace RomanticWeb
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
+        private Lazy<IEnumerable<IConvention>> _conventions;
+
         #endregion
 
         #region Constructors
@@ -42,8 +47,9 @@ namespace RomanticWeb
             WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
 
-            // todo: change how default is set
+            // todo: change how defaults are set
             _namedGraphSelector=new NamedGraphSelector();
+            _conventions = new Lazy<IEnumerable<IConvention>>(() => ContainerFactory.GetInstancesImplementing<IConvention>().ToList());
         }
         #endregion
 
@@ -69,6 +75,14 @@ namespace RomanticWeb
         }
 
         public IConverterCatalog Converters { get { return _conveters; } }
+
+        public IResultTransformerCatalog TransformerCatalog
+        {
+            get
+            {
+                return _transformerCatalog;
+            }
+        }
 
         private IEnumerable<IOntologyProvider> ImportedOntologies
         {
@@ -101,6 +115,7 @@ namespace RomanticWeb
                 return importedMappings;
             }
         }
+
         #endregion
 
         #region Public methods
@@ -160,7 +175,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
-            var repositories=_mappingBuilder.BuildMappings(buildMappings);
+            var repositories = _mappingBuilder.BuildMappings(buildMappings); 
             EnsureMappingsRepository();
             foreach (var mappingsRepository in repositories)
             {
@@ -191,6 +206,7 @@ namespace RomanticWeb
         #endregion
 
         #region Non-public methods
+
         private static void DefaultMappings(MappingBuilder mappings)
         {
             mappings.Fluent.FromAssemblyOf<ITypedEntity>();
@@ -230,7 +246,8 @@ namespace RomanticWeb
 
         private void EnsureMappingsRebuilt()
         {
-            _actualMappingsRepository.RebuildMappings(new MappingContext(_actualOntologyProvider));
+            var mappingContext=new MappingContext(_actualOntologyProvider,_conventions.Value);
+            _actualMappingsRepository.RebuildMappings(mappingContext);
         }
 
         private void EnsureNamedGraphSelector()

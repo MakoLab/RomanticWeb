@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Fluent
@@ -28,11 +29,6 @@ namespace RomanticWeb.Mapping.Fluent
 		}
 
         /// <summary>
-        /// Gets a value indicating whether this property is a collection
-        /// </summary>
-        protected internal virtual bool IsCollection { get { return false; } }
-
-        /// <summary>
         /// Not used for property map
         /// </summary>
         /// <returns><see cref="StorageStrategyOption.None"/></returns>
@@ -42,6 +38,19 @@ namespace RomanticWeb.Mapping.Fluent
             get
             {
                 return StorageStrategyOption.None;
+            }
+
+            set
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        protected internal virtual Aggregation? Aggregation
+        {
+            get
+            {
+                return null;
             }
 
             set
@@ -66,10 +75,14 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         protected internal virtual IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            return new PropertyMapping(
-                PropertyInfo.PropertyType,
-                PropertyInfo.Name,
-                GetTermUri(mappingContext.OntologyProvider));
+            var propertyMapping=new PropertyMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider));
+
+            if (StorageStrategy!=StorageStrategyOption.None)
+            {
+                propertyMapping.StorageStrategy=StorageStrategy;
+            }
+            
+            return propertyMapping;
         }
     }
 }

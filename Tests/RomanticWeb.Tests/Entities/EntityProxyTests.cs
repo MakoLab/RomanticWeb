@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
@@ -38,7 +39,7 @@ namespace RomanticWeb.Tests.Entities
                           .Returns(new Uri("urn:default:graph"));
 
             var entity = new Entity(_entityId, _context.Object);
-            _entityProxy=new EntityProxy(entity,_mapping.Object);
+            _entityProxy=new EntityProxy(entity,_mapping.Object,new TestTransformerCatalog());
         }
 
         [TearDown]

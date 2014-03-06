@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping
@@ -10,11 +12,22 @@ namespace RomanticWeb.Mapping
         /// <summary>Default constructor with ontology provider and default graph selector passed.</summary>
         /// <param name="ontologyProvider">Ontology provider.</param>
         public MappingContext(IOntologyProvider ontologyProvider)
+            :this(ontologyProvider,new IConvention[0])
         {
-            _ontologyProvider=ontologyProvider;
+        }
+
+        /// <summary>Default constructor with ontology provider and default graph selector passed.</summary>
+        /// <param name="ontologyProvider">Ontology provider.</param>
+        /// <param name="conventions"></param>
+        public MappingContext(IOntologyProvider ontologyProvider,IEnumerable<IConvention> conventions)
+        {
+            _ontologyProvider = ontologyProvider;
+            Conventions=conventions;
         }
 
         /// <summary>Gets the ontology provider.</summary>
         public IOntologyProvider OntologyProvider { get { return _ontologyProvider; } }
+
+        public IEnumerable<IConvention> Conventions { get; private set; }
     }
 }

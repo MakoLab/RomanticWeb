@@ -1,12 +1,11 @@
 ﻿using System;
-using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb
 {
     internal class DynamicPropertyAggregate
     {
-        private ProcessingOperation _aggregation=ProcessingOperation.Flatten;
+        private Aggregation _aggregation=Entities.ResultAggregations.Aggregation.Original;
 
         public DynamicPropertyAggregate(string propertyName)
         {
@@ -19,7 +18,7 @@ namespace RomanticWeb
             }
             else if (tokens.Length==2)
             {
-                ProcessingOperation aggregationOption;
+                Aggregation aggregationOption;
                 if (Enum.TryParse(tokens[0],true,out aggregationOption))
                 {
                     Aggregation=aggregationOption;
@@ -30,7 +29,7 @@ namespace RomanticWeb
             }
         }
 
-        public ProcessingOperation Aggregation
+        public Aggregation Aggregation
         {
             get
             {

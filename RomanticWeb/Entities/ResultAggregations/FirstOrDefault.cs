@@ -3,17 +3,17 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    internal class FirstOrDefaultProcessing : IResultProcessingStrategy
+    internal class FirstOrDefault:IResultAggregator
     {
-        public ProcessingOperation Operation
+        public Aggregation Aggregation
         {
             get
             {
-                return ProcessingOperation.FirstOrDefault;
+                return Aggregation.FirstOrDefault;
             }
         }
 
-        public object Process(IEnumerable<object> objects)
+        public object Aggregate(IEnumerable<object> objects)
         {
             return objects.FirstOrDefault();
         }

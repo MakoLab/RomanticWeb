@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -18,11 +19,6 @@ namespace RomanticWeb.Mapping.Model
         string Name { get; }
 
         /// <summary>
-        /// Gets a value indicating if the property is a collection
-        /// </summary>
-        bool IsCollection { get; }
-
-        /// <summary>
         /// Gets the property's return type
         /// </summary>
         Type ReturnType { get; }
@@ -30,6 +26,8 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>
         /// Gets the storage strategy for a mapped property
         /// </summary>
-        StorageStrategyOption StorageStrategy { get; }
+        StorageStrategyOption StorageStrategy { get; set; }
+
+        Aggregation? Aggregation { get; set; }
 	}
 }

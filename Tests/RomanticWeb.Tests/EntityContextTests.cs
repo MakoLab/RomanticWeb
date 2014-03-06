@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
@@ -24,7 +25,7 @@ namespace RomanticWeb.Tests
         private Mock<IEntityStore> _entityStore;
         private Mock<IEntitySource> _store;
         private Mock<IEntityContextFactory> _factory;
-        private Mock<IPropertyMapping> _typesMapping;
+        private IPropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
@@ -38,7 +39,6 @@ namespace RomanticWeb.Tests
                         _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                                     .Returns(new Node[0]);
-                        _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity),new IClassMapping[0], new[] { _typesMapping.Object }));
                         return _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
                     });
                 yield return new Lazy<IEntity>(
@@ -47,7 +47,6 @@ namespace RomanticWeb.Tests
                         _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                                     .Returns(new Node[0]);
-                        _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new IClassMapping[0], new[] { _typesMapping.Object }));
                         _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping(typeof(IPerson)));
                         return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
                     });
@@ -57,17 +56,20 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _typesMapping = new Mock<IPropertyMapping>();
-            _typesMapping.SetupGet(map => map.Uri).Returns(Vocabularies.Rdf.type);
-            _typesMapping.SetupGet(map => map.IsCollection).Returns(true);
-            _typesMapping.SetupGet(map => map.Name).Returns("Types");
-            _typesMapping.SetupGet(map => map.ReturnType).Returns(typeof(IEnumerable<EntityId>));
-            ////_typesMapping.SetupGet(map => map.GraphSelector).Returns(new FuncGraphSelector(entityId => entityId.Uri));
+            _typesMapping = new TestPropertyMapping
+                                {
+                                    Name="Types",
+                                    ReturnType = typeof(IEnumerable<EntityId>),
+                                    Aggregation=Aggregation.Original,
+                                    Uri=Vocabularies.Rdf.type
+                                };
             _factory = new Mock<IEntityContextFactory>();
             _factory.Setup(cf => cf.Converters).Returns(new Mock<IConverterCatalog>().Object);
+            _factory.Setup(cf => cf.TransformerCatalog).Returns(new TestTransformerCatalog());
             _ontologyProvider = new TestOntologyProvider();
-            _mappings = new Mock<IMappingsRepository>(MockBehavior.Strict);
+            _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
+            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new IClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
             _baseUriSelector=new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
@@ -84,7 +86,6 @@ namespace RomanticWeb.Tests
         [TearDown]
         public void Teardown()
         {
-            _mappings.VerifyAll();
             _entityStore.VerifyAll();
             _store.VerifyAll();
             _baseUriSelector.VerifyAll();
@@ -138,7 +139,6 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping(typeof(IPerson)));
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity),new IClassMapping[0], new[] { _typesMapping.Object }));
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
@@ -172,7 +172,6 @@ namespace RomanticWeb.Tests
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity),new IClassMapping[0], new[] { _typesMapping.Object }));
             dynamic entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
@@ -190,7 +189,6 @@ namespace RomanticWeb.Tests
             mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>()))
                           .Returns((string prop) => GetMapping(prop));
             _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new IClassMapping[0], new[] { _typesMapping.Object }));
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
@@ -209,7 +207,6 @@ namespace RomanticWeb.Tests
         public void Loading_entity_twice_should_initialize_only_once()
         {
             // given
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity),new IClassMapping[0], new[] { _typesMapping.Object }));
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -256,7 +253,6 @@ namespace RomanticWeb.Tests
         {
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new IClassMapping[0], new[] { _typesMapping.Object }));
             var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"), false);
 
             // then
@@ -318,7 +314,6 @@ namespace RomanticWeb.Tests
             _store.Setup(s => s.EntityExist(It.IsAny<EntityId>())).Returns(true);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity),new IClassMapping[0], new[] { _typesMapping.Object }));
 
             // when
             var entity = _entityContext.Load<IEntity>(entityId);
@@ -348,9 +343,9 @@ namespace RomanticWeb.Tests
         {
             return new TestPropertyMapping
                        {
-                           Name = propertyName,
-                           Uri = new Uri("http://unittest/" + propertyName),
-                           IsCollection = false
+                           Name=propertyName,
+                           Uri=new Uri("http://unittest/"+propertyName),
+                           Aggregation=Aggregation.SingleOrDefault
                        };
         }
     }

@@ -116,6 +116,8 @@
     <Compile Include="Entities\EntityProxyTests.cs" />
     <Compile Include="IntegrationTests\InMemory\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphMappingTests.cs" />
+    <Compile Include="Mapping\Conventions\CollectionConventionTests.cs" />
+    <Compile Include="Mapping\Conventions\RdfListConventionTests.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelectorTests.cs" />
     <Compile Include="dotNetRDF\TripleStoreAdapterTests.cs" />
     <Compile Include="EntityContextFactoryTests.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Stubs\TestOntologyProvider.cs" />
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="EntityTripleTests.cs" />
+    <Compile Include="Stubs\TestTransformerCatalog.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">
       <DependentUpon>TurtleGraphConversionTests.cs</DependentUpon>

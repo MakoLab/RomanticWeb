@@ -3,17 +3,17 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    internal class NoopProcessing:IResultProcessingStrategy
+    internal class OriginalResult:IResultAggregator
     {
-        public ProcessingOperation Operation
+        public Aggregation Aggregation
         {
             get
             {
-                return ProcessingOperation.Original;
+                return Aggregation.Original;
             }
         }
 
-        public object Process(IEnumerable<object> objects)
+        public object Aggregate(IEnumerable<object> objects)
         {
             return objects.ToList();
         }

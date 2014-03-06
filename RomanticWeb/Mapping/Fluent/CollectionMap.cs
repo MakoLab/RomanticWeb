@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Fluent
@@ -40,21 +41,21 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         protected internal override StorageStrategyOption StorageStrategy { get; set; }
 
-        /// <inheritdoc />
-        /// <returns>true</returns>
-        protected internal override bool IsCollection
-        {
-            get { return true; }
-        }
+        protected internal override Aggregation? Aggregation { get; set; }
 
         /// <inheritdoc />
         protected internal override IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            return new CollectionMapping(
-                PropertyInfo.PropertyType,
-                PropertyInfo.Name,
-                GetTermUri(mappingContext.OntologyProvider),
-                StorageStrategy);
+            var collectionMapping=new CollectionMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider),StorageStrategy);
+
+            if (StorageStrategy != StorageStrategyOption.None)
+            {
+                collectionMapping.StorageStrategy = StorageStrategy;
+            }
+
+            collectionMapping.Aggregation=Aggregation;
+
+            return collectionMapping;
         }
-	}
+    }
 }

@@ -40,7 +40,7 @@ namespace RomanticWeb.Mapping.Model
             }
         }
 
-        internal IEnumerable<IPropertyMapping> Properties
+        public IEnumerable<IPropertyMapping> Properties
         {
             get
             {
@@ -107,12 +107,12 @@ namespace RomanticWeb.Mapping.Model
 
             private static int CompareProperty(IPropertyMapping left,IPropertyMapping right)
             {
-                if (left.IsCollection==right.IsCollection)
+                if (left.GetType()==right.GetType())
                 {
                     return string.Compare(left.Name,right.Name,StringComparison.CurrentCulture);
                 }
 
-                if (left.IsCollection)
+                if (left is CollectionMapping)
                 {
                     return 1;
                 }

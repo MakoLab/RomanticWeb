@@ -5,13 +5,13 @@ namespace RomanticWeb.Entities.ResultAggregations
     /// <summary>
     /// Defines a contract for processing results from reading rdf nodes
     /// </summary>
-    public interface IResultProcessingStrategy
+    public interface IResultAggregator
     {
-        ProcessingOperation Operation { get; }
+        Aggregation Aggregation { get; }
 
         /// <summary>
         /// Processes nodes and returns the transformed value
         /// </summary>
-        object Process(IEnumerable<object> objects);
+        object Aggregate(IEnumerable<object> objects);
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Weavers>
-  <MethodCache />
+  <MethodCache SkipDebugOutput="true" />
   <NullGuard IncludeDebugAssert="false" />
   <Anotar.NLog />
   <InfoOf />

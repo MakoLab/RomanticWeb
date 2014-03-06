@@ -374,8 +374,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            var tomasz = EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
-            var gniewo = EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
+            var tomasz=EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
+            var gniewo=EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
 
             // when
             tomasz.Friends.Add(gniewo);

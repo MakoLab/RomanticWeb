@@ -27,7 +27,7 @@ namespace RomanticWeb.Mapping
         /// <summary>
         /// Finds all types annotated with mapping attributes and build mappings
         /// </summary>
-        protected override IEnumerable<IEntityMapping> BuildTypeMappings(MappingContext mappingContext)
+        protected override IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext)
         {
             return from type in Assembly.GetTypes()
                    let classAtributes = type.GetCustomAttributes<ClassAttribute>()

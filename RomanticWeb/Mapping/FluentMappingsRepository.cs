@@ -27,7 +27,7 @@ namespace RomanticWeb.Mapping
         /// Scans the <see cref="AssemblyMappingsRepository.Assembly"/> for implementations of
         /// <see cref="EntityMap"/> and uses them to build mappings
         /// </summary>
-        protected override IEnumerable<IEntityMapping> BuildTypeMappings(MappingContext mappingContext)
+        protected override IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext)
         {
             var maps=(from type in Assembly.GetTypes()
                       where type.IsConstructableEntityMap()

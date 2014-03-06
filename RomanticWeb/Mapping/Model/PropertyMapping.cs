@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
+using NullGuard;
+using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Property {Name}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    internal class PropertyMapping:IPropertyMapping
+    internal class PropertyMapping : IPropertyMapping
     {
         public PropertyMapping(Type returnType,string name,Uri predicateUri)
         {
-            if (returnType == null) { throw new ArgumentNullException("returnType"); }
-            if (name == null) { throw new ArgumentNullException("name"); }
-            if (predicateUri == null) { throw new ArgumentNullException("predicateUri"); }
-
             ReturnType=returnType;
             Name=name;
             Uri=predicateUri;
@@ -22,23 +21,21 @@ namespace RomanticWeb.Mapping.Model
 
         public string Name { get; private set; }
 
-        public bool IsCollection
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public Type ReturnType { get; private set; }
 
-        public StorageStrategyOption StorageStrategy
+        public virtual StorageStrategyOption StorageStrategy
         {
             get
             {
                 return StorageStrategyOption.None;
             }
+
+            set
+            {
+            }
         }
+
+        public Aggregation? Aggregation { get; set; }
 
 #pragma warning disable 1591
         public override string ToString()

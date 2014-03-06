@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using NullGuard;
 
 namespace RomanticWeb.Mapping.Model
 {
+    [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Class {Uri}")]
     internal class ClassMapping:IClassMapping
     {
@@ -15,17 +17,17 @@ namespace RomanticWeb.Mapping.Model
 
         public Uri Uri { get; private set; }
 
-        public static bool operator ==(ClassMapping left,ClassMapping right)
+        public static bool operator ==([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
         {
             return Equals(left,right);
         }
 
-        public static bool operator !=(ClassMapping left,ClassMapping right)
+        public static bool operator !=([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
         {
             return !Equals(left,right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals([AllowNull]object obj)
         {
             if (ReferenceEquals(null,obj)) { return false; }
             if (ReferenceEquals(this,obj)) { return true; }
@@ -39,7 +41,7 @@ namespace RomanticWeb.Mapping.Model
             return Uri.GetHashCode();
         }
 
-        protected bool Equals(ClassMapping other)
+        protected bool Equals([AllowNull]ClassMapping other)
         {
             return UriComparer.Equals(Uri,other.Uri);
         }

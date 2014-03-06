@@ -17,7 +17,7 @@ namespace RomanticWeb.Tests.IntegrationTests.TestMappings
 
             Property(p => p.Friend).Term.Is("foaf","knows");
 
-            Property(p => p.Friends).Term.Is("foaf", "friends");
+            Collection(p => p.Friends).Term.Is("foaf", "friends");
 
             Class.Is("foaf","Person");
 

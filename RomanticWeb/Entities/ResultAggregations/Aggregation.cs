@@ -1,17 +1,10 @@
 ﻿namespace RomanticWeb.Entities.ResultAggregations
 {
     /// <summary>Contains kinds of operation performed on multiple results when reading predicate values.</summary>
-    public enum ProcessingOperation
+    public enum Aggregation
     {
-        /// <summary>Leave results as-if.</summary>
+        /// <summary>Leave results intact.</summary>
         Original,
-
-        /// <summary>Combine all values into a single dictionary.</summary>
-        /// <remarks>This operation should also perform a flattening operation as well.</remarks>
-        Dictionary,
-
-        /// <summary>Combine all values into a single collection.</summary>
-        Flatten,
 
         /// <summary>Return only a single value.</summary>
         Single,

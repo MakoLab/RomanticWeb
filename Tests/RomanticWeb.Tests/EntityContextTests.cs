@@ -5,6 +5,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;

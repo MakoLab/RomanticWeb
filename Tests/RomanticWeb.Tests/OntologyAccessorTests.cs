@@ -3,6 +3,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
@@ -11,7 +12,7 @@ using RomanticWeb.Tests.Stubs;
 namespace RomanticWeb.Tests
 {
     [TestFixture]
-    public class ObjectAccessorTests
+    public class OntologyAccessorTests
     {
         private const string Uri = "urn:test:identity";
         private readonly Entity _entity = new Entity(new EntityId(Uri));
@@ -45,7 +46,7 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_graph.Object,_entity,_ontology,_nodeProcessor.Object,new TestTransformerCatalog());
+            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
 
             // when
             var givenName = accessor.givenName;
@@ -60,7 +61,7 @@ namespace RomanticWeb.Tests
             // given
             _graph = new Mock<IEntityStore>(MockBehavior.Strict);
             _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_graph.Object,_entity,_ontology,_nodeProcessor.Object,new TestTransformerCatalog());
+            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
 
             // when
             var givenName = accessor.fullName;

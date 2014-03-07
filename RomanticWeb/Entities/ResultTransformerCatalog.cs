@@ -7,13 +7,6 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities
 {
-    public interface IResultTransformerCatalog
-    {
-        IResultAggregator GetAggregator(Aggregation aggregation);
-
-        IResultTransformer GetTransformer(IPropertyMapping property);
-    }
-
     public sealed class ResultTransformerCatalog : IResultTransformerCatalog
     {
         private static readonly Lazy<IDictionary<Aggregation,IResultAggregator>> Aggregations;

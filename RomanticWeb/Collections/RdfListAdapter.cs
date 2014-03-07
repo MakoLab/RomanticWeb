@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using NullGuard;
 using RomanticWeb.Entities;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Collections
 {
@@ -12,11 +13,11 @@ namespace RomanticWeb.Collections
     internal class RdfListAdapter<T>:IList<T>,IRdfListAdapter
     {
         private readonly IEntityContext _context;
-        private readonly NamedGraphSelectionParameters _namedGraphOverride;
+        private readonly SourceGraphSelectionOverride _namedGraphOverride;
         private IRdfListNode _head;
         private IRdfListNode _tail;
 
-        public RdfListAdapter(IEntityContext context,IRdfListNode head,NamedGraphSelectionParameters namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,IRdfListNode head,SourceGraphSelectionOverride namedGraphOverride)
         {
             Count=0;
             _context=context;
@@ -26,7 +27,7 @@ namespace RomanticWeb.Collections
             Initialize();
         }
 
-        public RdfListAdapter(IEntityContext context,NamedGraphSelectionParameters namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,SourceGraphSelectionOverride namedGraphOverride)
             :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
         {
         }
@@ -258,13 +259,13 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode CreateNode()
         {
-            var nodeId=new BlankId(_context.BlankIdGenerator.Generate(),_namedGraphOverride.EntityId);
+            var nodeId=new BlankId(_context.BlankIdGenerator.Generate());
             var newNode=_context.Create<IRdfListNode>(nodeId);
             var proxy=newNode.UnwrapProxy() as IEntityProxy;
 
             if (proxy!=null)
             {
-                proxy.OverrideNamedGraphSelection(_namedGraphOverride);
+                proxy.OverrideGraphSelection(_namedGraphOverride);
             }
 
             return newNode;

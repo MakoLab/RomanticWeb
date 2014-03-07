@@ -1,15 +1,16 @@
 ﻿using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities
 {
     public interface IEntityProxy
     {
-        NamedGraphSelectionParameters NamedGraphSelectionParameters { get; }
+        SourceGraphSelectionOverride GraphSelectionOverride { get; }
 
         EntityId Id { get; }
 
         IEntityMapping EntityMapping { get; }
 
-        void OverrideNamedGraphSelection(NamedGraphSelectionParameters parametersOverride);
+        void OverrideGraphSelection(SourceGraphSelectionOverride graphOverride);
     }
 }

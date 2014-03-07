@@ -12,6 +12,7 @@ using RomanticWeb.Collections;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities
 {
@@ -27,7 +28,7 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
         private readonly INodeConverter _converter;
-        private NamedGraphSelectionParameters _namedGraphSelectionOverride;
+        private SourceGraphSelectionOverride _overrideSourceGraph;
 
         #endregion
 
@@ -73,12 +74,12 @@ namespace RomanticWeb.Entities
             }
         }
 
-        public NamedGraphSelectionParameters NamedGraphSelectionParameters
+        public SourceGraphSelectionOverride GraphSelectionOverride
         {
             [return:AllowNull]
             get
             {
-                return _namedGraphSelectionOverride;
+                return _overrideSourceGraph;
             }
         }
 
@@ -147,8 +148,8 @@ namespace RomanticWeb.Entities
                     var genericArguments = property.ReturnType.GetGenericArguments();
                     var ctor =
                         typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                                .GetConstructor(new[] { typeof(IEntityContext), typeof(NamedGraphSelectionParameters) });
-                    var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+                                                .GetConstructor(new[] { typeof(IEntityContext), typeof(OverridingGraphSelector) });
+                    var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
                     var rdfList=(IRdfListAdapter)ctor.Invoke(new object[] { Context,paremeters });
 
                     foreach (var item in (IEnumerable)value)
@@ -206,9 +207,9 @@ namespace RomanticWeb.Entities
             return _entity;
         }
 
-        public void OverrideNamedGraphSelection(NamedGraphSelectionParameters parametersOverride)
+        public void OverrideGraphSelection(SourceGraphSelectionOverride parametersOverride)
         {
-            _namedGraphSelectionOverride = parametersOverride;
+            _overrideSourceGraph = parametersOverride;
         }
 
         #endregion
@@ -236,30 +237,25 @@ namespace RomanticWeb.Entities
 
         private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
         {
-            var paremeters = NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(Id, _entityMapping, property);
+            var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
             if (proxy != null)
             {
                 if (proxy.Id is BlankId || proxy.EntityMapping.EntityType == typeof(IRdfListNode))
                 {
-                    proxy.OverrideNamedGraphSelection(paremeters);
+                    proxy.OverrideGraphSelection(paremeters);
                 }
             }
         }
 
+        [return:AllowNull]
         private Uri SelectNamedGraph(IPropertyMapping property)
         {
-            var entityId=Id;
-            var mapping=_entityMapping;
-            var propertyMapping=property;
-
-            if (_namedGraphSelectionOverride!=null)
+            if (_overrideSourceGraph!=null)
             {
-                entityId=_namedGraphSelectionOverride.EntityId;
-                mapping=_namedGraphSelectionOverride.EntityMapping;
-                propertyMapping=_namedGraphSelectionOverride.PropertyMapping;
+                return _overrideSourceGraph.SelectGraph(Context.GraphSelector);
             }
 
-            return Context.GraphSelector.SelectGraph(entityId,mapping,propertyMapping);
+            return Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
         }
 
         private object WrapResultAsDictionary(GetMemberBinder binder, IPropertyMapping property, IDictionary dictionary)

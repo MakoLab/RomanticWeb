@@ -1,13 +1,17 @@
-﻿using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
+using RomanticWeb.Collections;
 using RomanticWeb.Converters;
+using RomanticWeb.Entities;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
-namespace RomanticWeb.Entities
+namespace RomanticWeb.Dynamic
 {
     /// <summary>
     /// Allows dynamic resolution of prediacte URIs based dynamic member name and Ontology prefix
@@ -23,21 +27,18 @@ namespace RomanticWeb.Entities
         private readonly Ontology _ontology;
         private readonly INodeConverter _nodeConverter;
         private readonly IResultTransformerCatalog _resultTransformers;
+        private readonly IEntityContext _entityContext;
 
         /// <summary>
         /// Creates a new instance of <see cref="OntologyAccessor"/>
         /// </summary>
-        internal OntologyAccessor(
-            IEntityStore tripleStore,
-            Entity entity, 
-            Ontology ontology, 
-            INodeConverter nodeConverter,
-            IResultTransformerCatalog resultTransformers)
+        internal OntologyAccessor(Entity entity,Ontology ontology,IResultTransformerCatalog resultTransformers,IConverterCatalog converters)
         {
-            _tripleStore = tripleStore;
-            _entity = entity;
-            _ontology = ontology;
-            _nodeConverter = nodeConverter;
+            _tripleStore=entity.Context.Store;
+            _entity=entity;
+            _ontology=ontology;
+            _entityContext=entity.Context;
+            _nodeConverter=new NodeConverter(_entityContext,converters);
             _resultTransformers=resultTransformers;
         }
 
@@ -75,6 +76,16 @@ namespace RomanticWeb.Entities
             }
 
             result=GetObjects(_entity.Id,property,propertySpec);
+
+            if (propertySpec.IsList)
+            {
+                var graphOverride=new UnionGraphSelector();
+                var head=((IEntity)result).AsEntity<IRdfListNode>();
+                ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(graphOverride);
+                var rdfListAdapter=new RdfListAdapter<dynamic>(_entity.Context,head,graphOverride);
+                result=new ReadOnlyCollection<dynamic>(rdfListAdapter);
+            }
+
             return true;
         }
 
@@ -91,9 +102,9 @@ namespace RomanticWeb.Entities
             LogTo.Trace("Reading property {0}",property.Uri);
             var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
             var objects=_nodeConverter.ConvertNodes(objectValues);
-            var aggregation=_resultTransformers.GetAggregator(aggregate.Aggregation);
+            var aggregator=_resultTransformers.GetAggregator(aggregate.Aggregation);
             LogTo.Trace("Performing operation {0} on result nodes",aggregate.Aggregation);
-            return aggregation.Aggregate(objects);
+            return aggregator.Aggregate(objects);
         }
 
         private class DebuggerViewProxy

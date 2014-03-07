@@ -2,6 +2,7 @@
 using NullGuard;
 using RomanticWeb.Collections;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities.ResultPostprocessing
 {
@@ -23,7 +24,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                                                 {
                                                     typeof(IEntityContext),
                                                     typeof(IRdfListNode),
-                                                    typeof(NamedGraphSelectionParameters)
+                                                    typeof(OverridingGraphSelector)
                                                 });
 
             IRdfListNode head;
@@ -36,8 +37,8 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                 head=((IEntity)value).AsEntity<IRdfListNode>();
             }
 
-            var paremeters = parent.NamedGraphSelectionParameters ?? new NamedGraphSelectionParameters(parent.Id, parent.EntityMapping, property);
-            ((IEntityProxy)head.UnwrapProxy()).OverrideNamedGraphSelection(paremeters);
+            var paremeters = parent.GraphSelectionOverride ?? new OverridingGraphSelector(parent.Id, parent.EntityMapping, property);
+            ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(paremeters);
             return ctor.Invoke(new object[] { context, head, paremeters });
         }
 

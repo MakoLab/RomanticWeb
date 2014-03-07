@@ -178,7 +178,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-            dynamic people = tomasz.foaf.mbox;
+            dynamic people = tomasz.foaf.list_mbox;
 
             // then
             Assert.That(people.Count, Is.EqualTo(2));
@@ -193,8 +193,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.trig");
 
             // when
-            dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
-            dynamic numbers = tomasz.math.Original_matrix[0];
+            dynamic tomasz=EntityContext.Load<IEntity>(new EntityId("http://magi/math/array"));
+            dynamic numbers=tomasz.math.List_matrix[0];
 
             // then
             Assert.That(numbers != null);
@@ -211,7 +211,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             dynamic tomasz = EntityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-            dynamic nicks = tomasz.foaf.nick;
+            dynamic nicks = tomasz.foaf.list_nick;
 
             // then
             Assert.That(nicks.Count, Is.EqualTo(2));

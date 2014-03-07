@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
+    <Compile Include="Collections\IRdfListNode.cs" />
     <Compile Include="Collections\ObjectModel\ObservableDictionary.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
@@ -68,21 +69,21 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />
+    <Compile Include="Dynamic\OntologyAccessor.cs" />
     <Compile Include="Entities\ConstantBaseUri.cs" />
     <Compile Include="Entities\DefaultBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\EntityIdExtensions.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\IEntityProxy.cs" />
-    <Compile Include="Entities\IPostprocessorCatalog.cs" />
-    <Compile Include="Entities\IRdfListNode.cs" />
+    <Compile Include="Entities\ResultTransformerCatalog.cs" />
+    <Compile Include="Entities\IResultTransformerCatalog.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
-    <Compile Include="Entities\NamedGraphSelectionParameters.cs" />
     <Compile Include="Entities\ResultAggregations\AnyResultCheck.cs" />
     <Compile Include="Entities\CardinalityException.cs" />
     <Compile Include="Entities\ResultAggregations\Aggregation.cs" />
     <Compile Include="Entities\AmbiguousPropertyException.cs" />
-    <Compile Include="DynamicPropertyAggregate.cs" />
     <Compile Include="Converters\RdfListConverter.cs" />
     <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="Entities\ResultAggregations\SingleOrDefault.cs" />
     <Compile Include="Entities\ResultAggregations\SingleResult.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
-    <Compile Include="Entities\OntologyAccessor.cs" />
     <Compile Include="Entities\ResultPostprocessing\IResultTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\NullTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\ObservableCollectionTransformer.cs" />
@@ -221,6 +221,9 @@
     <Compile Include="NamedGraphs\NamedGraphSelector.cs" />
     <Compile Include="NamedGraphs\NamedGraphMatch.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelectorBase.cs" />
+    <Compile Include="NamedGraphs\OverridingGraphSelector.cs" />
+    <Compile Include="NamedGraphs\SourceGraphSelectionOverride.cs" />
+    <Compile Include="NamedGraphs\UnionGraphSelector.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />

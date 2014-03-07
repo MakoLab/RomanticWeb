@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RomanticWeb.Collections;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Tests.Collections
 {
@@ -13,12 +14,12 @@ namespace RomanticWeb.Tests.Collections
     {
         private Mock<IEntityContext> _contextMock;
         private IEntityContext _context;
-        private NamedGraphSelectionParameters _override;
+        private OverridingGraphSelector _override;
 
         [SetUp]
         public void Setup()
         {
-            _override=new NamedGraphSelectionParameters(
+            _override=new OverridingGraphSelector(
                 "urn:actual:entity",
                 new Mock<IEntityMapping>().Object,
                 new Mock<IPropertyMapping>().Object);

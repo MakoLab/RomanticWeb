@@ -1,5 +1,3 @@
-using RomanticWeb.Entities;
-
 namespace RomanticWeb.Collections
 {
     internal interface IRdfListAdapter

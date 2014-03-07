@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.Dynamic;
 
 namespace RomanticWeb.Entities
 {

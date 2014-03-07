@@ -1,6 +1,7 @@
-﻿using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Attributes;
 
-namespace RomanticWeb.Entities
+namespace RomanticWeb.Collections
 {
     public interface IRdfListNode:IEntity
     {

@@ -7,6 +7,7 @@ using ImpromptuInterface;
 using MethodCache.Attributes;
 using NullGuard;
 using RomanticWeb.Converters;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
@@ -239,7 +240,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
             {
-                var ontologyAccessor=new OntologyAccessor(Store,entity,ontology,_nodeConverter,_factory.TransformerCatalog);
+                var ontologyAccessor=new OntologyAccessor(entity,ontology,_factory.TransformerCatalog,_factory.Converters);
                 entity[ontology.Prefix]=ontologyAccessor;
             }
 

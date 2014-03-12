@@ -1,7 +1,10 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
+using RomanticWeb.TestEntities.Animals;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -59,20 +62,25 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             _factory=new EntityContextFactory().WithEntitySource(CreateEntitySource)
                                                .WithOntology(new DefaultOntologiesProvider())
+                                               .WithOntology(new LifeOntology())
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
-                                               .WithMappings(m=>m.AddMapping(GetType().Assembly,Mappings))
+                                               .WithMappings(m =>
+                                                       {
+                                                           m.FromAssemblyOf<IAnimal>();
+                                                           m.AddMapping(GetType().Assembly,Mappings);
+                                                       })
                                                .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
 
         [TearDown]
-        public void Teardown()
+        public void Teardown() 
         {
             ChildTeardown();
             _entityContext=null;
         }
 
-        protected virtual void ChildTeardown()
+        protected virtual void ChildTeardown() 
         {
         }
 
@@ -83,12 +91,33 @@ namespace RomanticWeb.Tests.IntegrationTests
             return mock.Object;
         }
 
-        protected virtual void ChildSetup()
+        protected virtual void ChildSetup() 
         {
         }
 
-        protected abstract void LoadTestFile(string fileName);
-
+        protected abstract void LoadTestFile(string fileName); 
+         
         protected abstract IEntitySource CreateEntitySource();
+
+        public class LifeOntology : IOntologyProvider
+        {
+            public IEnumerable<Ontology> Ontologies
+            {
+                get
+                {
+                    yield return new Ontology("life", "http://example/livingThings#");
+                }
+            }
+
+            public Uri ResolveUri(string prefix,string rdfTermName)
+            {
+                if (prefix=="life")
+                {
+                    return new Uri("http://example/livingThings#"+rdfTermName);
+                }
+             
+                return null;
+            }
+        }
     }
 }

@@ -124,7 +124,7 @@ namespace RomanticWeb.Tests
             {
                 ReturnType=collectionType,
                 StorageStrategy=StorageStrategyOption.RdfList
-            }.ActLike<IPropertyMapping>();
+            }.ActLike<ICollectionMapping>();
             var entity=new { }.ActLike<IEntity>();
             _entityContext.Setup(c => c.Load<IEntity>(It.IsAny<EntityId>(),false)).Returns(entity);
             var intConverter=new Mock<IUriNodeConverter>(MockBehavior.Strict);

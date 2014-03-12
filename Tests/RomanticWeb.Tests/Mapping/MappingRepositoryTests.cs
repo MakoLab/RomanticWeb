@@ -4,7 +4,9 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
+using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Animals;
 
 namespace RomanticWeb.Tests.Mapping
@@ -89,6 +91,19 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             classMappings.Should().HaveCount(4);
+        }
+
+        [Test]
+        public void Mapping_should_allow_dictionary_with_default_key_value()
+        {
+            // given
+            var mapping=_mappingsRepository.MappingFor<IEntityWithDictionary>();
+
+            // then
+            var propertyMapping=mapping.PropertyFor("SettingsDefault");
+            propertyMapping.Should().BeAssignableTo<IDictionaryMapping>();
+            propertyMapping.As<IDictionaryMapping>().KeyPredicate.Should().Be(Vocabularies.Rdf.predicate);
+            propertyMapping.As<IDictionaryMapping>().ValuePredicate.Should().Be(Vocabularies.Rdf.@object);
         }
 
         protected abstract IMappingsRepository CreateMappingsRepository();

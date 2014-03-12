@@ -34,6 +34,12 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        public void FromAssemblyOf<T>()
+        {
+            Fluent.FromAssemblyOf<T>();
+            Attributes.FromAssemblyOf<T>();
+        }
+
         internal void AddMapping<TMappingRepository>(Assembly mappingAssembly,TMappingRepository mappingsRepository)
             where TMappingRepository:IMappingsRepository
         {

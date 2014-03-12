@@ -23,11 +23,14 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         Type ReturnType { get; }
 
+        Aggregation? Aggregation { get; set; }
+	}
+
+    public interface ICollectionMapping:IPropertyMapping
+    {
         /// <summary>
         /// Gets the storage strategy for a mapped property
         /// </summary>
         StorageStrategyOption StorageStrategy { get; set; }
-
-        Aggregation? Aggregation { get; set; }
-	}
+    }
 }

@@ -41,14 +41,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>Creates a mapping from this definition.</summary>
         protected internal virtual IPropertyMapping GetMapping(MappingContext mappingContext)
         {
-            var propertyMapping=new PropertyMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider));
-
-            if (StorageStrategy!=StorageStrategyOption.None)
-            {
-                propertyMapping.StorageStrategy=StorageStrategy;
-            }
-            
-            return propertyMapping;
+            return new PropertyMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider));
         }
     }
 }

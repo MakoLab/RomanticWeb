@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.Mapping.Conventions
 {
-    public interface IPropertyConvention:IConvention<IPropertyMapping>
+    public interface IPropertyConvention : IConvention<IPropertyMapping>
     {
     }
 }

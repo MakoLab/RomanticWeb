@@ -34,8 +34,8 @@ namespace RomanticWeb.Tests.Stubs
                 }
 
                 yield return new Ontology(new NamespaceSpecification("dummy","http://example.com"),new DatatypeProperty("test"));
-
                 yield return new Ontology(new NamespaceSpecification("math", "http://example/maths/"));
+                yield return new Ontology(new NamespaceSpecification("magi", "http://magi/ontology#"));
             }
         }
     }

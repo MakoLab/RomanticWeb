@@ -14,29 +14,32 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class OntologyAccessorTests
     {
-        private const string Uri = "urn:test:identity";
-        private readonly Entity _entity = new Entity(new EntityId(Uri));
+        private const string Uri="urn:test:identity";
+        private Entity _entity;
         private Mock<INodeConverter> _nodeProcessor;
         private Ontology _ontology;
-        private Mock<IEntityStore> _graph;
+        private Mock<IEntityStore> _store;
 
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            _ontology = new Stubs.TestOntologyProvider().Ontologies.First();
+            _ontology=new TestOntologyProvider().Ontologies.First();
         }
 
         [SetUp]
         public void Setup()
         {
-            _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _nodeProcessor = new Mock<INodeConverter>();
+            var _context=new Mock<IEntityContext>();
+            _store=new Mock<IEntityStore>(MockBehavior.Strict);
+            _context.Setup(c => c.Store).Returns(_store.Object);
+            _entity=new Entity(new EntityId(Uri),_context.Object,true);
+            _nodeProcessor=new Mock<INodeConverter>();
         }
 
         [TearDown]
         public void Teardown()
         {
-            _graph.VerifyAll();
+            _store.VerifyAll();
             _nodeProcessor.VerifyAll();
         }
 
@@ -44,30 +47,28 @@ namespace RomanticWeb.Tests
         public void Getting_known_predicate_should_return_objects()
         {
             // given
-            _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
+            _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
 
             // when
-            var givenName = accessor.givenName;
+            var givenName=accessor.givenName;
 
             // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri,null), Times.Once);
+            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri,null), Times.Once);
         }
 
         [Test]
         public void Getting_unknown_predicate_should_use_the_property_name()
         {
             // given
-            _graph = new Mock<IEntityStore>(MockBehavior.Strict);
-            _graph.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
+            _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
             dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
 
             // when
-            var givenName = accessor.fullName;
+            var givenName=accessor.fullName;
 
             // then
-            _graph.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri,null), Times.Once);
+            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri,null), Times.Once);
         }
     }
 }

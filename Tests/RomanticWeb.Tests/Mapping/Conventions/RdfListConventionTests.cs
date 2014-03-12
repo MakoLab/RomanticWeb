@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             {
                 ReturnType = typeof(IList<int>),
                 Aggregation=default(Aggregation?)
-            }.ActLike<IPropertyMapping>();
+            }.ActLike<ICollectionMapping>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -50,7 +50,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             {
                 ReturnType = collectionType,
                 Aggregation = default(Aggregation?)
-            }.ActLike<IPropertyMapping>();
+            }.ActLike<ICollectionMapping>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -67,7 +67,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             {
                 ReturnType = typeof(int),
                 Aggregation = default(Aggregation?)
-            }.ActLike<IPropertyMapping>();
+            }.ActLike<ICollectionMapping>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -80,9 +80,9 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Applying_should_set_aggregation()
         {
             // given
-            IPropertyMapping mapping = New.ExpandoObject(
+            ICollectionMapping mapping = New.ExpandoObject(
                 ReturnType: typeof(int),
-                Aggregation: default(Aggregation?)).ActLike<IPropertyMapping>();
+                Aggregation: default(Aggregation?)).ActLike<ICollectionMapping>();
 
             // when
             _rdfListConvention.Apply(mapping);
@@ -95,9 +95,9 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Apply_should_not_replace_existing_value()
         {
             // given
-            IPropertyMapping mapping = New.ExpandoObject(
+            ICollectionMapping mapping = New.ExpandoObject(
                 ReturnType: typeof(int),
-                Aggregation: Aggregation.Single).ActLike<IPropertyMapping>();
+                Aggregation: Aggregation.Single).ActLike<ICollectionMapping>();
 
             // when
             _rdfListConvention.Apply(mapping);

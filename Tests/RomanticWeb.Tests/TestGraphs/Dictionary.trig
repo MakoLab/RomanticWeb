@@ -4,7 +4,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-element:HtmlText
+<http://data.magi/element/HtmlText>
 {
 	element:HtmlText magi:setting [ rdf:predicate "mode"^^xsd:string ; rdf:object "1"^^xsd:int ] ,
 		[ rdf:predicate "source"^^xsd:string ; rdf:object "some text"^^xsd:string ] .
@@ -12,5 +12,5 @@ element:HtmlText
 
 <http://app.magi/graphs>
 {
-	element:HtmlText foaf:primaryTopic element:HtmlText.
+	<http://data.magi/element/HtmlText> foaf:primaryTopic element:HtmlText.
 }

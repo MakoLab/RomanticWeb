@@ -23,7 +23,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets a builder for mapping a property
         /// </summary>
-		protected PropertyMap Property<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
+		protected PropertyMap Property<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
 		{
 			var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
 
@@ -35,7 +35,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets a builder for mapping a collection property
         /// </summary>
-        protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
+        protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
 		{
 			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
 
@@ -43,6 +43,15 @@ namespace RomanticWeb.Mapping.Fluent
 
 			return propertyMap;
 		}
+
+        protected DictionaryMap Dictionary<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
+        {
+            var dictionaryMap = new DictionaryMap(prop.ExtractPropertyInfo());
+
+            MappedProperties.Add(dictionaryMap);
+
+            return dictionaryMap;
+        }
 	}
 
     /// <summary>

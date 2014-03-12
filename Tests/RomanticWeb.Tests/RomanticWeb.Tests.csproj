@@ -101,10 +101,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseUriSelectorBuilderTests.cs" />
+    <Compile Include="Collections\DictionaryTransformerTests.cs" />
+    <Compile Include="Collections\RdfDictionaryTests.cs" />
     <Compile Include="Collections\RdfListAdapterTests.cs" />
     <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
-    <Compile Include="Converters\KeyValueConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
     <Compile Include="Converters\DecimalConverterTests.cs" />
     <Compile Include="Converters\DoubleConverterTests.cs" />
@@ -3116,6 +3117,10 @@
     <ProjectReference Include="..\..\RomanticWeb.JsonLd\RomanticWeb.JsonLd.csproj">
       <Project>{0BD5CF7B-5978-46F0-B7C6-A5D2B1C98F37}</Project>
       <Name>RomanticWeb.JsonLd</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RomanticWeb.TestEntities.FluentMappings\RomanticWeb.TestEntities.FluentMappings.csproj">
+      <Project>{87302AD5-4877-494F-AEB2-AC2A2DDB0D2B}</Project>
+      <Name>RomanticWeb.TestEntities.FluentMappings</Name>
     </ProjectReference>
     <ProjectReference Include="..\RomanticWeb.TestEntities\RomanticWeb.TestEntities.csproj">
       <Project>{AF4CCD1D-3FEF-4F5A-9A89-94D0E7E6D3B5}</Project>

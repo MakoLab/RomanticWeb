@@ -38,14 +38,22 @@ namespace RomanticWeb.Entities
 
         public IResultTransformer GetTransformer(IPropertyMapping property)
         {
-            if (property.StorageStrategy==StorageStrategyOption.RdfList)
+            var collectionMapping=property as ICollectionMapping;
+            if (collectionMapping!=null)
             {
-                return new RdfListTransformer();
-            }
+                if (collectionMapping.StorageStrategy==StorageStrategyOption.RdfList)
+                {
+                    return new RdfListTransformer();
+                }
 
-            if (property.StorageStrategy==StorageStrategyOption.Simple)
+                if (collectionMapping.StorageStrategy==StorageStrategyOption.Simple)
+                {
+                    return new ObservableCollectionTransformer();
+                }
+            }
+            else if (property is IDictionaryMapping)
             {
-                return new ObservableCollectionTransformer();
+                return new DictionaryTransformer();
             }
 
             return new NullTransformer();

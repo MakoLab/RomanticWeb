@@ -5,7 +5,7 @@ namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a type to an RDF class.</summary>
     [AttributeUsage(AttributeTargets.Interface|AttributeTargets.Class|AttributeTargets.Struct,Inherited = true,AllowMultiple = true)]
-    public sealed class ClassAttribute:MappingAttribute
+    public sealed class ClassAttribute : MappingAttribute
     {
         #region Constructors
         /// <summary>

@@ -12,8 +12,6 @@ namespace RomanticWeb.Tests.Stubs
 
         public Type ReturnType { get; set; }
 
-        public StorageStrategyOption StorageStrategy { get; set; }
-
         public Aggregation? Aggregation { get; set; }
 	}
 }

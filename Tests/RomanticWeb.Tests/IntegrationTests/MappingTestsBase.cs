@@ -5,9 +5,11 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
+using RomanticWeb.TestEntities.FluentMappings;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
@@ -399,6 +401,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(friends, Has.Count.EqualTo(4));
             friends.Select(friend => friend.FirstName)
                    .Should().Contain(new[] { "Karol", "Gniewko", "Dominik", "Przemek" });
+        }
+
+        [Test]
+        public void Should_load_entity_with_default_mapped_dictionary()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/HtmlText");
+
+            // when
+            var dict=entity.SettingsDefault;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("mode",1)
+                     .And.Contain("source","some text");
         }
 
         protected override IMappingsRepository SetupMappings()

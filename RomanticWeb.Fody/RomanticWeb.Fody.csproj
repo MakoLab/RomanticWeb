@@ -61,11 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuleWeaver.references.cs" />
+    <Compile Include="ModuleWeaver.dictionaries.cs" />
+    <Compile Include="ModuleWeaver.converters.cs" />
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeavingException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuleWeaver.imports.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

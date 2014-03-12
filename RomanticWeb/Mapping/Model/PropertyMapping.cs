@@ -23,18 +23,6 @@ namespace RomanticWeb.Mapping.Model
 
         public Type ReturnType { get; private set; }
 
-        public virtual StorageStrategyOption StorageStrategy
-        {
-            get
-            {
-                return StorageStrategyOption.None;
-            }
-
-            set
-            {
-            }
-        }
-
         public Aggregation? Aggregation { get; set; }
 
 #pragma warning disable 1591

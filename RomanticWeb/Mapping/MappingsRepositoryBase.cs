@@ -23,7 +23,11 @@ namespace RomanticWeb.Mapping
             {
                 foreach (var property in mapping.Properties)
                 {
-                    ApplyPropertyConventions(property, mappingContext.Conventions);
+                    ApplyConventions<IPropertyConvention,IPropertyMapping>(property,mappingContext.Conventions);
+                    if (property is ICollectionMapping)
+                    {
+                        ApplyConventions<ICollectionConvention,ICollectionMapping>(property as ICollectionMapping, mappingContext.Conventions);
+                    }
                 }
 
                 StoreMapping(mapping);
@@ -69,9 +73,10 @@ namespace RomanticWeb.Mapping
 
         protected abstract IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext); 
 
-        private static void ApplyPropertyConventions(IPropertyMapping property, IEnumerable<IConvention> conventions)
+        private static void ApplyConventions<TConvention,TMapping>(TMapping property,IEnumerable<IConvention> conventions)
+            where TConvention:IConvention<TMapping>
         {
-            var applicableConventions = from convention in conventions.OfType<IPropertyConvention>()
+            var applicableConventions = from convention in conventions.OfType<TConvention>()
                                         where convention.ShouldApply(property)
                                         select convention;
 

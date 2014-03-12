@@ -136,7 +136,7 @@ namespace RomanticWeb.Entities
             var propertyUri=Node.ForUri(property.Uri);
             var graphUri=SelectNamedGraph(property);
 
-            if (property.StorageStrategy==StorageStrategyOption.RdfList)
+            if (property is ICollectionMapping && ((ICollectionMapping)property).StorageStrategy == StorageStrategyOption.RdfList)
             {
                 if (value is IRdfListAdapter)
                 {
@@ -211,7 +211,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <summary>
-        /// Gets the undelying entity as dynamic.
+        /// Gets the underlying entity as dynamic.
         /// </summary>
         public dynamic AsDynamic()
         {
@@ -231,7 +231,7 @@ namespace RomanticWeb.Entities
         {
             try
             {
-                var aggregator = _resultTransformers.GetAggregator(property.Aggregation.GetValueOrDefault());
+                var aggregator=_resultTransformers.GetAggregator(property.Aggregation.GetValueOrDefault());
                 return aggregator.Aggregate(objectsForPredicate);
             }
             catch (CardinalityException e)

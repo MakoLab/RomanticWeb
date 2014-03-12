@@ -50,10 +50,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainExtensions.cs" />
+    <Compile Include="Collections\IKeyValuePair.cs" />
+    <Compile Include="Collections\IDictionaryOwner.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\IRdfListNode.cs" />
+    <Compile Include="Collections\Mapping\DictionaryOwnerMap.cs" />
+    <Compile Include="Collections\Mapping\DictionaryEntryMap.cs" />
     <Compile Include="Collections\ObjectModel\ObservableDictionary.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
+    <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Converters\AsEntityConverter.cs" />
@@ -77,6 +82,9 @@
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\IEntityProxy.cs" />
+    <Compile Include="Entities\ResultPostprocessing\DictionaryTransformer.cs" />
+    <Compile Include="Entities\ResultPostprocessing\DynamicAssemblyProvider.cs" />
+    <Compile Include="Entities\ResultPostprocessing\IDictionaryPairTypeProvider.cs" />
     <Compile Include="Entities\ResultTransformerCatalog.cs" />
     <Compile Include="Entities\IResultTransformerCatalog.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
@@ -105,7 +113,6 @@
     <Compile Include="Entities\ResultPostprocessing\RdfListTransformer.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
-    <Compile Include="EntityStoreExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
     <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />
     <Compile Include="Entities\BlankId.cs" />
@@ -167,12 +174,15 @@
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\Sparql\GenericSparqlQueryVisitor.cs" />
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
+    <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
     <Compile Include="Mapping\Conventions\IConvention.cs" />
+    <Compile Include="Mapping\Conventions\ICollectionConvention.cs" />
     <Compile Include="Mapping\Conventions\IPropertyConvention.cs" />
     <Compile Include="Mapping\Conventions\RdfListConvention.cs" />
     <Compile Include="Mapping\Conventions\SingleOrDefaultConvention.cs" />
+    <Compile Include="Mapping\Fluent\DictionaryMap.cs" />
     <Compile Include="Mapping\MappingBuilder.cs" />
     <Compile Include="Mapping\MappingFrom.cs" />
     <Compile Include="Mapping\MappingFromAttributes.cs" />
@@ -185,6 +195,7 @@
     <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
     <Compile Include="Mapping\Fluent\TermMap.cs" />
     <Compile Include="Mapping\MappingsRepositoryBase.cs" />
+    <Compile Include="Mapping\Model\IDictionaryMapping.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />

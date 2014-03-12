@@ -112,8 +112,14 @@ namespace RomanticWeb.Converters
                 // or convert primitive/string values
                 shouldConvert|=type.IsPrimitive||type==typeof(string);
 
-                // and don't convert rdf lists
-                shouldConvert&=propertyMapping.StorageStrategy!=StorageStrategyOption.RdfList;
+                // and don't convert rdf lists or dictionary nodes
+                var collectionMapping=propertyMapping as ICollectionMapping;
+                if (collectionMapping!=null)
+                {
+                    shouldConvert&=collectionMapping.StorageStrategy!=StorageStrategyOption.RdfList;
+                }
+
+                shouldConvert&=!(propertyMapping is IDictionaryMapping);
             }
 
             return shouldConvert;
@@ -154,7 +160,7 @@ namespace RomanticWeb.Converters
                     result=converter.Convert(objectNode);
                     if ((resultType!=null)&&(resultType.IsGenericType)&&(resultType.GetGenericTypeDefinition()==typeof(Nullable<>)))
                     {
-                        result=resultType.GetConstructors(System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.Instance).First().Invoke(new object[] { result });
+                        result=resultType.GetConstructors(System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.Instance).First().Invoke(new[] { result });
                     }
                 }
             }

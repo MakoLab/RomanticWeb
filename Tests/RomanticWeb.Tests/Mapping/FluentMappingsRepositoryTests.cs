@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using RomanticWeb.Mapping;
-using RomanticWeb.TestEntities.Animals;
+using RomanticWeb.TestEntities.FluentMappings;
 
 namespace RomanticWeb.Tests.Mapping
 {
@@ -9,7 +9,7 @@ namespace RomanticWeb.Tests.Mapping
     {
         protected override IMappingsRepository CreateMappingsRepository()
         {
-            return new FluentMappingsRepository(typeof(IAnimal).Assembly);
+            return new FluentMappingsRepository(typeof(AnimalMap).Assembly);
         }
     }
 }

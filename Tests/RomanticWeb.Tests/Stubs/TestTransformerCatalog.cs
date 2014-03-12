@@ -19,15 +19,19 @@ namespace RomanticWeb.Tests.Stubs
 
         public IResultTransformer GetTransformer(IPropertyMapping property)
         {
-            switch (property.StorageStrategy)
+            var collection=property as ICollectionMapping;
+            if (collection!=null)
             {
-                case StorageStrategyOption.RdfList:
-                    return new RdfListTransformer();
-                case StorageStrategyOption.Simple:
-                    return new ObservableCollectionTransformer();
-                default:
-                    return new NullTransformer();
+                switch (collection.StorageStrategy)
+                {
+                    case StorageStrategyOption.RdfList:
+                        return new RdfListTransformer();
+                    case StorageStrategyOption.Simple:
+                        return new ObservableCollectionTransformer();
+                }
             }
+
+            return new NullTransformer();
         }
     }
 }

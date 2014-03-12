@@ -16,6 +16,8 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,10 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animals\AnimalMap.cs" />
-    <Compile Include="Animals\CarnivoreMap.cs" />
-    <Compile Include="Animals\HerbivoreMap.cs" />
-    <Compile Include="Animals\HumanMap.cs" />
     <Compile Include="Animals\IAnimal.cs" />
     <Compile Include="Animals\ICarnivore.cs" />
     <Compile Include="Animals\IHerbivore.cs" />
@@ -55,11 +53,9 @@
     <Compile Include="Animals\IOmnivore.cs" />
     <Compile Include="Animals\IPlant.cs" />
     <Compile Include="Animals\IUntypedAnimal.cs" />
-    <Compile Include="Animals\OmnivoreMap.cs" />
-    <Compile Include="Animals\PlantMap.cs" />
-    <Compile Include="Animals\UntypedAnimalMap.cs" />
     <Compile Include="BlankNodes\INested.cs" />
     <Compile Include="BlankNodes\IRoot.cs" />
+    <Compile Include="IEntityWithDictionary.cs" />
     <Compile Include="IPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -69,8 +65,22 @@
       <Name>RomanticWeb</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Fody.1.22.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.1.22.1\build\Fody.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Fody.1.22.1\build\Fody.targets" Condition="Exists('..\..\packages\Fody.1.22.1\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -78,11 +78,20 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IBlankNodeIdGenerator BlankIdGenerator { get { return _blankIdGenerator; } }
 
+        /// <inheritdoc />
         public IOntologyProvider Ontologies { get { return _factory.Ontologies; } }
 
+        /// <inheritdoc />
         public INodeConverter NodeConverter { get { return _nodeConverter; } }
 
+        /// <inheritdoc />
         public INamedGraphSelector GraphSelector { get; private set; }
+
+        /// <inheritdoc />
+        public IMappingsRepository Mappings { get { return _mappings; } }
+
+        /// <inheritdoc />
+        public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
         #endregion
 
         #region Public methods
@@ -92,7 +101,7 @@ namespace RomanticWeb
             return new EntityQueryable<IEntity>(this,_entitySource,_mappings,_baseUriSelector);
         }
 
-        /// <inheritdoc />e
+        /// <inheritdoc />
         public IQueryable<T> AsQueryable<T>() where T:class,IEntity
         {
             return new EntityQueryable<T>(this,_entitySource,_mappings,_baseUriSelector);
@@ -112,12 +121,17 @@ namespace RomanticWeb
         [return: AllowNull]
         public T Load<T>(EntityId entityId,bool checkIfExist) where T:class,IEntity
         {
-            var entity=Load(entityId,checkIfExist);
-
+            Entity entity=Load(entityId,checkIfExist);
             if (entity==null)
             {
                 return null;
             }
+
+            // TODO: Abnormal behavior when uncommented!
+            ////if ((typeof(IEntity)!=typeof(T))&&(typeof(Entity)!=typeof(T)))
+            ////{
+            ////    entity=BuildEntityTypes<T>(entity);
+            ////}
 
             T result;
             Type entityType=GetEntityType(entity);
@@ -147,22 +161,7 @@ namespace RomanticWeb
                 return (T)(IEntity)Create(entityId);
             }
 
-            var entity=Create(entityId);
-
-            var entityMapping=_mappings.MappingFor<T>();
-            if (entityMapping==null)
-            {
-                throw new UnMappedTypeException(typeof(T));
-            }
-
-            var classMappings=entityMapping.Classes;
-            foreach (var classMapping in classMappings)
-            {
-                var typedEntity=entity.AsEntity<ITypedEntity>();
-                typedEntity.Types=new[] { new EntityId(classMapping.Uri) };
-            }
-
-            return EntityAs<T>(entity);
+            return EntityAs<T>(BuildEntityTypes<T>(Create(entityId)));
         }
 
         /// <inheritdoc />
@@ -185,7 +184,7 @@ namespace RomanticWeb
         public void Delete(EntityId entityId)
         {
             entityId=EnsureAbsoluteEntityId(entityId);
-            LogTo.Info("Deleting entity {0}", entityId);
+            LogTo.Info("Deleting entity {0}",entityId);
             _entityStore.Delete(entityId);
         }
 
@@ -194,36 +193,56 @@ namespace RomanticWeb
             // todo: implement
         }
 
-        #region Non-public methods
         /// <summary>Initializes given entity with data.</summary>
         /// <param name="entity">Entity to be initialized</param>
         public void InitializeEnitity(IEntity entity)
         {
-            LogTo.Debug("Initializing entity {0}", entity.Id);
-            _entitySource.LoadEntity(Store, entity.Id);
+            LogTo.Debug("Initializing entity {0}",entity.Id);
+            _entitySource.LoadEntity(Store,entity.Id);
         }
 
         /// <summary>Transforms given entity into a strongly typed interface.</summary>
         /// <typeparam name="T">Type of the interface to transform given entity to.</typeparam>
         /// <param name="entity">Entity to be transformed.</param>
         /// <returns>Passed entity beeing a given interface.</returns>
-        public T EntityAs<T>(IEntity entity) where T : class,IEntity
+        public T EntityAs<T>(IEntity entity) where T:class,IEntity
         {
-            if (typeof(T) == typeof(IEntity))
+            if (typeof(T)==typeof(IEntity))
             {
                 return (T)entity;
             }
 
-            LogTo.Trace("Wrapping entity {0} as {1}", entity.Id, typeof(T));
-            return EntityAs<T>((Entity)entity, _mappings.MappingFor<T>());
+            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,typeof(T));
+            return EntityAs((Entity)entity,_mappings.MappingFor<T>(),typeof(T));
+        }
+
+        /// <summary>Transforms given entity into a strongly typed interface.</summary>
+        /// <param name="T">Type of the interface to transform given entity to.</param>
+        /// <param name="entity">Entity to be transformed.</param>
+        /// <returns>Passed entity beeing a given interface.</returns>
+        public dynamic EntityAs(IEntity entity,Type T)
+        {
+            if (!(typeof(IEntity).IsAssignableFrom(T)))
+            {
+                throw new ArgumentNullException("T");
+            }
+
+            if (T==typeof(IEntity))
+            {
+                return entity;
+            }
+
+            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,T);
+            return EntityAs((Entity)entity,_mappings.MappingFor(T),T);
         }
         #endregion
 
+        #region Non-public methods
         [Cache]
         [return: AllowNull]
-        private Entity Load(EntityId entityId,bool checkIfExist=true)
+        private Entity Load(EntityId entityId,bool checkIfExist)
         {
-            entityId = EnsureAbsoluteEntityId(entityId);
+            entityId=EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Loading entity {0}",entityId);
 
             if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
@@ -247,6 +266,27 @@ namespace RomanticWeb
             return entity;
         }
 
+        private Entity BuildEntityTypes<T>(Entity entity)
+        {
+            var entityMapping=_mappings.MappingFor<T>();
+            if (entityMapping==null)
+            {
+                throw new UnMappedTypeException(typeof(T));
+            }
+
+            IEnumerable<IClassMapping> classMappings=entityMapping.Classes;
+            if (classMappings.Any())
+            {
+                ITypedEntity typedEntity=entity.AsEntity<ITypedEntity>();
+                foreach (var classMapping in classMappings)
+                {
+                    typedEntity.Types.Add(new EntityId(classMapping.Uri));
+                }
+            }
+
+            return entity;
+        }
+
         private EntityId EnsureAbsoluteEntityId(EntityId entityId)
         {
             if (!entityId.Uri.IsAbsoluteUri)
@@ -261,13 +301,24 @@ namespace RomanticWeb
         {
             if (mapping==null)
             {
-                throw new ArgumentNullException("mapping", string.Format("Mappings not found for type {0}",typeof(T)));
+                throw new ArgumentNullException("mapping",System.String.Format("Mappings not found for type {0}",typeof(T)));
             }
 
             var proxy=new EntityProxy(entity,mapping,_factory.TransformerCatalog);
             return proxy.ActLike<T>();
         }
-       
+
+        private dynamic EntityAs(Entity entity,IEntityMapping mapping,Type T)
+        {
+            if (mapping==null)
+            {
+                throw new ArgumentNullException("mapping",System.String.Format("Mappings not found for type {0}",T));
+            }
+
+            var proxy=new EntityProxy(entity,mapping,_factory.TransformerCatalog);
+            return proxy.ActLike(T);
+        }
+
         private IList<Type> GetEntityTypes(Entity entity)
         {
             IEnumerable<EntityId> entityClasses=entity.AsEntity<ITypedEntity>().Types??new EntityId[0];

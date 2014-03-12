@@ -2,7 +2,7 @@ using System;
 
 namespace RomanticWeb.NamedGraphs
 {
-    public interface SourceGraphSelectionOverride
+    public interface ISourceGraphSelectionOverride
     {
         Func<INamedGraphSelector,Uri> SelectGraph { get; }
     }

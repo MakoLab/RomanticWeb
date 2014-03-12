@@ -5,12 +5,12 @@ namespace RomanticWeb.Entities
 {
     public interface IEntityProxy
     {
-        SourceGraphSelectionOverride GraphSelectionOverride { get; }
+        ISourceGraphSelectionOverride GraphSelectionOverride { get; }
 
         EntityId Id { get; }
 
         IEntityMapping EntityMapping { get; }
 
-        void OverrideGraphSelection(SourceGraphSelectionOverride graphOverride);
+        void OverrideGraphSelection(ISourceGraphSelectionOverride graphOverride);
     }
 }

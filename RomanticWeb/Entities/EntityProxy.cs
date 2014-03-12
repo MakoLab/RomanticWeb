@@ -28,7 +28,7 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
         private readonly INodeConverter _converter;
-        private SourceGraphSelectionOverride _overrideSourceGraph;
+        private ISourceGraphSelectionOverride _overrideSourceGraph;
 
         #endregion
 
@@ -74,7 +74,7 @@ namespace RomanticWeb.Entities
             }
         }
 
-        public SourceGraphSelectionOverride GraphSelectionOverride
+        public ISourceGraphSelectionOverride GraphSelectionOverride
         {
             [return:AllowNull]
             get
@@ -199,6 +199,17 @@ namespace RomanticWeb.Entities
             return _entity.AsEntity<TInterface>();
         }
 
+        /// <summary>Gets the underlying wrapper as another type of entity.</summary>
+        public dynamic AsEntity(Type TInterface)
+        {
+            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
+            {
+                throw new ArgumentNullException("TInterface");
+            }
+
+            return _entity.AsEntity(TInterface);
+        }
+
         /// <summary>
         /// Gets the undelying entity as dynamic.
         /// </summary>
@@ -207,11 +218,10 @@ namespace RomanticWeb.Entities
             return _entity;
         }
 
-        public void OverrideGraphSelection(SourceGraphSelectionOverride parametersOverride)
+        public void OverrideGraphSelection(ISourceGraphSelectionOverride parametersOverride)
         {
             _overrideSourceGraph = parametersOverride;
         }
-
         #endregion
 
         #region Private methods

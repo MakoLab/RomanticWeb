@@ -32,21 +32,9 @@ namespace RomanticWeb.Mapping.Model
             }
         }
 
-        public IEnumerable<IClassMapping> Classes
-        {
-            get
-            {
-                return _classes;
-            }
-        }
+        public IEnumerable<IClassMapping> Classes { get { return _classes; } }
 
-        public IEnumerable<IPropertyMapping> Properties
-        {
-            get
-            {
-                return _properties;
-            }
-        }
+        public IEnumerable<IPropertyMapping> Properties { get { return _properties; } }
 
         public IPropertyMapping PropertyFor(string propertyName)
         {

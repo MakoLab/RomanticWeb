@@ -13,11 +13,11 @@ namespace RomanticWeb.Collections
     internal class RdfListAdapter<T>:IList<T>,IRdfListAdapter
     {
         private readonly IEntityContext _context;
-        private readonly SourceGraphSelectionOverride _namedGraphOverride;
+        private readonly ISourceGraphSelectionOverride _namedGraphOverride;
         private IRdfListNode _head;
         private IRdfListNode _tail;
 
-        public RdfListAdapter(IEntityContext context,IRdfListNode head,SourceGraphSelectionOverride namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,IRdfListNode head,ISourceGraphSelectionOverride namedGraphOverride)
         {
             Count=0;
             _context=context;
@@ -27,7 +27,7 @@ namespace RomanticWeb.Collections
             Initialize();
         }
 
-        public RdfListAdapter(IEntityContext context,SourceGraphSelectionOverride namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,ISourceGraphSelectionOverride namedGraphOverride)
             :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
         {
         }

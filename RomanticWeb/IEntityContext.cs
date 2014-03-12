@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -16,19 +17,24 @@ namespace RomanticWeb
         /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
         bool HasChanges { get; }
 
-        /// <summary>
-        /// Gets the blank identifier generator.
-        /// </summary>
-        /// <value>
-        /// The blank identifier generator.
-        /// </value>
+        /// <summary>Gets the blank identifier generator.</summary>
+        /// <value>The blank identifier generator.</value>
         IBlankNodeIdGenerator BlankIdGenerator { get; }
 
+        /// <summary>Gets the <see cref="IOntologyProvider" />.</summary>
         IOntologyProvider Ontologies { get; }
 
+        /// <summary>Gets the <see cref="INodeConverter" />.</summary>
         INodeConverter NodeConverter { get; }
 
+        /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
         INamedGraphSelector GraphSelector { get; }
+
+        /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>
+        IMappingsRepository Mappings { get; }
+
+        /// <summary>Gets the <see cref="IBaseUriSelectionPolicy" />.</summary>
+        IBaseUriSelectionPolicy BaseUriSelector { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>
@@ -68,5 +74,7 @@ namespace RomanticWeb
         void InitializeEnitity(IEntity entity);
 
         T EntityAs<T>(IEntity entity)where T:class,IEntity;
+
+        dynamic EntityAs(IEntity entity,Type T);
     }
 }

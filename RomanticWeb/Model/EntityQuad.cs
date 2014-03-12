@@ -36,6 +36,97 @@ namespace RomanticWeb.Model
         /// <summary>Gets entity id, which defines this triple.</summary>
         public EntityId EntityId { get { return _entityId; } }
 
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="o">Object <see cref="Uri" />.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,Uri o)
+        {
+            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForUri(o));
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="dataType">Optional Uri of the datatype of the value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,object value)
+        {
+            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value.ToString()));
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value)
+        {
+            return For(entityId,s,p,value,RomanticWeb.Vocabularies.Xsd.String);
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,int value)
+        {
+            return For(entityId,s,p,value.ToString(),RomanticWeb.Vocabularies.Xsd.Int);
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,float value)
+        {
+            return For(entityId,s,p,value.ToString("R",System.Globalization.CultureInfo.InvariantCulture),RomanticWeb.Vocabularies.Xsd.Float);
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,bool value)
+        {
+            return For(entityId,s,p,value.ToString().ToLower(),RomanticWeb.Vocabularies.Xsd.Boolean);
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="dataType">Optional Uri of the datatype of the value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value,Uri dataType)
+        {
+            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,dataType??RomanticWeb.Vocabularies.Xsd.String));
+        }
+
+        /// <summary>Creates a quad.</summary>
+        /// <param name="entityId">Entity identifier.</param>
+        /// <param name="s">Sbject <see cref="Uri" />.</param>
+        /// <param name="p">Predicate <see cref="Uri" />.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="language">Language of the value.</param>
+        /// <returns><see cref="EntityQuad" /> created.</returns>
+        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value,string language)
+        {
+            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,language));
+        }
+
 #pragma warning disable 1591
         public static bool operator==(EntityQuad left,[AllowNull] EntityQuad right)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
 
@@ -35,7 +36,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <summary>Wraps the entity as a given statically typed type.</summary>
-        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface : class,IEntity
+        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface:class,IEntity
         {
             TInterface result;
             entity=UnwrapProxy(entity);
@@ -60,6 +61,37 @@ namespace RomanticWeb.Entities
             return result;
         }
 
+        /// <summary>Wraps the entity as a given statically typed type.</summary>
+        public static dynamic AsEntity(this IEntity entity,Type TInterface)
+        {
+            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
+            {
+                throw new ArgumentOutOfRangeException("TInterface");
+            }
+            
+            dynamic result;
+            entity=UnwrapProxy(entity);
+
+            if (TInterface.IsAssignableFrom(entity.GetType()))
+            {
+                result=(IEntity)entity;
+            }
+            else if (entity is Entity)
+            {
+                result=((Entity)entity).AsEntity(TInterface);
+            }
+            else if (entity is EntityProxy)
+            {
+                result=((EntityProxy)entity).AsEntity(TInterface);
+            }
+            else
+            {
+                result=Impromptu.ActLike(entity.AsDynamic(),TInterface);
+            }
+
+            return result;
+        }
+
         /// <summary>Gets an enumeration containing all RDF types behind given entity.</summary>
         /// <param name="entity">Entity to operate on.</param>
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
@@ -72,7 +104,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="types">Enumeration of types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity, IEnumerable<EntityId> types)
+        public static bool Is(this IEntity entity,IEnumerable<EntityId> types)
         {
             return ((entity!=null)&&(types!=null)?entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any():false);
         }

@@ -166,6 +166,19 @@ namespace RomanticWeb.Entities
             return _context.EntityAs<TInterface>(this);
         }
 
+        /// <summary>Transforms given entity into a strongly typed interface.</summary>
+        /// <param name="TInterface">Strongly typed interface to be transformed into.</param>
+        /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
+        public dynamic AsEntity(Type TInterface)
+        {
+            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
+            {
+                throw new ArgumentOutOfRangeException("TInterface");
+            }
+
+            return _context.EntityAs(this,TInterface);
+        }
+
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>Type: <see cref="System.Int32" />
         /// A hash code for the current object.</returns>

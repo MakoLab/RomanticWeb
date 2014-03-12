@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Reflection;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping
 {
@@ -17,12 +19,6 @@ namespace RomanticWeb.Mapping
         }
 
         /// <summary>Gets the source <see cref="System.Reflection.Assembly"/>.</summary>
-        protected Assembly Assembly
-        {
-            get
-            {
-                return _assembly;
-            }
-        }
+        protected Assembly Assembly { get { return _assembly; } }
     }
 }

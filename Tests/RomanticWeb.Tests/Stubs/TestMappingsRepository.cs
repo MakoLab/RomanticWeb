@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
@@ -60,6 +61,29 @@ namespace RomanticWeb.Tests.Stubs
         {
             _entityMaps.Add(personMapping);
         }
+
+        ////public PropertyInfo MappingForProperty(Uri predicateUri)
+        ////{
+        ////    return (PropertyInfo)_entityMaps.Select(map =>
+        ////    {
+        ////        var mapping=new { Type=map.EntityType, Property=map.MappedProperties.FirstOrDefault(item =>
+        ////        {
+        ////            Uri uri=item.TermUri;
+        ////            if (uri==null)
+        ////            {
+        ////                Ontology ontology=_mappingContext.OntologyProvider.Ontologies.Where(element => element.Prefix==item.NamespacePrefix).FirstOrDefault();
+        ////                if (ontology!=null)
+        ////                {
+        ////                    uri=new Uri(ontology.BaseUri.AbsoluteUri+item.TermName);
+        ////                }
+        ////            }
+
+        ////            return (uri!=null)&&(uri.AbsoluteUri==predicateUri.AbsoluteUri);
+        ////        }) };
+
+        ////        return (mapping!=null?mapping.Property.PropertyInfo:null);
+        ////    });
+        ////}
 
         protected override IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext)
         {

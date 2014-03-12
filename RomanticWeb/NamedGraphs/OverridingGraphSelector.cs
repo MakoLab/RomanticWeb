@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.NamedGraphs
 {
-    public class OverridingGraphSelector : SourceGraphSelectionOverride
+    public class OverridingGraphSelector : ISourceGraphSelectionOverride
     {
         private readonly Func<INamedGraphSelector,Uri> _selectGraph;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Mapping.Model;
@@ -39,16 +40,21 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public IEntityMapping MappingFor(Type entityType)
         {
-            var mappingsForType=_mappingsRepositories.Select(item => item.MappingFor(entityType));
-            try
+            IList<IEntityMapping> result=(
+                from mappingRepository in _mappingsRepositories
+                let mapping=mappingRepository.MappingFor(entityType)
+                where mapping!=null
+                select mapping).ToList();
+            if (result.Count>1)
             {
-                return mappingsForType.SingleOrDefault(m => m!=null);
+                return new EntityMapping(entityType,result.SelectMany(item => item.Classes),result.SelectMany(item => item.Properties));
             }
-            catch (InvalidOperationException)
+            else if (result.Count>0)
             {
-                LogTo.Fatal("Multiple mappings found for type {0}",entityType);
-                throw;
+                return result[0];
             }
+
+            return null;
         }
 
         /// <inheritdoc />
@@ -69,6 +75,17 @@ namespace RomanticWeb.Mapping
                     where mapping!=null
                     select mapping).FirstOrDefault();
         }
+
+        /// <inheritdoc />
+        [return: AllowNull]
+        public PropertyInfo MappingForProperty(Uri predicateUri)
+        {
+            return (from repository in _mappingsRepositories
+                    let mapping=repository.MappingForProperty(predicateUri)
+                    where mapping!=null
+                    select mapping).FirstOrDefault();
+        }
+
         #endregion
     }
 }

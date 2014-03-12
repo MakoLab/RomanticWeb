@@ -2,7 +2,7 @@ using System;
 
 namespace RomanticWeb.NamedGraphs
 {
-    public class UnionGraphSelector:SourceGraphSelectionOverride
+    public class UnionGraphSelector:ISourceGraphSelectionOverride
     {
         public virtual Func<INamedGraphSelector,Uri> SelectGraph
         {

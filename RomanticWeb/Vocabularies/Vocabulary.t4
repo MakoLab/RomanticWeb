@@ -1,0 +1,183 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ output extension=".cs" #><#+
+    public void CreateVocabulary()
+    {
+        string prefix;
+        string ns;
+        string uri;
+        string className;
+        XmlNamespaceManager namespaceManager;
+        bool isRDFMode;
+        XmlDocument ontology=Initialize(out prefix,out uri,out ns,out className,out namespaceManager,out isRDFMode);
+#>using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace <#=ns #>.Vocabularies
+{
+    /// <summary><#=GetTitle(ontology.DocumentElement,namespaceManager,isRDFMode) #> (<#=uri #>).</summary>
+    [SuppressMessage("StyleCop.CSharp.NamingRules","*",Justification="Reviewed. Suppression is OK here.")]
+    public static partial class <#=className #>
+    {
+#pragma warning disable 1591 // ReSharper disable InconsistentNaming
+        public const string BaseUri="<#=uri #>";
+<#+
+        IEnumerable<XmlNode> classes=GetNodes(ontology.DocumentElement,namespaceManager,"rdfs:Class",isRDFMode).Union(
+            GetNodes(ontology.DocumentElement,namespaceManager,"owl:Class",isRDFMode));
+        foreach (XmlNode classNode in classes)
+        {#>
+
+        public static readonly Uri <#=GetTermName(classNode,namespaceManager) #>=new Uri(BaseUri+"<#=GetTermName(classNode,namespaceManager) #>");
+<#+     }
+
+        IEnumerable<XmlNode> properties=GetNodes(ontology.DocumentElement,namespaceManager,"rdf:Property",isRDFMode).Union(
+            GetNodes(ontology.DocumentElement,namespaceManager,"owl:DatatypeProperty",isRDFMode)).Union(
+            GetNodes(ontology.DocumentElement,namespaceManager,"owl:ObjectProperty",isRDFMode)).Union(
+            GetNodes(ontology.DocumentElement,namespaceManager,"owl:AnnotationProperty",isRDFMode));
+        foreach (XmlNode propertyNode in properties)
+        {#>
+
+        public static readonly Uri <#=GetTermName(propertyNode,namespaceManager) #>=new Uri(BaseUri+"<#=GetTermName(propertyNode,namespaceManager).Replace("@",System.String.Empty) #>");
+<#+		}
+
+        foreach (XmlNode classNode in classes)
+        {
+            string typeName=StandardizeTerm(classNode.Attributes["about",namespaceManager.LookupNamespace("rdf")].Value,namespaceManager);
+            if ((typeName!="rdfs:Class")&&(typeName!="rdf:Property")&&(typeName!="owl:Class")&&((!typeName.StartsWith("owl:"))&&(!typeName.EndsWith("Property"))))
+            {
+                IEnumerable<XmlNode> namedInstances=GetNodes(ontology.DocumentElement,namespaceManager,typeName,isRDFMode);
+                foreach (XmlNode namedInstanceNode in namedInstances)
+                {#>
+
+        public static readonly Uri <#=GetTermName(namedInstanceNode,namespaceManager) #>=new Uri(BaseUri+"<#=GetTermName(namedInstanceNode,namespaceManager).Replace("@",System.String.Empty) #>");
+<#+				}
+            }
+        }
+#>
+#pragma warning restore 1591 // ReSharper restore InconsistentNaming
+    }
+}<#+
+    }
+
+    private XmlDocument Initialize(out string prefix,out string uri,out string ns,out string className,out XmlNamespaceManager namespaceManager,out bool isRDFMode)
+    {
+        prefix=System.String.Empty;
+        uri=System.String.Empty;
+        ns=System.String.Empty;
+        className=System.String.Empty;
+        namespaceManager=null;
+        isRDFMode=false;
+        string fileName=((EnvDTE.ProjectItem)((EnvDTE.DTE)((IServiceProvider)this.Host).GetService(typeof(EnvDTE.DTE))).Solution.FindProjectItem(this.Host.TemplateFile).Collection.Parent).Properties.Item("LocalPath").Value.ToString();
+        XmlDocument result=new XmlDocument();
+        result.Load(fileName);
+        prefix=System.IO.Path.GetFileNameWithoutExtension(this.Host.TemplateFile);
+        className=(prefix.Count(item => Char.IsUpper(item))==prefix.Length?prefix.Substring(0,1).ToUpper()+prefix.Substring(1).ToLower():prefix);
+        prefix=prefix.ToLower();
+        IDictionary<string,string> namespaces=result.DocumentElement.CreateNavigator().GetNamespacesInScope(XmlNamespaceScope.All);
+        uri=namespaces[prefix];
+        ns=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint").ToString().Split('.')[0];
+        isRDFMode=(System.IO.Path.GetExtension(fileName).Substring(1).ToLower()=="rdf");
+        namespaceManager=new XmlNamespaceManager(result.NameTable);
+        namespaceManager.AddNamespace("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        namespaceManager.AddNamespace("rdfs","http://www.w3.org/2000/01/rdf-schema#");
+        namespaceManager.AddNamespace("owl","http://www.w3.org/2002/07/owl#");
+        namespaceManager.AddNamespace("dc","http://purl.org/dc/elements/1.1/");
+        namespaceManager.AddNamespace("dcterms","http://purl.org/dc/terms/");
+        foreach (KeyValuePair<string,string> @namespace in namespaces)
+        {
+            if (System.String.IsNullOrEmpty(namespaceManager.LookupPrefix(@namespace.Value)))
+            {
+                namespaceManager.AddNamespace(@namespace.Key,@namespace.Value);
+            }
+        }
+
+        namespaceManager.AddNamespace("base",namespaceManager.LookupNamespace(prefix));
+        return result;
+    }
+
+    private string GetTermName(XmlNode node,XmlNamespaceManager namespaceManager)
+    {
+        string result=null;
+        XmlAttribute attribute=node.Attributes["about",namespaceManager.LookupNamespace("rdf")];
+        if (attribute==null)
+        {
+            result=namespaceManager.LookupNamespace("base")+node.Attributes["ID",namespaceManager.LookupNamespace("rdf")].Value;
+        }
+        else
+        {
+            result=attribute.Value;
+        }
+
+        if (result.IndexOf('#')!=-1)
+        {
+            result=result.Substring(result.IndexOf('#')+1);
+        }
+        else
+        {
+            result=new Uri(result).Segments.Last();
+        }
+
+        string[] keywords=new string[] { "object","class","readonly","abstract" };
+        if (keywords.Contains(result))
+        {
+            result="@"+result;
+        }
+
+        return result;
+    }
+
+    private string GetTitle(XmlNode documentElement,XmlNamespaceManager namespaceManager,bool isRDFMode)
+    {
+        XmlNode ontology=documentElement.SelectSingleNode((isRDFMode?"rdf:Description[rdf:type[@rdf:resource=\"http://www.w3.org/2002/07/owl#Ontology\"]]":"owl:Ontology"),namespaceManager);
+        string result=GetTermName(ontology,namespaceManager);
+        XmlNode title=ontology.SelectSingleNode("*[(self::rdfs:label) or (self::dc:title) or (self::dcterms:title)]",namespaceManager);
+        if (title!=null)
+        {
+            result=title.InnerText;
+        }
+        else
+        {
+            XmlAttribute attribute=ontology.Attributes["label",namespaceManager.LookupNamespace("rdfs")]??(ontology.Attributes["title",namespaceManager.LookupNamespace("dc")]??documentElement.Attributes["title",namespaceManager.LookupNamespace("dcterms")]);
+            if (attribute!=null)
+            {
+                result=attribute.Value;
+            }
+        }
+
+        return result;
+    }
+
+    private IEnumerable<XmlNode> GetNodes(XmlNode node,XmlNamespaceManager namespaceManager,string name,bool isRDFMode)
+    {
+        name=StandardizeTerm(name,namespaceManager);
+        XmlNodeList result=null;
+        if (isRDFMode)
+        {
+            result=node.SelectNodes("rdf:Description[@rdf:about and rdf:type[@rdf:resource=\""+namespaceManager.LookupNamespace(name.Split(':')[0])+name.Split(':')[1]+"\"]]",namespaceManager);
+        }
+        else
+        {
+            result=node.SelectNodes(name,namespaceManager);
+        }
+
+        return result.Cast<XmlNode>().Where(item => item.Attributes["about",namespaceManager.LookupNamespace("rdf")].Value.StartsWith(namespaceManager.LookupNamespace("base")));
+    }
+
+    private string StandardizeTerm(string term,XmlNamespaceManager namespaceManager)
+    {
+        if ((!Regex.IsMatch(term,"[^:]+://"))&&(!Regex.IsMatch(term,"[^:]+:[a-zA-Z]")))
+        {
+            term=namespaceManager.LookupNamespace("base")+term;
+        }
+
+        namespaceManager.Cast<string>().Where(item => item.Length>0).Select(item => term=term.Replace(namespaceManager.LookupNamespace(item),item+":")).ToList();
+        return term;
+    }
+#>

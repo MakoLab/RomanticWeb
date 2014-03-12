@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
@@ -51,6 +52,19 @@ namespace RomanticWeb.Mapping
             return (from mapping in _mappings
                     where mapping.Value.Classes.Any(item => item.Uri.AbsoluteUri == classUri.AbsoluteUri)
                     select mapping.Key).FirstOrDefault();
+        }
+
+        /// <inheritdoc />
+        [return: AllowNull]
+        public PropertyInfo MappingForProperty(Uri predicateUri)
+        {
+            return (from mapping in _mappings
+                    let type=mapping.Value
+                    from property in type.Properties
+                    where property.Uri.AbsoluteUri==predicateUri.AbsoluteUri
+                    let propertyMapping=type.EntityType.GetProperty(property.Name,BindingFlags.Public|BindingFlags.Instance)
+                    where propertyMapping!=null
+                    select propertyMapping).FirstOrDefault();
         }
 
         protected abstract IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext); 

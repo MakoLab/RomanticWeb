@@ -9,6 +9,6 @@ namespace RomanticWeb.Entities
     {
         /// <summary>Gets or sets the entity's rdf classes.</summary>
         [Collection("rdf","type")]
-        IEnumerable<EntityId> Types { get; set; }
+        ICollection<EntityId> Types { get; set; }
     }
 }

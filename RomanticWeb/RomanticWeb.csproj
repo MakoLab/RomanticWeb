@@ -222,22 +222,67 @@
     <Compile Include="NamedGraphs\NamedGraphMatch.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelectorBase.cs" />
     <Compile Include="NamedGraphs\OverridingGraphSelector.cs" />
-    <Compile Include="NamedGraphs\SourceGraphSelectionOverride.cs" />
+    <Compile Include="NamedGraphs\ISourceGraphSelectionOverride.cs" />
     <Compile Include="NamedGraphs\UnionGraphSelector.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
+    <Compile Include="Ontologies\DC.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ontologies\DCTerms.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DCTerms.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\DefaultOntologiesProvider.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityId.cs" />
     <Compile Include="IEntityContext.cs" />
+    <Compile Include="Ontologies\FOAF.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FOAF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\IOntologyFactory.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
+    <Compile Include="Ontologies\LDP.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LDP.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\NamespaceSpecification.cs" />
     <Compile Include="Ontologies\ObjectProperty.cs" />
     <Compile Include="Ontologies\Ontology.cs" />
     <Compile Include="Ontologies\OntologyFactory.cs" />
     <Compile Include="Ontologies\OntologyProviderBase.cs" />
+    <Compile Include="Ontologies\OWL.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OWL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ontologies\RDF.cs">
+      <DependentUpon>RDF.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Ontologies\RDFS.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RDFS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ontologies\SIOC.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SIOC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ontologies\SKOS.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SKOS.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\Term.cs" />
     <Compile Include="Ontologies\OntologyExtensions.cs" />
     <Compile Include="Ontologies\XmlOntologyFactory.cs" />
@@ -251,28 +296,77 @@
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Vocabularies\Owl.cs" />
-    <Compile Include="Vocabularies\Foaf.cs" />
+    <None Include="Vocabularies\DCTerms.cs" />
+    <None Include="Vocabularies\Owl.cs" />
+    <None Include="Vocabularies\Foaf.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
-    <Compile Include="Vocabularies\Rdfs.cs" />
+    <None Include="Vocabularies\Rdfs.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />
     <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Ontologies\RDF.owl" />
+    <None Include="Ontologies\RDF.tt">
+      <DependentUpon>RDF.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RDF.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\RDFS.owl" />
+    <None Include="Ontologies\RDFS.tt">
+      <DependentUpon>RDFS.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RDFS.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\OWL.owl" />
+    <None Include="Ontologies\OWL.tt">
+      <DependentUpon>OWL.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>OWL.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\DC.owl" />
+    <None Include="Ontologies\DC.tt">
+      <DependentUpon>DC.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DC.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\DCAM.owl" />
     <EmbeddedResource Include="Ontologies\DCMIType.owl" />
     <EmbeddedResource Include="Ontologies\DCTerms.owl" />
-    <EmbeddedResource Include="Ontologies\SKOS.owl" />
+    <None Include="Ontologies\DCTerms.tt">
+      <DependentUpon>DCTerms.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DCTerms.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="Ontologies\SKOS.rdf" />
+    <None Include="Ontologies\SKOS.tt">
+      <DependentUpon>SKOS.rdf</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SKOS.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\FOAF.owl" />
+    <None Include="Ontologies\FOAF.tt">
+      <DependentUpon>FOAF.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FOAF.cs</LastGenOutput>
+    </None>
     <EmbeddedResource Include="Ontologies\Schema.rdf" />
     <EmbeddedResource Include="Ontologies\GR.owl" />
-    <EmbeddedResource Include="Ontologies\SIOC.rdf" />
+    <EmbeddedResource Include="Ontologies\SIOC.owl" />
+    <None Include="Ontologies\SIOC.tt">
+      <DependentUpon>SIOC.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SIOC.cs</LastGenOutput>
+    </None>
     <None Include="Fody.targets" />
     <EmbeddedResource Include="Ontologies\LDP.owl" />
+    <None Include="Ontologies\LDP.tt">
+      <DependentUpon>LDP.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LDP.cs</LastGenOutput>
+    </None>
+    <None Include="Vocabularies\Vocabulary.t4">
+      <LastGenOutput>OntologyVocabulary1.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -308,7 +402,9 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

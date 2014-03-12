@@ -1,0 +1,6 @@
+﻿<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Xml" #>
+<#@ include file="../Vocabularies/Vocabulary.t4" #><#
+    CreateVocabulary();
+#>

@@ -14,6 +14,52 @@ namespace RomanticWeb.DotNetRDF
     /// <summary>Provides useful extension methods for <see cref="ITripleStore" />.</summary>
     public static class TripleStoreExtensions
     {
+        /// <summary>Loads data from string with optional automated graph generation.</summary>
+        /// <param name="store">Target store to be loaded with data.</param>
+        /// <param name="data">String with data.</param>
+        /// <param name="metaGraphUri">When provided, store will have automatically created graphs for all resources that are mentioned in the meta graph provided.</param>
+        public static void LoadFromString(this ITripleStore store,string data,Uri metaGraphUri)
+        {
+            ITripleStore targetStore=(metaGraphUri!=null?new TripleStore():store);
+            targetStore.LoadFromString(data);
+            if (metaGraphUri!=null)
+            {
+                store.ExpandGraphs((TripleStore)targetStore,metaGraphUri);
+            }
+        }
+
+        /// <summary>Loads data from string with optional automated graph generation.</summary>
+        /// <param name="store">Target store to be loaded with data.</param>
+        /// <param name="data">String with data.</param>
+        /// <param name="parser">Store reader.</param>
+        /// <param name="metaGraphUri">When provided, store will have automatically created graphs for all resources that are mentioned in the meta graph provided.</param>
+        public static void LoadFromString(this ITripleStore store,string data,IStoreReader parser,Uri metaGraphUri)
+        {
+            ITripleStore targetStore=(metaGraphUri!=null?new TripleStore():store);
+            targetStore.LoadFromString(data,parser);
+            if (metaGraphUri!=null)
+            {
+                store.ExpandGraphs((TripleStore)targetStore,metaGraphUri);
+            }
+        }
+
+        /// <summary>Loads data from string with optional automated graph generation.</summary>
+        /// <param name="store">Target store to be loaded with data.</param>
+        /// <param name="data">String with data.</param>
+        /// <param name="parser">RDF reader.</param>
+        /// <param name="metaGraphUri">When provided, store will have automatically created graphs for all resources that are mentioned in the meta graph provided.</param>
+        public static void LoadFromString(this ITripleStore store,string data,IRdfReader parser,Uri metaGraphUri)
+        {
+            ITripleStore targetStore=(metaGraphUri!=null?new TripleStore():store);
+            IGraph graph=new Graph();
+            targetStore.Add(graph);
+            graph.LoadFromString(data,parser);
+            if (metaGraphUri!=null)
+            {
+                store.ExpandGraphs((TripleStore)targetStore,metaGraphUri);
+            }
+        }
+
         /// <summary>Loads data from file with optional automated graph generation.</summary>
         /// <param name="store">Target store to be loaded with data.</param>
         /// <param name="file">Source file with data.</param>
@@ -65,6 +111,10 @@ namespace RomanticWeb.DotNetRDF
                 if (triple!=null)
                 {
                     result=triple.Subject;
+                }
+                else
+                {
+                    result=null;
                 }
             }
             while ((result!=null)&&(result is IBlankNode));

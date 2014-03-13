@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for collection properties
     /// </summary>
-	public class CollectionMap : PropertyMap
+	public class CollectionMap : PropertyMapBase<CollectionMap>
     {
         internal CollectionMap(PropertyInfo propertyInfo)
 			: base(propertyInfo)
@@ -17,7 +17,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets a predicate map part
         /// </summary>
-        public new TermPart<CollectionMap> Term
+        public override ITermPart<CollectionMap> Term
         {
             get
             {
@@ -44,7 +44,7 @@ namespace RomanticWeb.Mapping.Fluent
         protected internal override Aggregation? Aggregation { get; set; }
 
         /// <inheritdoc />
-        protected internal override IPropertyMapping GetMapping(MappingContext mappingContext)
+        public override IPropertyMapping GetMapping(MappingContext mappingContext)
         {
             var collectionMapping=new CollectionMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider),StorageStrategy);
 

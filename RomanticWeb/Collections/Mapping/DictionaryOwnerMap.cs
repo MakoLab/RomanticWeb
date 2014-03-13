@@ -11,6 +11,6 @@ namespace RomanticWeb.Collections.Mapping
             SetupEntriesCollection(Collection(e => e.DictionaryEntries).Term);
         }
 
-        protected abstract void SetupEntriesCollection(TermPart<CollectionMap> term);
+        protected abstract void SetupEntriesCollection(ITermPart<CollectionMap> term);
     }
 }

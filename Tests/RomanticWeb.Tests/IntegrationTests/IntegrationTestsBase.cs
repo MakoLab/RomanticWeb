@@ -64,11 +64,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                .WithOntology(new DefaultOntologiesProvider())
                                                .WithOntology(new LifeOntology())
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
-                                               .WithMappings(m =>
-                                                       {
-                                                           m.FromAssemblyOf<IAnimal>();
-                                                           m.AddMapping(GetType().Assembly,Mappings);
-                                                       })
+                                               .WithMappings(BuildMappings)
                                                .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
@@ -78,6 +74,12 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             ChildTeardown();
             _entityContext=null;
+        }
+
+        protected virtual void BuildMappings(MappingBuilder m)
+        {
+            m.FromAssemblyOf<IAnimal>();
+            m.AddMapping(GetType().Assembly,Mappings);
         }
 
         protected virtual void ChildTeardown() 

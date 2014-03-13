@@ -198,7 +198,7 @@ namespace RomanticWeb.Fody
         {
             get
             {
-                return _references.Orm.FindType("TermPart`1");
+                return _references.Orm.FindType("ITermPart`1");
             }
         }
 

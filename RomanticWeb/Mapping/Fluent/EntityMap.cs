@@ -67,15 +67,15 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         /// <param name="type">The mapped type.</param>
         protected EntityMap(Type type)
-		{
-			EntityType = type;
-			MappedProperties = new List<PropertyMap>();
+        {
+            EntityType=type;
+            MappedProperties=new List<IPropertyMappingProvider>();
             _classes=new List<ClassMap>();
 		}
 
 		internal Type EntityType { get; set; }
 
-		internal IList<PropertyMap> MappedProperties { get; private set; }
+		internal IList<IPropertyMappingProvider> MappedProperties { get; private set; }
 
         internal IList<ClassMap> Classes { get { return _classes; } }
 

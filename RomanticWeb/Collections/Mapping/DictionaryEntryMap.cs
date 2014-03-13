@@ -11,8 +11,8 @@ namespace RomanticWeb.Collections.Mapping
             SetupValueProperty(Property(e => e.Value).Term);
         }
 
-        protected abstract void SetupKeyProperty(TermPart<PropertyMap> term);
+        protected abstract void SetupKeyProperty(ITermPart<PropertyMap> term);
 
-        protected abstract void SetupValueProperty(TermPart<PropertyMap> term);
+        protected abstract void SetupValueProperty(ITermPart<PropertyMap> term);
     }
 }

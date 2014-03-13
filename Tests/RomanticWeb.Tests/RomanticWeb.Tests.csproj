@@ -115,6 +115,9 @@
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="IntegrationTests\DictionaryTestsBase.cs" />
+    <Compile Include="IntegrationTests\InMemory\DictionaryFluentMappingTests.cs" />
+    <Compile Include="IntegrationTests\InMemory\DictionaryAttributeMappingTests.cs" />
     <Compile Include="IntegrationTests\InMemory\MappingTests.cs" />
     <Compile Include="IntegrationTests\NamedGraphMappingTests.cs" />
     <Compile Include="Mapping\Conventions\CollectionConventionTests.cs" />

@@ -15,7 +15,14 @@ namespace RomanticWeb.Converters
         public object Convert(IEntity entity,IPropertyMapping predicate)
         {
             var itemType=predicate.ReturnType.FindItemType();
-            return AsEntityMethod.MakeGenericMethod(itemType).Invoke(null,new object[] { entity });
+            if ((itemType!=entity.GetType())&&(!itemType.IsAssignableFrom(entity.GetType())))
+            {
+                return AsEntityMethod.MakeGenericMethod(itemType).Invoke(null,new object[] { entity });
+            }
+            else
+            {
+                return entity;
+            }
         }
 
         public bool CanConvert(IEntity objectNode,[AllowNull]IPropertyMapping predicate)

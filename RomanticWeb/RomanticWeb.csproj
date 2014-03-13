@@ -307,11 +307,8 @@
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <None Include="Vocabularies\DCTerms.cs" />
-    <None Include="Vocabularies\Owl.cs" />
-    <None Include="Vocabularies\Foaf.cs" />
+    <Compile Include="Vocabularies\Schema.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
-    <None Include="Vocabularies\Rdfs.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />
     <Compile Include="Vocabularies\Xsd.cs" />
   </ItemGroup>

@@ -6,10 +6,15 @@ namespace RomanticWeb.Fody.Dictionaries
 {
     internal class DictionaryMappingMeta
     {
-        internal DictionaryMappingMeta(PropertyDefinition property,Action<ILProcessor> injectDictionaryEntriesTermMappingCode,Action<ILProcessor> injectKeyMappingCode)
+        internal DictionaryMappingMeta(
+            PropertyDefinition property,
+            Action<ILProcessor> injectDictionaryEntriesTermMappingCode,
+            Action<ILProcessor> injectKeyMappingCode,
+            Action<ILProcessor> injectValueMappingCode)
         {
             InjectDictionaryEntriesTermMappingCode=injectDictionaryEntriesTermMappingCode;
             InjectKeyMappingCode=injectKeyMappingCode;
+            InjectValueMappingCode=injectValueMappingCode;
             Property=property;
             GenericArguments=((GenericInstanceType)property.PropertyType).GenericArguments.ToArray();
         }
@@ -25,5 +30,7 @@ namespace RomanticWeb.Fody.Dictionaries
         public Action<ILProcessor> InjectDictionaryEntriesTermMappingCode { get; private set; }
 
         public Action<ILProcessor> InjectKeyMappingCode { get; private set; }
+
+        public Action<ILProcessor> InjectValueMappingCode { get; private set; }
     }
 }

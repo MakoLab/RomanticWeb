@@ -442,11 +442,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKey");
 
             // when
-            var dict=entity.CustomQNameKeyDictionary;
+            var dict = entity.CustomQNameKeyDictionary;
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain("fatherName","Albert").And.Contain("motherName","Eva");
+            dict.Should().Contain("fatherName", "Albert").And.Contain("motherName", "Eva");
         }
 
         [Test]
@@ -454,14 +454,44 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("Dictionary.trig");
-            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKey");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKey");
 
             // when
-            var dict=entity.CustomUriKeyDictionary;
+            var dict = entity.CustomUriKeyDictionary;
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain("fatherName","Albert").And.Contain("motherName","Eva");
+            dict.Should().Contain("fatherName", "Albert").And.Contain("motherName", "Eva");
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_value_mapped_using_attributes_to_QName()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
+
+            // when
+            var dict=entity.CustomQNameValueDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("age",28).And.Contain("height",182);
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_value_mapped_using_attributes_to_Uri_string()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
+
+            // when
+            var dict=entity.CustomUriValueDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("age",28).And.Contain("height",182);
         }
 
         protected override IMappingsRepository SetupMappings()

@@ -66,6 +66,14 @@ namespace RomanticWeb.Fody
             }
         }
 
+        public TypeReference ValueAttributeTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(_references.Orm.FindType("ValueAttribute"));
+            }
+        }
+
         public TypeReference SystemTypeRef
         {
             get

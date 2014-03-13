@@ -43,7 +43,7 @@ namespace RomanticWeb.Fody
 
                 ownerMapping.Methods.Add(CreateDictionaryEntriesMappingOverride(dictionaryProperty));
                 entryMapping.Methods.Add(CreateEntryKeyMappingOverride(dictionaryProperty));
-                entryMapping.Methods.Add(CreateEntryValueMappingOverride());
+                entryMapping.Methods.Add(CreateEntryValueMappingOverride(dictionaryProperty));
 
                 ModuleDefinition.Types.Add(ownerMapping);
                 ModuleDefinition.Types.Add(entryMapping);
@@ -107,7 +107,7 @@ namespace RomanticWeb.Fody
             return @override;
         }
 
-        private MethodDefinition CreateEntryValueMappingOverride()
+        private MethodDefinition CreateEntryValueMappingOverride(DictionaryMappingMeta dictionaryProperty)
         {
             var @override = new MethodDefinition("SetupValueProperty", OverrideMethodAttributes, ModuleDefinition.TypeSystem.Void);
             @override.Parameters.Add(new ParameterDefinition(Imports.PropertyMapTermPartTypeRef));
@@ -115,8 +115,7 @@ namespace RomanticWeb.Fody
             var ilProcessor = @override.Body.GetILProcessor();
             ilProcessor.Append(Instruction.Create(OpCodes.Nop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ldarg_1));
-            ilProcessor.Append(Instruction.Create(OpCodes.Ldsfld, Imports.ObjectFieldRef));
-            ilProcessor.Append(Instruction.Create(OpCodes.Callvirt, ModuleDefinition.Import(Imports.TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(Imports.PropertyMapTypeRef))));
+            dictionaryProperty.InjectValueMappingCode(ilProcessor);
             ilProcessor.Append(Instruction.Create(OpCodes.Pop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ret));
 

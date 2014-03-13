@@ -21,8 +21,16 @@
 		[ magi:key "motherName"; rdf:object "Eva" ]
 }
 
+<http://data.magi/element/CustomValue>
+{
+	element:CustomValue <urn:dictionary:customValue> 
+		[ rdf:predicate "age"; magi:value "28"^^xsd:int ],
+		[ rdf:predicate "height"; magi:value "182"^^xsd:int ]
+}
+
 <http://app.magi/graphs>
 {
 	<http://data.magi/element/HtmlText> foaf:primaryTopic element:HtmlText.
 	<http://data.magi/element/CustomKey> foaf:primaryTopic element:CustomKey.
+	<http://data.magi/element/CustomValue> foaf:primaryTopic element:CustomValue.
 }

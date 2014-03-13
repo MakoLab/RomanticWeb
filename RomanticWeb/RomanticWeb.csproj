@@ -176,6 +176,7 @@
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
     <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
     <Compile Include="Mapping\Attributes\KeyAttribute.cs" />
+    <Compile Include="Mapping\Attributes\ValueAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
     <Compile Include="Mapping\Conventions\IConvention.cs" />

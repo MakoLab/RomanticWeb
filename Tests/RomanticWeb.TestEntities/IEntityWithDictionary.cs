@@ -27,5 +27,15 @@ namespace RomanticWeb.TestEntities
         [Value("http://magi/ontology#value")]
         [Dictionary("urn:dictionary:customValue")]
         IDictionary<string,int> CustomUriValueDictionary { get; }
+
+        [Key("magi","key")]
+        [Value("magi","value")]
+        [Dictionary("urn:dictionary:customKeyValue")]
+        IDictionary<int,int> CustomKeyValueQNameDictionary { get; }
+
+        [Key("http://magi/ontology#key")]
+        [Value("http://magi/ontology#value")]
+        [Dictionary("urn:dictionary:customKeyValue")]
+        IDictionary<int,int> CustomKeyValueUriDictionary { get; }
     }
 }

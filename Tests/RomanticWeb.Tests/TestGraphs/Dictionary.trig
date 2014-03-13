@@ -28,9 +28,17 @@
 		[ rdf:predicate "height"; magi:value "182"^^xsd:int ]
 }
 
+<http://data.magi/element/CustomKeyValue>
+{
+	element:CustomKeyValue <urn:dictionary:customKeyValue> 
+		[ magi:key "10"^^xsd:int; magi:value "15"^^xsd:int ],
+		[ magi:key "20"^^xsd:int; magi:value "31"^^xsd:int ]
+}
+
 <http://app.magi/graphs>
 {
 	<http://data.magi/element/HtmlText> foaf:primaryTopic element:HtmlText.
 	<http://data.magi/element/CustomKey> foaf:primaryTopic element:CustomKey.
 	<http://data.magi/element/CustomValue> foaf:primaryTopic element:CustomValue.
+	<http://data.magi/element/CustomKeyValue> foaf:primaryTopic element:CustomKeyValue.
 }

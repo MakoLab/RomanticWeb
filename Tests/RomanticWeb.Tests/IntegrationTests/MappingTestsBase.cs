@@ -5,11 +5,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
-using RomanticWeb.TestEntities.FluentMappings;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
@@ -469,14 +467,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("Dictionary.trig");
-            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
 
             // when
-            var dict=entity.CustomQNameValueDictionary;
+            var dict = entity.CustomQNameValueDictionary;
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain("age",28).And.Contain("height",182);
+            dict.Should().Contain("age", 28).And.Contain("height", 182);
         }
 
         [Test]
@@ -484,14 +482,44 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             LoadTestFile("Dictionary.trig");
-            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomValue");
 
             // when
-            var dict=entity.CustomUriValueDictionary;
+            var dict = entity.CustomUriValueDictionary;
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain("age",28).And.Contain("height",182);
+            dict.Should().Contain("age", 28).And.Contain("height", 182);
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_key_and_value_mapped_using_attributes_to_QName()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKeyValue");
+
+            // when
+            var dict=entity.CustomKeyValueQNameDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain(10,15).And.Contain(20,31);
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_key_and_value_mapped_using_attributes_to_Uri_string()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKeyValue");
+
+            // when
+            var dict=entity.CustomKeyValueUriDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain(10,15).And.Contain(20,31);
         }
 
         protected override IMappingsRepository SetupMappings()

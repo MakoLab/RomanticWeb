@@ -120,13 +120,13 @@ namespace RomanticWeb.Fody
             return genericArgs;
         }
 
-        internal static bool IsQNameDictionaryAttributeConstructor(this CustomAttribute dictionaryAttribute)
+        internal static bool IsQNameConstructor(this CustomAttribute dictionaryAttribute)
         {
             return dictionaryAttribute.ConstructorArguments.Count == 2
                    && dictionaryAttribute.ConstructorArguments.All(arg => arg.Type.FullName == "System.String");
         }
 
-        internal static bool IsUriStringDictionaryAttributeConstructor(this CustomAttribute dictionaryAttribute)
+        internal static bool IsUriStringConstructor(this CustomAttribute dictionaryAttribute)
         {
             return dictionaryAttribute.ConstructorArguments.Count == 1
                    && dictionaryAttribute.ConstructorArguments.All(arg => arg.Type.FullName == "System.String");

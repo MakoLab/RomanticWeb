@@ -14,7 +14,15 @@
 		 [ rdf:predicate "margin"^^xsd:string ; rdf:object "30"^^xsd:int ] .
 }
 
+<http://data.magi/element/CustomKey>
+{
+	element:CustomKey <urn:dictionary:customKey> 
+		[ magi:key "fatherName"; rdf:object "Albert" ],
+		[ magi:key "motherName"; rdf:object "Eva" ]
+}
+
 <http://app.magi/graphs>
 {
 	<http://data.magi/element/HtmlText> foaf:primaryTopic element:HtmlText.
+	<http://data.magi/element/CustomKey> foaf:primaryTopic element:CustomKey.
 }

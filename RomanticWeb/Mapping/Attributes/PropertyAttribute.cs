@@ -5,7 +5,7 @@ namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a property to an RDF predicate.</summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple=false)]
-    public class PropertyAttribute:MappingAttribute
+    public class PropertyAttribute:TermMappingAttribute
     {
         #region Constructors
         /// <summary>

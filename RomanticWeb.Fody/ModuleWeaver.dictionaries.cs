@@ -15,7 +15,7 @@ namespace RomanticWeb.Fody
 
         private DictionaryPropertyMappingFactory _factory;
 
-        private IEnumerable<DictionaryPropertyMapping> DictionaryPropertiesMappedWithAttributes
+        private IEnumerable<DictionaryMappingMeta> DictionaryPropertiesMappedWithAttributes
         {
             get
             {
@@ -28,7 +28,7 @@ namespace RomanticWeb.Fody
 
         private void AddDictionaryEntityTypesAndMappings()
         {
-            _factory=new DictionaryPropertyMappingFactory(ModuleDefinition,Imports);
+            _factory=new DictionaryPropertyMappingFactory(Imports);
 
             foreach (var dictionaryProperty in DictionaryPropertiesMappedWithAttributes.ToList())
             {
@@ -42,7 +42,7 @@ namespace RomanticWeb.Fody
                 var entryMapping=CreateEntryMapping(dictionaryProperty);
 
                 ownerMapping.Methods.Add(CreateDictionaryEntriesMappingOverride(dictionaryProperty));
-                entryMapping.Methods.Add(CreateEntryKeyMappingOverride());
+                entryMapping.Methods.Add(CreateEntryKeyMappingOverride(dictionaryProperty));
                 entryMapping.Methods.Add(CreateEntryValueMappingOverride());
 
                 ModuleDefinition.Types.Add(ownerMapping);
@@ -50,20 +50,20 @@ namespace RomanticWeb.Fody
             }
         }
 
-        private TypeDefinition CreateOwnerMapping(DictionaryPropertyMapping propertyMapping)
+        private TypeDefinition CreateOwnerMapping(DictionaryMappingMeta mappingMeta)
         {
-            TypeReference[] genericArgs = propertyMapping.OwnerType.JoinWith(propertyMapping.EntryType.JoinWith(propertyMapping.GenericArguments));
+            TypeReference[] genericArgs = mappingMeta.OwnerType.JoinWith(mappingMeta.EntryType.JoinWith(mappingMeta.GenericArguments));
             TypeReference baseType=ModuleDefinition.Import(Imports.DictionaryOwnerMapTypeRef.MakeGenericInstanceType(genericArgs));
-            var mappingType = CreateMappingType(propertyMapping.OwnerType, baseType);
+            var mappingType = CreateMappingType(mappingMeta.OwnerType, baseType);
             mappingType.Methods.Add(CreateDefaultConstructor(mappingType,genericArgs));
             return mappingType;
         }
 
-        private TypeDefinition CreateEntryMapping(DictionaryPropertyMapping dictionaryMapping)
+        private TypeDefinition CreateEntryMapping(DictionaryMappingMeta dictionaryMappingMeta)
         {
-            TypeReference[] genericArgs=dictionaryMapping.EntryType.JoinWith(dictionaryMapping.GenericArguments);
+            TypeReference[] genericArgs=dictionaryMappingMeta.EntryType.JoinWith(dictionaryMappingMeta.GenericArguments);
             TypeReference baseType=ModuleDefinition.Import(Imports.DictionaryEntryMapTypeRef.MakeGenericInstanceType(genericArgs));
-            var mappingType = CreateMappingType(dictionaryMapping.EntryType, baseType);
+            var mappingType = CreateMappingType(dictionaryMappingMeta.EntryType, baseType);
             mappingType.Methods.Add(CreateDefaultConstructor(mappingType,genericArgs));
             return mappingType;
         }
@@ -76,7 +76,7 @@ namespace RomanticWeb.Fody
             return mappingType;
         }
 
-        private MethodDefinition CreateDictionaryEntriesMappingOverride(DictionaryPropertyMapping mapping)
+        private MethodDefinition CreateDictionaryEntriesMappingOverride(DictionaryMappingMeta mappingMeta)
         {
             var @override=new MethodDefinition("SetupEntriesCollection",OverrideMethodAttributes,ModuleDefinition.TypeSystem.Void);
 
@@ -85,23 +85,22 @@ namespace RomanticWeb.Fody
             var ilProcessor=@override.Body.GetILProcessor();
             ilProcessor.Append(Instruction.Create(OpCodes.Nop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ldarg_1));
-            mapping.InjectDictionaryEntriesTermMappingCode(ilProcessor);
+            mappingMeta.InjectDictionaryEntriesTermMappingCode(ilProcessor);
             ilProcessor.Append(Instruction.Create(OpCodes.Pop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ret));
 
             return @override;
         }
 
-        private MethodDefinition CreateEntryKeyMappingOverride()
+        private MethodDefinition CreateEntryKeyMappingOverride(DictionaryMappingMeta mappingMeta)
         {
-            var @override = new MethodDefinition("SetupKeyProperty", OverrideMethodAttributes, ModuleDefinition.TypeSystem.Void);
+            var @override=new MethodDefinition("SetupKeyProperty",OverrideMethodAttributes,ModuleDefinition.TypeSystem.Void);
             @override.Parameters.Add(new ParameterDefinition(Imports.PropertyMapTermPartTypeRef));
 
             var ilProcessor = @override.Body.GetILProcessor();
             ilProcessor.Append(Instruction.Create(OpCodes.Nop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ldarg_1));
-            ilProcessor.Append(Instruction.Create(OpCodes.Ldsfld,Imports.PredicateFieldRef));
-            ilProcessor.Append(Instruction.Create(OpCodes.Callvirt, ModuleDefinition.Import(Imports.TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(Imports.PropertyMapTypeRef))));
+            mappingMeta.InjectKeyMappingCode(ilProcessor);
             ilProcessor.Append(Instruction.Create(OpCodes.Pop));
             ilProcessor.Append(Instruction.Create(OpCodes.Ret));
 
@@ -124,33 +123,33 @@ namespace RomanticWeb.Fody
             return @override;
         }
 
-        private void CreateDictionaryOwnerType(DictionaryPropertyMapping dictionaryProperty)
+        private void CreateDictionaryOwnerType(DictionaryMappingMeta dictionary)
         {
-            var declaringType=dictionaryProperty.Property.DeclaringType;
-            var dictOwnerName=string.Format("{0}_{1}_Owner",declaringType.Name,dictionaryProperty.Property.Name);
+            var declaringType=dictionary.Property.DeclaringType;
+            var dictOwnerName=string.Format("{0}_{1}_Owner",declaringType.Name,dictionary.Property.Name);
             var dictionaryOwnerType=new TypeDefinition(declaringType.Namespace,dictOwnerName,declaringType.Attributes);
 
-            var genericArgs=dictionaryProperty.EntryType.JoinWith(dictionaryProperty.GenericArguments);
+            var genericArgs=dictionary.EntryType.JoinWith(dictionary.GenericArguments);
             var baseType=Imports.DictionaryOwnerTypeRef.MakeGenericInstanceType(genericArgs);
             dictionaryOwnerType.Interfaces.Add(baseType);
 
             dictionaryOwnerType.CustomAttributes.Add(new CustomAttribute(Imports.CompilerGeneratedAttributeCtorRef));
 
-            dictionaryProperty.OwnerType=dictionaryOwnerType;
+            dictionary.OwnerType=dictionaryOwnerType;
         }
 
-        private void CreateDictionaryEntryType(DictionaryPropertyMapping dictionaryProperty)
+        private void CreateDictionaryEntryType(DictionaryMappingMeta dictionary)
         {
-            var declaringType=dictionaryProperty.Property.DeclaringType;
-            var dictEntryName=string.Format("{0}_{1}_Entry",declaringType.Name,dictionaryProperty.Property.Name);
+            var declaringType=dictionary.Property.DeclaringType;
+            var dictEntryName=string.Format("{0}_{1}_Entry",declaringType.Name,dictionary.Property.Name);
             var entryType=new TypeDefinition(declaringType.Namespace,dictEntryName,declaringType.Attributes);
 
-            var baseType=Imports.DictionaryEntryTypeRef.MakeGenericInstanceType(dictionaryProperty.GenericArguments);
+            var baseType=Imports.DictionaryEntryTypeRef.MakeGenericInstanceType(dictionary.GenericArguments);
             entryType.Interfaces.Add(baseType);
 
             entryType.CustomAttributes.Add(new CustomAttribute(Imports.CompilerGeneratedAttributeCtorRef));
 
-            dictionaryProperty.EntryType=entryType;
+            dictionary.EntryType=entryType;
         }
 
         private MethodDefinition CreateDefaultConstructor(TypeDefinition type,IEnumerable<TypeReference> dictionaryGenericArguments)

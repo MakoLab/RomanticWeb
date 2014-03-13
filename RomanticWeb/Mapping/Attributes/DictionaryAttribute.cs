@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Attributes
 {
-    public class DictionaryAttribute:PropertyAttribute
+    public sealed class DictionaryAttribute:PropertyAttribute
     {
         public DictionaryAttribute(string prefix,string term)
             :base(prefix,term)

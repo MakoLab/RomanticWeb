@@ -4,7 +4,7 @@ using Anotar.NLog;
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Base class for mapping attributes.</summary>
-    public abstract class MappingAttribute:Attribute
+    public abstract class TermMappingAttribute:Attribute
     {
         #region Fields
         private readonly string _prefix;
@@ -15,21 +15,21 @@ namespace RomanticWeb.Mapping.Attributes
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MappingAttribute"/> class.
+        /// Initializes a new instance of the <see cref="TermMappingAttribute"/> class.
         /// </summary>
         /// <param name="prefix">The prefix.</param>
         /// <param name="term">The term.</param>
-        protected MappingAttribute(string prefix,string term)
+        protected TermMappingAttribute(string prefix,string term)
         {
             _prefix=prefix;
             _term=term;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MappingAttribute"/> class.
+        /// Initializes a new instance of the <see cref="TermMappingAttribute"/> class.
         /// </summary>
         /// <param name="termUri">The term URI.</param>
-        protected MappingAttribute(string termUri)
+        protected TermMappingAttribute(string termUri)
         {
             _uri=new Uri(termUri);
         }

@@ -175,6 +175,7 @@
     <Compile Include="Linq\Sparql\GenericSparqlQueryVisitor.cs" />
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
     <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
+    <Compile Include="Mapping\Attributes\KeyAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
     <Compile Include="Mapping\Conventions\IConvention.cs" />
@@ -219,7 +220,7 @@
     <Compile Include="Mapping\Fluent\TermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMap.cs" />
     <Compile Include="Mapping\Model\PropertyMapping.cs" />
-    <Compile Include="Mapping\Attributes\MappingAttribute.cs" />
+    <Compile Include="Mapping\Attributes\TermMappingAttribute.cs" />
     <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
     <Compile Include="Mapping\Attributes\ClassAttribute.cs" />
     <Compile Include="Mapping\Model\ClassMapping.cs" />

@@ -7,51 +7,103 @@ namespace RomanticWeb.Fody.Dictionaries
 {
     internal class DictionaryPropertyMappingFactory
     {
-        private readonly ModuleDefinition _module;
         private readonly WeaverImports _imports;
 
-        public DictionaryPropertyMappingFactory(ModuleDefinition module,WeaverImports imports)
+        public DictionaryPropertyMappingFactory(WeaverImports imports)
         {
-            _module=module;
             _imports=imports;
         }
 
-        public DictionaryPropertyMapping CreateFromAttributeMapping(PropertyDefinition property)
+        public DictionaryMappingMeta CreateFromAttributeMapping(PropertyDefinition property)
         {
-            var dictionaryAttribute = property.CustomAttributes.Single(at => at.AttributeType.FullName == _imports.DictionaryAttributeTypeRef.FullName);
+            var dictionaryAttribute=property.CustomAttributes.Single(at => at.AttributeType.FullName==_imports.DictionaryAttributeTypeRef.FullName);
+            var keyAttribute=property.CustomAttributes.SingleOrDefault(at => at.AttributeType.FullName==_imports.KeyAttributeTypeRef.FullName);
 
-            Action<ILProcessor> injectDictionaryEntriesCode;
-            if (dictionaryAttribute.IsQNameDictionaryAttributeConstructor())
-            {
-                string prefix=dictionaryAttribute.ConstructorArguments[0].Value.ToString();
-                string term=dictionaryAttribute.ConstructorArguments[1].Value.ToString();
-                injectDictionaryEntriesCode=processor => InjectQNameTerm(processor,prefix,term);
-            }
-            else if (dictionaryAttribute.IsUriStringDictionaryAttributeConstructor())
-            {
-                string uriString=dictionaryAttribute.ConstructorArguments[0].Value.ToString();
-                injectDictionaryEntriesCode=processor => InjectUriStringTerm(processor,uriString);
-            }
-            else
-            {
-                throw new InvalidOperationException("Unrecognized DictionaryAttribute constructor");
-            }
+            var injectDictionaryEntriesCode=GetTermUriInjectMethod(dictionaryAttribute);
+            var injectKeyMappingCode=GetKeyMappingCode(keyAttribute);
 
-            return new DictionaryPropertyMapping(property,injectDictionaryEntriesCode);
+            return new DictionaryMappingMeta(property,injectDictionaryEntriesCode,injectKeyMappingCode);
         }
 
-        private void InjectQNameTerm(ILProcessor il, string prefix, string termName)
+        private Action<ILProcessor> GetKeyMappingCode(CustomAttribute keyAttribute)
         {
-            il.Append(Instruction.Create(OpCodes.Ldstr, prefix));
-            il.Append(Instruction.Create(OpCodes.Ldstr, termName));
-            il.Append(Instruction.Create(OpCodes.Callvirt, _module.Import(_imports.TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(_imports.CollectionMapTypeRef))));
+            if (keyAttribute==null)
+            {
+                return DefaultKeyMappingCode;
+            }
+
+            if (keyAttribute.IsQNameConstructor())
+            {
+                string prefix=keyAttribute.ConstructorArguments[0].Value.ToString();
+                string term=keyAttribute.ConstructorArguments[1].Value.ToString();
+                return processor => InjectPropertyAsQName(processor,prefix,term);
+            }
+
+            if (keyAttribute.IsUriStringConstructor())
+            {
+                string uriString=keyAttribute.ConstructorArguments[0].Value.ToString();
+                return processor => InjectPropertyAsUri(processor, uriString);
+            }
+
+            throw new InvalidOperationException("Unrecognized KeyAttribute constructor");
         }
 
-        private void InjectUriStringTerm(ILProcessor il, string uriString)
+        private void DefaultKeyMappingCode(ILProcessor ilProcessor)
+        {
+            ilProcessor.Append(Instruction.Create(OpCodes.Ldsfld,_imports.PredicateFieldRef));
+            ilProcessor.Append(Instruction.Create(OpCodes.Callvirt,_imports.PropertyMapIsUriRef));
+        }
+
+        private Action<ILProcessor> GetTermUriInjectMethod(CustomAttribute dictionaryAttribute)
+        {
+            if (dictionaryAttribute.IsQNameConstructor())
+            {
+                string prefix = dictionaryAttribute.ConstructorArguments[0].Value.ToString();
+                string term = dictionaryAttribute.ConstructorArguments[1].Value.ToString();
+                return processor => InjectCollectionAsQName(processor,prefix,term);
+            }
+            
+            if (dictionaryAttribute.IsUriStringConstructor())
+            {
+                string uriString = dictionaryAttribute.ConstructorArguments[0].Value.ToString();
+                return processor => InjectCollectionAsUri(processor,uriString);
+            }
+            
+            throw new InvalidOperationException("Unrecognized DictionaryAttribute constructor");
+        }
+
+        private void InjectCollectionAsQName(ILProcessor il,string prefix,string termName)
+        {
+            InjectQNameTerm(il,prefix,termName,_imports.CollectionMapIsQNameRef);
+        }
+
+        private void InjectCollectionAsUri(ILProcessor il,string uriString)
+        {
+            InjectUriStringTerm(il,uriString,_imports.CollectionMapIsUriRef);
+        }
+
+        private void InjectPropertyAsQName(ILProcessor il,string prefix,string termName)
+        {
+            InjectQNameTerm(il,prefix,termName,_imports.PropertyMapIsQNameRef);
+        }
+
+        private void InjectPropertyAsUri(ILProcessor il,string uriString)
+        {
+            InjectUriStringTerm(il,uriString,_imports.PropertyMapIsUriRef);
+        }
+
+        private void InjectQNameTerm(ILProcessor il,string prefix,string termName,MethodReference method)
+        {
+            il.Append(Instruction.Create(OpCodes.Ldstr,prefix));
+            il.Append(Instruction.Create(OpCodes.Ldstr,termName));
+            il.Append(Instruction.Create(OpCodes.Callvirt,method));
+        }
+
+        private void InjectUriStringTerm(ILProcessor il,string uriString,MethodReference method)
         {
             il.Append(Instruction.Create(OpCodes.Ldstr,uriString));
             il.Append(Instruction.Create(OpCodes.Newobj,_imports.UriStringConstructorRef));
-            il.Append(Instruction.Create(OpCodes.Callvirt,_module.Import(_imports.TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(_imports.CollectionMapTypeRef))));
+            il.Append(Instruction.Create(OpCodes.Callvirt,method));
         }
     }
 }

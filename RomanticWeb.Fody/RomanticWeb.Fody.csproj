@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dictionaries\DictionaryPropertyMapping.cs" />
+    <Compile Include="Dictionaries\DictionaryMappingMeta.cs" />
     <Compile Include="Dictionaries\DictionaryPropertyMappingFactory.cs" />
     <Compile Include="ModuleWeaver.dictionaries.cs">
       <DependentUpon>ModuleWeaver.cs</DependentUpon>

@@ -404,7 +404,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_allow_getting_dictionary_with_default_key_value_mapped_to_QName_property()
+        public void Should_allow_getting_dictionary_with_default_key_value_mapped_using_attributes_to_QName_property()
         {
             // given
             LoadTestFile("Dictionary.trig");
@@ -420,18 +420,48 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_allow_getting_dictionary_with_default_key_value_mapped_to_Uri_property()
+        public void Should_allow_getting_dictionary_with_default_key_value_mapped_using_attributes_to_Uri_property()
         {
             // given
             LoadTestFile("Dictionary.trig");
             var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/HtmlText");
 
             // when
-            var dict=entity.StringIntDictionary;
+            var dict = entity.StringIntDictionary;
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain("padding",20).And.Contain("margin",30);
+            dict.Should().Contain("padding", 20).And.Contain("margin", 30);
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_key_mapped_using_attributes_to_QName()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKey");
+
+            // when
+            var dict=entity.CustomQNameKeyDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("fatherName","Albert").And.Contain("motherName","Eva");
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_custom_key_mapped_using_attributes_to_Uri_string()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity=EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKey");
+
+            // when
+            var dict=entity.CustomUriKeyDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("fatherName","Albert").And.Contain("motherName","Eva");
         }
 
         protected override IMappingsRepository SetupMappings()

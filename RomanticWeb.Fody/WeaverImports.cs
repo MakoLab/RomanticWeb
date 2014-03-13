@@ -18,11 +18,51 @@ namespace RomanticWeb.Fody
             _references=references;
         }
 
+        public MethodReference PropertyMapIsUriRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef));
+            }
+        }
+
+        public MethodReference PropertyMapIsQNameRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef));
+            }
+        }
+
+        public MethodReference CollectionMapIsUriRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef));
+            }
+        }
+
+        public MethodReference CollectionMapIsQNameRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef));
+            }
+        }
+
         public TypeReference DictionaryAttributeTypeRef
         {
             get
             {
                 return ModuleDefinition.Import(_references.Orm.FindType("DictionaryAttribute"));
+            }
+        }
+
+        public TypeReference KeyAttributeTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(_references.Orm.FindType("KeyAttribute"));
             }
         }
 

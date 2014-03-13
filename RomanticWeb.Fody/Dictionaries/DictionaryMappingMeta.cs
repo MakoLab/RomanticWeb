@@ -4,11 +4,12 @@ using Mono.Cecil.Cil;
 
 namespace RomanticWeb.Fody.Dictionaries
 {
-    internal class DictionaryPropertyMapping
+    internal class DictionaryMappingMeta
     {
-        internal DictionaryPropertyMapping(PropertyDefinition property,Action<ILProcessor> injectDictionaryEntriesTermMappingCode)
+        internal DictionaryMappingMeta(PropertyDefinition property,Action<ILProcessor> injectDictionaryEntriesTermMappingCode,Action<ILProcessor> injectKeyMappingCode)
         {
             InjectDictionaryEntriesTermMappingCode=injectDictionaryEntriesTermMappingCode;
+            InjectKeyMappingCode=injectKeyMappingCode;
             Property=property;
             GenericArguments=((GenericInstanceType)property.PropertyType).GenericArguments.ToArray();
         }
@@ -21,6 +22,8 @@ namespace RomanticWeb.Fody.Dictionaries
 
         public TypeDefinition OwnerType { get; set; }
 
-        public Action<ILProcessor> InjectDictionaryEntriesTermMappingCode { get; private set; } 
+        public Action<ILProcessor> InjectDictionaryEntriesTermMappingCode { get; private set; }
+
+        public Action<ILProcessor> InjectKeyMappingCode { get; private set; }
     }
 }

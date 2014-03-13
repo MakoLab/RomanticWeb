@@ -9,13 +9,13 @@ namespace RomanticWeb.Fody
     internal class WeaverImports
     {
         private readonly ModuleWeaver _moduleWeaver;
-
         private readonly WeaverReferences _references;
 
         public WeaverImports(ModuleWeaver moduleWeaver,WeaverReferences references)
         {
             _moduleWeaver=moduleWeaver;
             _references=references;
+            Cache=new DictionaryCache();
         }
 
         public MethodReference PropertyMapIsUriRef
@@ -233,5 +233,7 @@ namespace RomanticWeb.Fody
                 return ModuleDefinition.Import(typeof(CompilerGeneratedAttribute)).Resolve();
             }
         }
+
+        private DictionaryCache Cache { get; set; }
     }
 }

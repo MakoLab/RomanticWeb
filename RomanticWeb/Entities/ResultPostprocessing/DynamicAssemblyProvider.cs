@@ -9,12 +9,12 @@ namespace RomanticWeb.Entities.ResultPostprocessing
     {
         public Type GetEntryType(IPropertyMapping property)
         {
-            return Type.GetType("RomanticWeb.TestEntities.IEntityWithDictionary_SettingsDefault_Entry, RomanticWeb.TestEntities", true);
+            return Type.GetType(string.Format("RomanticWeb.TestEntities.IEntityWithDictionary_{0}_Entry, RomanticWeb.TestEntities",property.Name), true);
         }
 
-        public Type GetOwnerType(IEntityMapping entity)
+        public Type GetOwnerType(IPropertyMapping property)
         {
-            return Type.GetType("RomanticWeb.TestEntities.IEntityWithDictionary_SettingsDefault_Owner, RomanticWeb.TestEntities", true);
+            return Type.GetType(string.Format("RomanticWeb.TestEntities.IEntityWithDictionary_{0}_Owner, RomanticWeb.TestEntities",property.Name), true);
         }
     }
 }

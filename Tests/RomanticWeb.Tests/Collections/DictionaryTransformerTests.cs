@@ -32,8 +32,8 @@ namespace RomanticWeb.Tests.Collections
             _context=new Mock<IEntityContext>(MockBehavior.Strict);
             _context.Setup(c => c.Load<Owner>(Id,false)).Returns(_owner);
             _provider=new Mock<IDictionaryPairTypeProvider>(MockBehavior.Strict);
-            _provider.Setup(p => p.GetEntryType(It.IsAny<IPropertyMapping>())).Returns(typeof(DictionaryPair));
-            _provider.Setup(p => p.GetOwnerType(It.IsAny<IEntityMapping>())).Returns(typeof(Owner));
+            _provider.Setup(p => p.GetEntryType(_property)).Returns(typeof(DictionaryPair));
+            _provider.Setup(p => p.GetOwnerType(_property)).Returns(typeof(Owner));
             _transformer=new DictionaryTransformer(_provider.Object);
         }
 
@@ -91,7 +91,6 @@ namespace RomanticWeb.Tests.Collections
         {
             dynamic expando=new ExpandoObject();
             expando.Id=Id;
-            expando.EntityMapping=new { }.ActLike<IEntityMapping>();
             return Impromptu.ActLike<IEntityProxy>(expando);
         }
 

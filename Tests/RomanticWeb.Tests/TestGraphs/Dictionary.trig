@@ -8,6 +8,10 @@
 {
 	element:HtmlText magi:setting [ rdf:predicate "mode"^^xsd:string ; rdf:object "1"^^xsd:int ] ,
 		[ rdf:predicate "source"^^xsd:string ; rdf:object "some text"^^xsd:string ] .
+
+	element:HtmlText <urn:dictionary:property> 
+		 [ rdf:predicate "padding"^^xsd:string ; rdf:object "20"^^xsd:int ],
+		 [ rdf:predicate "margin"^^xsd:string ; rdf:object "30"^^xsd:int ] .
 }
 
 <http://app.magi/graphs>

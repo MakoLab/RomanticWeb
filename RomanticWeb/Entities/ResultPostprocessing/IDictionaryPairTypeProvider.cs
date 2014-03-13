@@ -7,6 +7,6 @@ namespace RomanticWeb.Entities.ResultPostprocessing
     {
         Type GetEntryType(IPropertyMapping property);
 
-        Type GetOwnerType(IEntityMapping entity);
+        Type GetOwnerType(IPropertyMapping property);
     }
 }

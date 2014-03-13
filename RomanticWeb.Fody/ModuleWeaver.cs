@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Mono.Cecil;
-using Mono.Cecil.Rocks;
 
 namespace RomanticWeb.Fody
 {
@@ -17,6 +14,10 @@ namespace RomanticWeb.Fody
 
         public Action<string> LogError { get; set; }
 
+        private WeaverImports Imports { get; set; }
+
+        private WeaverReferences References { get; set; }
+
         public void Execute()
         {
             AssemblyDefinition ormAssembly;
@@ -26,8 +27,8 @@ namespace RomanticWeb.Fody
                 return;
             }
             
-            LoadDependencies();
-            ImportTypes();
+            References=new WeaverReferences(this);
+            Imports=new WeaverImports(this,References);
 
             AddTypeConverters();
             AddDictionaryEntityTypesAndMappings();

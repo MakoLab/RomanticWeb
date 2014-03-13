@@ -31,13 +31,13 @@ namespace RomanticWeb.Fody
             var constructor = ModuleDefinition.Import(typeof(TypeConverterAttribute).GetConstructor(new[] { typeof(Type) }));
 
             // get EntityIdTypeConverter<> base type
-            var convererType = ModuleDefinition.Import(RomanticWebAssembly.MainModule.GetType("RomanticWeb.ComponentModel.EntityIdTypeConverter`1"));
+            var convererType = ModuleDefinition.Import(References.Orm.MainModule.GetType("RomanticWeb.ComponentModel.EntityIdTypeConverter`1"));
 
             // make generic type EntityIdTypeConverter<entityIdType>
             var genericConverter = convererType.MakeGenericInstanceType(entityIdType);
 
             var attribute = new CustomAttribute(constructor);
-            attribute.ConstructorArguments.Add(new CustomAttributeArgument(SystemTypeRef,genericConverter));
+            attribute.ConstructorArguments.Add(new CustomAttributeArgument(Imports.SystemTypeRef, genericConverter));
             entityIdType.CustomAttributes.Add(attribute);
         }
 

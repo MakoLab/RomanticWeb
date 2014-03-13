@@ -46,6 +46,30 @@ namespace RomanticWeb.Fody
             return firstOrDefault;
         }
 
+        public static TypeDefinition FindType(this AssemblyDefinition assembly,string name)
+        {
+            var type=assembly.MainModule.Types.SingleOrDefault(t => t.Name==name||t.FullName==name);
+
+            if (type==null)
+            {
+                throw new WeavingException(string.Format("Expected to find type '{0}' in assemnly '{1}'.", name, assembly.FullName));
+            }
+
+            return type;
+        }
+
+        public static MethodReference FindConstructor(this TypeDefinition typeDefinition, params string[] paramTypes)
+        {
+            var firstOrDefault = typeDefinition.GetConstructors().FirstOrDefault(x => IsMatch(x, paramTypes));
+            if (firstOrDefault == null)
+            {
+                var parameterNames = string.Join(", ", paramTypes);
+                throw new WeavingException(string.Format("Expected to find constructor '.ctor({0})' on type '{1}'.", parameterNames, typeDefinition.FullName));
+            }
+
+            return firstOrDefault;
+        }
+
         internal static bool HasEntityIdAncestor(this TypeDefinition childType)
         {
             return childType.HasAncestorOfType("RomanticWeb.Entities.EntityId");
@@ -96,6 +120,17 @@ namespace RomanticWeb.Fody
             return genericArgs;
         }
 
+        internal static bool IsQNameDictionaryAttributeConstructor(this CustomAttribute dictionaryAttribute)
+        {
+            return dictionaryAttribute.ConstructorArguments.Count == 2
+                   && dictionaryAttribute.ConstructorArguments.All(arg => arg.Type.FullName == "System.String");
+        }
+
+        internal static bool IsUriStringDictionaryAttributeConstructor(this CustomAttribute dictionaryAttribute)
+        {
+            return dictionaryAttribute.ConstructorArguments.Count == 1
+                   && dictionaryAttribute.ConstructorArguments.All(arg => arg.Type.FullName == "System.String");
+        }
 
         private static bool IsMatch(this MethodReference methodReference, params string[] paramTypes)
         {

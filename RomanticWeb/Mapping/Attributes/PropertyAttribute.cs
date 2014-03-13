@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Model;
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a property to an RDF predicate.</summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple=false)]
     public class PropertyAttribute:MappingAttribute
     {
         #region Constructors

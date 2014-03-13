@@ -404,7 +404,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_load_entity_with_default_mapped_dictionary()
+        public void Should_allow_getting_dictionary_with_default_key_value_mapped_to_QName_property()
         {
             // given
             LoadTestFile("Dictionary.trig");
@@ -417,6 +417,21 @@ namespace RomanticWeb.Tests.IntegrationTests
             dict.Should().HaveCount(2);
             dict.Should().Contain("mode",1)
                      .And.Contain("source","some text");
+        }
+
+        [Test]
+        public void Should_allow_getting_dictionary_with_default_key_value_mapped_to_Uri_property()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/HtmlText");
+
+            // when
+            var dict=entity.StringIntDictionary;
+
+            // then
+            dict.Should().HaveCount(2);
+            dict.Should().Contain("padding",20).And.Contain("margin",30);
         }
 
         protected override IMappingsRepository SetupMappings()

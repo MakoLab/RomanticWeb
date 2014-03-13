@@ -25,7 +25,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             Type keyType=GetKeyType(property);
             Type valueType=GetValueType(property);
             Type pairEntityType=_typeProvider.GetEntryType(property);
-            Type ownerType=_typeProvider.GetOwnerType(parent.EntityMapping);
+            Type ownerType=_typeProvider.GetOwnerType(property);
 
             var constructor=typeof(RdfDictionary<,,,>)
                 .MakeGenericType(keyType,valueType,pairEntityType,ownerType)

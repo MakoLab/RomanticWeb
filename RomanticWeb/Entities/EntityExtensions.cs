@@ -100,6 +100,33 @@ namespace RomanticWeb.Entities
             return (entity!=null?entity.AsEntity<ITypedEntity>().Types.Union(new EntityId[] { new EntityId(RomanticWeb.Vocabularies.Owl.Thing) }):new EntityId[0]);
         }
 
+        /// <summary>Determines if a given entity is of the given type provided.</summary>
+        /// <param name="entity">Entity to operate on.</param>
+        /// <param name="type">Types to check against.</param>
+        /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
+        public static bool Is(this IEntity entity,Uri type)
+        {
+            return entity.Is(new Uri[] { type });
+        }
+
+        /// <summary>Determines if a given entity is of any of the types provided.</summary>
+        /// <param name="entity">Entity to operate on.</param>
+        /// <param name="types">Enumeration of types to check against.</param>
+        /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
+        public static bool Is(this IEntity entity,IEnumerable<Uri> types)
+        {
+            return entity.Is(types.Select(item => new EntityId(item)));
+        }
+
+        /// <summary>Determines if a given entity is of the given type provided.</summary>
+        /// <param name="entity">Entity to operate on.</param>
+        /// <param name="type">Types to check against.</param>
+        /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
+        public static bool Is(this IEntity entity,EntityId type)
+        {
+            return entity.Is(new EntityId[] { type });
+        }
+
         /// <summary>Determines if a given entity is of any of the types provided.</summary>
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="types">Enumeration of types to check against.</param>

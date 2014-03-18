@@ -30,7 +30,7 @@ namespace RomanticWeb.TestEntities
 
         [Key("magi","key")]
         [Value("magi","value")]
-        [Dictionary("urn:dictionary:customKeyValue")]
+        [Dictionary("urn:dictionary:customKeyValue")] 
         IDictionary<int,int> CustomKeyValueQNameDictionary { get; }
 
         [Key("http://magi/ontology#key")]

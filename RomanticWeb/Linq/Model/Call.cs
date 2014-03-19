@@ -155,6 +155,13 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Substring.</summary>
         Substring=0x00000500,
         #endregion
+        #region Result modifiers
+        /// <summary>Offset operator.</summary>
+        Offset=0x00000009,
+
+        /// <summary>Limit operator.</summary>
+        Limit=0x0000000A
+#endregion
     }
     #endregion
 

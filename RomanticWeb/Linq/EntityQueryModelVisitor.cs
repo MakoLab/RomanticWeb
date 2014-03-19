@@ -213,40 +213,6 @@ namespace RomanticWeb.Linq
                 (fromClause.FromExpression.Type.GetGenericArguments()[0]!=typeof(IEntity)))
             {
                 this.GetEntityAccessor(fromClause);
-
-                ////Type type=fromClause.FromExpression.Type.GetGenericArguments()[0];
-                ////var classMappings=_mappingsRepository.FindClassMapping(type);
-                ////if (classMappings.Any())
-                ////{
-                ////    EntityConstrain constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
-                ////    if (!_mainFromComponent.Elements.Contains(constrain))
-                ////    {
-                ////        _mainFromComponent.Elements.Add(constrain);
-                ////    }
-
-                ////    IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(type);
-                ////    if (inheritedTypes.Any())
-                ////    {
-                ////        OptionalPattern optional=new OptionalPattern();
-                ////        foreach (Type inheritedType in inheritedTypes)
-                ////        {
-                ////            classMappings=_mappingsRepository.FindClassMapping(inheritedType);
-                ////            if (classMappings.Any())
-                ////            {
-                ////                constrain=new EntityConstrain(new Literal(Vocabularies.Rdf.type),new Literal(classMappings.First().Uri));
-                ////                if ((!_mainFromComponent.Elements.Contains(constrain))&&(!optional.Patterns.Contains(constrain)))
-                ////                {
-                ////                    optional.Patterns.Add(constrain);
-                ////                }
-                ////            }
-                ////        }
-
-                ////        if ((optional.Patterns.Count>0)&&(!_mainFromComponent.Elements.Contains(constrain)))
-                ////        {
-                ////            _mainFromComponent.Elements.Add(optional);
-                ////        }
-                ////    }
-                ////}
             }
         }
 
@@ -312,6 +278,26 @@ namespace RomanticWeb.Linq
 
         private void VisitSingleResultOperator(SingleResultOperator countResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
+        }
+
+        private void VisitSkipResultOperator(SkipResultOperator skipResultOperation,Remotion.Linq.QueryModel queryModel,int index)
+        {
+            if (!(skipResultOperation.Count is System.Linq.Expressions.ConstantExpression))
+            {
+                throw new InvalidOperationException("Only constant expressions are supported for the Skip operators.");
+            }
+
+            _query.Offset=Convert.ToInt32(((System.Linq.Expressions.ConstantExpression)skipResultOperation.Count).Value);
+        }
+
+        private void VisitTakeResultOperator(TakeResultOperator takeResultOperation,Remotion.Linq.QueryModel queryModel,int index)
+        {
+            if (!(takeResultOperation.Count is System.Linq.Expressions.ConstantExpression))
+            {
+                throw new InvalidOperationException("Only constant expressions are supported for the Take operators.");
+            }
+
+            _query.Limit=Convert.ToInt32(((System.Linq.Expressions.ConstantExpression)takeResultOperation.Count).Value);
         }
         #endregion
     }

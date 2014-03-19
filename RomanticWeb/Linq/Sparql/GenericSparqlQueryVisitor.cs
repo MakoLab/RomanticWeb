@@ -143,6 +143,15 @@ namespace RomanticWeb.Linq.Sparql
             }
 
             _commandText.Append("} ");
+            if (query.Limit>=0)
+            {
+                _commandText.AppendFormat("LIMIT {0} ",query.Limit);
+            }
+
+            if (query.Offset>=0)
+            {
+                _commandText.AppendFormat("OFFSET {0} ",query.Offset);
+            }
 
             if (query.IsSubQuery)
             {

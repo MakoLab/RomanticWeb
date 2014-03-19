@@ -35,6 +35,8 @@ namespace RomanticWeb.Linq.Model
         private IVariableNamingStrategy _variableNamingStrategy;
         private Identifier _subject;
         private QueryForms _queryForm;
+        private int _offset=-1;
+        private int _limit=-1;
         #endregion
 
         #region Constructors
@@ -88,6 +90,12 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Gets a query form of given query.</summary>
         public QueryForms QueryForm { get { return _queryForm; } internal set { _queryForm=value; } }
+
+        /// <summary>Gets or sets the offset.</summary>
+        public int Offset { get { return _offset; } set { _offset=(value>=0?value:-1); } }
+
+        /// <summary>Gets or sets the limit.</summary>
+        public int Limit { get { return _limit; } set { _limit=(value>=0?value:-1); } }
 
         /// <summary>Gets an owning query.</summary>
         internal override Query OwnerQuery

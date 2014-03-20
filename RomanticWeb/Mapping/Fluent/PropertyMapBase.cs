@@ -1,12 +1,27 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using RomanticWeb.Entities.ResultAggregations;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
-    public abstract class PropertyMapBase<T> : TermMap, IPropertyMappingProvider
-        where T : TermMap
+    public abstract class PropertyMapBase<T>:PropertyMapBase
+        where T:TermMap
+    {
+        protected PropertyMapBase(PropertyInfo propertyInfo)
+            :base(propertyInfo)
+        {
+        }
+
+        /// <summary>Gets a predicate map part.</summary>
+        public abstract ITermPart<T> Term { get; }
+
+        public abstract Aggregation? Aggregation { get; }
+    }
+
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non generic class in one file")]
+    public abstract class PropertyMapBase:TermMap
     {
         private readonly PropertyInfo _propertyInfo;
 
@@ -15,29 +30,14 @@ namespace RomanticWeb.Mapping.Fluent
             _propertyInfo = propertyInfo;
         }
 
-        /// <summary>Gets a predicate map part.</summary>
-        public abstract ITermPart<T> Term { get; }
-
-        /// <summary>Not used for property map.</summary>
-        /// <returns><see cref="StorageStrategyOption.None"/></returns>
-        /// <remarks>Setting throws <see cref="InvalidOperationException"/></remarks>
-        protected internal virtual StorageStrategyOption StorageStrategy
+        internal PropertyInfo PropertyInfo
         {
-            get { return StorageStrategyOption.None; }
-
-            set { throw new InvalidOperationException(); }
+            get
+            {
+                return _propertyInfo;
+            }
         }
 
-        protected internal virtual Aggregation? Aggregation
-        {
-            get { return null; }
-
-            set { throw new InvalidOperationException(); }
-        }
-
-        /// <summary>Gets the mapped property's <see cref="System.Reflection.PropertyInfo"/>.</summary>
-        protected PropertyInfo PropertyInfo { get { return _propertyInfo; } }
-
-        public abstract IPropertyMapping GetMapping(MappingContext mappingContext);
+        public abstract IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor);
     }
 }

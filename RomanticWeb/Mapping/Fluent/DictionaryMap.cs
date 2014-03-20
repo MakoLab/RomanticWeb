@@ -1,12 +1,15 @@
 ﻿using System.Reflection;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Entities.ResultAggregations;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
     public sealed class DictionaryMap:PropertyMapBase<DictionaryMap>
     {
-        private readonly TermMap _keyMap;
-        private readonly TermMap _valueMap;
+        private readonly KeyMap _keyMap;
+
+        private readonly ValueMap _valueMap;
 
         internal DictionaryMap(PropertyInfo propertyInfo)
             :base(propertyInfo)
@@ -42,14 +45,34 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        public override IPropertyMapping GetMapping(MappingContext mappingContext)
+        public override Aggregation? Aggregation
         {
-            return new DictionaryMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider));
+            get
+            {
+                return Entities.ResultAggregations.Aggregation.Original;
+            }
         }
 
-        public class ValueMap : TermMap { }
+        public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+        {
+            return fluentMapsVisitor.Visit(this,_keyMap.Accept(fluentMapsVisitor),_valueMap.Accept(fluentMapsVisitor));
+        }
 
-        public class KeyMap : TermMap { }
+        public class ValueMap:TermMap
+        {
+            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            {
+                return fluentMapsVisitor.Visit(this);
+            }
+        }
+
+        public class KeyMap:TermMap
+        {
+            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            {
+                return fluentMapsVisitor.Visit(this);
+            }
+        }
 
         private class DictionaryPart:ITermPart<DictionaryMap>
         {
@@ -62,7 +85,7 @@ namespace RomanticWeb.Mapping.Fluent
                 _actualMap=actualMap;
             }
 
-            public DictionaryMap Is(string prefix, string predicateName)
+            public DictionaryMap Is(string prefix,string predicateName)
             {
                 _actualMap.SetQName(prefix,predicateName);
                 return _dictionaryMap;

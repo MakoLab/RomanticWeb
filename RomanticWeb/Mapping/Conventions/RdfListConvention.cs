@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Conventions
 {
     public class RdfListConvention:ICollectionConvention
     {
-        public bool ShouldApply(ICollectionMapping target)
+        public bool ShouldApply(ICollectionMappingProvider target)
         {
             return !target.Aggregation.HasValue
-                && target.ReturnType.IsGenericType
-                && target.ReturnType.GetGenericTypeDefinition()==typeof(IList<>);
+                && target.PropertyInfo.PropertyType.IsGenericType
+                && target.PropertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(IList<>);
         }
 
-        public void Apply(ICollectionMapping target)
+        public void Apply(ICollectionMappingProvider target)
         {
-            target.Aggregation=Aggregation.SingleOrDefault;
-            target.StorageStrategy=StorageStrategyOption.RdfList;
+            target.StoreAs=StoreAs.RdfList;
         }
     }
 }

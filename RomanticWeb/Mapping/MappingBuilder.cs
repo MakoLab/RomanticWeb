@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
+using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping
 {
@@ -10,7 +8,12 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public sealed class MappingBuilder
     {
-        private readonly IDictionary<Tuple<Assembly,Type>, IMappingsRepository> _mappingsRepositories=new Dictionary<Tuple<Assembly,Type>,IMappingsRepository>(); 
+        private readonly MappingsRepository _mappingsRepository;
+
+        internal MappingBuilder(MappingsRepository mappingsRepository)
+        {
+            _mappingsRepository=mappingsRepository;
+        }
 
         /// <summary>
         /// Allows registering attribute mappings
@@ -34,6 +37,9 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        /// <summary>
+        /// Registers both fluent and attrbiute mappings from an assembly
+        /// </summary>
         public void FromAssemblyOf<T>()
         {
             Fluent.FromAssemblyOf<T>();
@@ -41,21 +47,9 @@ namespace RomanticWeb.Mapping
         }
 
         internal void AddMapping<TMappingRepository>(Assembly mappingAssembly,TMappingRepository mappingsRepository)
-            where TMappingRepository:IMappingsRepository
+            where TMappingRepository:IMappingSource
         {
-            var key=Tuple.Create(mappingAssembly,typeof(TMappingRepository));
-
-            if (!_mappingsRepositories.ContainsKey(key))
-            {
-                _mappingsRepositories.Add(key,mappingsRepository);
-            }
-        }
-
-        internal IEnumerable<IMappingsRepository> BuildMappings(Action<MappingBuilder> buildDelegate)
-        {
-            var currentRepositories=_mappingsRepositories.Values.ToList();
-            buildDelegate.Invoke(this);
-            return _mappingsRepositories.Values.Except(currentRepositories);
+            _mappingsRepository.AddSource(mappingAssembly,mappingsRepository);
         }
     }
 }

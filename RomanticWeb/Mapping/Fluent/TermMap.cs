@@ -1,6 +1,4 @@
 ﻿using System;
-using Anotar.NLog;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {
@@ -24,29 +22,6 @@ namespace RomanticWeb.Mapping.Fluent
         {
             NamespacePrefix=prefix;
             TermName=termName;
-        }
-
-        /// <summary>
-        /// Gets the <see cref="TermUri"/>, if set explicitly 
-        /// or uses the <paramref name="ontologyProvider"/> to resolve the QName
-        /// </summary>
-        protected Uri GetTermUri(IOntologyProvider ontologyProvider)
-        {
-            if (TermUri!=null)
-            {
-                return TermUri;
-            }
-
-            Uri resolvedUri=ontologyProvider.ResolveUri(NamespacePrefix,TermName);
-
-            if (resolvedUri==null)
-            {
-                var message=string.Format("Cannot resolve QName {0}:{1}",NamespacePrefix,TermName);
-                LogTo.Fatal(message);
-                throw new MappingException(message);
-            }
-
-            return resolvedUri;
         }
     }
 }

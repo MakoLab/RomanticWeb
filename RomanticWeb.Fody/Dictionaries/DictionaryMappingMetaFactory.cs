@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace RomanticWeb.Fody.Dictionaries
 {
-    internal class DictionaryPropertyMappingFactory
+    internal class DictionaryMappingMetaFactory
     {
         private readonly WeaverImports _imports;
 
-        public DictionaryPropertyMappingFactory(WeaverImports imports)
+        public DictionaryMappingMetaFactory(WeaverImports imports)
         {
             _imports=imports;
         }
@@ -25,6 +26,14 @@ namespace RomanticWeb.Fody.Dictionaries
             var injectValueMappingCode=GetPropertyMappingCode(valueAttribute)??DefaultValueMappingCode;
 
             return new DictionaryMappingMeta(property,injectDictionaryEntriesCode,injectKeyMappingCode,injectValueMappingCode);
+        }
+
+        public IEnumerable<DictionaryMappingMeta> CreateManyFromEntityMap(TypeDefinition entityMapType)
+        {
+            foreach (var method in entityMapType.Methods)
+            {
+                yield break;
+            }
         }
 
         private Action<ILProcessor> GetPropertyMappingCode(CustomAttribute attribute)

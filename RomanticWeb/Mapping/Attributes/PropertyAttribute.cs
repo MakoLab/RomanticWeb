@@ -1,5 +1,7 @@
 ﻿using System;
-using RomanticWeb.Mapping.Model;
+using System.Reflection;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -27,16 +29,10 @@ namespace RomanticWeb.Mapping.Attributes
 
         #endregion
 
-        #region Non-public methods
-        internal IPropertyMapping GetMapping(Type propertyType,string propertyName,MappingContext mappingContext)
+        #region Public methods
+        internal virtual IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor,PropertyInfo property)
         {
-            return GetMappingInternal(propertyType, propertyName, GetTermUri(mappingContext), mappingContext);
-        }
-
-        /// <summary>Creates a <see cref="PropertyMapping"/>.</summary>
-        protected virtual IPropertyMapping GetMappingInternal(Type propertyType,string propertyName,Uri uri,MappingContext mappingContext)
-        {
-            return new PropertyMapping(propertyType, propertyName, uri);
+            return visitor.Visit(property,this);
         }
 
         #endregion

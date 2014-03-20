@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
@@ -32,8 +31,8 @@ namespace RomanticWeb.Tests.Linq
         public void SetUp()
         {
             _ontologies=new TestOntologyProvider();
-            MappingContext mappingContext=new MappingContext(_ontologies);
-            _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
+            var mappingContext=new MappingContext(_ontologies);
+            _mappings=new TestMappingsRepository(_ontologies,new NamedGraphsPersonMapping());
             _mappings.RebuildMappings(mappingContext);
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));

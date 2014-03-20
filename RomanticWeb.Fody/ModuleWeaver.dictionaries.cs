@@ -13,7 +13,7 @@ namespace RomanticWeb.Fody
         private const TypeAttributes MapTypeAttributes=TypeAttributes.Public | TypeAttributes.BeforeFieldInit;
         private const MethodAttributes OverrideMethodAttributes=MethodAttributes.Public|MethodAttributes.Family|MethodAttributes.Virtual|MethodAttributes.HideBySig;
 
-        private DictionaryPropertyMappingFactory _factory;
+        private DictionaryMappingMetaFactory _metaFactory;
 
         private IEnumerable<DictionaryMappingMeta> DictionaryPropertiesMappedWithAttributes
         {
@@ -22,15 +22,25 @@ namespace RomanticWeb.Fody
                 return from typeDefinition in ModuleDefinition.Types
                        from property in typeDefinition.Properties
                        where HasDictionaryAttribute(property)
-                       select _factory.CreateFromAttributeMapping(property);
+                       select _metaFactory.CreateFromAttributeMapping(property);
+            }
+        }
+
+        private IEnumerable<DictionaryMappingMeta> DictionaryPropertiesMappedWithFluent
+        {
+            get
+            {
+                return (from type in ModuleDefinition.Types
+                        where type.HasAncestorOfType(Imports.EntityMapTypeRef.FullName)
+                        select _metaFactory.CreateManyFromEntityMap(type)).SelectMany(meta => meta);
             }
         }
 
         private void AddDictionaryEntityTypesAndMappings()
         {
-            _factory=new DictionaryPropertyMappingFactory(Imports);
+            _metaFactory=new DictionaryMappingMetaFactory(Imports);
 
-            foreach (var dictionaryProperty in DictionaryPropertiesMappedWithAttributes.ToList())
+            foreach (var dictionaryProperty in GetDictionaryPropertiesMeta())
             {
                 CreateDictionaryEntryType(dictionaryProperty);
                 CreateDictionaryOwnerType(dictionaryProperty);
@@ -38,17 +48,22 @@ namespace RomanticWeb.Fody
                 ModuleDefinition.Types.Add(dictionaryProperty.OwnerType);
                 ModuleDefinition.Types.Add(dictionaryProperty.EntryType);
 
-                var ownerMapping=CreateOwnerMapping(dictionaryProperty);
-                var entryMapping=CreateEntryMapping(dictionaryProperty);
+                ////var ownerMapping = CreateOwnerMapping(dictionaryProperty);
+                ////var entryMapping = CreateEntryMapping(dictionaryProperty);
 
-                ownerMapping.Methods.Add(CreateDictionaryEntriesMappingOverride(dictionaryProperty));
-                entryMapping.Methods.Add(CreateEntryKeyMappingOverride(dictionaryProperty));
-                entryMapping.Methods.Add(CreateEntryValueMappingOverride(dictionaryProperty));
+                ////ownerMapping.Methods.Add(CreateDictionaryEntriesMappingOverride(dictionaryProperty));
+                ////entryMapping.Methods.Add(CreateEntryKeyMappingOverride(dictionaryProperty));
+                ////entryMapping.Methods.Add(CreateEntryValueMappingOverride(dictionaryProperty));
 
-                ModuleDefinition.Types.Add(ownerMapping);
-                ModuleDefinition.Types.Add(entryMapping);
+                ////ModuleDefinition.Types.Add(ownerMapping);
+                ////ModuleDefinition.Types.Add(entryMapping);
             }
         }
+
+        private IList<DictionaryMappingMeta> GetDictionaryPropertiesMeta()
+        {
+            return DictionaryPropertiesMappedWithAttributes.Union(DictionaryPropertiesMappedWithFluent).ToList();
+        } 
 
         private TypeDefinition CreateOwnerMapping(DictionaryMappingMeta mappingMeta)
         {

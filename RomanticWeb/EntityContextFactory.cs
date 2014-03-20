@@ -18,19 +18,16 @@ namespace RomanticWeb
     public class EntityContextFactory:IEntityContextFactory
     {
         #region Fields
-        private static readonly object MappingsLocker=new Object();
         private static readonly object OntologiesLocker=new Object();
         private static IEnumerable<IOntologyProvider> importedOntologies;
-        private static IEnumerable<IMappingsRepository> importedMappings;
 
         private readonly IResultTransformerCatalog _transformerCatalog=new ResultTransformerCatalog();
         private readonly ConverterCatalog _conveters=new ConverterCatalog();
-        private readonly MappingBuilder _mappingBuilder=new MappingBuilder();
+        private readonly MappingsRepository _mappingsRepository=new MappingsRepository();
         private bool _isInitialized;
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
         private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
-        private CompoundMappingsRepository _actualMappingsRepository;
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
@@ -70,7 +67,7 @@ namespace RomanticWeb
             get
             {
                 EnsureInitialized();
-                return _actualMappingsRepository;
+                return _mappingsRepository;
             }
         }
 
@@ -97,22 +94,6 @@ namespace RomanticWeb
                 }
 
                 return importedOntologies;
-            }
-        }
-
-        private IEnumerable<IMappingsRepository> ImportedMappings
-        {
-            get
-            {
-                if (importedMappings==null)
-                {
-                    lock (MappingsLocker)
-                    {
-                        importedMappings=ContainerFactory.GetInstancesImplementing<IMappingsRepository>();
-                    }
-                }
-
-                return importedMappings;
             }
         }
 
@@ -175,15 +156,8 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
-            var repositories = _mappingBuilder.BuildMappings(buildMappings); 
-            EnsureMappingsRepository();
-            foreach (var mappingsRepository in repositories)
-            {
-                if (!_actualMappingsRepository.MappingsRepositories.Contains(mappingsRepository))
-                {
-                    _actualMappingsRepository.MappingsRepositories.Add(mappingsRepository);
-                }
-            }
+            var mappingBuilder=new MappingBuilder(_mappingsRepository);
+            buildMappings.Invoke(mappingBuilder);
 
             return this;
         }
@@ -222,7 +196,6 @@ namespace RomanticWeb
             }
 
             EnsureOntologyProvider();
-            EnsureMappingsRepository();
             EnsureMappingsRebuilt();
             EnsureNamedGraphSelector();
             _isInitialized=true;
@@ -236,18 +209,10 @@ namespace RomanticWeb
             }
         }
 
-        private void EnsureMappingsRepository()
-        {
-            if (_actualMappingsRepository==null)
-            {
-                _actualMappingsRepository=new CompoundMappingsRepository(ImportedMappings);
-            }
-        }
-
         private void EnsureMappingsRebuilt()
         {
             var mappingContext=new MappingContext(_actualOntologyProvider,_conventions.Value);
-            _actualMappingsRepository.RebuildMappings(mappingContext);
+            _mappingsRepository.RebuildMappings(mappingContext);
         }
 
         private void EnsureNamedGraphSelector()

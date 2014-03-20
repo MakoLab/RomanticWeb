@@ -22,11 +22,11 @@ namespace RomanticWeb.Tests.Stubs
             var collection=property as ICollectionMapping;
             if (collection!=null)
             {
-                switch (collection.StorageStrategy)
+                switch (collection.StoreAs)
                 {
-                    case StorageStrategyOption.RdfList:
+                    case StoreAs.RdfList:
                         return new RdfListTransformer();
-                    case StorageStrategyOption.Simple:
+                    case StoreAs.SimpleCollection:
                         return new ObservableCollectionTransformer();
                 }
             }

@@ -4,8 +4,8 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
@@ -21,9 +21,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             get { return EntityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz")); }
         }
 
-        private new TestMappingsRepository Mappings
+        private new TestMappingSource Mappings
         {
-            get { return (TestMappingsRepository)base.Mappings; }
+            get { return (TestMappingSource)base.Mappings; }
         }
 
 		[Test]
@@ -401,9 +401,9 @@ namespace RomanticWeb.Tests.IntegrationTests
                    .Should().Contain(new[] { "Karol", "Gniewko", "Dominik", "Przemek" });
         }
 
-        protected override IMappingsRepository SetupMappings()
+        protected override IMappingSource SetupMappings()
         {
-            return new TestMappingsRepository();
+            return new TestMappingSource();
         }
 
         protected override void ChildSetup()

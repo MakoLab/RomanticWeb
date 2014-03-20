@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -224,9 +224,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             Factory.WithNamedGraphSelector(new TestGraphSelector()); 
         }
 
-        protected override IMappingsRepository SetupMappings()
+        protected override IMappingSource SetupMappings()
         {
-            return new TestMappingsRepository();
+            return new TestMappingSource();
         }
     }
 }

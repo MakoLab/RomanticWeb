@@ -1,5 +1,7 @@
-﻿using System;
-using RomanticWeb.Mapping.Model;
+﻿using System.Linq;
+using System.Reflection;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -15,9 +17,11 @@ namespace RomanticWeb.Mapping.Attributes
         {
         }
 
-        protected override IPropertyMapping GetMappingInternal(Type propertyType, string propertyName, Uri uri, MappingContext mappingContext)
+        internal override IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor,PropertyInfo property)
         {
-            return new DictionaryMapping(propertyType,propertyName,uri);
+            var keyAttribute=property.GetCustomAttributes<KeyAttribute>().SingleOrDefault();
+            var valueAttribute=property.GetCustomAttributes<ValueAttribute>().SingleOrDefault();
+            return visitor.Visit(property,this,visitor.Visit(keyAttribute),visitor.Visit(valueAttribute));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.TestEntities.Animals;
 
 namespace RomanticWeb.Tests.Mapping
@@ -7,9 +8,9 @@ namespace RomanticWeb.Tests.Mapping
     [TestFixture]
     public class AttributeMappingsRepositoryTests : MappingRepositoryTests
     {
-        protected override IMappingsRepository CreateMappingsRepository()
+        protected override IMappingSource CreateMappingSource()
         {
-            return new AttributeMappingsRepository(typeof(IAnimal).Assembly);
+            return new AttributeMappingsSource(typeof(IAnimal).Assembly);
         }
     }
 }

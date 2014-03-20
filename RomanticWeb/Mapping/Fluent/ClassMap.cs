@@ -1,12 +1,13 @@
 ﻿using System;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>
     /// A mapping definition for rdf class
     /// </summary>
-    public sealed class ClassMap : TermMap
+    public sealed class ClassMap:TermMap
     {
         private readonly TermPart<ClassMap> _termPart;
 
@@ -18,9 +19,9 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Sets the class name 
         /// </summary>
-        public ClassMap Is(string prefix, string className)
+        public ClassMap Is(string prefix,string className)
         {
-            return _termPart.Is(prefix, className);
+            return _termPart.Is(prefix,className);
         }
 
         /// <summary>
@@ -31,9 +32,9 @@ namespace RomanticWeb.Mapping.Fluent
             return _termPart.Is(uri);
         }
 
-        internal IClassMapping GetMapping(MappingContext mappingContext)
+        public IClassMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
-            return new ClassMapping(GetTermUri(mappingContext.OntologyProvider));
+            return fluentMapsVisitor.Visit(this);
         }
- }
+    }
 }

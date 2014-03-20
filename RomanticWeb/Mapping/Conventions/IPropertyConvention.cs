@@ -1,8 +1,8 @@
-﻿using RomanticWeb.Mapping.Model;
+﻿using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Conventions
 {
-    public interface IPropertyConvention : IConvention<IPropertyMapping>
+    public interface IPropertyConvention:IConvention<IPropertyMappingProvider>
     {
     }
 }

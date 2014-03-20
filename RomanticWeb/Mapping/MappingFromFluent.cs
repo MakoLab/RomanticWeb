@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.Mapping
 {
@@ -11,7 +12,7 @@ namespace RomanticWeb.Mapping
 
         public override void FromAssembly(Assembly mappingAssembly)
         {
-            MappingBuilder.AddMapping(mappingAssembly,new FluentMappingsRepository(mappingAssembly));
+            MappingBuilder.AddMapping(mappingAssembly,new FluentMappingsSource(mappingAssembly));
         }
     }
 }

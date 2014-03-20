@@ -42,8 +42,8 @@ namespace RomanticWeb.Tests
                 });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+            _entityContextFactory.Mappings.Should().BeOfType<MappingsRepository>();
+            _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
 
         [Test]
@@ -61,11 +61,10 @@ namespace RomanticWeb.Tests
                 });
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+            _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
 
-        [Test, Description("Calling WithMappings twice")]
+        [Test,Description("Calling WithMappings twice")]
         public void Adding_attribute_mappings_for_an_Assembly_twice_should_add_only_one_repository()
         {
             // given
@@ -76,8 +75,8 @@ namespace RomanticWeb.Tests
             _entityContextFactory.WithMappings(m => m.Attributes.FromAssemblyOf<IPerson>());
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+            _entityContextFactory.Mappings.Should().BeOfType<MappingsRepository>();
+            _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
 
         [Test,Description("Calling WithMappings twice")]
@@ -91,8 +90,8 @@ namespace RomanticWeb.Tests
             _entityContextFactory.WithMappings(m => m.Fluent.FromAssemblyOf<IPerson>());
 
             // then
-            _entityContextFactory.Mappings.Should().BeAssignableTo<CompoundMappingsRepository>();
-            _entityContextFactory.Mappings.As<CompoundMappingsRepository>().MappingsRepositories.Should().HaveCount(3);
+            _entityContextFactory.Mappings.Should().BeOfType<MappingsRepository>();
+            _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
     }
 }

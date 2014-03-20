@@ -122,6 +122,8 @@
     <Compile Include="IntegrationTests\NamedGraphMappingTests.cs" />
     <Compile Include="Mapping\Conventions\CollectionConventionTests.cs" />
     <Compile Include="Mapping\Conventions\RdfListConventionTests.cs" />
+    <Compile Include="Mapping\InheritanceAwareProviderTests.cs" />
+    <Compile Include="Mapping\TestingInheritanceTreeProvider.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelectorTests.cs" />
     <Compile Include="dotNetRDF\TripleStoreAdapterTests.cs" />
     <Compile Include="EntityContextFactoryTests.cs" />
@@ -148,11 +150,13 @@
     <Compile Include="NodeTests.cs" />
     <Compile Include="RdfNodeTests.cs" />
     <Compile Include="Stubs\TestGraphSelector.cs" />
+    <Compile Include="Stubs\TestMappingSource.cs" />
     <Compile Include="Stubs\TestMappingsRepository.cs" />
     <Compile Include="Linq\SparqlTests.cs" />
     <Compile Include="OntologyAccessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\TestOntologyProvider.cs" />
+    <Compile Include="Stubs\TestPropertyInfo.cs" />
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="EntityTripleTests.cs" />
     <Compile Include="Stubs\TestTransformerCatalog.cs" />

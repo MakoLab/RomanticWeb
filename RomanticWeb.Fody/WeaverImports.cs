@@ -202,6 +202,14 @@ namespace RomanticWeb.Fody
             }
         }
 
+        public TypeReference EntityMapTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(_references.Orm.FindType("EntityMap"));
+            }
+        }
+
         private ModuleDefinition ModuleDefinition
         {
             get

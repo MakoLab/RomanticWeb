@@ -8,12 +8,12 @@ namespace RomanticWeb.Mapping.Model
     [DebuggerDisplay("Collection {Name}")]
     internal class CollectionMapping:PropertyMapping,ICollectionMapping
     {
-        public CollectionMapping(Type returnType,string name,Uri predicateUri,StorageStrategyOption storageStrategy)
+        public CollectionMapping(Type returnType,string name,Uri predicateUri,StoreAs storageStrategy)
             :base(returnType,name,predicateUri)
         {
-            StorageStrategy=storageStrategy;
+            StoreAs=storageStrategy;
         }
 
-        public StorageStrategyOption StorageStrategy { get; set; }
+        public StoreAs StoreAs { get; private set; }
     }
 }

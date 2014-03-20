@@ -116,7 +116,7 @@ namespace RomanticWeb.Converters
                 var collectionMapping=propertyMapping as ICollectionMapping;
                 if (collectionMapping!=null)
                 {
-                    shouldConvert&=collectionMapping.StorageStrategy!=StorageStrategyOption.RdfList;
+                    shouldConvert&=collectionMapping.StoreAs!=StoreAs.RdfList;
                 }
 
                 shouldConvert&=!(propertyMapping is IDictionaryMapping);

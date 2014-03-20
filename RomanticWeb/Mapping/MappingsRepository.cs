@@ -5,32 +5,53 @@ using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping
 {
-    public abstract class MappingsRepositoryBase:IMappingsRepository
+    public sealed class MappingsRepository : IMappingsRepository
     {
+        private readonly object _locker=new object();
+        private readonly IDictionary<Tuple<Assembly,Type>,IMappingSource> _sources;
         private readonly IDictionary<Type, IEntityMapping> _mappings;
 
-        protected MappingsRepositoryBase()
+        public MappingsRepository()
         {
-            _mappings=new Dictionary<Type,IEntityMapping>();
+            _sources=new Dictionary<Tuple<Assembly,Type>,IMappingSource>();
+            _mappings = new Dictionary<Type, IEntityMapping>();
+        }
+
+        internal IEnumerable<IMappingSource> Sources
+        {
+            get
+            {
+                return _sources.Values;
+            }
         }
 
         public void RebuildMappings(MappingContext mappingContext)
         {
-            foreach (var mapping in CreateMappings(mappingContext))
+            var conventionsVisitor=new ConventionsVisitor(mappingContext.Conventions);
+            var mappingBuilder=new MappingModelBuilder(mappingContext);
+
+            var providers = new Dictionary<Type, IList<IEntityMappingProvider>>();
+            foreach (var provider in Sources.SelectMany(mappingSource => mappingSource.GetMappingProviders()))
             {
-                foreach (var property in mapping.Properties)
+                provider.Accept(conventionsVisitor);
+                if (!providers.ContainsKey(provider.EntityType))
                 {
-                    ApplyConventions<IPropertyConvention,IPropertyMapping>(property,mappingContext.Conventions);
-                    if (property is ICollectionMapping)
-                    {
-                        ApplyConventions<ICollectionConvention,ICollectionMapping>(property as ICollectionMapping, mappingContext.Conventions);
-                    }
+                    providers[provider.EntityType]=new List<IEntityMappingProvider>();
                 }
 
-                StoreMapping(mapping);
+                providers[provider.EntityType].Add(provider);
+            }
+
+            var singleProviderPerType=providers.Select(provider => provider.Value.Count>1?new MultiMappingProvider(provider.Key,provider.Value):provider.Value[0]).ToList();
+
+            var inheriatenceBuilder=new InheritanceMappingBuilder(singleProviderPerType);
+            foreach (var provider in inheriatenceBuilder.CombineInheritingMappings())
+            {
+                StoreMapping(mappingBuilder.BuildMapping(provider));
             }
         }
 
@@ -71,18 +92,16 @@ namespace RomanticWeb.Mapping
                     select propertyMapping).FirstOrDefault();
         }
 
-        protected abstract IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext); 
-
-        private static void ApplyConventions<TConvention,TMapping>(TMapping property,IEnumerable<IConvention> conventions)
-            where TConvention:IConvention<TMapping>
+        public void AddSource(Assembly mappingAssembly,IMappingSource mappingSource)
         {
-            var applicableConventions = from convention in conventions.OfType<TConvention>()
-                                        where convention.ShouldApply(property)
-                                        select convention;
-
-            foreach (var convention in applicableConventions)
+            lock (_locker)
             {
-                convention.Apply(property);
+                var key=Tuple.Create(mappingAssembly,mappingSource.GetType());
+                
+                if (!_sources.ContainsKey(key))
+                {
+                    _sources.Add(key,mappingSource);
+                }
             }
         }
 

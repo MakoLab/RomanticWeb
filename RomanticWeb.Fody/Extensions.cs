@@ -8,7 +8,7 @@ namespace RomanticWeb.Fody
 {
     public static class Extensions
     {
-        public static MethodReference MakeHostInstanceGeneric(this MethodReference self, params TypeReference[] arguments)
+        internal static MethodReference MakeHostInstanceGeneric(this MethodReference self, params TypeReference[] arguments)
         {
             var reference = new MethodReference(self.Name, self.ReturnType, self.DeclaringType.MakeGenericInstanceType(arguments))
             {
@@ -30,7 +30,7 @@ namespace RomanticWeb.Fody
             return reference;
         }
 
-        public static MethodDefinition FindMethod(this TypeDefinition typeDefinition, string method, params string[] paramTypes)
+        internal static MethodDefinition FindMethod(this TypeDefinition typeDefinition, string method, params string[] paramTypes)
         {
             var firstOrDefault = typeDefinition.Methods
                                                .FirstOrDefault(x =>
@@ -46,7 +46,7 @@ namespace RomanticWeb.Fody
             return firstOrDefault;
         }
 
-        public static TypeDefinition FindType(this AssemblyDefinition assembly,string name)
+        internal static TypeDefinition FindType(this AssemblyDefinition assembly, string name)
         {
             var type=assembly.MainModule.Types.SingleOrDefault(t => t.Name==name||t.FullName==name);
 
@@ -58,7 +58,7 @@ namespace RomanticWeb.Fody
             return type;
         }
 
-        public static MethodReference FindConstructor(this TypeDefinition typeDefinition, params string[] paramTypes)
+        internal static MethodReference FindConstructor(this TypeDefinition typeDefinition, params string[] paramTypes)
         {
             var firstOrDefault = typeDefinition.GetConstructors().FirstOrDefault(x => IsMatch(x, paramTypes));
             if (firstOrDefault == null)
@@ -80,7 +80,7 @@ namespace RomanticWeb.Fody
             return childType.HasAncestorOfType("Nancy.NancyModule");
         }
 
-        internal static bool HasAncestorOfType(this TypeDefinition childType, string typeName)
+        internal static bool HasAncestorOfType(this TypeDefinition childType,string typeName)
         {
             var baseType=childType.BaseType;
 

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
@@ -18,11 +19,18 @@ namespace RomanticWeb.Mapping.Fluent
                 return new TermPart<PropertyMap>(this);
             }
         }
-        
-        /// <summary>Creates a mapping from this definition.</summary>
-        public override IPropertyMapping GetMapping(MappingContext mappingContext)
+
+        public override Entities.ResultAggregations.Aggregation? Aggregation
         {
-            return new PropertyMapping(PropertyInfo.PropertyType, PropertyInfo.Name, GetTermUri(mappingContext.OntologyProvider));
+            get
+            {
+                return Entities.ResultAggregations.Aggregation.SingleOrDefault;
+            }
+        }
+
+        public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+        {
+            return fluentMapsVisitor.Visit(this);
         }
     }
 }

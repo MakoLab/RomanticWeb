@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Animals;
@@ -14,7 +18,7 @@ namespace RomanticWeb.Tests.Mapping
     [TestFixture]
     public abstract class MappingRepositoryTests
     {
-        private IMappingsRepository _mappingsRepository;
+        private MappingsRepository _mappingsRepository;
         private Mock<IOntologyProvider> _ontologies;
 
         [SetUp]
@@ -24,8 +28,16 @@ namespace RomanticWeb.Tests.Mapping
             _ontologies.Setup(o => o.ResolveUri(It.IsAny<string>(), It.IsAny<string>()))
                        .Returns((string p, string t) => GetUri(p, t));
 
-            _mappingsRepository = CreateMappingsRepository();
-            _mappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object));
+            _mappingsRepository=new MappingsRepository();
+            _mappingsRepository.AddSource(GetType().Assembly,CreateMappingSource());
+            IEnumerable<IConvention> conventions=new IConvention[]
+                                                     {
+                                                         new DefaultDictionaryKeyPredicateConvention(),
+                                                         new DefaultDictionaryValuePredicateConvention(),
+                                                         new CollectionConvention(),
+                                                         new RdfListConvention()
+                                                     };
+            _mappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object,conventions));
         }
 
         [Test]
@@ -84,7 +96,7 @@ namespace RomanticWeb.Tests.Mapping
         public void Subclass_should_inherit_parent_Class_mappings()
         {
             // given
-            var mapping = _mappingsRepository.MappingFor<IHuman>();
+            var mapping=_mappingsRepository.MappingFor<IHuman>();
 
             // when
             var classMappings=mapping.Classes;
@@ -106,7 +118,50 @@ namespace RomanticWeb.Tests.Mapping
             propertyMapping.As<IDictionaryMapping>().ValuePredicate.Should().Be(Vocabularies.Rdf.@object);
         }
 
-        protected abstract IMappingsRepository CreateMappingsRepository();
+        [TestCase("DefaultListMapping",StoreAs.RdfList)]
+        [TestCase("DefaultEnumerableMapping",StoreAs.SimpleCollection)]
+        [TestCase("DefaultCollectionMapping",StoreAs.SimpleCollection)]
+        public void Default_setting_for_collection_should_be_replaced_by_conventions(string propertyName,StoreAs asExpected)
+        {
+            // given
+            var mapping=_mappingsRepository.MappingFor<IEntityWithCollections>();
+
+            // when
+            var property=(ICollectionMapping)mapping.PropertyFor(propertyName);
+
+            // then
+            property.StoreAs.Should().Be(asExpected);
+        }
+
+        [TestCase("OverridenListMapping",StoreAs.SimpleCollection)]
+        [TestCase("OverridenEnumerableMapping",StoreAs.RdfList)]
+        [TestCase("OverridenCollectionMapping",StoreAs.RdfList)]
+        public void Explicit_setting_for_collection_should_not_be_replaced_by_conventions(string propertyName,StoreAs asExpected)
+        {
+            // given
+            var mapping=_mappingsRepository.MappingFor<IEntityWithCollections>();
+
+            // when
+            var property=(ICollectionMapping)mapping.PropertyFor(propertyName);
+
+            // then
+            property.StoreAs.Should().Be(asExpected);
+        }
+
+        [Test]
+        public void Property_should_be_mapped_to_SingleOrDefault_result()
+        {
+            // given
+            var mapping=_mappingsRepository.MappingFor<IAnimal>();
+
+            // when
+            var propertyMapping=mapping.PropertyFor("Name");
+
+            // then
+            propertyMapping.Aggregation.Should().Be(Aggregation.SingleOrDefault);
+        }
+
+        protected abstract IMappingSource CreateMappingSource();
 
         private static Uri GetUri(string prefix, string term)
         {

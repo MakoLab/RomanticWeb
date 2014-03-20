@@ -123,7 +123,7 @@ namespace RomanticWeb.Tests
             var mapping = new
             {
                 ReturnType=collectionType,
-                StorageStrategy=StorageStrategyOption.RdfList
+                StoreAs=StoreAs.RdfList
             }.ActLike<ICollectionMapping>();
             var entity=new { }.ActLike<IEntity>();
             _entityContext.Setup(c => c.Load<IEntity>(It.IsAny<EntityId>(),false)).Returns(entity);
@@ -151,7 +151,7 @@ namespace RomanticWeb.Tests
             var mapping = new
             {
                 ReturnType = collectionType,
-                StorageStrategy = StorageStrategyOption.RdfList
+                StoreAs = StoreAs.RdfList
             }.ActLike<IPropertyMapping>();
 
             // when
@@ -172,7 +172,7 @@ namespace RomanticWeb.Tests
             var property = new
                              {
                                  ReturnType=typeof(string),
-                                 StorageStrategy=StorageStrategyOption.None
+                                 StoreAs=StoreAs.Undefined
                              }.ActLike<IPropertyMapping>();
 
             // when

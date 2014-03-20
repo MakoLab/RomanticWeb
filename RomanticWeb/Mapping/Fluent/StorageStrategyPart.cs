@@ -1,5 +1,4 @@
-﻿using RomanticWeb.Entities.ResultAggregations;
-using RomanticWeb.Mapping.Model;
+﻿using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping.Fluent
 {
@@ -20,8 +19,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public CollectionMap SimpleCollection()
         {
-            _collectionMap.StorageStrategy=StorageStrategyOption.Simple;
-            _collectionMap.Aggregation=Aggregation.Original;
+            _collectionMap.StorageStrategy=StoreAs.SimpleCollection;
             return _collectionMap;
         }
 
@@ -30,8 +28,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public CollectionMap RdfList()
         {
-            _collectionMap.StorageStrategy=StorageStrategyOption.RdfList;
-            _collectionMap.Aggregation=Aggregation.SingleOrDefault;
+            _collectionMap.StorageStrategy=StoreAs.RdfList;
             return _collectionMap;
         }
     }

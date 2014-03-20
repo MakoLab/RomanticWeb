@@ -97,77 +97,93 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool TryGetMember(GetMemberBinder binder,out object result)
         {
-            _entity.EnsureIsInitialized();
-
-            var property=_entityMapping.PropertyFor(binder.Name);
-            var graph=SelectNamedGraph(property);
-
-            LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
-
-            IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-            var objectsForPredicate=_converter.ConvertNodes(objects,property);
-            var aggregatedResult=AggregateResults(property,objectsForPredicate);
-            var resultTransformer=_resultTransformers.GetTransformer(property);
-
-            result=resultTransformer.GetTransformed(this,property,Context,aggregatedResult);
-
-            if (result is IEntity)
+            try
             {
-                var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
+                _entity.EnsureIsInitialized();
 
-                if (entityProxy != null)
+                var property=_entityMapping.PropertyFor(binder.Name);
+                var graph=SelectNamedGraph(property);
+
+                LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
+
+                IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
+                var objectsForPredicate=_converter.ConvertNodes(objects,property);
+                var aggregatedResult=AggregateResults(property,objectsForPredicate);
+                var resultTransformer=_resultTransformers.GetTransformer(property);
+
+                result=resultTransformer.GetTransformed(this,property,Context,aggregatedResult);
+
+                if (result is IEntity)
                 {
-                    SetNamedGraphOverride(entityProxy,property);
-                }
-            }
+                    var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
 
-            return true;
+                    if (entityProxy != null)
+                    {
+                        SetNamedGraphOverride(entityProxy,property);
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                LogTo.Fatal("An error occured when getting value for property {0}#{1}",_entityMapping.EntityType.FullName,binder.Name);
+                throw;
+            }
         }
 
         /// <inheritdoc />
         public override bool TrySetMember(SetMemberBinder binder,object value)
         {
-            _entity.EnsureIsInitialized();
-
-            var property=_entityMapping.PropertyFor(binder.Name);
-
-            LogTo.Trace("Setting property {0}",property.Uri);
-
-            var propertyUri=Node.ForUri(property.Uri);
-            var graphUri=SelectNamedGraph(property);
-
-            if (property is ICollectionMapping && ((ICollectionMapping)property).StorageStrategy == StorageStrategyOption.RdfList)
+            try
             {
-                if (value is IRdfListAdapter)
+                _entity.EnsureIsInitialized();
+
+                var property=_entityMapping.PropertyFor(binder.Name);
+
+                LogTo.Trace("Setting property {0}",property.Uri);
+
+                var propertyUri=Node.ForUri(property.Uri);
+                var graphUri=SelectNamedGraph(property);
+
+                if (property is ICollectionMapping && ((ICollectionMapping)property).StoreAs == StoreAs.RdfList)
                 {
-                    Node listHead=Node.FromEntityId((value as IRdfListAdapter).Head.Id);
-                    _store.ReplacePredicateValues(Id,propertyUri,new[] { listHead },graphUri);
+                    if (value is IRdfListAdapter)
+                    {
+                        Node listHead=Node.FromEntityId((value as IRdfListAdapter).Head.Id);
+                        _store.ReplacePredicateValues(Id,propertyUri,new[] { listHead },graphUri);
+                    }
+                    else
+                    {
+                        var genericArguments = property.ReturnType.GetGenericArguments();
+                        var ctor =
+                            typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
+                                                    .GetConstructor(new[] { typeof(IEntityContext), typeof(OverridingGraphSelector) });
+                        var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
+                        var rdfList=(IRdfListAdapter)ctor.Invoke(new object[] { Context,paremeters });
+
+                        foreach (var item in (IEnumerable)value)
+                        {
+                            rdfList.Add(item);
+                        }
+
+                        Node listHead=Node.FromEntityId(rdfList.Head.Id);
+                        _store.ReplacePredicateValues(Id, propertyUri, new[] { listHead },graphUri);
+                    }
                 }
                 else
                 {
-                    var genericArguments = property.ReturnType.GetGenericArguments();
-                    var ctor =
-                        typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                                .GetConstructor(new[] { typeof(IEntityContext), typeof(OverridingGraphSelector) });
-                    var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
-                    var rdfList=(IRdfListAdapter)ctor.Invoke(new object[] { Context,paremeters });
-
-                    foreach (var item in (IEnumerable)value)
-                    {
-                        rdfList.Add(item);
-                    }
-
-                    Node listHead=Node.FromEntityId(rdfList.Head.Id);
-                    _store.ReplacePredicateValues(Id, propertyUri, new[] { listHead },graphUri);
+                    var newValues=_converter.ConvertBack(value,property);
+                    _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
                 }
-            }
-            else
-            {
-                var newValues=_converter.ConvertBack(value,property);
-                _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
-            }
 
-            return true;
+                return true;
+            }
+            catch
+            {
+                LogTo.Fatal("An error occured when setting value for property {0}#{1}", _entityMapping.EntityType.FullName, binder.Name);
+                throw;
+            }
         }
 
         /// <inheritdoc />

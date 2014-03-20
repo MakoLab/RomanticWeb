@@ -1,14 +1,13 @@
-﻿using System;
-using RomanticWeb.Entities.ResultAggregations;
+﻿using System.Reflection;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a collection to an RDF predicate.</summary>
     public class CollectionAttribute:PropertyAttribute
     {
-        private StorageStrategyOption _storageStrategy;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionAttribute"/> class.
         /// </summary>
@@ -17,7 +16,6 @@ namespace RomanticWeb.Mapping.Attributes
         public CollectionAttribute(string prefix,string propertyName)
             :base(prefix,propertyName)
         {
-            StorageStrategy = StorageStrategyOption.Simple;
         }
 
         /// <summary>
@@ -32,49 +30,11 @@ namespace RomanticWeb.Mapping.Attributes
         /// <summary>
         /// Gets or sets the storage strategy
         /// </summary>
-        public StorageStrategyOption StorageStrategy
+        public StoreAs StoreAs { get; set; }
+
+        internal override IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor, PropertyInfo property)
         {
-            get
-            {
-                return _storageStrategy;
-            }
-
-            set
-            {
-                switch (value)
-                {
-                    case StorageStrategyOption.Simple:
-                        Aggregation=Entities.ResultAggregations.Aggregation.Original;
-                        break;
-                    case StorageStrategyOption.RdfList:
-                        Aggregation=Entities.ResultAggregations.Aggregation.SingleOrDefault;
-                        break;
-                    default:
-                        Aggregation=null;
-                        break;
-                }
-
-                _storageStrategy=value;
-            }
-        }
-
-        private Aggregation? Aggregation { get; set; }
-
-        /// <summary>
-        /// Creates a <see cref="CollectionMapping"/>
-        /// </summary>
-        protected override IPropertyMapping GetMappingInternal(Type propertyType, string propertyName, Uri uri, MappingContext mappingContext)
-        {
-            var collectionMapping = new CollectionMapping(propertyType, propertyName, uri, StorageStrategy);
-
-            if (StorageStrategy!=StorageStrategyOption.None)
-            {
-                collectionMapping.StorageStrategy=StorageStrategy;
-            }
-
-            collectionMapping.Aggregation = Aggregation;
-
-            return collectionMapping;
+            return visitor.Visit(property, this);
         }
     }
 }

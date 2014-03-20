@@ -41,12 +41,12 @@ namespace RomanticWeb.Entities
             var collectionMapping=property as ICollectionMapping;
             if (collectionMapping!=null)
             {
-                if (collectionMapping.StorageStrategy==StorageStrategyOption.RdfList)
+                if (collectionMapping.StoreAs==StoreAs.RdfList)
                 {
                     return new RdfListTransformer();
                 }
 
-                if (collectionMapping.StorageStrategy==StorageStrategyOption.Simple)
+                if (collectionMapping.StoreAs==StoreAs.SimpleCollection)
                 {
                     return new ObservableCollectionTransformer();
                 }

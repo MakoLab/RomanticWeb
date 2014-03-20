@@ -49,8 +49,8 @@ namespace RomanticWeb.Tests.Linq
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
             
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
-            _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
-            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new SingleOrDefaultConvention(), new RdfListConvention(),new CollectionConvention() });
+            _mappingsRepository=new TestMappingsRepository(ontologyProvider,new TestPersonMap(),new TestTypedEntityMap());
+            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new RdfListConvention(),new CollectionConvention() });
             _mappingsRepository.RebuildMappings(mappingContext);
             _entityContext=new EntityContext(
                 _factory.Object,

@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dictionaries\DictionaryMappingMeta.cs" />
-    <Compile Include="Dictionaries\DictionaryPropertyMappingFactory.cs" />
+    <Compile Include="Dictionaries\DictionaryMappingMetaFactory.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="ModuleWeaver.dictionaries.cs">
       <DependentUpon>ModuleWeaver.cs</DependentUpon>

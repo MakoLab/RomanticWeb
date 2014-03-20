@@ -1,5 +1,6 @@
 ﻿using System;
-using Anotar.NLog;
+using NullGuard;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -42,25 +43,17 @@ namespace RomanticWeb.Mapping.Attributes
 
         /// <summary>Gets the term.</summary>
         public string Term { get { return _term; } }
-        #endregion
 
-        #region Non-public methods
-        /// <summary>
-        /// Gets the term URI.
-        /// </summary>
-        /// <exception cref="MappingException"></exception>
-        protected Uri GetTermUri(MappingContext mappingContext)
+        public Uri Uri
         {
-            Uri uri=_uri??mappingContext.OntologyProvider.ResolveUri(Prefix,Term);
-            if (uri==null)
+            [return:AllowNull]
+            get
             {
-                var message=string.Format("Cannot resolve QName {0}:{1}",Prefix,Term);
-                LogTo.Fatal(message);
-                throw new MappingException(message);
+                return _uri;
             }
-
-            return uri;
         }
+
+        protected Func<IOntologyProvider,Uri> TermUriFactoryMethod { get; set; }
         #endregion
     }
 }

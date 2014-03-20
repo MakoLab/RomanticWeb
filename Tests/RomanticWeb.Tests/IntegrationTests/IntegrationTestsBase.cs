@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Animals;
 using RomanticWeb.Tests.Stubs;
@@ -23,7 +24,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        public IMappingsRepository Mappings { get; private set; }
+        public IMappingSource Mappings { get; private set; }
 
         protected IEntityContext EntityContext
         {
@@ -86,11 +87,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
         }
 
-        protected virtual IMappingsRepository SetupMappings()
+        protected virtual IMappingSource SetupMappings()
         {
-            var mock = new Mock<IMappingsRepository>();
-            mock.Setup(m => m.RebuildMappings(It.IsAny<MappingContext>()));
-            return mock.Object;
+            return new Mock<IMappingSource>().Object;
         }
 
         protected virtual void ChildSetup() 

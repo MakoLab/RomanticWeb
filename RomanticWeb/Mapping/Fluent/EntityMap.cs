@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Linq.Expressions;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
@@ -36,8 +36,8 @@ namespace RomanticWeb.Mapping.Fluent
         /// Gets a builder for mapping a collection property
         /// </summary>
         protected CollectionMap Collection<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
-		{
-			var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
+        {
+            var propertyMap=new CollectionMap(prop.ExtractPropertyInfo());
 
 			MappedProperties.Add(propertyMap);
 
@@ -60,7 +60,9 @@ namespace RomanticWeb.Mapping.Fluent
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class")]
     public abstract class EntityMap
     {
+        private readonly Type _type;
         private readonly IList<ClassMap> _classes;
+        private readonly IList<PropertyMapBase> _mappedProperties;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityMap"/> class.
@@ -68,16 +70,42 @@ namespace RomanticWeb.Mapping.Fluent
         /// <param name="type">The mapped type.</param>
         protected EntityMap(Type type)
         {
-            EntityType=type;
-            MappedProperties=new List<IPropertyMappingProvider>();
+            _type=type;
+            _mappedProperties=new List<PropertyMapBase>();
             _classes=new List<ClassMap>();
-		}
+        }
 
-		internal Type EntityType { get; set; }
+        internal Type Type
+        {
+            get
+            {
+                return _type;
+            }
+        }
 
-		internal IList<IPropertyMappingProvider> MappedProperties { get; private set; }
+        internal IEnumerable<ClassMap> Classes
+        {
+            get
+            {
+                return _classes;
+            }
+        }
 
-        internal IList<ClassMap> Classes { get { return _classes; } }
+        internal IEnumerable<PropertyMapBase> Properties
+        {
+            get
+            {
+                return _mappedProperties;
+            }
+        } 
+
+        protected IList<PropertyMapBase> MappedProperties
+        {
+            get
+            {
+                return _mappedProperties;
+            }
+        }
 
         /// <summary>
         /// Gets a builder for mapping the type
@@ -92,12 +120,9 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        internal EntityMapping CreateMapping(MappingContext mappingContext)
-		{
-            var classMappings=_classes.Select(cs => cs.GetMapping(mappingContext));
-            var propertyMappings=MappedProperties.Select(mp=>mp.GetMapping(mappingContext));
-
-            return new EntityMapping(EntityType,classMappings,propertyMappings);
-		}
-	}
+        public IEntityMappingProvider Accept(IFluentMapsVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
+    }
 }

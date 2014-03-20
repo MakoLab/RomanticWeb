@@ -11,7 +11,7 @@ namespace RomanticWeb.Mapping
 
         public override void FromAssembly(Assembly mappingAssembly)
         {
-            MappingBuilder.AddMapping(mappingAssembly, new AttributeMappingsRepository(mappingAssembly));
+            MappingBuilder.AddMapping(mappingAssembly,new AttributeMappingsSource(mappingAssembly));
         }
     }
 }

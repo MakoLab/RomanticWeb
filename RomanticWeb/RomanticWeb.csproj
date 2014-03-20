@@ -174,33 +174,63 @@
     <Compile Include="Linq\EntityQueryModelVisitor.cs" />
     <Compile Include="Linq\Sparql\GenericSparqlQueryVisitor.cs" />
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
+    <Compile Include="Mapping\Attributes\AttributeMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
+    <Compile Include="Mapping\Fluent\FluentMappingsSource.cs" />
+    <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />
+    <Compile Include="Mapping\Model\DictionaryMapping.cs" />
+    <Compile Include="Mapping\Providers\ClassMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\CollectionMappingProvider.cs" />
     <Compile Include="Mapping\Attributes\KeyAttribute.cs" />
+    <Compile Include="Mapping\Providers\DictionaryMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\EntityMappingProvider.cs" />
     <Compile Include="Mapping\Attributes\ValueAttribute.cs" />
     <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
+    <Compile Include="Mapping\Conventions\ConventionsVisitor.cs" />
+    <Compile Include="Mapping\Conventions\DefaultDictionaryKeyPredicateConvention.cs" />
+    <Compile Include="Mapping\Conventions\DefaultDictionaryValuePredicateConvention.cs" />
     <Compile Include="Mapping\Conventions\IConvention.cs" />
     <Compile Include="Mapping\Conventions\ICollectionConvention.cs" />
+    <Compile Include="Mapping\Conventions\IDictionaryConvention.cs" />
     <Compile Include="Mapping\Conventions\IPropertyConvention.cs" />
     <Compile Include="Mapping\Conventions\RdfListConvention.cs" />
-    <Compile Include="Mapping\Conventions\SingleOrDefaultConvention.cs" />
+    <Compile Include="Mapping\Dynamic\DynamicDictionaryMappingProvider.cs" />
     <Compile Include="Mapping\Fluent\DictionaryMap.cs" />
-    <Compile Include="Mapping\Fluent\IPropertyMappingProvider.cs" />
     <Compile Include="Mapping\Fluent\ITermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMapBase.cs" />
     <Compile Include="Mapping\MappingBuilder.cs" />
     <Compile Include="Mapping\MappingFrom.cs" />
     <Compile Include="Mapping\MappingFromAttributes.cs" />
     <Compile Include="Mapping\MappingFromFluent.cs" />
-    <Compile Include="Mapping\AssemblyMappingsRepository.cs" />
+    <Compile Include="Mapping\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Attributes\CollectionAttribute.cs" />
     <Compile Include="Mapping\Extensions.cs" />
-    <Compile Include="Mapping\FluentMappingsRepository.cs" />
     <Compile Include="Mapping\Fluent\ClassMap.cs" />
     <Compile Include="Mapping\Fluent\StorageStrategyPart.cs" />
     <Compile Include="Mapping\Fluent\TermMap.cs" />
-    <Compile Include="Mapping\MappingsRepositoryBase.cs" />
+    <Compile Include="Mapping\MappingsRepository.cs" />
+    <Compile Include="Mapping\Model\ICollectionMapping.cs" />
     <Compile Include="Mapping\Model\IDictionaryMapping.cs" />
+    <Compile Include="Mapping\Model\MappingModelBuilder.cs" />
+    <Compile Include="Mapping\Providers\IClassMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\ICollectionMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\IDictionaryMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\IEntityMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\IMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\IMappingSource.cs" />
+    <Compile Include="Mapping\Providers\InheritanceTreeProvider.cs" />
+    <Compile Include="Mapping\Providers\InheritanceMappingBuilder.cs" />
+    <Compile Include="Mapping\Providers\IPropertyMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\ITermMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\KeyMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\MultiMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\PropertyMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\TermMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
+    <Compile Include="Mapping\Visitors\IFluentMapsVisitor.cs" />
+    <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
+    <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -209,7 +239,7 @@
     <Compile Include="IEntitySource.cs" />
     <Compile Include="Converters\INodeConverter.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
-    <Compile Include="Mapping\AttributeMappingsRepository.cs" />
+    <Compile Include="Mapping\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\MappingException.cs" />
     <Compile Include="Mapping\Model\CollectionMapping.cs" />
@@ -228,7 +258,7 @@
     <Compile Include="Mapping\Attributes\PropertyAttribute.cs" />
     <Compile Include="Mapping\Attributes\ClassAttribute.cs" />
     <Compile Include="Mapping\Model\ClassMapping.cs" />
-    <Compile Include="Mapping\Model\StorageStrategyOption.cs" />
+    <Compile Include="Mapping\Model\StoreAs.cs" />
     <Compile Include="Mapping\ReflectionHelper.cs" />
     <Compile Include="Mapping\TypeExtensions.cs" />
     <Compile Include="Mapping\UnMappedTypeException.cs" />
@@ -418,6 +448,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

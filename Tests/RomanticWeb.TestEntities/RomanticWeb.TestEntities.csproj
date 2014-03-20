@@ -55,7 +55,11 @@
     <Compile Include="Animals\IUntypedAnimal.cs" />
     <Compile Include="BlankNodes\INested.cs" />
     <Compile Include="BlankNodes\IRoot.cs" />
+    <Compile Include="IEntityWithCollections.cs" />
     <Compile Include="IEntityWithDictionary.cs" />
+    <Compile Include="Inheritance\FluentChildMap.cs" />
+    <Compile Include="Inheritance\IAttributesParent.cs" />
+    <Compile Include="Inheritance\IFluentChild.cs" />
     <Compile Include="IPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

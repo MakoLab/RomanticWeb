@@ -1,24 +1,26 @@
 using System.Collections.Generic;
 using System.Reflection;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping
 {
     /// <summary>
-    /// Base class for implementations of <see cref="IMappingsRepository"/>, which scan an <see cref="Assembly"/>
+    /// Base class for implementations of <see cref="IMappingSource"/>, which scan an <see cref="Assembly"/>
     /// </summary>
-    public abstract class AssemblyMappingsRepository:MappingsRepositoryBase
+    public abstract class AssemblyMappingsSource:IMappingSource
     {
         private readonly Assembly _assembly;
 
-        /// <summary>Initializes a new instance of the <see cref="AssemblyMappingsRepository"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="AssemblyMappingsSource"/> class.</summary>
         /// <param name="assembly">The assembly.</param>
-        protected AssemblyMappingsRepository(Assembly assembly)
+        protected AssemblyMappingsSource(Assembly assembly)
         {
             _assembly=assembly;
         }
 
         /// <summary>Gets the source <see cref="System.Reflection.Assembly"/>.</summary>
         protected Assembly Assembly { get { return _assembly; } }
+
+        public abstract IEnumerable<IEntityMappingProvider> GetMappingProviders();
     }
 }

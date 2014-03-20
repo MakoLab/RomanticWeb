@@ -9,85 +9,70 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestMappingsRepository:MappingsRepositoryBase
+    public class TestMappingsRepository : IMappingsRepository
     {
-        private readonly List<EntityMap> _entityMaps;
+        private readonly IOntologyProvider _ontologyProvider;
+        private readonly TestMappingSource _mappingSource;
+        private MappingModelBuilder _builder;
+        private List<IEntityMapping> _mappings;
 
-        public TestMappingsRepository(params EntityMap[] entityMaps)
+        public TestMappingsRepository(IOntologyProvider ontologyProvider,params EntityMap[] entityMaps)
         {
-            _entityMaps = entityMaps.ToList();
+            _ontologyProvider=ontologyProvider;
+            _mappingSource=new TestMappingSource(entityMaps);
         }
 
-        ////public void RebuildMappings(MappingContext mappingContext)
-        ////{
-        ////    _mappingContext = mappingContext;
-        ////    _mappings=_entityMaps.Select(m => m.CreateMapping(mappingContext)).ToList();
-        ////}
-
-        ////public IEntityMapping MappingFor<TEntity>()
-        ////{
-        ////    return MappingFor(typeof(TEntity));
-        ////}
-
-        ////public IEntityMapping MappingFor(Type entityType)
-        ////{
-        ////    return (from mapping in Mappings
-        ////            where mapping.EntityType==entityType
-        ////            select mapping).SingleOrDefault();
-        ////}
-
-        ////public Type MappingFor(Uri classUri)
-        ////{
-        ////    return _entityMaps.Where(map => 
-        ////        {
-        ////            return map.Classes.Any(item =>
-        ////            {
-        ////                Uri uri=item.TermUri;
-        ////                if (uri==null)
-        ////                {
-        ////                    Ontology ontology=_mappingContext.OntologyProvider.Ontologies.Where(element => element.Prefix==item.NamespacePrefix).FirstOrDefault();
-        ////                    if (ontology!=null)
-        ////                    {
-        ////                        uri=new Uri(ontology.BaseUri.AbsoluteUri+item.TermName);
-        ////                    }
-        ////                }
-
-        ////                return (uri!=null)&&(uri.AbsoluteUri==classUri.AbsoluteUri);
-        ////            });
-        ////        }).Select(map => map.EntityType).FirstOrDefault();
-        ////}
-
-        public void Add(EntityMap personMapping)
+        private List<IEntityMapping> Mappings
         {
-            _entityMaps.Add(personMapping);
+            get
+            {
+                return _mappings;
+            }
         }
 
-        ////public PropertyInfo MappingForProperty(Uri predicateUri)
-        ////{
-        ////    return (PropertyInfo)_entityMaps.Select(map =>
-        ////    {
-        ////        var mapping=new { Type=map.EntityType, Property=map.MappedProperties.FirstOrDefault(item =>
-        ////        {
-        ////            Uri uri=item.TermUri;
-        ////            if (uri==null)
-        ////            {
-        ////                Ontology ontology=_mappingContext.OntologyProvider.Ontologies.Where(element => element.Prefix==item.NamespacePrefix).FirstOrDefault();
-        ////                if (ontology!=null)
-        ////                {
-        ////                    uri=new Uri(ontology.BaseUri.AbsoluteUri+item.TermName);
-        ////                }
-        ////            }
-
-        ////            return (uri!=null)&&(uri.AbsoluteUri==predicateUri.AbsoluteUri);
-        ////        }) };
-
-        ////        return (mapping!=null?mapping.Property.PropertyInfo:null);
-        ////    });
-        ////}
-
-        protected override IEnumerable<IEntityMapping> CreateMappings(MappingContext mappingContext)
+        public void RebuildMappings(MappingContext mappingContext)
         {
-            return _entityMaps.Select(m => m.CreateMapping(mappingContext));
+            _builder=new MappingModelBuilder(mappingContext);
+            _mappings=_mappingSource.GetMappingProviders().Select(m => _builder.BuildMapping(m)).ToList();
+        }
+
+        public IEntityMapping MappingFor<TEntity>()
+        {
+            return MappingFor(typeof(TEntity));
+        }
+
+        public IEntityMapping MappingFor(Type entityType)
+        {
+            return (from mapping in Mappings
+                    where mapping.EntityType == entityType
+                    select mapping).SingleOrDefault();
+        }
+
+        public Type MappingFor(Uri classUri)
+        {
+            return _mappingSource.GetMappingProviders().Where(map => map.Classes.Any(item =>
+                {
+                    Uri uri=item.GetTerm(_ontologyProvider);
+                    return (uri != null) && (uri.AbsoluteUri == classUri.AbsoluteUri);
+                })).Select(map => map.EntityType).FirstOrDefault();
+        }
+
+        public PropertyInfo MappingForProperty(Uri predicateUri)
+        {
+            return _mappingSource.GetMappingProviders().Select(map =>
+            {
+                var mapping = new
+                {
+                    Type = map.EntityType,
+                    Property = map.Properties.FirstOrDefault(item =>
+                        {
+                            Uri uri=item.GetTerm(_ontologyProvider);
+                            return (uri != null) && (uri.AbsoluteUri == predicateUri.AbsoluteUri);
+                        })
+                };
+
+                return mapping.Property.PropertyInfo;
+            }).SingleOrDefault();
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using FluentAssertions;
 using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
 using NUnit.Framework;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.Mapping.Conventions
 {
@@ -28,9 +30,9 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             var mapping = new
             {
-                ReturnType = typeof(ICollection<int>),
-                Aggregation = default(Aggregation?)
-            }.ActLike<ICollectionMapping>();
+                PropertyInfo = (PropertyInfo)new TestPropertyInfo(typeof(ICollection<int>)),
+                StoreAs = default(StoreAs)
+            }.ActLike<ICollectionMappingProvider>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -45,9 +47,9 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             var mapping = new
             {
-                ReturnType = typeof(IEnumerable<int>),
-                Aggregation = default(Aggregation?)
-            }.ActLike<ICollectionMapping>();
+                PropertyInfo = (PropertyInfo)new TestPropertyInfo(typeof(IEnumerable<int>)),
+                StoreAs = default(StoreAs)
+            }.ActLike<ICollectionMappingProvider>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -63,10 +65,10 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         {
             // given
             var mapping = new
-                              {
-                                  ReturnType=collectionType,
-                                  Aggregation=default(Aggregation?)
-                              }.ActLike<ICollectionMapping>();
+            {
+                PropertyInfo = (PropertyInfo)new TestPropertyInfo(collectionType),
+                StoreAs = default(StoreAs)
+            }.ActLike<ICollectionMappingProvider>();
 
             // when
             var shouldApply=_rdfListConvention.ShouldApply(mapping);
@@ -80,10 +82,10 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         {
             // given
             var mapping = new
-                              {
-                                  ReturnType = typeof(int),
-                                  Aggregation = default(Aggregation?)
-                              }.ActLike<ICollectionMapping>();
+            {
+                PropertyInfo = (PropertyInfo)new TestPropertyInfo(typeof(int)),
+                StoreAs = default(StoreAs)
+            }.ActLike<ICollectionMappingProvider>();
 
             // when
             var shouldApply = _rdfListConvention.ShouldApply(mapping);
@@ -93,18 +95,18 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         }
 
         [Test]
-        public void Applying_should_set_aggregation()
+        public void Applying_should_set_StorageStrategy()
         {
             // given
-            ICollectionMapping mapping = New.ExpandoObject(
-                ReturnType: typeof(int),
-                Aggregation: Aggregation.Has).ActLike<ICollectionMapping>();
+            ICollectionMappingProvider mapping = New.ExpandoObject(
+                ReturnType: (PropertyInfo)new TestPropertyInfo(typeof(int)),
+                StoreAs: StoreAs.Undefined).ActLike<ICollectionMappingProvider>();
 
             // when
             _rdfListConvention.Apply(mapping);
 
             // then
-            mapping.Aggregation.Should().Be(Aggregation.Original);
+            mapping.StoreAs.Should().Be(StoreAs.SimpleCollection);
         }
     }
 }

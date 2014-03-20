@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
-using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Fluent;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.TestEntities.FluentMappings;
 
 namespace RomanticWeb.Tests.Mapping
@@ -7,9 +8,9 @@ namespace RomanticWeb.Tests.Mapping
     [TestFixture]
     public class FluentMappingsRepositoryTests : MappingRepositoryTests
     {
-        protected override IMappingsRepository CreateMappingsRepository()
+        protected override IMappingSource CreateMappingSource()
         {
-            return new FluentMappingsRepository(typeof(AnimalMap).Assembly);
+            return new FluentMappingsSource(typeof(AnimalMap).Assembly);
         }
     }
 }

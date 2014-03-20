@@ -33,8 +33,8 @@ namespace RomanticWeb.Tests.Linq
         [SetUp]
         public void Setup()
         {
-            _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
             _ontologies=new TestOntologyProvider();
+            _mappings=new TestMappingsRepository(_ontologies,new NamedGraphsPersonMapping());
             _mappings.RebuildMappings(new MappingContext(_ontologies));
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));

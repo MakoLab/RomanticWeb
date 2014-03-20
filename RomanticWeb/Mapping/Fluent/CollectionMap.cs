@@ -1,14 +1,18 @@
 ﻿using System.Reflection;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>
     /// A mapping definition for collection properties
     /// </summary>
-	public class CollectionMap : PropertyMapBase<CollectionMap>
+	public sealed class CollectionMap:PropertyMapBase<CollectionMap>
     {
+        private Aggregation? _aggregation;
+
         internal CollectionMap(PropertyInfo propertyInfo)
 			: base(propertyInfo)
 		{
@@ -36,26 +40,19 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        /// <summary>
-        /// Gets the storage strategy of this collection
-        /// </summary>
-        protected internal override StorageStrategyOption StorageStrategy { get; set; }
-
-        protected internal override Aggregation? Aggregation { get; set; }
-
-        /// <inheritdoc />
-        public override IPropertyMapping GetMapping(MappingContext mappingContext)
+        public override Aggregation? Aggregation
         {
-            var collectionMapping=new CollectionMapping(PropertyInfo.PropertyType,PropertyInfo.Name,GetTermUri(mappingContext.OntologyProvider),StorageStrategy);
-
-            if (StorageStrategy != StorageStrategyOption.None)
+            get
             {
-                collectionMapping.StorageStrategy = StorageStrategy;
+                return _aggregation;
             }
+        }
 
-            collectionMapping.Aggregation=Aggregation;
+        public StoreAs StorageStrategy { get; set; }
 
-            return collectionMapping;
+        public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+        {
+            return fluentMapsVisitor.Visit(this);
         }
     }
 }

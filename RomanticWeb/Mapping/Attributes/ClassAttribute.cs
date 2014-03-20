@@ -1,5 +1,6 @@
 ﻿using System;
-using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -26,14 +27,10 @@ namespace RomanticWeb.Mapping.Attributes
         }
         #endregion
 
-        #region Internal methods
-
-        /// <summary>Creates a class mapping using given mappingContext.</summary>
-        /// <param name="mappingContext">Ontology to be used to resolve the prefix.</param>
-        /// <returns>Class mapping or null.</returns>
-        internal IClassMapping GetMapping(MappingContext mappingContext)
+        #region Public methods
+        public IClassMappingProvider Accept(IMappingAttributesVisitor visitor)
         {
-            return new ClassMapping(GetTermUri(mappingContext));
+            return visitor.Visit(this);
         }
         #endregion
     }

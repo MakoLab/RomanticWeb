@@ -4,14 +4,14 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestPropertyMapping : IPropertyMapping
+    internal class TestPropertyMapping : PropertyMapping,IPropertyMapping
 	{
-        public Uri Uri { get; set; }
-
-        public string Name { get; set; }
-
-        public Type ReturnType { get; set; }
-
-        public Aggregation? Aggregation { get; set; }
+        public TestPropertyMapping(
+            Type returnType,
+            string name,
+            Uri predicateUri)
+            :base(returnType,name,predicateUri)
+        {
+        }
 	}
 }

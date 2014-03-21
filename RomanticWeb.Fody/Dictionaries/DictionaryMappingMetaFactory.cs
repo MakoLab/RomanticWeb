@@ -25,15 +25,7 @@ namespace RomanticWeb.Fody.Dictionaries
             var injectKeyMappingCode=GetPropertyMappingCode(keyAttribute)??DefaultKeyMappingCode;
             var injectValueMappingCode=GetPropertyMappingCode(valueAttribute)??DefaultValueMappingCode;
 
-            return new DictionaryMappingMeta(property,injectDictionaryEntriesCode,injectKeyMappingCode,injectValueMappingCode);
-        }
-
-        public IEnumerable<DictionaryMappingMeta> CreateManyFromEntityMap(TypeDefinition entityMapType)
-        {
-            foreach (var method in entityMapType.Methods)
-            {
-                yield break;
-            }
+            return new DictionaryMappingMeta(property);
         }
 
         private Action<ILProcessor> GetPropertyMappingCode(CustomAttribute attribute)

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Collections;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities.ResultPostprocessing

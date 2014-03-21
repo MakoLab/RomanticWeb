@@ -7,17 +7,19 @@ namespace RomanticWeb.Tests.Stubs
     internal class TestPropertyInfo:PropertyInfo
     {
         private readonly Type _type;
+        private readonly string _name;
 
-        public TestPropertyInfo(Type type)
+        public TestPropertyInfo(Type type, string name="Property")
         {
             _type=type;
+            _name=name;
         }
 
         public override string Name
         {
             get
             {
-                throw new NotImplementedException();
+                return _name;
             }
         }
 

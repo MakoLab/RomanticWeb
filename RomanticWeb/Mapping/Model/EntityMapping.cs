@@ -10,17 +10,19 @@ namespace RomanticWeb.Mapping.Model
     internal class EntityMapping : IEntityMapping
     {
         private readonly Type _entityType;
-        private readonly IList<IClassMapping> _classes;
-        private readonly IList<IPropertyMapping> _properties;
+        private readonly List<ClassMapping> _classes;
+        private readonly List<PropertyMapping> _properties;
 
-        public EntityMapping(Type entityType,IEnumerable<IClassMapping> classes,IEnumerable<IPropertyMapping> properties)
+        public EntityMapping(Type entityType,IEnumerable<ClassMapping> classes,IEnumerable<PropertyMapping> properties)
         {
             _entityType=entityType;
             _properties=properties.ToList();
             _classes=classes.ToList();
+
+            _properties.ForEach(p => p.EntityMapping=this);
         }
 
-        internal EntityMapping(Type entityType):this(entityType,new IClassMapping[0],new IPropertyMapping[0])
+        internal EntityMapping(Type entityType):this(entityType,new ClassMapping[0],new PropertyMapping[0])
         {
         }
 
@@ -46,16 +48,6 @@ namespace RomanticWeb.Mapping.Model
             }
 
             return propertyMapping;
-        }
-
-        internal void AddPropertyMapping(IPropertyMapping propertyMapping)
-        {
-            _properties.Add(propertyMapping);
-        }
-
-        internal void AddClassMapping(IClassMapping classMapping)
-        {
-            _classes.Add(classMapping);
         }
 
         private class DebuggerViewProxy

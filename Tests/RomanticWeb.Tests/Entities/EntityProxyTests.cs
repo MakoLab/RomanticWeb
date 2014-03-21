@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
@@ -53,8 +52,8 @@ namespace RomanticWeb.Tests.Entities
             // given
             var idToUse=new EntityId("urn:actual:id");
             var entityMappingToUse=ImpromptuInterface.Dynamic.Builder.New().ActLike<IEntityMapping>();
-            IPropertyMapping mappingToUse=new TestPropertyMapping();
-            var propertyMapping=new TestPropertyMapping();
+            IPropertyMapping mappingToUse=new Mock<IPropertyMapping>().Object;
+            var propertyMapping=new Mock<IPropertyMapping>().Object;
             _mapping.Setup(m => m.PropertyFor("property"))
                     .Returns(propertyMapping);
             _converter.Setup(c => c.ConvertNodes(It.IsAny<IEnumerable<Node>>(), propertyMapping))
@@ -73,7 +72,7 @@ namespace RomanticWeb.Tests.Entities
         public void Should_retrieve_named_graph_when_getting_property()
         {
             // given
-            var propertyMapping=new TestPropertyMapping();
+            var propertyMapping=new Mock<IPropertyMapping>().Object;
             _mapping.Setup(m => m.PropertyFor("property"))
                     .Returns(propertyMapping);
             _converter.Setup(c => c.ConvertNodes(It.IsAny<IEnumerable<Node>>(),propertyMapping))

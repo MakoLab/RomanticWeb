@@ -20,7 +20,7 @@ namespace RomanticWeb.Mapping.Model
             return new EntityMapping(mapping.EntityType,classes,properties);
         }
 
-        public IPropertyMapping BuildMapping(IPropertyMappingProvider mapping)
+        private PropertyMapping BuildMapping(IPropertyMappingProvider mapping)
         {
             if (mapping is IDictionaryMappingProvider)
             {
@@ -35,12 +35,12 @@ namespace RomanticWeb.Mapping.Model
             return BuildPropertyMapping(mapping);
         }
 
-        public IClassMapping BuildMapping(IClassMappingProvider mapping)
+        private ClassMapping BuildMapping(IClassMappingProvider mapping)
         {
             return new ClassMapping(mapping.GetTerm(_mappingContext.OntologyProvider));
         }
 
-        private IPropertyMapping BuildPropertyMapping(IPropertyMappingProvider provider)
+        private PropertyMapping BuildPropertyMapping(IPropertyMappingProvider provider)
         {
             return new PropertyMapping(
                 provider.PropertyInfo.PropertyType, 
@@ -51,7 +51,7 @@ namespace RomanticWeb.Mapping.Model
                        };
         }
 
-        private IPropertyMapping BuildDictionaryMapping(IDictionaryMappingProvider provider)
+        private PropertyMapping BuildDictionaryMapping(IDictionaryMappingProvider provider)
         {
             return new DictionaryMapping(
                 provider.PropertyInfo.PropertyType, 
@@ -64,7 +64,7 @@ namespace RomanticWeb.Mapping.Model
             };
         }
 
-        private IPropertyMapping BuildCollectionMapping(ICollectionMappingProvider provider)
+        private CollectionMapping BuildCollectionMapping(ICollectionMappingProvider provider)
         {
             return new CollectionMapping(
                 provider.PropertyInfo.PropertyType,

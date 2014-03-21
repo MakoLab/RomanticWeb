@@ -8,6 +8,8 @@ namespace RomanticWeb.Mapping.Model
     /// </summary>
     public interface IPropertyMapping
 	{
+        IEntityMapping EntityMapping { get; }
+
         /// <summary>
         /// Gets the RDF predicate URI
         /// </summary>

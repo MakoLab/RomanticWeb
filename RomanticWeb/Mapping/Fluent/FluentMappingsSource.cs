@@ -25,7 +25,7 @@ namespace RomanticWeb.Mapping.Fluent
             Visitors.IFluentMapsVisitor visitor = new FluentMappingProviderBuilder();
             var maps = (from type in Assembly.GetTypes()
                         where type.IsConstructableEntityMap()
-                        let map= (EntityMap)Activator.CreateInstance(type,true)
+                        let map=(EntityMap)Activator.CreateInstance(type,true)
                         select map.Accept(visitor));
 
             return maps;

@@ -26,7 +26,7 @@ namespace RomanticWeb.Tests
         private Mock<IEntityStore> _entityStore;
         private Mock<IEntitySource> _store;
         private Mock<IEntityContextFactory> _factory;
-        private IPropertyMapping _typesMapping;
+        private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
@@ -57,12 +57,9 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _typesMapping = new TestPropertyMapping
+            _typesMapping = new TestPropertyMapping(typeof(IEnumerable<EntityId>),"Types",Vocabularies.Rdf.type)
                                 {
-                                    Name="Types",
-                                    ReturnType = typeof(IEnumerable<EntityId>),
-                                    Aggregation=Aggregation.Original,
-                                    Uri=Vocabularies.Rdf.type
+                                    Aggregation=Aggregation.Original
                                 };
             _factory = new Mock<IEntityContextFactory>();
             _factory.Setup(cf => cf.Converters).Returns(new Mock<IConverterCatalog>().Object);
@@ -70,7 +67,7 @@ namespace RomanticWeb.Tests
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new IClassMapping[0], new[] { _typesMapping }));
+            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
             _baseUriSelector=new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
@@ -340,12 +337,10 @@ namespace RomanticWeb.Tests
             _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId),Times.Once);
         }
 
-        private static IPropertyMapping GetMapping(string propertyName)
+        private static PropertyMapping GetMapping(string propertyName)
         {
-            return new TestPropertyMapping
+            return new TestPropertyMapping(typeof(int),propertyName,new Uri("http://unittest/"+propertyName))
                        {
-                           Name=propertyName,
-                           Uri=new Uri("http://unittest/"+propertyName),
                            Aggregation=Aggregation.SingleOrDefault
                        };
         }

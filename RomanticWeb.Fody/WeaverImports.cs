@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mono.Cecil;
@@ -207,6 +208,22 @@ namespace RomanticWeb.Fody
             get
             {
                 return ModuleDefinition.Import(_references.Orm.FindType("EntityMap"));
+            }
+        }
+
+        public TypeReference EntityTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(_references.Orm.FindType("IEntity"));
+            }
+        }
+
+        public TypeReference DictionaryTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(typeof(IDictionary<,>));
             }
         }
 

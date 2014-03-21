@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using NullGuard;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping
 {
@@ -33,18 +35,11 @@ namespace RomanticWeb.Mapping
         {
             var conventionsVisitor=new ConventionsVisitor(mappingContext.Conventions);
             var mappingBuilder=new MappingModelBuilder(mappingContext);
+            var dictionaryMappingProvider=new DynamicDictionaryMappingSource(mappingContext.OntologyProvider);
 
-            var providers = new Dictionary<Type, IList<IEntityMappingProvider>>();
-            foreach (var provider in Sources.SelectMany(mappingSource => mappingSource.GetMappingProviders()))
-            {
-                provider.Accept(conventionsVisitor);
-                if (!providers.ContainsKey(provider.EntityType))
-                {
-                    providers[provider.EntityType]=new List<IEntityMappingProvider>();
-                }
-
-                providers[provider.EntityType].Add(provider);
-            }
+            var providers=new Dictionary<Type,IList<IEntityMappingProvider>>();
+            CreateStaticMappings(providers,conventionsVisitor,dictionaryMappingProvider);
+            CreateDynamicMappings(providers,dictionaryMappingProvider,conventionsVisitor);
 
             var singleProviderPerType=providers.Select(provider => provider.Value.Count>1?new MultiMappingProvider(provider.Key,provider.Value):provider.Value[0]).ToList();
 
@@ -102,6 +97,42 @@ namespace RomanticWeb.Mapping
                 {
                     _sources.Add(key,mappingSource);
                 }
+            }
+        }
+
+        private void CreateStaticMappings(
+            IDictionary<Type,IList<IEntityMappingProvider>> providers,
+            params IMappingProviderVisitor[] visitors)
+        {
+            CreateMappings(providers,Sources,visitors);
+        }
+
+        private void CreateDynamicMappings(
+            IDictionary<Type, IList<IEntityMappingProvider>> providers,
+            IMappingSource source,
+            params IMappingProviderVisitor[] visitors)
+        {
+            CreateMappings(providers,new[] { source },visitors);
+        }
+
+        private void CreateMappings(
+            IDictionary<Type, IList<IEntityMappingProvider>> providers,
+            IEnumerable<IMappingSource> sources,
+            params IMappingProviderVisitor[] visitors)
+        {
+            foreach (var provider in sources.SelectMany(mappingSource => mappingSource.GetMappingProviders()))
+            {
+                foreach (var visitor in visitors)
+                {
+                    provider.Accept(visitor);
+                }
+
+                if (!providers.ContainsKey(provider.EntityType))
+                {
+                    providers[provider.EntityType] = new List<IEntityMappingProvider>();
+                }
+
+                providers[provider.EntityType].Add(provider);
             }
         }
 

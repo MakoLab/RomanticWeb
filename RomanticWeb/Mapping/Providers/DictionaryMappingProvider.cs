@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb.Mapping.Providers
 {
@@ -35,6 +36,14 @@ namespace RomanticWeb.Mapping.Providers
             get
             {
                 return _value;
+            }
+        }
+
+        public override Aggregation? Aggregation
+        {
+            get
+            {
+                return Entities.ResultAggregations.Aggregation.Original;
             }
         }
 

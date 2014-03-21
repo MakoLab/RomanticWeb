@@ -7,6 +7,7 @@ using ImpromptuInterface;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Collections;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;

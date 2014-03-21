@@ -49,6 +49,9 @@
     <EmbeddedResource Include="Ontologies\GEO.rdf" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RomanticWeb.Fody\Dictionaries\DictionaryEntityNames.cs">
+      <Link>Dynamic\DictionaryEntityNames.cs</Link>
+    </Compile>
     <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="Collections\IKeyValuePair.cs" />
     <Compile Include="Collections\IDictionaryOwner.cs" />
@@ -74,8 +77,11 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Dynamic\DynamicAssemblyProvider.cs" />
     <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />
+    <Compile Include="Dynamic\IDictionaryPairTypeProvider.cs" />
     <Compile Include="Dynamic\OntologyAccessor.cs" />
+    <Compile Include="Dynamic\TypeDictionaryEntityNames.cs" />
     <Compile Include="Entities\ConstantBaseUri.cs" />
     <Compile Include="Entities\DefaultBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\EntityIdExtensions.cs" />
@@ -83,8 +89,6 @@
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\IEntityProxy.cs" />
     <Compile Include="Entities\ResultPostprocessing\DictionaryTransformer.cs" />
-    <Compile Include="Entities\ResultPostprocessing\DynamicAssemblyProvider.cs" />
-    <Compile Include="Entities\ResultPostprocessing\IDictionaryPairTypeProvider.cs" />
     <Compile Include="Entities\ResultTransformerCatalog.cs" />
     <Compile Include="Entities\IResultTransformerCatalog.cs" />
     <Compile Include="Entities\ITypedEntity.cs" />
@@ -185,7 +189,6 @@
     <Compile Include="Mapping\Providers\DictionaryMappingProvider.cs" />
     <Compile Include="Mapping\Providers\EntityMappingProvider.cs" />
     <Compile Include="Mapping\Attributes\ValueAttribute.cs" />
-    <Compile Include="Mapping\CompoundMappingsRepository.cs" />
     <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
     <Compile Include="Mapping\Conventions\ConventionsVisitor.cs" />
     <Compile Include="Mapping\Conventions\DefaultDictionaryKeyPredicateConvention.cs" />
@@ -195,7 +198,7 @@
     <Compile Include="Mapping\Conventions\IDictionaryConvention.cs" />
     <Compile Include="Mapping\Conventions\IPropertyConvention.cs" />
     <Compile Include="Mapping\Conventions\RdfListConvention.cs" />
-    <Compile Include="Mapping\Dynamic\DynamicDictionaryMappingProvider.cs" />
+    <Compile Include="Dynamic\DynamicDictionaryMappingSource.cs" />
     <Compile Include="Mapping\Fluent\DictionaryMap.cs" />
     <Compile Include="Mapping\Fluent\ITermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMapBase.cs" />
@@ -448,7 +451,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Mapping\Dynamic\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

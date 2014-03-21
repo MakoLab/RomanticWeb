@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using RomanticWeb.Mapping.Model;
 
-namespace RomanticWeb.Entities.ResultPostprocessing
+namespace RomanticWeb.Dynamic
 {
     public interface IDictionaryPairTypeProvider
     {

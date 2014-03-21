@@ -75,6 +75,11 @@ namespace RomanticWeb.Fody
             return childType.HasAncestorOfType("RomanticWeb.Entities.EntityId");
         }
 
+        internal static bool Implements(this TypeDefinition childType,TypeReference interfaceType)
+        {
+            return childType.FullName==interfaceType.FullName||childType.Interfaces.Any(iface => iface.FullName == interfaceType.FullName);
+        }
+
         internal static bool HasNancyModuleAncestor(this TypeDefinition childType)
         {
             return childType.HasAncestorOfType("Nancy.NancyModule");

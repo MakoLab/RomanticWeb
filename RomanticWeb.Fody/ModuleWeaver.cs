@@ -31,7 +31,7 @@ namespace RomanticWeb.Fody
             Imports=new WeaverImports(this,References);
 
             AddTypeConverters();
-            AddDictionaryEntityTypesAndMappings();
+            AddDictionaryEntityTypes();
         }
 
         private bool ModuleHasNoRomanticWebReference(out AssemblyDefinition ormAssembly)

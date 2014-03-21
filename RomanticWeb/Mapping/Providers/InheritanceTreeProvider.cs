@@ -9,12 +9,12 @@ namespace RomanticWeb.Mapping.Providers
     internal class InheritanceTreeProvider:IEntityMappingProvider
     {
         private readonly IEntityMappingProvider _mainProvider;
-        private readonly IList<IEntityMappingProvider> _parentProviders;
+        private readonly IDictionary<Type,IEntityMappingProvider> _parentProviders;
 
         public InheritanceTreeProvider(IEntityMappingProvider mainProvider,IEnumerable<IEntityMappingProvider> parentProviders)
         {
             _mainProvider=mainProvider;
-            _parentProviders=parentProviders.ToList();
+            _parentProviders=parentProviders.ToDictionary(mp => mp.EntityType,mp => mp);
         }
 
         public Type EntityType
@@ -29,7 +29,7 @@ namespace RomanticWeb.Mapping.Providers
         {
             get
             {
-                return _mainProvider.Classes.Union(_parentProviders.SelectMany(p => p.Classes));
+                return _mainProvider.Classes.Union(_parentProviders.SelectMany(p => p.Value.Classes));
             }
         }
 
@@ -37,17 +37,31 @@ namespace RomanticWeb.Mapping.Providers
         {
             get
             {
-                var providers=new Dictionary<PropertyInfo,IPropertyMappingProvider>();
+                var providers=new Dictionary<string,IPropertyMappingProvider>();
                 foreach (var property in _mainProvider.Properties)
                 {
-                    providers[property.PropertyInfo]=property;
+                    providers[property.PropertyInfo.Name]=property;
                 }
 
-                foreach (var property in _parentProviders.SelectMany(p => p.Properties))
+                var parents=new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
+                while (parents.Any())
                 {
-                    if (!providers.ContainsKey(property.PropertyInfo))
+                    var iface=parents.Dequeue();
+                    foreach (var immediateParent in iface.GetImmediateParents())
                     {
-                        providers[property.PropertyInfo]=property;
+                        parents.Enqueue(immediateParent);
+                    }
+
+                    if (_parentProviders.ContainsKey(iface))
+                    {
+                        var provider=_parentProviders[iface];
+                        foreach (var property in provider.Properties)
+                        {
+                            if (!providers.ContainsKey(property.PropertyInfo.Name))
+                            {
+                                providers[property.PropertyInfo.Name] = property;
+                            }
+                        }
                     }
                 }
 
@@ -57,6 +71,39 @@ namespace RomanticWeb.Mapping.Providers
 
         public void Accept(IMappingProviderVisitor visitor)
         {
+        }
+
+        private class PropertyInfoComparer:IEqualityComparer<PropertyInfo>
+        {
+            public bool Equals(PropertyInfo x,PropertyInfo y)
+            {
+                if (x==null||y==null)
+                {
+                    return false;
+                }
+
+                if (x.DeclaringType!=null&&x.DeclaringType.IsGenericType)
+                {
+                    x=x.DeclaringType.GetGenericTypeDefinition().GetProperty(x.Name);
+                }
+
+                if (y.DeclaringType!=null&&y.DeclaringType.IsGenericType)
+                {
+                    y=y.DeclaringType.GetGenericTypeDefinition().GetProperty(y.Name);
+                }
+
+                return object.Equals(x,y);
+            }
+
+            public int GetHashCode(PropertyInfo property)
+            {
+                if (property.DeclaringType!=null&&property.DeclaringType.IsGenericType)
+                {
+                    property=property.DeclaringType.GetGenericTypeDefinition().GetProperty(property.Name);
+                }
+
+                return property.GetHashCode();
+            }
         }
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.Entities;
 
 namespace System
 {
-    /// <summary>Exposes usefull <see cref="Type" /> extension methods.</summary>
+    /// <summary>Exposes useful <see cref="Type" /> extension methods.</summary>
     public static class TypeExtensions
     {
         /// <summary>Checks if the type can be assigned to the <see cref="IEnumerable>" /> interface.</summary>
@@ -99,6 +100,30 @@ namespace System
             }
 
             return result;
+        }
+
+        public static IEnumerable<Type> GetImmediateParents(this Type type)
+        {
+            if (type.BaseType!=null)
+            {
+                yield return type.BaseType;
+            }
+
+            var allInterfaces=type.GetInterfaces();
+            foreach (var iface in allInterfaces.Except(allInterfaces.SelectMany(i => i.GetInterfaces())).Where(iface => iface!=typeof(IEntity)))
+            {
+                yield return iface;
+            }
+
+            if (type.IsGenericType)
+            {
+                var genericTypeDefinition=type.GetGenericTypeDefinition();
+
+                if (genericTypeDefinition!=type)
+                {
+                    yield return genericTypeDefinition;
+                }
+            }
         }
     }
 }

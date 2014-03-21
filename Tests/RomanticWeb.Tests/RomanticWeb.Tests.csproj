@@ -114,6 +114,7 @@
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
     <Compile Include="IntegrationTests\DictionaryTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\DictionaryFluentMappingTests.cs" />
@@ -123,6 +124,9 @@
     <Compile Include="Mapping\Conventions\CollectionConventionTests.cs" />
     <Compile Include="Mapping\Conventions\RdfListConventionTests.cs" />
     <Compile Include="Mapping\InheritanceAwareProviderTests.cs" />
+    <Compile Include="Mapping\InheritanceTreeProviderTests.cs" />
+    <Compile Include="Mapping\MappingRepositoryTestBase.cs" />
+    <Compile Include="Mapping\MixedMappingTests.cs" />
     <Compile Include="Mapping\TestingInheritanceTreeProvider.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelectorTests.cs" />
     <Compile Include="dotNetRDF\TripleStoreAdapterTests.cs" />
@@ -142,10 +146,10 @@
     <Compile Include="JsonLd\JsonLdTestSuiteTests.cs" />
     <Compile Include="Linq\QueryableTests.cs" />
     <Compile Include="Linq\VisitorTests.cs" />
-    <Compile Include="Mapping\AttributeMappingsRepositoryTests.cs" />
+    <Compile Include="Mapping\AttributeMappingsSourceTests.cs" />
     <Compile Include="Mapping\EntityMappingTests.cs" />
-    <Compile Include="Mapping\FluentMappingsRepositoryTests.cs" />
-    <Compile Include="Mapping\MappingRepositoryTests.cs" />
+    <Compile Include="Mapping\FluentMappingsSourceTests.cs" />
+    <Compile Include="Mapping\MappingSourceTests.cs" />
     <Compile Include="NodeConverterTests.cs" />
     <Compile Include="NodeTests.cs" />
     <Compile Include="RdfNodeTests.cs" />
@@ -161,6 +165,7 @@
     <Compile Include="EntityTripleTests.cs" />
     <Compile Include="Stubs\TestTransformerCatalog.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
+    <Compile Include="TypeExtensionsTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">
       <DependentUpon>TurtleGraphConversionTests.cs</DependentUpon>
       <LogicalName>RomanticWeb.Tests.TurtleGraphConversionTests.ttl</LogicalName>
@@ -3128,6 +3133,10 @@
     <ProjectReference Include="..\RomanticWeb.TestEntities.FluentMappings\RomanticWeb.TestEntities.FluentMappings.csproj">
       <Project>{87302AD5-4877-494F-AEB2-AC2A2DDB0D2B}</Project>
       <Name>RomanticWeb.TestEntities.FluentMappings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RomanticWeb.TestEntities.MixedMappings\RomanticWeb.TestEntities.MixedMappings.csproj">
+      <Project>{6B8F4D5C-36E9-4952-B719-AF80E5171276}</Project>
+      <Name>RomanticWeb.TestEntities.MixedMappings</Name>
     </ProjectReference>
     <ProjectReference Include="..\RomanticWeb.TestEntities\RomanticWeb.TestEntities.csproj">
       <Project>{AF4CCD1D-3FEF-4F5A-9A89-94D0E7E6D3B5}</Project>

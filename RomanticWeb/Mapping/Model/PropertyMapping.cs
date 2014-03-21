@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Model
     [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Property {Name}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    internal class PropertyMapping : IPropertyMapping
+    internal class PropertyMapping:IPropertyMapping
     {
         public PropertyMapping(Type returnType,string name,Uri predicateUri)
         {
@@ -16,6 +16,8 @@ namespace RomanticWeb.Mapping.Model
             Name=name;
             Uri=predicateUri;
         }
+
+        public IEntityMapping EntityMapping { get; internal set; }
 
         public Uri Uri { get; private set; }
 
@@ -62,6 +64,22 @@ namespace RomanticWeb.Mapping.Model
                 get
                 {
                     return _mapping.ReturnType;
+                }
+            }
+
+            public Aggregation? Aggregation
+            {
+                get
+                {
+                    return _mapping.Aggregation;
+                }
+            }
+
+            public IEntityMapping EntityMapping
+            {
+                get
+                {
+                    return _mapping.EntityMapping;
                 }
             }
         }

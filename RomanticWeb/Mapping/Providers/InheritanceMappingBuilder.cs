@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RomanticWeb.Mapping.Providers
@@ -31,7 +32,21 @@ namespace RomanticWeb.Mapping.Providers
 
         private IEnumerable<IEntityMappingProvider> GetParentMappings(IEntityMappingProvider childMapping)
         {
-            return _originalMappings.Where(m => (m.EntityType.IsAssignableFrom(childMapping.EntityType))&&(m.EntityType!=childMapping.EntityType));
+            return from m in _originalMappings
+                   where m.EntityType != childMapping.EntityType
+                   where IsDerivedFrom(childMapping.EntityType,m.EntityType)
+                   select m;
+        }
+
+        private bool IsDerivedFrom(Type child,Type parent)
+        {
+            var anyInterfaceDerivesFromParent=(from iface in child.GetInterfaces()
+                                               where iface.IsGenericType
+                                               let genericDefinition = iface.GetGenericTypeDefinition()
+                                               where genericDefinition==parent
+                                               select iface).Any();
+
+            return parent.IsAssignableFrom(child) || anyInterfaceDerivesFromParent;
         }
     }
 }

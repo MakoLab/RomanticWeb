@@ -65,6 +65,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dictionaries\DictionaryEntityNames.cs" />
+    <Compile Include="Dictionaries\CecilDictionaryEntityNames.cs" />
     <Compile Include="Dictionaries\DictionaryMappingMeta.cs" />
     <Compile Include="Dictionaries\DictionaryMappingMetaFactory.cs" />
     <Compile Include="DictionaryCache.cs" />

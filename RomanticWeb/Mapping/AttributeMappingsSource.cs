@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Providers;
 
@@ -24,7 +25,7 @@ namespace RomanticWeb.Mapping
         {
             var builder=new AttributeMappingProviderBuilder();
             return from type in Assembly.GetTypes()
-                   let classAtributes = type.GetCustomAttributes<ClassAttribute>()
+                   where typeof(IEntity).IsAssignableFrom(type)
                    select builder.Visit(type);
         }
     }

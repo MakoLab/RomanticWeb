@@ -30,23 +30,23 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        private static bool IsDerivedFrom(Type child,Type parent)
+        {
+            var anyInterfaceDerivesFromParent=from iface in child.GetInterfaces()
+                                              where iface.IsGenericType
+                                              let genericDefinition = iface.GetGenericTypeDefinition()
+                                              where genericDefinition==parent
+                                              select iface;
+
+            return parent.IsAssignableFrom(child) || anyInterfaceDerivesFromParent.Any();
+        }
+
         private IEnumerable<IEntityMappingProvider> GetParentMappings(IEntityMappingProvider childMapping)
         {
             return from m in _originalMappings
                    where m.EntityType != childMapping.EntityType
                    where IsDerivedFrom(childMapping.EntityType,m.EntityType)
                    select m;
-        }
-
-        private bool IsDerivedFrom(Type child,Type parent)
-        {
-            var anyInterfaceDerivesFromParent=(from iface in child.GetInterfaces()
-                                               where iface.IsGenericType
-                                               let genericDefinition = iface.GetGenericTypeDefinition()
-                                               where genericDefinition==parent
-                                               select iface).Any();
-
-            return parent.IsAssignableFrom(child) || anyInterfaceDerivesFromParent;
         }
     }
 }

@@ -212,7 +212,6 @@ namespace RomanticWeb
                 return (T)entity;
             }
 
-            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,typeof(T));
             return EntityAs((Entity)entity,_mappings.MappingFor<T>(),typeof(T));
         }
 
@@ -232,7 +231,6 @@ namespace RomanticWeb
                 return entity;
             }
 
-            LogTo.Trace("Wrapping entity {0} as {1}",entity.Id,T);
             return EntityAs((Entity)entity,_mappings.MappingFor(T),T);
         }
         #endregion

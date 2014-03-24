@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Dynamic;
 using Anotar.NLog;
-using ImpromptuInterface;
 using NullGuard;
 using RomanticWeb.Collections;
 using RomanticWeb.Converters;
@@ -282,21 +279,6 @@ namespace RomanticWeb.Entities
             }
 
             return Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
-        }
-
-        private object WrapResultAsDictionary(GetMemberBinder binder, IPropertyMapping property, IDictionary dictionary)
-        {
-            object result;
-            var genericArguments = property.ReturnType.GetGenericArguments();
-
-            var observable =
-                (INotifyCollectionChanged)
-                typeof(ObservableDictionary<,>).MakeGenericType(genericArguments)
-                                               .GetConstructor(new Type[] { typeof(IDictionary) })
-                                               .Invoke(new object[] { dictionary });
-            observable.CollectionChanged += (sender, args) => Impromptu.InvokeSet(this, binder.Name, sender);
-            result = observable;
-            return result;
         }
 
         #endregion

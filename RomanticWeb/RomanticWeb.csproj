@@ -59,7 +59,6 @@
     <Compile Include="Collections\IRdfListNode.cs" />
     <Compile Include="Collections\Mapping\DictionaryOwnerMap.cs" />
     <Compile Include="Collections\Mapping\DictionaryEntryMap.cs" />
-    <Compile Include="Collections\ObjectModel\ObservableDictionary.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />

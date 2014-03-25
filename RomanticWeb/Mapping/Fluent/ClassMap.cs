@@ -32,6 +32,11 @@ namespace RomanticWeb.Mapping.Fluent
             return _termPart.Is(uri);
         }
 
+        /// <summary>
+        /// Accepts the specified fluent maps visitor.
+        /// </summary>
+        /// <param name="fluentMapsVisitor">The fluent maps visitor.</param>
+        /// <returns></returns>
         public IClassMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
             return fluentMapsVisitor.Visit(this);

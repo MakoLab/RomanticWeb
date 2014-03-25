@@ -50,7 +50,7 @@ namespace RomanticWeb.Tests.Linq
             
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository=new TestMappingsRepository(ontologyProvider,new TestPersonMap(),new TestTypedEntityMap());
-            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new RdfListConvention(),new CollectionConvention() });
+            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new RdfListConvention(),new CollectionStorageConvention() });
             _mappingsRepository.RebuildMappings(mappingContext);
             _entityContext=new EntityContext(
                 _factory.Object,

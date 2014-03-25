@@ -24,7 +24,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        public IMappingSource Mappings { get; private set; }
+        public IMappingProviderSource Mappings { get; private set; }
 
         protected IEntityContext EntityContext
         {
@@ -87,9 +87,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
         }
 
-        protected virtual IMappingSource SetupMappings()
+        protected virtual IMappingProviderSource SetupMappings()
         {
-            return new Mock<IMappingSource>().Object;
+            return new Mock<IMappingProviderSource>().Object;
         }
 
         protected virtual void ChildSetup() 

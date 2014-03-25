@@ -19,64 +19,64 @@ namespace RomanticWeb.Mapping.Attributes
             return new ClassMappingProvider(attribute.Prefix,attribute.Term);
         }
 
-        public IPropertyMappingProvider Visit(PropertyInfo property,PropertyAttribute attribute)
+        public IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute,PropertyInfo property)
         {
-            if (attribute.Uri != null)
+            if (propertyAttribute.Uri != null)
             {
-                return new PropertyMappingProvider(attribute.Uri,property);
+                return new PropertyMappingProvider(propertyAttribute.Uri,property);
             }
 
-            return new PropertyMappingProvider(attribute.Prefix,attribute.Term,property);
+            return new PropertyMappingProvider(propertyAttribute.Prefix,propertyAttribute.Term,property);
         }
 
-        public ICollectionMappingProvider Visit(PropertyInfo property,CollectionAttribute attribute)
+        public ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute,PropertyInfo property)
         {
-            if (attribute.Uri != null)
+            if (collectionAttribute.Uri != null)
             {
-                return new CollectionMappingProvider(attribute.Uri,attribute.StoreAs,property);
+                return new CollectionMappingProvider(collectionAttribute.Uri,collectionAttribute.StoreAs,property);
             }
 
-            return new CollectionMappingProvider(attribute.Prefix,attribute.Term,attribute.StoreAs,property);
+            return new CollectionMappingProvider(collectionAttribute.Prefix,collectionAttribute.Term,collectionAttribute.StoreAs,property);
         }
 
-        public IDictionaryMappingProvider Visit(PropertyInfo property,DictionaryAttribute attribute,ITermMappingProvider key,ITermMappingProvider value)
+        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute,PropertyInfo property,ITermMappingProvider key,ITermMappingProvider value)
         {
-            if (attribute.Uri != null)
+            if (dictionaryAttribute.Uri != null)
             {
-                return new DictionaryMappingProvider(attribute.Uri,key,value,property);
+                return new DictionaryMappingProvider(dictionaryAttribute.Uri,key,value,property);
             }
 
-            return new DictionaryMappingProvider(attribute.Prefix,attribute.Term,key,value,property);
+            return new DictionaryMappingProvider(dictionaryAttribute.Prefix,dictionaryAttribute.Term,key,value,property);
         }
 
-        public ITermMappingProvider Visit(KeyAttribute attribute)
+        public ITermMappingProvider Visit(KeyAttribute keyAttribute)
         {
-            if (attribute==null)
+            if (keyAttribute==null)
             {
                 return new KeyMappingProvider();
             }
 
-            if (attribute.Uri != null)
+            if (keyAttribute.Uri != null)
             {
-                return new KeyMappingProvider(attribute.Uri);
+                return new KeyMappingProvider(keyAttribute.Uri);
             }
 
-            return new KeyMappingProvider(attribute.Prefix, attribute.Term);
+            return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
         }
 
-        public ITermMappingProvider Visit(ValueAttribute attribute)
+        public ITermMappingProvider Visit(ValueAttribute valueAttribute)
         {
-            if (attribute==null)
+            if (valueAttribute==null)
             {
                 return new ValueMappingProvider();
             }
 
-            if (attribute.Uri!=null)
+            if (valueAttribute.Uri!=null)
             {
-                return new ValueMappingProvider(attribute.Uri);
+                return new ValueMappingProvider(valueAttribute.Uri);
             }
             
-            return new ValueMappingProvider(attribute.Prefix,attribute.Term);
+            return new ValueMappingProvider(valueAttribute.Prefix,valueAttribute.Term);
         }
 
         public IEntityMappingProvider Visit(Type entityType)

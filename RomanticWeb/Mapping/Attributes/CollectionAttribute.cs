@@ -34,7 +34,7 @@ namespace RomanticWeb.Mapping.Attributes
 
         internal override IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor, PropertyInfo property)
         {
-            return visitor.Visit(property, this);
+            return visitor.Visit(this,property);
         }
     }
 }

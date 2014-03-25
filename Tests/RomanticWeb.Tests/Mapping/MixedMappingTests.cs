@@ -89,7 +89,7 @@ namespace RomanticWeb.Tests.Mapping
             properties.Should().HaveCount(2);
         }
 
-        protected override IEnumerable<IMappingSource> CreateMappingSources()
+        protected override IEnumerable<IMappingProviderSource> CreateMappingSources()
         {
             yield return new FluentMappingsSource(typeof(IHidesMember).Assembly);
             yield return new AttributeMappingsSource(typeof(IHidesMember).Assembly);

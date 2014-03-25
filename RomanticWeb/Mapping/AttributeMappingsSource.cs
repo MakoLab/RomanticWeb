@@ -21,6 +21,9 @@ namespace RomanticWeb.Mapping
             LogTo.Trace("Created attribute mappings repository for assembly {0}", assembly);
         }
 
+        /// <summary>
+        /// Create mapping propviders from mapping attributes
+        /// </summary>
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             var builder=new AttributeMappingProviderBuilder();

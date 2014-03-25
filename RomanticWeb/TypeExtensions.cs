@@ -9,13 +9,13 @@ namespace System
     /// <summary>Exposes useful <see cref="Type" /> extension methods.</summary>
     public static class TypeExtensions
     {
-        /// <summary>Checks if the type can be assigned to the <see cref="IEnumerable>" /> interface.</summary>
+        /// <summary>Checks if the type can be assigned to the <see cref="IEnumerable" /> interface.</summary>
         /// <remarks>This method will return false for type <see cref="System.String" />.</remarks>
         /// <param name="type">Type to be checked.</param>
         /// <returns><b>true</b> if the type is <see cref="System.Array" /> or is assignable to <see cref="IEnumerable" /> (except <see cref="System.String" />); otherwise <b>false</b>.</returns>
         public static bool IsEnumerable(this Type type)
         {
-            return (type!=null?(type.IsArray)||((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string))):false);
+            return (type!=null&&((type.IsArray)||((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))));
         }
 
         /// <summary>Tries to resolve item type of complex types.</summary>
@@ -38,7 +38,7 @@ namespace System
                     }
                     else
                     {
-                        type=typeof(object);
+                        result=typeof(object);
                     }
                 }
             }
@@ -55,7 +55,7 @@ namespace System
             return (type!=null)&&(instanceType!=null)&&(instanceType!=typeof(object))&&
                 (((instanceType.IsGenericType)&&(instanceType.GetGenericTypeDefinition()==type))||
                 (type.IsAssignableFromSpecificGeneric(instanceType.BaseType))||
-                instanceType.GetInterfaces().Any(interfaceType => type.IsAssignableFromSpecificGeneric(interfaceType)));
+                instanceType.GetInterfaces().Any(type.IsAssignableFromSpecificGeneric));
         }
 
         /// <summary>Retrieves generic arguments for given specific generic type used in context of a generic type definition.</summary>
@@ -64,7 +64,7 @@ namespace System
         /// <returns>Array of <see cref="Type" /> with generic type arguments of given specific generic type in context of a generic type definition.</returns>
         public static Type[] GetGenericArgumentsFor(this Type type,[AllowNull] Type instanceType)
         {
-            Type[] result=new Type[0];
+            var result=new Type[0];
             if ((type!=null)&&(instanceType!=null)&&(instanceType!=typeof(object)))
             {
                 if ((instanceType.IsGenericType)&&(instanceType.GetGenericTypeDefinition()==type))
@@ -95,13 +95,16 @@ namespace System
                 }
                 else if (((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))&&(type.IsGenericType))
                 {
-                    result=type.GetGenericTypeDefinition().MakeGenericType(new Type[] { newItemType }.Union(type.GetGenericArguments().Skip(1)).ToArray());
+                    result=type.GetGenericTypeDefinition().MakeGenericType(new[] { newItemType }.Union(type.GetGenericArguments().Skip(1)).ToArray());
                 }
             }
 
             return result;
         }
 
+        /// <summary>
+        /// Gets the direct parents of a type.
+        /// </summary>
         public static IEnumerable<Type> GetImmediateParents(this Type type)
         {
             if (type.BaseType!=null)

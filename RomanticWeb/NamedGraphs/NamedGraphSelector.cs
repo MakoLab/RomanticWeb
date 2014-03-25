@@ -4,9 +4,9 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.NamedGraphs
 {
-    internal class NamedGraphSelector : NamedGraphSelectorBase
+    internal class NamedGraphSelector:INamedGraphSelector
     {
-        public override Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
+        public Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
         {
             return entityId.Uri;
         }

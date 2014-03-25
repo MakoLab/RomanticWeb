@@ -4,11 +4,21 @@ using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb.Mapping.Providers
 {
+    /// <summary>
+    /// Mapping provider, which returns a mapping for dictionary property predicate
+    /// </summary>
     public class DictionaryMappingProvider:PropertyMappingProvider,IDictionaryMappingProvider
     {
         private readonly ITermMappingProvider _key;
         private readonly ITermMappingProvider _value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DictionaryMappingProvider"/> class.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <param name="key">The key mapping provider.</param>
+        /// <param name="value">The value mapping provider.</param>
+        /// <param name="property">The property.</param>
         public DictionaryMappingProvider(Uri uri,ITermMappingProvider key,ITermMappingProvider value,PropertyInfo property)
             :base(uri,property)
         {
@@ -16,6 +26,14 @@ namespace RomanticWeb.Mapping.Providers
             _value=value;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DictionaryMappingProvider"/> class.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
+        /// <param name="term">The term.</param>
+        /// <param name="key">The key mapping provider.</param>
+        /// <param name="value">The value mapping provider.</param>
+        /// <param name="property">The property.</param>
         public DictionaryMappingProvider(string prefix,string term,ITermMappingProvider key,ITermMappingProvider value,PropertyInfo property)
             : base(prefix,term,property)
         {
@@ -23,6 +41,12 @@ namespace RomanticWeb.Mapping.Providers
             _value=value;
         }
 
+        /// <summary>
+        /// Gets the key mapping provider.
+        /// </summary>
+        /// <value>
+        /// The key mapping provider.
+        /// </value>
         public ITermMappingProvider Key
         {
             get
@@ -31,6 +55,12 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <summary>
+        /// Gets the value mapping provider.
+        /// </summary>
+        /// <value>
+        /// The value mapping provider.
+        /// </value>
         public ITermMappingProvider Value
         {
             get
@@ -39,6 +69,12 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <summary>
+        /// Gets the aggregation.
+        /// </summary>
+        /// <value>
+        /// <see cref="Entities.ResultAggregations.Aggregation.SingleOrDefault" />
+        /// </value>
         public override Aggregation? Aggregation
         {
             get
@@ -47,9 +83,10 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public override void Accept(Visitors.IMappingProviderVisitor visitor)
+        /// <inheridoc/>
+        public override void Accept(Visitors.IMappingProviderVisitor mappingProviderVisitor)
         {
-            visitor.Visit(this);
+            mappingProviderVisitor.Visit(this);
         }
     }
 }

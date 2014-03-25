@@ -20,6 +20,10 @@ namespace RomanticWeb.Mapping.Fluent
             LogTo.Trace("Created fluent mappings repository for assembly {0}",assembly);
         }
 
+        /// <summary>
+        /// Finds all fluent <see cref="EntityMap"/>s in the <see cref="AssemblyMappingsSource.Assembly"/>
+        /// and transforms them to <see cref="IEntityMappingProvider"/>s
+        /// </summary>
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             Visitors.IFluentMapsVisitor visitor = new FluentMappingProviderBuilder();

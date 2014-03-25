@@ -1,13 +1,14 @@
 ﻿namespace RomanticWeb.Dynamic
 {
-    public abstract class DictionaryEntityNames
+    /// <summary>
+    /// Contains the type names of dictionary IEntities, 
+    /// which are used to access dictionary triples
+    /// </summary>
+    internal abstract class DictionaryEntityNames
     {
         private readonly string _ns;
-
         private readonly string _entityTypeName;
-
         private readonly string _propertyName;
-
         private readonly string _assemblyName;
 
         protected DictionaryEntityNames(string @namespace,string entityTypeName,string propertyName,string assemblyName)
@@ -18,6 +19,9 @@
             _assemblyName=assemblyName;
         }
 
+        /// <summary>
+        /// Gets the fully qualified name of the dictionary owner type .
+        /// </summary>
         public string OwnerTypeFullyQualifiedName
         {
             get
@@ -26,6 +30,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the fully qualified name of the dictionary entry type .
+        /// </summary>
         public string EntryTypeFullyQualifiedName
         {
             get
@@ -34,6 +41,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name of the dictionary owner type .
+        /// </summary>
         public string OwnerTypeName
         {
             get
@@ -42,6 +52,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name of the dictionary entry type .
+        /// </summary>
         public string EntryTypeName
         {
             get
@@ -50,6 +63,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the dictionary types' namespace .
+        /// </summary>
         public string Namespace
         {
             get

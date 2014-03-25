@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
+    /// <summary>
+    /// A mapping definition for dictionary properties
+    /// </summary>
     public sealed class DictionaryMap:PropertyMapBase<DictionaryMap>
     {
         private readonly KeyMap _keyMap;
@@ -18,9 +20,7 @@ namespace RomanticWeb.Mapping.Fluent
             _valueMap=new ValueMap();
         }
 
-        /// <summary>
-        /// Gets a predicate map part
-        /// </summary>
+        /// <inheritdoc/>
         public override ITermPart<DictionaryMap> Term
         {
             get
@@ -29,6 +29,9 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <summary>
+        /// Gets the dictionary key predicate map part
+        /// </summary>
         public ITermPart<DictionaryMap> KeyPredicate
         {
             get
@@ -37,6 +40,9 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <summary>
+        /// Gets the dictionary value predicate map part
+        /// </summary>
         public ITermPart<DictionaryMap> ValuePredicate
         {
             get
@@ -45,29 +51,34 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        public override Aggregation? Aggregation
-        {
-            get
-            {
-                return Entities.ResultAggregations.Aggregation.Original;
-            }
-        }
-
+        /// <inheritdoc/>
         public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
             return fluentMapsVisitor.Visit(this,_keyMap.Accept(fluentMapsVisitor),_valueMap.Accept(fluentMapsVisitor));
         }
 
+        /// <summary>
+        /// A definition for mapping dictionary value predicate
+        /// </summary>
         public class ValueMap:TermMap
         {
+            /// <summary>
+            /// Accepts the specified fluent maps visitor.
+            /// </summary>
             public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }
         }
 
+        /// <summary>
+        /// A definition for mapping dictionary key predicate
+        /// </summary>
         public class KeyMap:TermMap
         {
+            /// <summary>
+            /// Accepts the specified fluent maps visitor.
+            /// </summary>
             public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);

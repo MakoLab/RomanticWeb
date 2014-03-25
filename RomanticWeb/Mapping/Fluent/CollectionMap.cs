@@ -11,8 +11,6 @@ namespace RomanticWeb.Mapping.Fluent
     /// </summary>
 	public sealed class CollectionMap:PropertyMapBase<CollectionMap>
     {
-        private Aggregation? _aggregation;
-
         internal CollectionMap(PropertyInfo propertyInfo)
 			: base(propertyInfo)
 		{
@@ -40,16 +38,12 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        public override Aggregation? Aggregation
-        {
-            get
-            {
-                return _aggregation;
-            }
-        }
-
+        /// <summary>
+        /// Gets or sets the value, which indicates how the collection's triples will be stored.
+        /// </summary>
         public StoreAs StorageStrategy { get; set; }
 
+        /// <inheritdoc />
         public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
             return fluentMapsVisitor.Visit(this);

@@ -44,6 +44,9 @@ namespace RomanticWeb.Mapping.Fluent
 			return propertyMap;
 		}
 
+        /// <summary>
+        /// Gets a builder for mapping a dictionary property
+        /// </summary>
         protected DictionaryMap Dictionary<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
         {
             var dictionaryMap = new DictionaryMap(prop.ExtractPropertyInfo());
@@ -97,9 +100,9 @@ namespace RomanticWeb.Mapping.Fluent
             {
                 return _mappedProperties;
             }
-        } 
+        }
 
-        protected IList<PropertyMapBase> MappedProperties
+        internal IList<PropertyMapBase> MappedProperties
         {
             get
             {
@@ -120,9 +123,13 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        public IEntityMappingProvider Accept(IFluentMapsVisitor visitor)
+        /// <summary>
+        /// Accepts the specified fluent maps visitor.
+        /// </summary>
+        /// <param name="fluentMapsVisitor">The fluent maps visitor.</param>
+        public IEntityMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
-            return visitor.Visit(this);
+            return fluentMapsVisitor.Visit(this);
         }
     }
 }

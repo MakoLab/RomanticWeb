@@ -7,9 +7,9 @@ using RomanticWeb.Entities;
 namespace RomanticWeb.Collections
 {
     [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
-    internal class RdfDictionary<TKey,TValue,TPair,TOwner>:IDictionary<TKey,TValue>
-        where TPair:class,IKeyValuePair<TKey,TValue>
-        where TOwner:class,IDictionaryOwner<TPair,TKey,TValue>
+    internal class RdfDictionary<TKey,TValue,TEntry,TOwner>:IDictionary<TKey,TValue>
+        where TEntry:class,IDictionaryEntry<TKey,TValue>
+        where TOwner:class,IDictionaryOwner<TEntry,TKey,TValue>
     {
         private readonly TOwner _dictionaryOwner;
         private readonly IEntityContext _context;
@@ -136,7 +136,7 @@ namespace RomanticWeb.Collections
 
         public void Add(TKey key,TValue value)
         {
-            var pair=_context.Create<TPair>(_context.BlankIdGenerator.Generate());
+            var pair=_context.Create<TEntry>(_context.BlankIdGenerator.Generate());
             pair.Key=key;
             pair.Value=value;
             _dictionaryOwner.DictionaryEntries.Add(pair);
@@ -168,23 +168,23 @@ namespace RomanticWeb.Collections
             return false;
         }
 
-        private void DeletePair(TPair pair)
+        private void DeletePair(TEntry pair)
         {
             _context.Delete(pair.Id);
             _dictionaryOwner.DictionaryEntries.Remove(pair);
         }
 
         [return:AllowNull]
-        private TPair GetPair(TKey key)
+        private TEntry GetPair(TKey key)
         {
             return _dictionaryOwner.DictionaryEntries.SingleOrDefault(entry => Equals(entry.Key, key));
         }
 
         private class Enumerator:IEnumerator<KeyValuePair<TKey,TValue>>
         {
-            private readonly IEnumerator<TPair> _inner;
+            private readonly IEnumerator<TEntry> _inner;
 
-            public Enumerator(IDictionaryOwner<TPair,TKey,TValue> dictionaryOwner)
+            public Enumerator(IDictionaryOwner<TEntry,TKey,TValue> dictionaryOwner)
             {
                 _inner=dictionaryOwner.DictionaryEntries.GetEnumerator();
             }

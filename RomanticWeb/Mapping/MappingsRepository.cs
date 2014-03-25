@@ -11,19 +11,25 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping
 {
-    public sealed class MappingsRepository : IMappingsRepository
+    /// <summary>
+    /// Default implementation of <see cref="IMappingsRepository"/>
+    /// </summary>
+    public sealed class MappingsRepository:IMappingsRepository
     {
         private readonly object _locker=new object();
-        private readonly IDictionary<Tuple<Assembly,Type>,IMappingSource> _sources;
+        private readonly IDictionary<Tuple<Assembly,Type>,IMappingProviderSource> _sources;
         private readonly IDictionary<Type, IEntityMapping> _mappings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
+        /// </summary>
         public MappingsRepository()
         {
-            _sources=new Dictionary<Tuple<Assembly,Type>,IMappingSource>();
+            _sources=new Dictionary<Tuple<Assembly,Type>,IMappingProviderSource>();
             _mappings = new Dictionary<Type, IEntityMapping>();
         }
 
-        internal IEnumerable<IMappingSource> Sources
+        internal IEnumerable<IMappingProviderSource> Sources
         {
             get
             {
@@ -31,6 +37,10 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        /// <summary>
+        /// Retrieves mapping providers from <see cref="IMappingProviderSource"/>s, 
+        /// creates dynamic mappings, applies conventions and transforms providers into mappings
+        /// </summary>
         public void RebuildMappings(MappingContext mappingContext)
         {
             var conventionsVisitor=new ConventionsVisitor(mappingContext.Conventions);
@@ -87,7 +97,7 @@ namespace RomanticWeb.Mapping
                     select propertyMapping).FirstOrDefault();
         }
 
-        public void AddSource(Assembly mappingAssembly,IMappingSource mappingSource)
+        internal void AddSource(Assembly mappingAssembly,IMappingProviderSource mappingSource)
         {
             lock (_locker)
             {
@@ -109,7 +119,7 @@ namespace RomanticWeb.Mapping
 
         private void CreateDynamicMappings(
             IDictionary<Type, IList<IEntityMappingProvider>> providers,
-            IMappingSource source,
+            IMappingProviderSource source,
             params IMappingProviderVisitor[] visitors)
         {
             CreateMappings(providers,new[] { source },visitors);
@@ -117,7 +127,7 @@ namespace RomanticWeb.Mapping
 
         private void CreateMappings(
             IDictionary<Type, IList<IEntityMappingProvider>> providers,
-            IEnumerable<IMappingSource> sources,
+            IEnumerable<IMappingProviderSource> sources,
             params IMappingProviderVisitor[] visitors)
         {
             foreach (var provider in sources.SelectMany(mappingSource => mappingSource.GetMappingProviders()))

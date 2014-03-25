@@ -12,7 +12,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Dynamic
 {
-    internal class DynamicDictionaryMappingSource:IMappingProviderVisitor,IMappingSource
+    internal class DynamicDictionaryMappingSource:IMappingProviderVisitor,IMappingProviderSource
     {
         private readonly IFluentMapsVisitor _visitor=new FluentMappingProviderBuilder();
         private readonly List<EntityMap> _entityMaps=new List<EntityMap>();
@@ -29,30 +29,31 @@ namespace RomanticWeb.Dynamic
                    select map.Accept(_visitor);
         }
 
-        public void Visit(ICollectionMappingProvider mappingProvider)
+        public void Visit(ICollectionMappingProvider collectionMappingProvider)
         {
         }
 
-        public void Visit(IPropertyMappingProvider mappingProvider)
+        public void Visit(IPropertyMappingProvider propertyMappingProvider)
         {
         }
 
-        public void Visit(IDictionaryMappingProvider mappingProvider)
+        public void Visit(IDictionaryMappingProvider dictionaryMappingProvider)
         {
-            _entityMaps.Add(CreateDictionaryOwnerMapping(mappingProvider));
-            _entityMaps.Add(CreateDictionaryEntryMapping(mappingProvider));
+            _entityMaps.Add(CreateDictionaryOwnerMapping(dictionaryMappingProvider));
+            _entityMaps.Add(CreateDictionaryEntryMapping(dictionaryMappingProvider));
         }
 
-        public void Visit(IClassMappingProvider mappingProvider)
+        public void Visit(IClassMappingProvider classMappingProvider)
         {
         }
 
-        public void Visit(IEntityMappingProvider mappingProvider)
+        public void Visit(IEntityMappingProvider entityMappingProvider)
         {
         }
 
         private EntityMap CreateDictionaryOwnerMapping(IDictionaryMappingProvider map)
         {
+            // todo: refactoring
             var actualEntityType = map.PropertyInfo.DeclaringType;
             var owner = actualEntityType.Assembly.GetType(string.Format("{0}_{1}_Owner", actualEntityType.FullName, map.PropertyInfo.Name));
             var entry = actualEntityType.Assembly.GetType(string.Format("{0}_{1}_Entry", actualEntityType.FullName, map.PropertyInfo.Name));

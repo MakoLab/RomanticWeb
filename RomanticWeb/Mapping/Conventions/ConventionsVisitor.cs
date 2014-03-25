@@ -5,37 +5,59 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Conventions
 {
+    /// <summary>
+    /// Visits mapping providers and applies conventions
+    /// </summary>
     public class ConventionsVisitor:IMappingProviderVisitor
     {
         private readonly IList<IConvention> _conventions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConventionsVisitor"/> class.
+        /// </summary>
+        /// <param name="conventions">The conventions.</param>
         public ConventionsVisitor(IEnumerable<IConvention> conventions)
         {
             _conventions=conventions.ToList();
         }
 
-        public void Visit(ICollectionMappingProvider mappingProvider)
+        /// <summary>
+        /// Applies property and collection conventions to <paramref name="collectionMappingProvider"/>
+        /// </summary>
+        public void Visit(ICollectionMappingProvider collectionMappingProvider)
         {
-            Visit(mappingProvider as IPropertyMappingProvider);
-            SelectAndApplyConventions<ICollectionConvention,ICollectionMappingProvider>(mappingProvider);
+            Visit(collectionMappingProvider as IPropertyMappingProvider);
+            SelectAndApplyConventions<ICollectionConvention,ICollectionMappingProvider>(collectionMappingProvider);
         }
 
-        public void Visit(IPropertyMappingProvider mappingProvider)
+        /// <summary>
+        /// Applies property conventions to <paramref name="propertyMappingProvider"/>
+        /// </summary>
+        public void Visit(IPropertyMappingProvider propertyMappingProvider)
         {
-            SelectAndApplyConventions<IPropertyConvention,IPropertyMappingProvider>(mappingProvider);
+            SelectAndApplyConventions<IPropertyConvention,IPropertyMappingProvider>(propertyMappingProvider);
         }
 
-        public void Visit(IDictionaryMappingProvider mappingProvider)
+        /// <summary>
+        /// Applies property and dictionary conventions to <paramref name="dictionaryMappingProvider"/>
+        /// </summary>
+        public void Visit(IDictionaryMappingProvider dictionaryMappingProvider)
         {
-            Visit(mappingProvider as IPropertyMappingProvider);
-            SelectAndApplyConventions<IDictionaryConvention,IDictionaryMappingProvider>(mappingProvider);
+            Visit(dictionaryMappingProvider as IPropertyMappingProvider);
+            SelectAndApplyConventions<IDictionaryConvention,IDictionaryMappingProvider>(dictionaryMappingProvider);
         }
 
-        public void Visit(IClassMappingProvider mappingProvider)
+        /// <summary>
+        /// Does nothing for now
+        /// </summary>
+        public void Visit(IClassMappingProvider classMappingProvider)
         {
         }
 
-        public void Visit(IEntityMappingProvider mappingProvider)
+        /// <summary>
+        /// Does nothing for now
+        /// </summary>
+        public void Visit(IEntityMappingProvider entityMappingProvider)
         {
         }
 

@@ -87,7 +87,7 @@ namespace RomanticWeb.Fody
         {
             get
             {
-                return ModuleDefinition.Import(_references.Orm.FindType("IKeyValuePair`2"));
+                return ModuleDefinition.Import(_references.Orm.FindType("IDictionaryEntry`2"));
             }
         }
 

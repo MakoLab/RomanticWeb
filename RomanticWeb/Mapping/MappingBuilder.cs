@@ -47,7 +47,7 @@ namespace RomanticWeb.Mapping
         }
 
         internal void AddMapping<TMappingRepository>(Assembly mappingAssembly,TMappingRepository mappingsRepository)
-            where TMappingRepository:IMappingSource
+            where TMappingRepository:IMappingProviderSource
         {
             _mappingsRepository.AddSource(mappingAssembly,mappingsRepository);
         }

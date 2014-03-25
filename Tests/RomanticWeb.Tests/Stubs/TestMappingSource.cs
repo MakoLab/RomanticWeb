@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestMappingSource:IMappingSource
+    public class TestMappingSource:IMappingProviderSource
     {
         private readonly RomanticWeb.Mapping.Visitors.IFluentMapsVisitor _builder=new FluentMappingProviderBuilder();
         private readonly List<IEntityMappingProvider> _entityMaps;

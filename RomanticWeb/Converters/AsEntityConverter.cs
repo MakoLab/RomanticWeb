@@ -8,33 +8,46 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Changes <see cref="IEntity"/> type by calling <see cref="EntityExtensions.AsEntity{TInterface}"/> method
+    /// </summary>
     public class AsEntityConverter:IUriNodeConverter
     {
         private static readonly MethodInfo AsEntityMethod=Info.OfMethod("RomanticWeb","RomanticWeb.Entities.EntityExtensions","AsEntity","IEntity");
 
+        /// <summary>
+        /// Converts entity
+        /// </summary>
         public object Convert(IEntity entity,IPropertyMapping predicate)
         {
             var itemType=predicate.ReturnType.FindItemType();
-            if ((itemType!=entity.GetType())&&(!itemType.IsAssignableFrom(entity.GetType())))
+            if ((itemType!=entity.GetType())&&(!itemType.IsInstanceOfType(entity)))
             {
                 return AsEntityMethod.MakeGenericMethod(itemType).Invoke(null,new object[] { entity });
             }
-            else
-            {
-                return entity;
-            }
+            
+            return entity;
         }
 
+        /// <summary>
+        /// Checks whether an entity can be converted.
+        /// </summary>
         public bool CanConvert(IEntity objectNode,[AllowNull]IPropertyMapping predicate)
         {
             return (predicate!=null)&&(PredicateIsEntityOrCollectionThereof(predicate));
         }
 
+        /// <summary>
+        /// Converts an entity back to <see cref="Node" />.
+        /// </summary>
         public IEnumerable<Node> ConvertBack(object obj)
         {
             yield return Node.FromEntityId(((IEntity)obj).Id);
         }
 
+        /// <summary>
+        /// Checks whether an entity can be converted back to <see cref="Node" />(s).
+        /// </summary>
         public bool CanConvertBack(object value,[AllowNull]IPropertyMapping predicate)
         {
             return (predicate!=null)&&(value is IEntity);

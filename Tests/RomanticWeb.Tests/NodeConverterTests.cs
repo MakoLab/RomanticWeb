@@ -197,7 +197,7 @@ namespace RomanticWeb.Tests
             var literalConverters=converters.OfType<ILiteralNodeConverter>().ToList();
             var complexConverters=converters.OfType<IUriNodeConverter>().ToList();
             var catalog=new Mock<IConverterCatalog>();
-            catalog.Setup(cc => cc.ComplexTypeConverters).Returns(complexConverters);
+            catalog.Setup(cc => cc.UriNodeConverters).Returns(complexConverters);
             catalog.Setup(cc => cc.LiteralNodeConverters).Returns(literalConverters);
             return new NodeConverter(_entityContext.Object,catalog.Object);
         }

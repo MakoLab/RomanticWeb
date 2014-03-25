@@ -28,6 +28,11 @@ namespace RomanticWeb.Mapping.Attributes
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        /// <returns></returns>
         public IClassMappingProvider Accept(IMappingAttributesVisitor visitor)
         {
             return visitor.Visit(this);

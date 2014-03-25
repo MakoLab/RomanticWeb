@@ -9,7 +9,7 @@ namespace RomanticWeb.Tests.Mapping
     [TestFixture]
     public class FluentMappingsSourceTests:MappingSourceTests
     {
-        protected override IEnumerable<IMappingSource> CreateMappingSources()
+        protected override IEnumerable<IMappingProviderSource> CreateMappingSources()
         {
             yield return new FluentMappingsSource(typeof(AnimalMap).Assembly);
         }

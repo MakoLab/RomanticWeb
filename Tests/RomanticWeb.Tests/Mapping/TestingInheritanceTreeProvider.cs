@@ -70,7 +70,7 @@ namespace RomanticWeb.Tests.Mapping
                 }
             }
 
-            public void Accept(IMappingProviderVisitor visitor)
+            public void Accept(IMappingProviderVisitor mappingProviderVisitor)
             {
             }
 
@@ -110,7 +110,7 @@ namespace RomanticWeb.Tests.Mapping
                 }
             }
 
-            public void Accept(IMappingProviderVisitor visitor)
+            public void Accept(IMappingProviderVisitor mappingProviderVisitor)
             {
             }
 
@@ -150,7 +150,7 @@ namespace RomanticWeb.Tests.Mapping
                 }
             }
 
-            public void Accept(IMappingProviderVisitor visitor)
+            public void Accept(IMappingProviderVisitor mappingProviderVisitor)
             {
             }
 
@@ -190,7 +190,7 @@ namespace RomanticWeb.Tests.Mapping
                 }
             }
 
-            public void Accept(IMappingProviderVisitor visitor)
+            public void Accept(IMappingProviderVisitor mappingProviderVisitor)
             {
             }
 

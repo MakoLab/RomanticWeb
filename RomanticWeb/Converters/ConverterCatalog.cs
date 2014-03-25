@@ -6,6 +6,9 @@ using RomanticWeb.ComponentModel.Composition;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Default implementation of <see cref="IConverterCatalog"/>
+    /// </summary>
     public sealed class ConverterCatalog:IConverterCatalog
     {
         private static readonly Lazy<IReadOnlyCollection<ILiteralNodeConverter>> LiteralConverters;
@@ -21,7 +24,8 @@ namespace RomanticWeb.Converters
         {
         }
 
-        public IReadOnlyCollection<IUriNodeConverter> ComplexTypeConverters
+        /// <inheritdoc/>
+        public IReadOnlyCollection<IUriNodeConverter> UriNodeConverters
         {
             get
             {
@@ -29,6 +33,7 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <inheritdoc/>
         public IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters
         {
             get

@@ -2,10 +2,25 @@
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Contract for implementing a catalog converter
+    /// </summary>
     public interface IConverterCatalog
     {
-        IReadOnlyCollection<IUriNodeConverter> ComplexTypeConverters { get; }
+        /// <summary>
+        /// Gets the URI node converters.
+        /// </summary>
+        /// <value>
+        /// The URI node converters.
+        /// </value>
+        IReadOnlyCollection<IUriNodeConverter> UriNodeConverters { get; }
 
+        /// <summary>
+        /// Gets the literal node converters.
+        /// </summary>
+        /// <value>
+        /// The literal node converters.
+        /// </value>
         IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
     }
 }

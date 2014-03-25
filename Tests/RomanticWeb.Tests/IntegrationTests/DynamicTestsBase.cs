@@ -224,7 +224,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             Factory.WithNamedGraphSelector(new TestGraphSelector()); 
         }
 
-        protected override IMappingSource SetupMappings()
+        protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();
         }

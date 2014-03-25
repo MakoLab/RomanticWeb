@@ -40,7 +40,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public void Accept(IMappingProviderVisitor visitor)
+        public void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {
             throw new NotImplementedException();
         }

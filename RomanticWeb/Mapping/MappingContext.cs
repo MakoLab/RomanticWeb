@@ -28,6 +28,9 @@ namespace RomanticWeb.Mapping
         /// <summary>Gets the ontology provider.</summary>
         public IOntologyProvider OntologyProvider { get { return _ontologyProvider; } }
 
+        /// <summary>
+        /// Gets the conventions.
+        /// </summary>
         public IEnumerable<IConvention> Conventions { get; private set; }
     }
 }

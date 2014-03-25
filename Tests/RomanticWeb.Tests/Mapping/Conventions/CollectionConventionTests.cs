@@ -16,12 +16,12 @@ namespace RomanticWeb.Tests.Mapping.Conventions
     public class CollectionConventionTests
     {
         private static readonly dynamic New=Builder.New();
-        private CollectionConvention _rdfListConvention;
+        private CollectionStorageConvention _rdfListConvention;
 
         [SetUp]
         public void Setup()
         {
-            _rdfListConvention=new CollectionConvention();
+            _rdfListConvention=new CollectionStorageConvention();
         }
 
         [Test]

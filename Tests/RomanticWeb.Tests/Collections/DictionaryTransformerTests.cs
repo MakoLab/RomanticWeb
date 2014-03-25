@@ -21,7 +21,7 @@ namespace RomanticWeb.Tests.Collections
         private static readonly Uri Id=new Uri("urn:parent:id");
         private DictionaryTransformer _transformer;
         private Mock<IEntityContext> _context;
-        private Mock<IDictionaryPairTypeProvider> _provider;
+        private Mock<IDictionaryTypeProvider> _provider;
         private Owner _owner;
         private IPropertyMapping _property;
 
@@ -32,7 +32,7 @@ namespace RomanticWeb.Tests.Collections
             _property=CreateDictionaryProperty();
             _context=new Mock<IEntityContext>(MockBehavior.Strict);
             _context.Setup(c => c.Load<Owner>(Id,false)).Returns(_owner);
-            _provider=new Mock<IDictionaryPairTypeProvider>(MockBehavior.Strict);
+            _provider=new Mock<IDictionaryTypeProvider>(MockBehavior.Strict);
             _provider.Setup(p => p.GetEntryType(_property)).Returns(typeof(DictionaryPair));
             _provider.Setup(p => p.GetOwnerType(_property)).Returns(typeof(Owner));
             _transformer=new DictionaryTransformer(_provider.Object);
@@ -95,10 +95,9 @@ namespace RomanticWeb.Tests.Collections
             return Impromptu.ActLike<IEntityProxy>(expando);
         }
 
-        private class DictionaryPair:IKeyValuePair<int,IPerson>
+        private class DictionaryPair:IDictionaryEntry<int,IPerson>
         {
             private readonly EntityId _id;
-            private IEntityContext _context;
 
             public DictionaryPair(EntityId id)
             {
@@ -113,13 +112,7 @@ namespace RomanticWeb.Tests.Collections
                 }
             }
 
-            public IEntityContext Context
-            {
-                get
-                {
-                    return _context;
-                }
-            }
+            public IEntityContext Context { get; private set; }
 
             public int Key { get; set; }
 
@@ -128,8 +121,6 @@ namespace RomanticWeb.Tests.Collections
 
         private class Owner:IDictionaryOwner<DictionaryPair,int,IPerson>
         {
-            private IEntityContext _context;
-
             public Owner(EntityId id)
             {
                 Id=id;
@@ -137,13 +128,7 @@ namespace RomanticWeb.Tests.Collections
 
             public EntityId Id { get; private set; }
 
-            public IEntityContext Context
-            {
-                get
-                {
-                    return _context;
-                }
-            }
+            public IEntityContext Context { get; private set; }
 
             public ICollection<DictionaryPair> DictionaryEntries { get; set; }
         }

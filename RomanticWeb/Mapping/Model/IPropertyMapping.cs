@@ -8,6 +8,9 @@ namespace RomanticWeb.Mapping.Model
     /// </summary>
     public interface IPropertyMapping
 	{
+        /// <summary>
+        /// Gets the entity mapping.
+        /// </summary>
         IEntityMapping EntityMapping { get; }
 
         /// <summary>
@@ -25,6 +28,9 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         Type ReturnType { get; }
 
+        /// <summary>
+        /// Gets the aggregation operation.
+        /// </summary>
         Aggregation? Aggregation { get; }
 	}
 }

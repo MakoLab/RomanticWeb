@@ -51,9 +51,10 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Properties
-        /// <summary>Gets an IRI of this entity.</summary>
+        /// <inheritdoc/>
         public EntityId Id { get { return _entityId; } }
 
+        /// <inheritdoc/>
         public IEntityContext Context
         {
             get
@@ -164,19 +165,6 @@ namespace RomanticWeb.Entities
         public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
         {
             return _context.EntityAs<TInterface>(this);
-        }
-
-        /// <summary>Transforms given entity into a strongly typed interface.</summary>
-        /// <param name="TInterface">Strongly typed interface to be transformed into.</param>
-        /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
-        public dynamic AsEntity(Type TInterface)
-        {
-            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
-            {
-                throw new ArgumentOutOfRangeException("TInterface");
-            }
-
-            return _context.EntityAs(this,TInterface);
         }
 
         /// <summary>Serves as the default hash function. </summary>

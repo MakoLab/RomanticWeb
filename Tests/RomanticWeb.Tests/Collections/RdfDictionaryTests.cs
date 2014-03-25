@@ -308,7 +308,7 @@ namespace RomanticWeb.Tests.Collections
             return new RdfDictionary<string,int,TestPair,TestOwner>(Id,_context);
         }
 
-        internal class TestPair:IKeyValuePair<string, int>
+        internal class TestPair:IDictionaryEntry<string, int>
         {
             private readonly EntityId _id;
             private IEntityContext _context;

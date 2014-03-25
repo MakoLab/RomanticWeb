@@ -7,7 +7,10 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities
 {
-    public sealed class ResultTransformerCatalog : IResultTransformerCatalog
+    /// <summary>
+    /// Default implementation of <see cref="IResultTransformerCatalog"/>
+    /// </summary>
+    public sealed class ResultTransformerCatalog:IResultTransformerCatalog
     {
         private static readonly Lazy<IDictionary<Aggregation,IResultAggregator>> Aggregations;
         private readonly IResultAggregator _fallbackAggregation=new OriginalResult();
@@ -26,6 +29,7 @@ namespace RomanticWeb.Entities
             });
         }
 
+        /// <inheritdoc />
         public IResultAggregator GetAggregator(Aggregation aggregation)
         {
             if (Aggregations.Value.ContainsKey(aggregation))
@@ -36,6 +40,7 @@ namespace RomanticWeb.Entities
             return _fallbackAggregation;
         }
 
+        /// <inheritdoc />
         public IResultTransformer GetTransformer(IPropertyMapping property)
         {
             var collectionMapping=property as ICollectionMapping;

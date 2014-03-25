@@ -1,6 +1,5 @@
 ﻿using System;
 using NullGuard;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Attributes
 {
@@ -41,9 +40,12 @@ namespace RomanticWeb.Mapping.Attributes
         /// <summary>Gets the ontology prefix.</summary>
         public string Prefix { get { return _prefix; } }
 
-        /// <summary>Gets the term.</summary>
+        /// <summary>Gets the term name.</summary>
         public string Term { get { return _term; } }
 
+        /// <summary>
+        /// Gets the URI.
+        /// </summary>
         public Uri Uri
         {
             [return:AllowNull]
@@ -52,8 +54,6 @@ namespace RomanticWeb.Mapping.Attributes
                 return _uri;
             }
         }
-
-        protected Func<IOntologyProvider,Uri> TermUriFactoryMethod { get; set; }
         #endregion
     }
 }

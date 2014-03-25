@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -9,8 +8,14 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities.ResultPostprocessing
 {
+    /// <summary>
+    /// Transforms RDF object values to an <see cref="ObservableCollection{T}"/>
+    /// </summary>
     public class ObservableCollectionTransformer:IResultTransformer
     {
+        /// <summary>
+        /// Get the <see cref="ObservableCollection{T}"/> containing <paramref name="value"/>
+        /// </summary>
         public object GetTransformed(IEntityProxy parent,IPropertyMapping property,IEntityContext context,[AllowNull]object value)
         {
             var genericArguments = property.ReturnType.GetGenericArguments();

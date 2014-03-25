@@ -39,13 +39,13 @@ namespace RomanticWeb.Tests.Mapping
                                                        {
                                                            new DefaultDictionaryKeyPredicateConvention(),
                                                            new DefaultDictionaryValuePredicateConvention(),
-                                                           new CollectionConvention(),
+                                                           new CollectionStorageConvention(),
                                                            new RdfListConvention()
                                                        };
             MappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object, conventions));
         }
 
-        protected abstract IEnumerable<IMappingSource> CreateMappingSources();
+        protected abstract IEnumerable<IMappingProviderSource> CreateMappingSources();
 
         private static Uri GetUri(string prefix, string term)
         {

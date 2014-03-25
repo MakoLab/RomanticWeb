@@ -52,7 +52,6 @@ namespace RomanticWeb.Model
         /// <param name="s">Sbject <see cref="Uri" />.</param>
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
-        /// <param name="dataType">Optional Uri of the datatype of the value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,object value)
         {
@@ -67,7 +66,7 @@ namespace RomanticWeb.Model
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value)
         {
-            return For(entityId,s,p,value,RomanticWeb.Vocabularies.Xsd.String);
+            return For(entityId,s,p,value,Vocabularies.Xsd.String);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -78,7 +77,7 @@ namespace RomanticWeb.Model
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,int value)
         {
-            return For(entityId,s,p,value.ToString(),RomanticWeb.Vocabularies.Xsd.Int);
+            return For(entityId,s,p,value.ToString(),Vocabularies.Xsd.Int);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -89,7 +88,7 @@ namespace RomanticWeb.Model
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,float value)
         {
-            return For(entityId,s,p,value.ToString("R",System.Globalization.CultureInfo.InvariantCulture),RomanticWeb.Vocabularies.Xsd.Float);
+            return For(entityId,s,p,value.ToString("R",System.Globalization.CultureInfo.InvariantCulture),Vocabularies.Xsd.Float);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -100,7 +99,7 @@ namespace RomanticWeb.Model
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,bool value)
         {
-            return For(entityId,s,p,value.ToString().ToLower(),RomanticWeb.Vocabularies.Xsd.Boolean);
+            return For(entityId,s,p,value.ToString().ToLower(),Vocabularies.Xsd.Boolean);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -112,7 +111,7 @@ namespace RomanticWeb.Model
         /// <returns><see cref="EntityQuad" /> created.</returns>
         public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value,Uri dataType)
         {
-            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,dataType??RomanticWeb.Vocabularies.Xsd.String));
+            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,dataType??Vocabularies.Xsd.String));
         }
 
         /// <summary>Creates a quad.</summary>
@@ -158,7 +157,7 @@ namespace RomanticWeb.Model
 
         public override string ToString()
         {
-            return System.String.Format("{0} {1} {2} {3}",Subject,Predicate,Object,Graph);
+            return String.Format("{0} {1} {2} {3}",Subject,Predicate,Object,Graph);
         }
 
         int IComparable<EntityQuad>.CompareTo(EntityQuad other)

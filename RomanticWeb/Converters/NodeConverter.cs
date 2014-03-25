@@ -78,7 +78,7 @@ namespace RomanticWeb.Converters
                                      select obj;
                 foreach (var element in objectsToConvert)
                 {
-                    var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
+                    var converter=_converters.UriNodeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
                     if (converter!=null)
                     {
                         convertedNodes.AddRange(converter.ConvertBack(element));
@@ -180,7 +180,7 @@ namespace RomanticWeb.Converters
                 entity=new Entity(uriNode.ToEntityId());
             }
 
-            var converter=_converters.ComplexTypeConverters.FirstOrDefault(c => c.CanConvert(entity,predicate));
+            var converter=_converters.UriNodeConverters.FirstOrDefault(c => c.CanConvert(entity,predicate));
             if (converter!=null)
             {
                 return converter.Convert(entity,predicate);

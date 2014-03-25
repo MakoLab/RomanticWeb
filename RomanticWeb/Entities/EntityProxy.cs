@@ -30,9 +30,12 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Constructors
-        /// <summary>Initializes a new instance of the <see cref="EntityProxy"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityProxy" /> class.
+        /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
+        /// <param name="resultTransformers">The result transformers.</param>
         public EntityProxy(Entity entity, IEntityMapping entityMapping,IResultTransformerCatalog resultTransformers)
         {
             _store=entity.Context.Store;
@@ -54,6 +57,12 @@ namespace RomanticWeb.Entities
             }
         }
 
+        /// <summary>
+        /// Gets the entity mapping.
+        /// </summary>
+        /// <value>
+        /// The entity mapping.
+        /// </value>
         public IEntityMapping EntityMapping
         {
             get
@@ -71,6 +80,12 @@ namespace RomanticWeb.Entities
             }
         }
 
+        /// <summary>
+        /// Gets the graph selection override.
+        /// </summary>
+        /// <value>
+        /// The graph selection override.
+        /// </value>
         public ISourceGraphSelectionOverride GraphSelectionOverride
         {
             [return:AllowNull]
@@ -212,17 +227,6 @@ namespace RomanticWeb.Entities
             return _entity.AsEntity<TInterface>();
         }
 
-        /// <summary>Gets the underlying wrapper as another type of entity.</summary>
-        public dynamic AsEntity(Type TInterface)
-        {
-            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
-            {
-                throw new ArgumentNullException("TInterface");
-            }
-
-            return _entity.AsEntity(TInterface);
-        }
-
         /// <summary>
         /// Gets the underlying entity as dynamic.
         /// </summary>
@@ -231,6 +235,10 @@ namespace RomanticWeb.Entities
             return _entity;
         }
 
+        /// <summary>
+        /// Overrides the graph selection.
+        /// </summary>
+        /// <param name="parametersOverride">The parameters override.</param>
         public void OverrideGraphSelection(ISourceGraphSelectionOverride parametersOverride)
         {
             _overrideSourceGraph = parametersOverride;

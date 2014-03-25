@@ -6,7 +6,7 @@ using RomanticWeb.Mapping.Visitors;
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a property to an RDF predicate.</summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
     public class PropertyAttribute:TermMappingAttribute
     {
         #region Constructors
@@ -32,7 +32,7 @@ namespace RomanticWeb.Mapping.Attributes
         #region Public methods
         internal virtual IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor,PropertyInfo property)
         {
-            return visitor.Visit(property,this);
+            return visitor.Visit(this,property);
         }
 
         #endregion

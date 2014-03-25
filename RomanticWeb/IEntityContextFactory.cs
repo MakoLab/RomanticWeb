@@ -14,8 +14,20 @@ namespace RomanticWeb
         /// <summary>Gets the mappings.</summary>
         IMappingsRepository Mappings { get; }
 
+        /// <summary>
+        /// Gets the converters.
+        /// </summary>
+        /// <value>
+        /// The converters.
+        /// </value>
         IConverterCatalog Converters { get; }
 
+        /// <summary>
+        /// Gets the transformer catalog.
+        /// </summary>
+        /// <value>
+        /// The transformer catalog.
+        /// </value>
         IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>

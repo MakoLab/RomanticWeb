@@ -6,19 +6,35 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
 {
+    /// <summary>
+    /// Mapping provider, which returns a mapping for collection property predicate
+    /// </summary>
     public class CollectionMappingProvider:PropertyMappingProvider,ICollectionMappingProvider
     {
         private StoreAs _storeAs;
         private Aggregation? _aggregation;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
+        /// </summary>
+        /// <param name="termUri">The term URI.</param>
+        /// <param name="storeAs">The storage strategy.</param>
+        /// <param name="property">The property.</param>
         public CollectionMappingProvider(Uri termUri,StoreAs storeAs,PropertyInfo property)
             :base(termUri,property)
         {
             ((ICollectionMappingProvider)this).StoreAs = storeAs;
         }
 
-        public CollectionMappingProvider(string namespacePrefix,string termName,StoreAs storeAs,PropertyInfo property)
-            :base(namespacePrefix,termName,property)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
+        /// </summary>
+        /// <param name="namespacePrefix">The namespace prefix.</param>
+        /// <param name="term">The term.</param>
+        /// <param name="storeAs">The storate strategy.</param>
+        /// <param name="property">The property.</param>
+        public CollectionMappingProvider(string namespacePrefix,string term,StoreAs storeAs,PropertyInfo property)
+            :base(namespacePrefix,term,property)
         {
             ((ICollectionMappingProvider)this).StoreAs=storeAs;
         }
@@ -26,6 +42,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Gets or sets the storage strategy
         /// </summary>
+        /// <remarks>Setting this updated the <see cref="Aggregation"/> property</remarks>
         StoreAs ICollectionMappingProvider.StoreAs
         {
             get
@@ -52,6 +69,12 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <summary>
+        /// Gets the aggregation.
+        /// </summary>
+        /// <value>
+        /// The aggregation.
+        /// </value>
         public override Aggregation? Aggregation
         {
             get
@@ -60,9 +83,10 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public override void Accept(IMappingProviderVisitor visitor)
+        /// <inheritdoc/>
+        public override void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {
-            visitor.Visit(this);
+            mappingProviderVisitor.Visit(this);
         }
     }
 }

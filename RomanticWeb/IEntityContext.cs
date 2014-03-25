@@ -71,10 +71,18 @@ namespace RomanticWeb
         /// </summary>
         void Delete(EntityId entityId);
 
+        /// <summary>
+        /// Initializes the enitity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         void InitializeEnitity(IEntity entity);
 
+        /// <summary>
+        /// Wraps an entity as another entity type.
+        /// </summary>
+        /// <typeparam name="T">the <see cref="IEntity"/> type</typeparam>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
         T EntityAs<T>(IEntity entity)where T:class,IEntity;
-
-        dynamic EntityAs(IEntity entity,Type T);
     }
 }

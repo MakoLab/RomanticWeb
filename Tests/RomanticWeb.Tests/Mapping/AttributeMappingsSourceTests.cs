@@ -39,7 +39,7 @@ namespace RomanticWeb.Tests.Mapping
             Assert.That(propertyMapping.Uri,Is.EqualTo(new Uri("urn:generic:collection")));
         }
 
-        protected override IEnumerable<IMappingSource> CreateMappingSources()
+        protected override IEnumerable<IMappingProviderSource> CreateMappingSources()
         {
             yield return new AttributeMappingsSource(typeof(IAnimal).Assembly);
         }

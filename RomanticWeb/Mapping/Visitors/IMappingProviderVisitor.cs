@@ -2,16 +2,39 @@
 
 namespace RomanticWeb.Mapping.Visitors
 {
+    /// <summary>
+    /// Contract for implementing visitors of mapping providers
+    /// </summary>
     public interface IMappingProviderVisitor
     {
-        void Visit(ICollectionMappingProvider mappingProvider);
+        /// <summary>
+        /// Visits the specified collection mapping provider.
+        /// </summary>
+        /// <param name="collectionMappingProvider">The collection mapping provider.</param>
+        void Visit(ICollectionMappingProvider collectionMappingProvider);
 
-        void Visit(IPropertyMappingProvider mappingProvider);
+        /// <summary>
+        /// Visits the specified property mapping provider.
+        /// </summary>
+        /// <param name="propertyMappingProvider">The property mapping provider.</param>
+        void Visit(IPropertyMappingProvider propertyMappingProvider);
 
-        void Visit(IDictionaryMappingProvider mappingProvider);
+        /// <summary>
+        /// Visits the specified dictionary mapping provider.
+        /// </summary>
+        /// <param name="dictionaryMappingProvider">The dictionary mapping provider.</param>
+        void Visit(IDictionaryMappingProvider dictionaryMappingProvider);
 
-        void Visit(IClassMappingProvider mappingProvider);
+        /// <summary>
+        /// Visits the specified class mapping provider.
+        /// </summary>
+        /// <param name="classMappingProvider">The class mapping provider.</param>
+        void Visit(IClassMappingProvider classMappingProvider);
 
-        void Visit(IEntityMappingProvider mappingProvider);
+        /// <summary>
+        /// Visits the specified entity mapping provider.
+        /// </summary>
+        /// <param name="entityMappingProvider">The entity mapping provider.</param>
+        void Visit(IEntityMappingProvider entityMappingProvider);
     }
 }

@@ -3,25 +3,42 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    public class ValueMappingProvider : TermMappingProviderBase
+    /// <summary>
+    /// Mapping provider, which returns a mapping for dictionary value property
+    /// </summary>
+    public class ValueMappingProvider:TermMappingProviderBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValueMappingProvider"/> class.
+        /// </summary>
+        /// <param name="termUri">The term URI.</param>
         public ValueMappingProvider(Uri termUri)
             :base(termUri)
         {
         }
 
-        public ValueMappingProvider(string namespacePrefix,string termName)
-            :base(namespacePrefix,termName)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValueMappingProvider"/> class.
+        /// </summary>
+        /// <param name="namespacePrefix">The namespace prefix.</param>
+        /// <param name="term">The term.</param>
+        public ValueMappingProvider(string namespacePrefix,string term)
+            :base(namespacePrefix,term)
         {
         }
 
+        /// <summary>
+        /// Initializes an empty <see cref="ValueMappingProvider"/>.
+        /// </summary>
         public ValueMappingProvider()
         {
         }
 
-        public override void Accept(IMappingProviderVisitor visitor)
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        public override void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {
-            throw new NotImplementedException();
         }
     }
 }

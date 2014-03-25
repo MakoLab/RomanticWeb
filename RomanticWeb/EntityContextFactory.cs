@@ -51,7 +51,7 @@ namespace RomanticWeb
         #endregion
 
         #region Properties
-        /// <summary>Gets the ontology provider.</summary>
+        /// <inheritdoc/>
         public IOntologyProvider Ontologies
         {
             get
@@ -61,7 +61,7 @@ namespace RomanticWeb
             }
         }
 
-        /// <summary>Gets the mappings.</summary>
+        /// <inheritdoc/>
         public IMappingsRepository Mappings
         {
             get
@@ -71,8 +71,10 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc/>
         public IConverterCatalog Converters { get { return _conveters; } }
 
+        /// <inheritdoc/>
         public IResultTransformerCatalog TransformerCatalog
         {
             get

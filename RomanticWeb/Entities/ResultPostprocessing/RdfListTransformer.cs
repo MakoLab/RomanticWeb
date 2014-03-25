@@ -6,8 +6,14 @@ using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities.ResultPostprocessing
 {
+    /// <summary>
+    /// Transforms the resulting nodes to a <see cref="RdfListAdapter{T}"/>
+    /// </summary>
     public class RdfListTransformer:IResultTransformer
     {
+        /// <summary>
+        /// Transforms the resulting nodes to a <see cref="RdfListAdapter{T}"/>
+        /// </summary>
         public object GetTransformed(IEntityProxy parent,IPropertyMapping property,IEntityContext context,[AllowNull]object value)
         {
             var genericArguments = property.ReturnType.GetGenericArguments();

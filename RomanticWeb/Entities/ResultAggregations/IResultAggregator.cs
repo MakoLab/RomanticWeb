@@ -7,6 +7,12 @@ namespace RomanticWeb.Entities.ResultAggregations
     /// </summary>
     public interface IResultAggregator
     {
+        /// <summary>
+        /// Gets the aggregation.
+        /// </summary>
+        /// <value>
+        /// The aggregation.
+        /// </value>
         Aggregation Aggregation { get; }
 
         /// <summary>

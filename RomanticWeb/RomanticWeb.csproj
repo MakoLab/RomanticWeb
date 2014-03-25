@@ -53,7 +53,7 @@
       <Link>Dynamic\DictionaryEntityNames.cs</Link>
     </Compile>
     <Compile Include="AppDomainExtensions.cs" />
-    <Compile Include="Collections\IKeyValuePair.cs" />
+    <Compile Include="Collections\IDictionaryEntry.cs" />
     <Compile Include="Collections\IDictionaryOwner.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\IRdfListNode.cs" />
@@ -76,9 +76,9 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
-    <Compile Include="Dynamic\DynamicAssemblyProvider.cs" />
+    <Compile Include="Dynamic\DefaultDictionaryTypeProvider.cs" />
     <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />
-    <Compile Include="Dynamic\IDictionaryPairTypeProvider.cs" />
+    <Compile Include="Dynamic\IDictionaryTypeProvider.cs" />
     <Compile Include="Dynamic\OntologyAccessor.cs" />
     <Compile Include="Dynamic\TypeDictionaryEntityNames.cs" />
     <Compile Include="Entities\ConstantBaseUri.cs" />
@@ -188,7 +188,7 @@
     <Compile Include="Mapping\Providers\DictionaryMappingProvider.cs" />
     <Compile Include="Mapping\Providers\EntityMappingProvider.cs" />
     <Compile Include="Mapping\Attributes\ValueAttribute.cs" />
-    <Compile Include="Mapping\Conventions\CollectionConvention.cs" />
+    <Compile Include="Mapping\Conventions\CollectionStorageConvention.cs" />
     <Compile Include="Mapping\Conventions\ConventionsVisitor.cs" />
     <Compile Include="Mapping\Conventions\DefaultDictionaryKeyPredicateConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultDictionaryValuePredicateConvention.cs" />
@@ -220,7 +220,7 @@
     <Compile Include="Mapping\Providers\IDictionaryMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IEntityMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IMappingSource.cs" />
+    <Compile Include="Mapping\Providers\IMappingProviderSource.cs" />
     <Compile Include="Mapping\Providers\InheritanceTreeProvider.cs" />
     <Compile Include="Mapping\Providers\InheritanceMappingBuilder.cs" />
     <Compile Include="Mapping\Providers\IPropertyMappingProvider.cs" />
@@ -268,7 +268,6 @@
     <Compile Include="NamedGraphs\INamedGraphSelector.cs" />
     <Compile Include="NamedGraphs\NamedGraphSelector.cs" />
     <Compile Include="NamedGraphs\NamedGraphMatch.cs" />
-    <Compile Include="NamedGraphs\NamedGraphSelectorBase.cs" />
     <Compile Include="NamedGraphs\OverridingGraphSelector.cs" />
     <Compile Include="NamedGraphs\ISourceGraphSelectionOverride.cs" />
     <Compile Include="NamedGraphs\UnionGraphSelector.cs" />

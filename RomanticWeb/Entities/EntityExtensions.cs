@@ -12,7 +12,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Target entity to be converted to dynamic.</param>
         public static dynamic AsDynamic(this IEntity entity)
         {
-            dynamic result=null;
+            dynamic result;
             entity=UnwrapProxy(entity);
 
             if (entity is Entity)
@@ -29,7 +29,7 @@ namespace RomanticWeb.Entities
             }
             else
             {
-                result=(dynamic)entity;
+                result=entity;
             }
 
             return result;
@@ -61,43 +61,12 @@ namespace RomanticWeb.Entities
             return result;
         }
 
-        /// <summary>Wraps the entity as a given statically typed type.</summary>
-        public static dynamic AsEntity(this IEntity entity,Type TInterface)
-        {
-            if (!(typeof(IEntity).IsAssignableFrom(TInterface)))
-            {
-                throw new ArgumentOutOfRangeException("TInterface");
-            }
-            
-            dynamic result;
-            entity=UnwrapProxy(entity);
-
-            if (TInterface.IsAssignableFrom(entity.GetType()))
-            {
-                result=(IEntity)entity;
-            }
-            else if (entity is Entity)
-            {
-                result=((Entity)entity).AsEntity(TInterface);
-            }
-            else if (entity is EntityProxy)
-            {
-                result=((EntityProxy)entity).AsEntity(TInterface);
-            }
-            else
-            {
-                result=Impromptu.ActLike(entity.AsDynamic(),TInterface);
-            }
-
-            return result;
-        }
-
         /// <summary>Gets an enumeration containing all RDF types behind given entity.</summary>
         /// <param name="entity">Entity to operate on.</param>
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
-            return (entity!=null?entity.AsEntity<ITypedEntity>().Types.Union(new EntityId[] { new EntityId(RomanticWeb.Vocabularies.Owl.Thing) }):new EntityId[0]);
+            return (entity!=null?entity.AsEntity<ITypedEntity>().Types.Union(new[] { new EntityId(Vocabularies.Owl.Thing) }):new EntityId[0]);
         }
 
         /// <summary>Determines if a given entity is of the given type provided.</summary>
@@ -106,7 +75,7 @@ namespace RomanticWeb.Entities
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
         public static bool Is(this IEntity entity,Uri type)
         {
-            return entity.Is(new Uri[] { type });
+            return entity.Is(new[] { type });
         }
 
         /// <summary>Determines if a given entity is of any of the types provided.</summary>
@@ -124,7 +93,7 @@ namespace RomanticWeb.Entities
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
         public static bool Is(this IEntity entity,EntityId type)
         {
-            return entity.Is(new EntityId[] { type });
+            return entity.Is(new[] { type });
         }
 
         /// <summary>Determines if a given entity is of any of the types provided.</summary>
@@ -133,7 +102,7 @@ namespace RomanticWeb.Entities
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
         public static bool Is(this IEntity entity,IEnumerable<EntityId> types)
         {
-            return ((entity!=null)&&(types!=null)?entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any():false);
+            return ((entity!=null)&&(types!=null)&&entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any());
         }
 
         /// <summary>

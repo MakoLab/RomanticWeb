@@ -401,7 +401,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                    .Should().Contain(new[] { "Karol", "Gniewko", "Dominik", "Przemek" });
         }
 
-        protected override IMappingSource SetupMappings()
+        protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();
         }

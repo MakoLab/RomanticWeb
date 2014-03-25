@@ -44,19 +44,19 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public void Accept(IMappingProviderVisitor visitor)
+        public void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {
             var @this=((IEntityMappingProvider)this);
-            visitor.Visit(this);
+            mappingProviderVisitor.Visit(this);
 
             foreach (var property in @this.Properties)
             {
-                property.Accept(visitor);
+                property.Accept(mappingProviderVisitor);
             }
 
             foreach (var classProvider in @this.Classes)
             {
-                classProvider.Accept(visitor);
+                classProvider.Accept(mappingProviderVisitor);
             }
         }
     }

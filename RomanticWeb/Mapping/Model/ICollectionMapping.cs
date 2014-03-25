@@ -1,5 +1,8 @@
 ﻿namespace RomanticWeb.Mapping.Model
 {
+    /// <summary>
+    /// Represents a collection property mapping
+    /// </summary>
     public interface ICollectionMapping:IPropertyMapping
     {
         /// <summary>

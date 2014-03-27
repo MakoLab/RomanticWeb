@@ -71,21 +71,40 @@ namespace RomanticWeb.Converters
                 convertedNodes.AddRange(convertedEntities);
             }
 
-            if (value is IEnumerable && !(value is string))
+            if ((value is IEnumerable)&&!(value is string))
             {
-                var objectsToConvert=from obj in ((IEnumerable)value).Cast<object>()
-                                     where obj.GetType()==property.ReturnType.GetGenericArguments().First()
-                                     select obj;
-                foreach (var element in objectsToConvert)
+                Type targetType=property.ReturnType.GetGenericArguments().First();
+                foreach (object item in (IEnumerable)value)
                 {
-                    var converter=_converters.UriNodeConverters.FirstOrDefault(c => c.CanConvertBack(element,property));
-                    if (converter!=null)
+                    bool canAddItem=true;
+                    Type[] constraints=new Type[0];
+                    if ((targetType.IsGenericParameter)&&((constraints=targetType.GetGenericParameterConstraints()).Length>0))
                     {
-                        convertedNodes.AddRange(converter.ConvertBack(element));
+                        foreach (Type constraint in constraints)
+                        {
+                            if (!constraint.IsAssignableFrom(item.GetType()))
+                            {
+                                canAddItem=false;
+                                break;
+                            }
+                        }
                     }
                     else
                     {
-                        convertedNodes.Add(ConvertOneBack(element));
+                        canAddItem=targetType.IsAssignableFrom(item.GetType());
+                    }
+
+                    if (canAddItem)
+                    {
+                        var converter=_converters.UriNodeConverters.FirstOrDefault(c => c.CanConvertBack(item,property));
+                        if (converter!=null)
+                        {
+                            convertedNodes.AddRange(converter.ConvertBack(item));
+                        }
+                        else
+                        {
+                            convertedNodes.Add(ConvertOneBack(item));
+                        }
                     }
                 }
             }
@@ -104,19 +123,19 @@ namespace RomanticWeb.Converters
 
             // convert literal node
             shouldConvert|=objectNode.IsLiteral;
-            
+
             if ((!shouldConvert)&&(propertyMapping!=null))
             {
-                type = propertyMapping.ReturnType.FindItemType();
-                
+                type=propertyMapping.ReturnType.FindItemType();
+
                 // or convert primitive/string values
-                shouldConvert|=type.IsPrimitive||type==typeof(string);
+                shouldConvert|=(type.IsPrimitive)||(type==typeof(string));
 
                 // and don't convert rdf lists or dictionary nodes
                 var collectionMapping=propertyMapping as ICollectionMapping;
                 if (collectionMapping!=null)
                 {
-                    shouldConvert&=collectionMapping.StoreAs!=StoreAs.RdfList;
+                    shouldConvert&=(collectionMapping.StoreAs!=StoreAs.RdfList);
                 }
 
                 shouldConvert&=!(propertyMapping is IDictionaryMapping);
@@ -154,9 +173,9 @@ namespace RomanticWeb.Converters
             }
             else
             {
-            var converter=_converters.GetBestConverter(objectNode);
-            if (converter!=null)
-            {
+                var converter=_converters.GetBestConverter(objectNode);
+                if (converter!=null)
+                {
                     result=converter.Convert(objectNode);
                     if ((resultType!=null)&&(resultType.IsGenericType)&&(resultType.GetGenericTypeDefinition()==typeof(Nullable<>)))
                     {

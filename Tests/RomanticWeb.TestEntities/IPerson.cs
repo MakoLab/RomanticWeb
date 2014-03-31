@@ -12,6 +12,8 @@ namespace RomanticWeb.TestEntities
 
 	    Uri Homepage { get; }
 
+        IList<IEntity> HomepageAsEntities { get; }
+
         ICollection<string> Interests { get; set; }
 
 	    ICollection<string> NickNames { get; }
@@ -21,5 +23,7 @@ namespace RomanticWeb.TestEntities
 	    IPerson Friend { get; }
 
         IEntity Entity { get; set; }
+
+        int Age { get; set; }
 	}
 }

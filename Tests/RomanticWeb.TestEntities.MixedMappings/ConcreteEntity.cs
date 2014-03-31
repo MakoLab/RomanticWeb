@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Attributes;
 
@@ -40,6 +41,14 @@ namespace RomanticWeb.TestEntities.MixedMappings
 
         [Property("urn:concrete:class")]
         public string UnMappedProperty
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public ICollection<string> GenericProperty
         {
             get
             {

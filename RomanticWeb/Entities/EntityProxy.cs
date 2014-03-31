@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Collections;
-using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
@@ -24,26 +22,26 @@ namespace RomanticWeb.Entities
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
-        private readonly INodeConverter _converter;
         private ISourceGraphSelectionOverride _overrideSourceGraph;
 
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityProxy" /> class.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
-        public EntityProxy(Entity entity, IEntityMapping entityMapping,IResultTransformerCatalog resultTransformers)
+        public EntityProxy(Entity entity,IEntityMapping entityMapping,IResultTransformerCatalog resultTransformers)
         {
             _store=entity.Context.Store;
             _entity=entity;
             _entityMapping=entityMapping;
             _resultTransformers=resultTransformers;
-            _converter=entity.Context.NodeConverter;
         }
+
         #endregion
 
         #region Properties
@@ -109,25 +107,22 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool TryGetMember(GetMemberBinder binder,out object result)
         {
+            var property=_entityMapping.PropertyFor(binder.Name);
             try
             {
                 _entity.EnsureIsInitialized();
 
-                var property=_entityMapping.PropertyFor(binder.Name);
                 var graph=SelectNamedGraph(property);
 
                 LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
 
                 IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-                var objectsForPredicate=_converter.ConvertNodes(objects,property);
-                var aggregatedResult=AggregateResults(property,objectsForPredicate);
                 var resultTransformer=_resultTransformers.GetTransformer(property);
-
-                result=resultTransformer.GetTransformed(this,property,Context,aggregatedResult);
+                result=resultTransformer.FromNodes(this,property,Context,objects);
 
                 if (result is IEntity)
                 {
-                    var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
+                    var entityProxy=((IEntity)result).UnwrapProxy() as IEntityProxy;
 
                     if (entityProxy != null)
                     {
@@ -137,9 +132,10 @@ namespace RomanticWeb.Entities
 
                 return true;
             }
-            catch
+            catch (Exception e)
             {
                 LogTo.Fatal("An error occured when getting value for property {0}#{1}",_entityMapping.EntityType.FullName,binder.Name);
+                LogTo.Fatal(e.Message);
                 throw;
             }
         }
@@ -157,43 +153,16 @@ namespace RomanticWeb.Entities
 
                 var propertyUri=Node.ForUri(property.Uri);
                 var graphUri=SelectNamedGraph(property);
+                var resultTransformer=_resultTransformers.GetTransformer(property);
 
-                if (property is ICollectionMapping && ((ICollectionMapping)property).StoreAs == StoreAs.RdfList)
-                {
-                    if (value is IRdfListAdapter)
-                    {
-                        Node listHead=Node.FromEntityId((value as IRdfListAdapter).Head.Id);
-                        _store.ReplacePredicateValues(Id,propertyUri,new[] { listHead },graphUri);
-                    }
-                    else
-                    {
-                        var genericArguments = property.ReturnType.GetGenericArguments();
-                        var ctor =
-                            typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                                    .GetConstructor(new[] { typeof(IEntityContext), typeof(OverridingGraphSelector) });
-                        var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
-                        var rdfList=(IRdfListAdapter)ctor.Invoke(new object[] { Context,paremeters });
-
-                        foreach (var item in (IEnumerable)value)
-                        {
-                            rdfList.Add(item);
-                        }
-
-                        Node listHead=Node.FromEntityId(rdfList.Head.Id);
-                        _store.ReplacePredicateValues(Id, propertyUri, new[] { listHead },graphUri);
-                    }
-                }
-                else
-                {
-                    var newValues=_converter.ConvertBack(value,property);
-                    _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
-                }
+                var newValues=resultTransformer.ToNodes(value,this,property,Context);
+                _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
 
                 return true;
             }
             catch
             {
-                LogTo.Fatal("An error occured when setting value for property {0}#{1}", _entityMapping.EntityType.FullName, binder.Name);
+                LogTo.Fatal("An error occured when setting value for property {0}#{1}",_entityMapping.EntityType.FullName,binder.Name);
                 throw;
             }
         }
@@ -201,7 +170,8 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var entity=obj as IEntity;
+            var proxy = obj as EntityProxy;
+            IEntity entity=proxy!=null?proxy._entity:obj as IEntity;
             if (entity==null) { return false; }
 
             return _entity.Equals(entity);
@@ -246,25 +216,6 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Private methods
-
-        [return:AllowNull]
-        private object AggregateResults(IPropertyMapping property,IEnumerable<object> objectsForPredicate)
-        {
-            try
-            {
-                var aggregator=_resultTransformers.GetAggregator(property.Aggregation.GetValueOrDefault());
-                return aggregator.Aggregate(objectsForPredicate);
-            }
-            catch (CardinalityException e)
-            {
-                LogTo.Fatal(
-                    "Expected {0} but got {1} result(s) for property {2}",
-                    e.ExpectedCardinality,
-                    e.ActualCardinality,
-                    property);
-                throw;
-            }
-        }
 
         private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
         {

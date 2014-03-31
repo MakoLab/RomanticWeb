@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using RomanticWeb.Mapping.Providers;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Sources
 {
     /// <summary>
     /// Base class for implementations of <see cref="IMappingProviderSource" />, which scan an <see cref="Assembly" />

@@ -24,7 +24,7 @@ namespace RomanticWeb.Converters
     }
 
     /// <summary>
-    /// Result of matching literals for conversion by <see cref="ILiteralNodeConverter"/>
+    /// Result of matching literals for conversion by <see cref="LiteralNodeConverter"/>
     /// </summary>
     public struct LiteralConversionMatch:IComparable<LiteralConversionMatch>
     {
@@ -41,12 +41,12 @@ namespace RomanticWeb.Converters
 #pragma warning disable 1591
         public int CompareTo(LiteralConversionMatch other)
         {
-            if (LiteralFormatMatches!=other.LiteralFormatMatches)
+            if (LiteralFormatMatches != other.LiteralFormatMatches)
             {
                 return LiteralFormatMatches.CompareTo(other.LiteralFormatMatches);
             }
 
-            if (DatatypeMatches!=other.DatatypeMatches)
+            if (DatatypeMatches != other.DatatypeMatches)
             {
                 return DatatypeMatches.CompareTo(other.DatatypeMatches);
             }

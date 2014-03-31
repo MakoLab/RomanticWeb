@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Model;
@@ -26,7 +27,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_values_from_literals(string literal, decimal expectedValue)
         {
             // when
-            var value = Converter.Convert(Node.ForLiteral(literal));
+            var value = Converter.Convert(Node.ForLiteral(literal),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(value, Is.InstanceOf<decimal>());
@@ -37,7 +38,7 @@ namespace RomanticWeb.Tests.Converters
         [ExpectedException]
         public void Should_not_convert_scientific_notation()
         {
-            Converter.Convert(Node.ForLiteral("2e10"));
+            Converter.Convert(Node.ForLiteral("2e10"),new Mock<IEntityContext>().Object);
         }
 
         [TestCase("some text")]
@@ -45,7 +46,7 @@ namespace RomanticWeb.Tests.Converters
         [ExpectedException]
         public void Should_not_convert_non_numbers(string literal)
         {
-            Converter.Convert(Node.ForLiteral(literal));
+            Converter.Convert(Node.ForLiteral(literal),new Mock<IEntityContext>().Object);
         }
     }
 }

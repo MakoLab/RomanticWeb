@@ -8,8 +8,6 @@ using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Conventions;
-using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
@@ -42,16 +40,12 @@ namespace RomanticWeb.Tests.Linq
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig"); 
             
             _factory=new Mock<IEntityContextFactory>();
-            _factory.Setup(cf => cf.Converters).Returns(new ConverterCatalog());
-            _factory.Setup(cf => cf.TransformerCatalog).Returns(new TestTransformerCatalog());
-
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
             
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
-            _mappingsRepository=new TestMappingsRepository(ontologyProvider,new TestPersonMap(),new TestTypedEntityMap());
-            var mappingContext=new MappingContext(ontologyProvider,new IConvention[]{ new RdfListConvention(),new CollectionStorageConvention() });
-            _mappingsRepository.RebuildMappings(mappingContext);
+            _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
+            var mappingContext=new MappingContext(ontologyProvider,EntityContextFactory.CreateDefaultConventions());
             _entityContext=new EntityContext(
                 _factory.Object,
                 _mappingsRepository,
@@ -168,23 +162,23 @@ namespace RomanticWeb.Tests.Linq
             tomasz.Should().NotBeNull();
         }
 
-        private class TestPersonMap : EntityMap<IPerson>
+        private class TestPersonMap : TestEntityMapping<IPerson>
         {
             public TestPersonMap()
             {
-                Class.Is("foaf", "Person");
-                Collection(p => p.Knows).Term.Is("foaf","knows");
-                Property(p => p.FirstName).Term.Is("foaf","givenName");
-                Property(p => p.Surname).Term.Is("foaf","familyName");
+                Class(Vocabularies.Foaf.Person);
+                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>());
+                Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
+                Property("Surname", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
             }
         }
 
-        private class TestTypedEntityMap : EntityMap<ITypedEntity>
+        private class TestTypedEntityMap : TestEntityMapping<ITypedEntity>
         {
             public TestTypedEntityMap()
             {
-                Class.Is(Vocabularies.Rdfs.Class);
-                Collection(p => p.Types).Term.Is(Vocabularies.Rdf.type);
+                Class(Vocabularies.Rdfs.Class);
+                Collection("Types",Vocabularies.Rdf.type,typeof(ICollection<EntityId>),new EntityIdConverter());
             }
         }
     }

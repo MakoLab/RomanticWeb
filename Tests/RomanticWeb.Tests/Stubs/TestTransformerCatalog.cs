@@ -31,7 +31,7 @@ namespace RomanticWeb.Tests.Stubs
                 }
             }
 
-            return new NullTransformer();
+            return new SimpleTransformer(new OriginalResult());
         }
     }
 }

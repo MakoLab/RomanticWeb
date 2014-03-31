@@ -13,7 +13,7 @@ namespace RomanticWeb.Mapping.Conventions
         /// <inheritdoc/>
         public bool ShouldApply(ICollectionMappingProvider target)
         {
-            return !target.Aggregation.HasValue
+            return target.StoreAs==StoreAs.Undefined
                 && target.PropertyInfo.PropertyType.IsGenericType
                 && target.PropertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(IList<>);
         }

@@ -6,12 +6,17 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Converter for GUID literal nodes
     /// </summary>
-    public class GuidConverter:ILiteralNodeConverter
+    public class GuidConverter : INodeConverter
     {
         /// <inheritdoc />
-        public object Convert(Node objectNode)
+        public object Convert(Node objectNode,IEntityContext context)
         {
             return Guid.Parse(objectNode.Literal);
+        }
+
+        public Node ConvertBack(object value)
+        {
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />

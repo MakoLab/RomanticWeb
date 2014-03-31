@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Tests.Stubs
 {

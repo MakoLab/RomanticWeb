@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Fluent;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.TestEntities.MixedMappings;
 
 namespace RomanticWeb.Tests.Mapping
@@ -23,6 +21,45 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             property.Uri.Should().Be(new Uri("urn:open:mapping2"));
+        }
+
+        [Test]
+        public void Should_fill_return_types_for_inherited_generic_properties()
+        {
+            // given
+            var mapping=MappingsRepository.MappingFor<IDerived>();
+
+            // when
+            var property=mapping.PropertyFor("MappedProperty2");
+
+            // then
+            property.ReturnType.Should().Be(typeof(int));
+        }
+
+        [Test]
+        public void Should_contain_closed_generic_mappings_not_mapped_explicitly()
+        {
+            // given
+            var mapping=MappingsRepository.MappingFor<IGenericParent<int>>();
+
+            // when
+            var property=mapping.PropertyFor("MappedProperty2");
+
+            // then
+            property.ReturnType.Should().Be(typeof(int));
+        }
+
+        [Test]
+        public void Should_contain_open_generic_mappings()
+        {
+            // given
+            var mapping=MappingsRepository.MappingFor(typeof(IGenericParent<>));
+
+            // when
+            var property=mapping.PropertyFor("MappedProperty2");
+
+            // then
+            property.ReturnType.Name.Should().Be("T");
         }
 
         [Test]

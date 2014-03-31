@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using RomanticWeb.Mapping.Fluent;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.TestEntities.FluentMappings;
 
 namespace RomanticWeb.Tests.Mapping

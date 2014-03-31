@@ -26,7 +26,7 @@ namespace RomanticWeb.ComponentModel.Composition
         {
             if (!@interface.IsInterface)
             {
-                throw new ArgumentOutOfRangeException("T");
+                throw new ArgumentOutOfRangeException("interface");
             }
 
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -53,11 +53,6 @@ namespace RomanticWeb.ComponentModel.Composition
         /// <returns>Enumeration of constructors of types implementing given interface.</returns>
         public static IEnumerable<ConstructorInfo> GetTypesImplementing<T>(params object[] arguments)
         {
-            if (!typeof(T).IsInterface)
-            {
-                throw new ArgumentOutOfRangeException("T");
-            }
-
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
                     from type in assembly.GetTypes()

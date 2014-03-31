@@ -6,7 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Providers;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Sources
 {
     /// <summary>
     /// Mappings repository, which reads mapping attributes from an assembly

@@ -61,7 +61,7 @@ namespace RomanticWeb.Entities
                 return new DictionaryTransformer();
             }
 
-            return new NullTransformer();
+            return new SimpleTransformer(new SingleOrDefault());
         }
     }
 }

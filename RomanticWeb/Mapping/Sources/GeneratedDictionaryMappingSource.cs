@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,15 +10,15 @@ using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.Ontologies;
 
-namespace RomanticWeb.Dynamic
+namespace RomanticWeb.Mapping.Sources
 {
-    internal class DynamicDictionaryMappingSource:IMappingProviderVisitor,IMappingProviderSource
+    internal class GeneratedDictionaryMappingSource:IMappingProviderVisitor,IMappingProviderSource
     {
         private readonly IFluentMapsVisitor _visitor=new FluentMappingProviderBuilder();
         private readonly List<EntityMap> _entityMaps=new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
 
-        public DynamicDictionaryMappingSource(IOntologyProvider ontologyProvider)
+        public GeneratedDictionaryMappingSource(IOntologyProvider ontologyProvider)
         {
             _ontologyProvider=ontologyProvider;
         }

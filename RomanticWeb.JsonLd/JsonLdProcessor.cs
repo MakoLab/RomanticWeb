@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
@@ -24,6 +23,11 @@ namespace RomanticWeb.JsonLd
         internal const string Index="@index";
         internal const string Base="@base";
         internal const string Default="@default";
+
+        private static readonly Node RdfFirst=Node.ForUri(Rdf.first);
+        private static readonly Node RdfType=Node.ForUri(Rdf.type);
+        private static readonly Node RdfRest=Node.ForUri(Rdf.rest);
+        private static readonly Node RdfNil=Node.ForUri(Rdf.nil);
 
         private readonly JArray _listInGraph=new JArray();
         private List<Node> _nodesInList=new List<Node>();
@@ -86,7 +90,7 @@ namespace RomanticWeb.JsonLd
             var groups=from quad in quads
                        where quad.Subject==subject&&quad.Graph==graphName
                        group quad.Object by quad.Predicate into g
-                       select new { Predicate=(g.Key==Node.a?useRdfType?Node.a:Node.ForLiteral(Type):g.Key), Objects=g } 
+                       select new { Predicate=(g.Key==RdfType?useRdfType?RdfType:Node.ForLiteral(Type):g.Key), Objects=g } 
                        into selection
                         orderby selection.Predicate
                         select selection;
@@ -97,11 +101,11 @@ namespace RomanticWeb.JsonLd
             foreach (var objectGroup in groups)
             {
                 JProperty res;
-                if (objectGroup.Predicate==Node.a||objectGroup.Predicate==Node.ForLiteral(Type))
+                if (objectGroup.Predicate==RdfType||objectGroup.Predicate==Node.ForLiteral(Type))
                 {
                     if (useRdfType)
                     {
-                        res=new JProperty(new JProperty(Node.a.ToString(),new JArray(from o in objectGroup.Objects select GetPropertyValue(o,nativeTypes,listsInGraph))));
+                        res=new JProperty(new JProperty(RdfType.ToString(),new JArray(from o in objectGroup.Objects select GetPropertyValue(o,nativeTypes,listsInGraph))));
                     }
                     else
                     {
@@ -127,7 +131,7 @@ namespace RomanticWeb.JsonLd
 
         private JObject GetListsFromGraph(IEnumerable<EntityQuad> quads,bool useNativeTypes)
         {
-            var lists=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==Node.rest&&q.Object==Node.nil));
+            var lists=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==RdfRest&&q.Object==RdfNil));
             var locList=new JObject();
             foreach (var list in lists)
             {
@@ -145,14 +149,14 @@ namespace RomanticWeb.JsonLd
         private void PrepareLists(EntityQuad list,IEnumerable<EntityQuad> quads,bool useNativeTypes)
         {
             Node localSubject=list.Subject;
-            int anotherPropertyInList=quads.Count(q => q.Subject==localSubject&&q.Predicate!=Node.a);
-            var firstValues=quads.Where(q => (q.Subject==localSubject&&q.Predicate==Node.first)).Select(q => q.Object);
+            int anotherPropertyInList=quads.Count(q => q.Subject==localSubject&&q.Predicate!=RdfType);
+            var firstValues=quads.Where(q => (q.Subject==localSubject&&q.Predicate==RdfFirst)).Select(q => q.Object);
             Node firstValue=firstValues.First();
             Node restValue=list.Object;
             _listInGraph.AddFirst(ReturnListProperties(firstValue,useNativeTypes));
             _nodesInList.Add(localSubject);
 
-            IEnumerable<EntityQuad> quad=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==Node.rest&&q.Object==localSubject));
+            IEnumerable<EntityQuad> quad=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==RdfRest&&q.Object==localSubject));
             if (anotherPropertyInList>2||firstValues.Count()>1)
             {
                 if (_listInGraph.Count()>1)
@@ -170,7 +174,7 @@ namespace RomanticWeb.JsonLd
                 }
                 else
                 {
-                    IEnumerable<EntityQuad> firstQuad=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==Node.first&&q.Object==localSubject));
+                    IEnumerable<EntityQuad> firstQuad=quads.Where(q => (q.Subject.IsBlank&&q.Predicate==RdfFirst&&q.Object==localSubject));
                     if (firstQuad.Count()==1)
                     {
                         _listInGraph.First.Remove();
@@ -212,7 +216,7 @@ namespace RomanticWeb.JsonLd
 
         private JProperty GetNonLiteralObjectPreoperties(Node @object,JObject lists)
         {
-            if (@object==Node.nil)
+            if (@object==RdfNil)
             {
                 return new JProperty(List,new JArray());
             }

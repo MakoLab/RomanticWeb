@@ -13,7 +13,7 @@ namespace RomanticWeb.Converters
         /// <value>
         /// The URI node converters.
         /// </value>
-        IReadOnlyCollection<IUriNodeConverter> UriNodeConverters { get; }
+        IReadOnlyCollection<INodeConverter> UriNodeConverters { get; }
 
         /// <summary>
         /// Gets the literal node converters.
@@ -21,6 +21,6 @@ namespace RomanticWeb.Converters
         /// <value>
         /// The literal node converters.
         /// </value>
-        IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
+        IReadOnlyCollection<LiteralNodeConverter> LiteralNodeConverters { get; }
     }
 }

@@ -10,7 +10,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Converters
 {
-    public abstract class XsdConverterTestsBase<TConverter> where TConverter:ILiteralNodeConverter,new()
+    public abstract class XsdConverterTestsBase<TConverter> where TConverter:LiteralNodeConverter,new()
     {
         private TConverter _converter;
 

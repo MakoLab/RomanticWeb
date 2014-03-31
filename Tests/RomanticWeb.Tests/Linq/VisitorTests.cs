@@ -11,9 +11,7 @@ using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Mapping;
 using RomanticWeb.Model;
-using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
-using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.Linq
@@ -27,15 +25,12 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private IOntologyProvider _ontologies;
-        private Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] _testQueries;
+        private Tuple<IQueryable<IPerson>,string,string,string,string,string,string>[] _testQueries;
 
         [SetUp]
         public void Setup()
         {
-            _ontologies=new TestOntologyProvider();
-            _mappings=new TestMappingsRepository(_ontologies,new NamedGraphsPersonMapping());
-            _mappings.RebuildMappings(new MappingContext(_ontologies));
+            _mappings=new TestMappingsRepository(new QueryableTests.NamedGraphsPersonMapping());
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);

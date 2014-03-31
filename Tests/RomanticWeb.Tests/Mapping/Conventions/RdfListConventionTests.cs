@@ -5,7 +5,6 @@ using FluentAssertions;
 using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
 using NUnit.Framework;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
@@ -31,12 +30,12 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             var mapping = new
             {
-                PropertyInfo = (PropertyInfo)new TestPropertyInfo(typeof(IList<int>)),
-                Aggregation=default(Aggregation?)
+                PropertyInfo=(PropertyInfo)new TestPropertyInfo(typeof(IList<int>)),
+                StoreAs=StoreAs.Undefined
             }.ActLike<ICollectionMappingProvider>();
 
             // when
-            var shouldApply = _rdfListConvention.ShouldApply(mapping);
+            var shouldApply=_rdfListConvention.ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeTrue();
@@ -51,12 +50,12 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             var mapping = new
             {
-                PropertyInfo = (PropertyInfo)new TestPropertyInfo(collectionType),
-                Aggregation = default(Aggregation?)
+                PropertyInfo=(PropertyInfo)new TestPropertyInfo(collectionType),
+                StoreAs=StoreAs.Undefined
             }.ActLike<ICollectionMappingProvider>();
 
             // when
-            var shouldApply = _rdfListConvention.ShouldApply(mapping);
+            var shouldApply=_rdfListConvention.ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeFalse();
@@ -68,12 +67,12 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             var mapping = new
             {
-                PropertyInfo = (PropertyInfo)new TestPropertyInfo(typeof(int)),
-                Aggregation = default(Aggregation?)
+                PropertyInfo=(PropertyInfo)new TestPropertyInfo(typeof(int)),
+                StoreAs=StoreAs.Undefined
             }.ActLike<ICollectionMappingProvider>();
 
             // when
-            var shouldApply = _rdfListConvention.ShouldApply(mapping);
+            var shouldApply=_rdfListConvention.ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeFalse();
@@ -85,7 +84,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             // given
             ICollectionMappingProvider mapping = New.ExpandoObject(
                 PropertyInfo: (PropertyInfo)new TestPropertyInfo(typeof(int)),
-                Aggregation: default(Aggregation?)).ActLike<ICollectionMappingProvider>();
+                StoreAs: StoreAs.Undefined).ActLike<ICollectionMappingProvider>();
 
             // when
             _rdfListConvention.Apply(mapping);

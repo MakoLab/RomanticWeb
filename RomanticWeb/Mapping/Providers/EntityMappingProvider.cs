@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal class EntityMappingProvider : IEntityMappingProvider
+    internal class EntityMappingProvider:VisitableEntityMappingProviderBase
     {
         private readonly IEnumerable<IClassMappingProvider> _classes;
         private readonly IEnumerable<IPropertyMappingProvider> _properties;
@@ -20,7 +19,7 @@ namespace RomanticWeb.Mapping.Providers
             _properties=properties;
         }
 
-        public Type EntityType
+        public override Type EntityType
         {
             get
             {
@@ -28,7 +27,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public IEnumerable<IClassMappingProvider> Classes
+        public override IEnumerable<IClassMappingProvider> Classes
         {
             get
             {
@@ -36,27 +35,11 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public IEnumerable<IPropertyMappingProvider> Properties
+        public override IEnumerable<IPropertyMappingProvider> Properties
         {
             get
             {
                 return _properties;
-            }
-        }
-
-        public void Accept(IMappingProviderVisitor mappingProviderVisitor)
-        {
-            var @this=((IEntityMappingProvider)this);
-            mappingProviderVisitor.Visit(this);
-
-            foreach (var property in @this.Properties)
-            {
-                property.Accept(mappingProviderVisitor);
-            }
-
-            foreach (var classProvider in @this.Classes)
-            {
-                classProvider.Accept(mappingProviderVisitor);
             }
         }
     }

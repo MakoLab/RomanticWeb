@@ -4,10 +4,8 @@ using FluentAssertions;
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
-using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
@@ -57,13 +55,8 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _typesMapping = new TestPropertyMapping(typeof(IEnumerable<EntityId>),"Types",Vocabularies.Rdf.type)
-                                {
-                                    Aggregation=Aggregation.Original
-                                };
+            _typesMapping=new TestPropertyMapping(typeof(IEnumerable<EntityId>),"Types",Vocabularies.Rdf.type);
             _factory = new Mock<IEntityContextFactory>();
-            _factory.Setup(cf => cf.Converters).Returns(new Mock<IConverterCatalog>().Object);
-            _factory.Setup(cf => cf.TransformerCatalog).Returns(new TestTransformerCatalog());
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
@@ -94,12 +87,12 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_create_an_instance_with_id(Lazy<IEntity> lazyEntity)
         {
             // when
-            dynamic entity = lazyEntity.Value;
+            dynamic entity=lazyEntity.Value;
 
             // when
-            Assert.That(entity, Is.Not.Null);
-            Assert.That(entity, Is.InstanceOf<IEntity>());
-            Assert.That(entity.Id, Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
+            Assert.That(entity,Is.Not.Null);
+            Assert.That(entity,Is.InstanceOf<IEntity>());
+            Assert.That(entity.Id,Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
         }
 
         [Test, ExpectedException(typeof(ArgumentNullException))]
@@ -112,12 +105,15 @@ namespace RomanticWeb.Tests
         [TestCaseSource("TypedAndUntypedEntities")]
         public void Creating_new_Entity_should_add_getters_for_known_ontology_namespaces(Lazy<IEntity> lazyEntity)
         {
+            // given
+            dynamic entity=lazyEntity.Value.AsDynamic();
+
             // when
-            dynamic entity = lazyEntity.Value.AsDynamic();
+            var foaf=entity.foaf;
 
             // then
-            Assert.That(entity.foaf, Is.Not.Null);
-            Assert.That(entity.foaf, Is.InstanceOf<OntologyAccessor>());
+            Assert.That(foaf,Is.Not.Null);
+            Assert.That(foaf,Is.InstanceOf<OntologyAccessor>());
         }
 
         [Test]
@@ -126,10 +122,10 @@ namespace RomanticWeb.Tests
         public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces(Lazy<IEntity> lazyEntity)
         {
             // given
-            dynamic entity = lazyEntity.Value.AsDynamic();
+            dynamic entity=lazyEntity.Value.AsDynamic();
 
             // when
-            var accessor = entity.dcterms;
+            var accessor=entity.dcterms;
         }
 
         [Test]
@@ -153,30 +149,31 @@ namespace RomanticWeb.Tests
         public void Accessing_entity_id_should_not_trigger_lazy_load(Lazy<IEntity> lazyEntity)
         {
             // given
-            IEntity entity = lazyEntity.Value;
-            dynamic dynEntity = entity.AsDynamic();
+            IEntity entity=lazyEntity.Value;
+            dynamic dynEntity=entity.AsDynamic();
 
             // when
-            var id = entity.Id;
-            id = dynEntity.Id;
+            var id=entity.Id;
+            id=dynEntity.Id;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), It.IsAny<EntityId>()), Times.Never);
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(),It.IsAny<EntityId>()),Times.Never);
         }
 
         [Test]
         public void Accessing_entity_member_for_the_first_time_should_trigger_lazy_load()
         {
             // when
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            dynamic entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
-            var id = entity.foaf.givenName;
+            var id=entity.foaf.givenName;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(),new EntityId("http://magi/people/Tomasz")),Times.Once);
         }
 
         [Test]
@@ -193,44 +190,47 @@ namespace RomanticWeb.Tests
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
-            var name = entity.FirstName;
-            var page = entity.Homepage;
-            var interests = entity.Interests;
+            var name=entity.FirstName;
+            var page=entity.Homepage;
+            var interests=entity.Interests;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(),new EntityId("http://magi/people/Tomasz")),Times.Once);
         }
 
         [Test]
         public void Loading_entity_twice_should_initialize_only_once()
         {
             // given
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-            var name = entity.AsDynamic().foaf.givenName;
-            entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            var name=entity.AsDynamic().foaf.givenName;
+            entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
-            var page = entity.AsDynamic().foaf.homePage;
+            var page=entity.AsDynamic().foaf.homePage;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+            _store.Verify(
+                s => s.LoadEntity(It.IsAny<IEntityStore>(),new EntityId("http://magi/people/Tomasz")),Times.Once);
         }
 
         [Test]
         public void New_entity_should_not_trigger_initialization()
         {
             // given
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            var entity = _entityContext.Create<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
+            var entity=_entityContext.Create<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // when
-            var page = entity.AsDynamic().foaf.homePage;
+            var page=entity.AsDynamic().foaf.homePage;
 
             // then
-            Assert.That(page, Is.Empty);
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), It.IsAny<EntityId>()), Times.Never);
+            Assert.That(page,Is.Empty);
+            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(),It.IsAny<EntityId>()),Times.Never);
         }
 
         [Test]
@@ -240,92 +240,93 @@ namespace RomanticWeb.Tests
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(false);
 
             // when
-            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
-            Assert.That(entity, Is.Null);
+            Assert.That(entity,Is.Null);
         }
 
         [Test]
         public void Should_be_possible_to_load_entity_without_checking_for_existence()
         {
             // when
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            var entity = _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"), false);
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
+            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"),false);
 
             // then
-            Assert.That(entity, Is.Not.Null);
-            _store.Verify(s => s.EntityExist(It.IsAny<EntityId>()), Times.Never);
+            Assert.That(entity,Is.Not.Null);
+            _store.Verify(s => s.EntityExist(It.IsAny<EntityId>()),Times.Never);
         }
 
         [Test]
         public void Should_apply_changes_to_underlying_store_when_committing()
         {
             // given
-            var aChangeset = new DatasetChanges();
+            var aChangeset=new DatasetChanges();
             _entityStore.Setup(store => store.Changes).Returns(aChangeset);
 
             // when
             _entityContext.Commit();
 
             // then
-            _store.Verify(store => store.ApplyChanges(aChangeset), Times.Once);
+            _store.Verify(store => store.ApplyChanges(aChangeset),Times.Once);
         }
 
         [Test]
         public void Deleting_entity_should_mark_for_deletion_in_changeset()
         {
             // given
-            var entityId = new EntityId("urn:some:entityid");
+            var entityId=new EntityId("urn:some:entityid");
             _entityStore.Setup(store => store.Delete(entityId));
 
             // when
             _entityContext.Delete(entityId);
 
             // then
-            _entityStore.Verify(store => store.Delete(entityId), Times.Once);
+            _entityStore.Verify(store => store.Delete(entityId),Times.Once);
         }
 
         [Test]
         public void Creating_entity_with_relative_Uri_should_make_the_Uri_absolute()
         {
             // given
-            var entityId = new EntityId("some/relative/uri");
+            var entityId=new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
 
             // when
-            var entity = _entityContext.Create<IEntity>(entityId);
+            var entity=_entityContext.Create<IEntity>(entityId);
 
             // then
             entity.Id.Should().Be(new EntityId("http://test.com/base/some/relative/uri"));
-            _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId), Times.Once);
+            _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId),Times.Once);
         }
 
         [Test]
         public void Loading_entity_with_relative_Uri_should_make_the_Uri_absolute()
         {
             // given
-            var entityId = new EntityId("some/relative/uri");
+            var entityId=new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
             _store.Setup(s => s.EntityExist(It.IsAny<EntityId>())).Returns(true);
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
+            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
 
             // when
-            var entity = _entityContext.Load<IEntity>(entityId);
+            var entity=_entityContext.Load<IEntity>(entityId);
 
             // then
             entity.Id.Should().Be(new EntityId("http://test.com/base/some/relative/uri"));
-            _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId), Times.Once);
+            _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId),Times.Once);
         }
 
         [Test]
         public void Deleting_entity_with_relative_Uri_should_make_the_Uri_absolute()
         {
             // given
-            var entityId = new EntityId("some/relative/uri");
+            var entityId=new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
             _entityStore.Setup(store => store.Delete(It.IsAny<EntityId>()));
@@ -339,10 +340,7 @@ namespace RomanticWeb.Tests
 
         private static PropertyMapping GetMapping(string propertyName)
         {
-            return new TestPropertyMapping(typeof(int),propertyName,new Uri("http://unittest/"+propertyName))
-                       {
-                           Aggregation=Aggregation.SingleOrDefault
-                       };
+            return new TestPropertyMapping(typeof(int),propertyName,new Uri("http://unittest/"+propertyName));
         }
     }
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using NullGuard;
-using RomanticWeb.Dynamic;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping
@@ -18,7 +18,11 @@ namespace RomanticWeb.Mapping
     {
         private readonly object _locker=new object();
         private readonly IDictionary<Tuple<Assembly,Type>,IMappingProviderSource> _sources;
-        private readonly IDictionary<Type, IEntityMapping> _mappings;
+        private readonly IDictionary<Type,IEntityMapping> _mappings;
+        private readonly IDictionary<Type,IEntityMappingProvider> _openGenericProviders;
+        private readonly IList<IMappingProviderVisitor> _providerVisitors;
+
+        private MappingModelBuilder _mappingBuilder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
@@ -26,7 +30,9 @@ namespace RomanticWeb.Mapping
         public MappingsRepository()
         {
             _sources=new Dictionary<Tuple<Assembly,Type>,IMappingProviderSource>();
-            _mappings = new Dictionary<Type, IEntityMapping>();
+            _mappings=new Dictionary<Type,IEntityMapping>();
+            _openGenericProviders=new Dictionary<Type,IEntityMappingProvider>();
+            _providerVisitors=new List<IMappingProviderVisitor>();
         }
 
         internal IEnumerable<IMappingProviderSource> Sources
@@ -43,21 +49,13 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public void RebuildMappings(MappingContext mappingContext)
         {
-            var conventionsVisitor=new ConventionsVisitor(mappingContext.Conventions);
-            var mappingBuilder=new MappingModelBuilder(mappingContext);
-            var dictionaryMappingProvider=new DynamicDictionaryMappingSource(mappingContext.OntologyProvider);
+            _providerVisitors.Add(new ConventionsVisitor(mappingContext.Conventions));
+            _mappingBuilder=new MappingModelBuilder(mappingContext);
+            var dictionaryMappingsProvider=new GeneratedDictionaryMappingSource(mappingContext.OntologyProvider);
+            _providerVisitors.Add(dictionaryMappingsProvider);
 
-            var providers=new Dictionary<Type,IList<IEntityMappingProvider>>();
-            CreateStaticMappings(providers,conventionsVisitor,dictionaryMappingProvider);
-            CreateDynamicMappings(providers,dictionaryMappingProvider,conventionsVisitor);
-
-            var singleProviderPerType=providers.Select(provider => provider.Value.Count>1?new MultiMappingProvider(provider.Key,provider.Value):provider.Value[0]).ToList();
-
-            var inheriatenceBuilder=new InheritanceMappingBuilder(singleProviderPerType);
-            foreach (var provider in inheriatenceBuilder.CombineInheritingMappings())
-            {
-                StoreMapping(mappingBuilder.BuildMapping(provider));
-            }
+            CreateMappings(Sources.ToArray());
+            CreateMappings(dictionaryMappingsProvider);
         }
 
         /// <summary>Gets a mapping for an Entity type.</summary>
@@ -72,6 +70,12 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public IEntityMapping MappingFor(Type entityType)
         {
+            if (entityType.IsGenericType && !entityType.IsGenericTypeDefinition)
+            {
+                var genericDefinition=entityType.GetGenericTypeDefinition();
+                return CreateMappingFromGenericDefinition(genericDefinition,entityType);
+            }
+
             return (_mappings.ContainsKey(entityType) ? _mappings[entityType] : null);
         }
 
@@ -110,40 +114,43 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        private void CreateStaticMappings(
-            IDictionary<Type,IList<IEntityMappingProvider>> providers,
-            params IMappingProviderVisitor[] visitors)
+        private void CreateMappings(params IMappingProviderSource[] sources)
         {
-            CreateMappings(providers,Sources,visitors);
-        }
+            var mappings=from source in sources
+                         from provider in source.GetMappingProviders()
+                         group provider by provider.EntityType into g 
+                         select new KeyValuePair<Type,IList<IEntityMappingProvider>>(g.Key,g.ToList());
 
-        private void CreateDynamicMappings(
-            IDictionary<Type, IList<IEntityMappingProvider>> providers,
-            IMappingProviderSource source,
-            params IMappingProviderVisitor[] visitors)
-        {
-            CreateMappings(providers,new[] { source },visitors);
-        }
+            var singleProviderPerType = mappings.Select(provider => provider.Value.Count > 1 ? new MultiMappingProvider(provider.Key, provider.Value) : provider.Value[0]).ToList();
 
-        private void CreateMappings(
-            IDictionary<Type, IList<IEntityMappingProvider>> providers,
-            IEnumerable<IMappingProviderSource> sources,
-            params IMappingProviderVisitor[] visitors)
-        {
-            foreach (var provider in sources.SelectMany(mappingSource => mappingSource.GetMappingProviders()))
+            var inheritanceMappingBuilder = new InheritanceMappingBuilder(singleProviderPerType);
+            foreach (var provider in inheritanceMappingBuilder.CombineInheritingMappings().Where(p=>p.Properties.Any() || p.Classes.Any()))
             {
-                foreach (var visitor in visitors)
+                foreach (var visitor in _providerVisitors)
                 {
                     provider.Accept(visitor);
                 }
 
-                if (!providers.ContainsKey(provider.EntityType))
+                if (provider.EntityType.IsGenericTypeDefinition)
                 {
-                    providers[provider.EntityType] = new List<IEntityMappingProvider>();
+                    _openGenericProviders[provider.EntityType] = provider;
                 }
 
-                providers[provider.EntityType].Add(provider);
+                StoreMapping(_mappingBuilder.BuildMapping(provider));
             }
+        }
+
+        private IEntityMapping CreateMappingFromGenericDefinition(Type genericDefinition,Type entityType)
+        {
+            var openGenericProvider=_openGenericProviders[genericDefinition];
+            var provider=new ClosedGenericEntityMappingProvider(openGenericProvider,entityType.GenericTypeArguments);
+
+            foreach (var visitor in _providerVisitors)
+            {
+                provider.Accept(visitor);
+            }
+
+            return _mappingBuilder.BuildMapping(provider);
         }
 
         private void StoreMapping(IEntityMapping mapping)

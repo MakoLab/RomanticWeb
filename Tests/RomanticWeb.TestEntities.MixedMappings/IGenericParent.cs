@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Entities;
+﻿using System.Collections.Generic;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.MixedMappings
@@ -12,6 +13,9 @@ namespace RomanticWeb.TestEntities.MixedMappings
         T MappedProperty2 { get; }
 
         T UnMappedProperty { get; }
+
+        [Property("urn:open:mapping1")]
+        ICollection<T> GenericProperty { get; }
         
         string NonGenericProperty { get; }
     }

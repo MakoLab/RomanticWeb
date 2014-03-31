@@ -14,7 +14,7 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Gets Uris of xsd floating point types
         /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        protected override IEnumerable<Uri> SupportedDataTypes
         {
             get
             {
@@ -23,17 +23,24 @@ namespace RomanticWeb.Converters
             }
         }
 
-        /// <summary>
-        /// Converts xsd:float or xsd:double to <see cref="double"/>
-        /// </summary>
-        public override object Convert(Node objectNode)
+        public override Node ConvertBack(object value)
         {
-            if (objectNode.Literal=="+INF")
+            if (value is float)
+            {
+                return Node.ForLiteral(XmlConvert.ToString((float)value),Xsd.Float);
+            }
+            
+            return Node.ForLiteral(XmlConvert.ToString((double)value),Xsd.Double);
+        }
+
+        protected override object ConvertInternal(Node literalNode)
+        {
+            if (literalNode.Literal == "+INF")
             {
                 return double.PositiveInfinity;
             }
-            
-            return XmlConvert.ToDouble(objectNode.Literal);
+
+            return XmlConvert.ToDouble(literalNode.Literal);
         }
     }
 }

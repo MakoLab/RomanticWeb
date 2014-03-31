@@ -11,9 +11,6 @@ namespace RomanticWeb.Mapping.Providers
     /// </summary>
     public class CollectionMappingProvider:PropertyMappingProvider,ICollectionMappingProvider
     {
-        private StoreAs _storeAs;
-        private Aggregation? _aggregation;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
         /// </summary>
@@ -43,45 +40,7 @@ namespace RomanticWeb.Mapping.Providers
         /// Gets or sets the storage strategy
         /// </summary>
         /// <remarks>Setting this updated the <see cref="Aggregation"/> property</remarks>
-        StoreAs ICollectionMappingProvider.StoreAs
-        {
-            get
-            {
-                return _storeAs;
-            }
-
-            set
-            {
-                switch (value)
-                {
-                    case StoreAs.SimpleCollection:
-                        _aggregation=Entities.ResultAggregations.Aggregation.Original;
-                        break;
-                    case StoreAs.RdfList:
-                        _aggregation=Entities.ResultAggregations.Aggregation.SingleOrDefault;
-                        break;
-                    default:
-                        _aggregation=null;
-                        break;
-                }
-
-                _storeAs=value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the aggregation.
-        /// </summary>
-        /// <value>
-        /// The aggregation.
-        /// </value>
-        public override Aggregation? Aggregation
-        {
-            get
-            {
-                return _aggregation;
-            }
-        }
+        StoreAs ICollectionMappingProvider.StoreAs { get; set; }
 
         /// <inheritdoc/>
         public override void Accept(IMappingProviderVisitor mappingProviderVisitor)

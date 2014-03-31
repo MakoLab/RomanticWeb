@@ -14,7 +14,7 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Gets Uri of xsd:boolean
         /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        protected override IEnumerable<Uri> SupportedDataTypes
         {
             get
             {
@@ -22,10 +22,15 @@ namespace RomanticWeb.Converters
             }
         }
 
+        public override Node ConvertBack(object value)
+        {
+            return Node.ForLiteral(XmlConvert.ToString((bool)value),Xsd.Boolean);
+        }
+
         /// <summary>
         /// Converts xsd:boolean to <see cref="bool"/>
         /// </summary>
-        public override object Convert(Node objectNode)
+        protected override object ConvertInternal(Node objectNode)
         {
             return XmlConvert.ToBoolean(objectNode.Literal);
         }

@@ -21,8 +21,7 @@ namespace RomanticWeb
         private static readonly object OntologiesLocker=new Object();
         private static IEnumerable<IOntologyProvider> importedOntologies;
 
-        private readonly IResultTransformerCatalog _transformerCatalog=new ResultTransformerCatalog();
-        private readonly ConverterCatalog _conveters=new ConverterCatalog();
+        private readonly IList<IConvention> _conventions;
         private readonly MappingsRepository _mappingsRepository=new MappingsRepository();
         private bool _isInitialized;
         private Func<IEntitySource> _entitySourceFactory;
@@ -31,7 +30,6 @@ namespace RomanticWeb
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
-        private Lazy<IEnumerable<IConvention>> _conventions;
 
         #endregion
 
@@ -42,12 +40,13 @@ namespace RomanticWeb
         public EntityContextFactory()
         {
             WithMappings(DefaultMappings);
+            _conventions=CreateDefaultConventions().ToList();
             LogTo.Info("Created entity context factory");
 
             // todo: change how defaults are set
             _namedGraphSelector=new NamedGraphSelector();
-            _conventions = new Lazy<IEnumerable<IConvention>>(() => ContainerFactory.GetInstancesImplementing<IConvention>().ToList());
         }
+
         #endregion
 
         #region Properties
@@ -71,15 +70,11 @@ namespace RomanticWeb
             }
         }
 
-        /// <inheritdoc/>
-        public IConverterCatalog Converters { get { return _conveters; } }
-
-        /// <inheritdoc/>
-        public IResultTransformerCatalog TransformerCatalog
+        public IList<IConvention> Conventions
         {
             get
             {
-                return _transformerCatalog;
+                return _conventions;
             }
         }
 
@@ -183,6 +178,32 @@ namespace RomanticWeb
 
         #region Non-public methods
 
+        internal static IEnumerable<IConvention> CreateDefaultConventions()
+        {
+            yield return new CollectionStorageConvention();
+
+            // todo: introduce a kind of builder so that changing configuration is easy
+            yield return new DefaultConvertersConvention()
+                .SetDefault<IntegerConverter>(IntegerConverter.SupportedTypes)
+                .SetDefault<DecimalConverter>(typeof(decimal))
+                .SetDefault<BooleanConverter>(typeof(bool))
+                .SetDefault<Base64BinaryConverter>(typeof(byte[]))
+                .SetDefault<DateTimeConverter>(typeof(DateTime))
+                .SetDefault<DoubleConverter>(typeof(float), typeof(double))
+                .SetDefault<DoubleConverter>(typeof(float), typeof(double))
+                .SetDefault<DoubleConverter>(typeof(float), typeof(double))
+                .SetDefault<DoubleConverter>(typeof(float), typeof(double))
+                .SetDefault<GuidConverter>(typeof(Guid))
+                .SetDefault<DefaultUriConverter>(typeof(Uri))
+                .SetDefault<StringConverter>(typeof(string))
+                .SetDefault<FallbackNodeConverter>(typeof(object));
+            yield return new DefaultDictionaryKeyPredicateConvention();
+            yield return new DefaultDictionaryValuePredicateConvention();
+            yield return new RdfListConvention();
+            yield return new EntityPropertiesConvention();
+            yield return new EntityIdPropertiesConvention();
+        }
+
         private static void DefaultMappings(MappingBuilder mappings)
         {
             mappings.Fluent.FromAssemblyOf<ITypedEntity>();
@@ -213,7 +234,7 @@ namespace RomanticWeb
 
         private void EnsureMappingsRebuilt()
         {
-            var mappingContext=new MappingContext(_actualOntologyProvider,_conventions.Value);
+            var mappingContext=new MappingContext(_actualOntologyProvider,_conventions);
             _mappingsRepository.RebuildMappings(mappingContext);
         }
 

@@ -13,9 +13,11 @@ namespace RomanticWeb.Tests.IntegrationTests.TestMappings
 
             Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"));
 
-            Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
+            Collection(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
 
             Property(p => p.Friend).Term.Is("foaf","knows");
+
+            Property(p => p.Age).Term.Is("foaf","age");
 
             Collection(p => p.Friends).Term.Is("foaf", "friends");
 

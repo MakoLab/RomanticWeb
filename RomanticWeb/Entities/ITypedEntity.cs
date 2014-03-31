@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Entities
 {
@@ -8,7 +9,7 @@ namespace RomanticWeb.Entities
     public interface ITypedEntity:IEntity
     {
         /// <summary>Gets or sets the entity's rdf classes.</summary>
-        [Collection("rdf","type")]
+        [Collection("rdf","type",StoreAs=StoreAs.SimpleCollection)]
         ICollection<EntityId> Types { get; set; }
     }
 }

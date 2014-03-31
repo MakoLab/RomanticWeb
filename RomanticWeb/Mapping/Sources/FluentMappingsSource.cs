@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
+using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Providers;
 
-namespace RomanticWeb.Mapping.Fluent
+namespace RomanticWeb.Mapping.Sources
 {
     /// <summary>
     /// Mapping repository, which scans an assembly for fluent mapping classes 
     /// </summary>
-    public sealed class FluentMappingsSource : AssemblyMappingsSource
+    public sealed class FluentMappingsSource:AssemblyMappingsSource
     {
         /// <summary>
         /// Creates a new instance of <see cref="FluentMappingsSource"/>
@@ -21,8 +22,8 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <summary>
-        /// Finds all fluent <see cref="EntityMap"/>s in the <see cref="AssemblyMappingsSource.Assembly"/>
-        /// and transforms them to <see cref="IEntityMappingProvider"/>s
+        /// Finds all fluent <see cref="AssemblyMappingsSource.Assembly"/>s in the <see cref="AssemblyMappingsSource"/>
+        /// and transforms them to <see cref="EntityMap"/>s
         /// </summary>
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {

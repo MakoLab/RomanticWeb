@@ -24,11 +24,10 @@ namespace RomanticWeb
         /// <summary>Gets the <see cref="IOntologyProvider" />.</summary>
         IOntologyProvider Ontologies { get; }
 
-        /// <summary>Gets the <see cref="INodeConverter" />.</summary>
-        INodeConverter NodeConverter { get; }
-
         /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
         INamedGraphSelector GraphSelector { get; }
+
+        IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>
         IMappingsRepository Mappings { get; }

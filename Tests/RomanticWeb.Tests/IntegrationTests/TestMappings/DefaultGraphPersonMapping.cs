@@ -15,7 +15,8 @@ namespace RomanticWeb.Tests.IntegrationTests.TestMappings
 	        Class.Is("foaf","Person");
 	        Property(p => p.FirstName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"));
 	        Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"));
-	        Property(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
+            Collection(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
+            Collection(p => p.HomepageAsEntities).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
 	        Property(p => p.Friend).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows"));
 	        Property(p => p.Entity).Term.Is("dummy","entity");
 	        Collection(p => p.Interests)

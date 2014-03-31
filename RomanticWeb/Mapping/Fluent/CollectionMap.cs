@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using RomanticWeb.Entities.ResultAggregations;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
@@ -47,6 +47,13 @@ namespace RomanticWeb.Mapping.Fluent
         public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
             return fluentMapsVisitor.Visit(this);
+        }
+
+        public CollectionMap ConvertElementsWith<TConverter>()
+            where TConverter:INodeConverter
+        {
+            ConverterType=typeof(TConverter);
+            return this;
         }
     }
 }

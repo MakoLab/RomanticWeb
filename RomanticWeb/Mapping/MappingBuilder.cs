@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping
 {

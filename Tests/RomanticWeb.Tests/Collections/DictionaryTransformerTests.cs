@@ -11,6 +11,7 @@ using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests.Collections
@@ -51,7 +52,7 @@ namespace RomanticWeb.Tests.Collections
             object elements=CreateDictionaryEntries();
 
             // when
-            var dict=_transformer.GetTransformed(proxy,_property,_context.Object,elements);
+            var dict=_transformer.FromNodes(proxy,_property,_context.Object,new Node[0]);
 
             // then
             dict.Should().BeOfType<RdfDictionary<int,IPerson,DictionaryPair,Owner>>();
@@ -65,7 +66,7 @@ namespace RomanticWeb.Tests.Collections
             object elements=CreateDictionaryEntries();
 
             // when
-            _transformer.GetTransformed(proxy,_property,_context.Object,elements);
+            _transformer.FromNodes(proxy,_property,_context.Object,new Node[0]);
 
             // then
             _provider.Verify(p => p.GetEntryType(_property));

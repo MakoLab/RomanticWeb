@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Animals;
 using RomanticWeb.Tests.Stubs;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using NullGuard;
-using RomanticWeb.Entities.ResultAggregations;
+using RomanticWeb.Converters;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -25,7 +25,7 @@ namespace RomanticWeb.Mapping.Model
 
         public Type ReturnType { get; private set; }
 
-        public Aggregation? Aggregation { get; set; }
+        public INodeConverter Converter { get; internal set; }
 
 #pragma warning disable 1591
         public override string ToString()
@@ -64,14 +64,6 @@ namespace RomanticWeb.Mapping.Model
                 get
                 {
                     return _mapping.ReturnType;
-                }
-            }
-
-            public Aggregation? Aggregation
-            {
-                get
-                {
-                    return _mapping.Aggregation;
                 }
             }
 

@@ -30,6 +30,10 @@ namespace System
                 {
                     result=type.GetElementType();
                 }
+                else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    result=type.GenericTypeArguments.Single();
+                }
                 else if ((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))
                 {
                     if (type.IsGenericType)

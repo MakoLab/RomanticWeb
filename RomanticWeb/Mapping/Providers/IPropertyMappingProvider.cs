@@ -1,5 +1,5 @@
+using System;
 using System.Reflection;
-using RomanticWeb.Entities.ResultAggregations;
 
 namespace RomanticWeb.Mapping.Providers
 {
@@ -16,12 +16,6 @@ namespace RomanticWeb.Mapping.Providers
         /// </value>
         PropertyInfo PropertyInfo { get; }
 
-        /// <summary>
-        /// Gets the aggregation.
-        /// </summary>
-        /// <value>
-        /// The aggregation.
-        /// </value>
-        Aggregation? Aggregation { get; }
+        Type ConverterType { get; set; }
     }
 }

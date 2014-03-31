@@ -1,4 +1,6 @@
-﻿using RomanticWeb.Mapping.Model;
+﻿using System.Collections.Generic;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities.ResultPostprocessing
 {
@@ -10,12 +12,19 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <summary>
         /// Gets the transformed result.
         /// </summary>
-        /// <param name="parent">The parent entity.</param>
+        /// <param name="proxy">The parent entity proxy.</param>
         /// <param name="property">The property.</param>
         /// <param name="context">The context.</param>
-        /// <param name="value">The value.</param>
-        object GetTransformed(IEntityProxy parent,IPropertyMapping property,IEntityContext context,object value);
+        /// <param name="nodes">The nodes.</param>
+        object FromNodes(IEntityProxy proxy,IPropertyMapping property,IEntityContext context,IEnumerable<Node> nodes);
 
-        void SetTransformed(object value,IEntityStore store);
+        /// <summary>
+        /// Gets the transformed result.
+        /// </summary>
+        /// <param name="proxy">The parent entity.</param>
+        /// <param name="property">The property.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="value">The object to transform.</param>
+        IEnumerable<Node> ToNodes(object value,IEntityProxy proxy,IPropertyMapping property,IEntityContext context);
     }
 }

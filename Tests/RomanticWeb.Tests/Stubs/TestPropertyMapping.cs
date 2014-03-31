@@ -1,10 +1,9 @@
 ﻿using System;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    internal class TestPropertyMapping : PropertyMapping,IPropertyMapping
+    internal class TestPropertyMapping:PropertyMapping
 	{
         public TestPropertyMapping(
             Type returnType,

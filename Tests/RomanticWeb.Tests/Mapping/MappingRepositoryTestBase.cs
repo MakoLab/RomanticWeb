@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Mapping

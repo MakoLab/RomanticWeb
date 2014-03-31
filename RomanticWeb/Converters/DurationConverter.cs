@@ -13,7 +13,7 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Gets Uri of xsd:duration
         /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        protected override IEnumerable<Uri> SupportedDataTypes
         {
             get
             {
@@ -21,12 +21,14 @@ namespace RomanticWeb.Converters
             }
         }
 
-        /// <summary>
-        /// Converts xsd:duration to <see cref="Duration"/>
-        /// </summary>
-        public override object Convert(Node objectNode)
+        public override Node ConvertBack(object value)
         {
-            return Duration.Parse(objectNode.Literal);
+            return Node.ForLiteral(((Duration)value).ToString(),Xsd.Duration);
+        }
+
+        protected override object ConvertInternal(Node literalNode)
+        {
+            return Duration.Parse(literalNode.Literal);
         }
     }
 }

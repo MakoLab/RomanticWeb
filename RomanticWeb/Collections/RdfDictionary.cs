@@ -7,7 +7,7 @@ using RomanticWeb.Entities;
 namespace RomanticWeb.Collections
 {
     [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
-    internal class RdfDictionary<TKey,TValue,TEntry,TOwner>:IDictionary<TKey,TValue>
+    internal class RdfDictionary<TKey,TValue,TEntry,TOwner>:IDictionary<TKey,TValue>,IRdfDictionary
         where TEntry:class,IDictionaryEntry<TKey,TValue>
         where TOwner:class,IDictionaryOwner<TEntry,TKey,TValue>
     {
@@ -19,6 +19,15 @@ namespace RomanticWeb.Collections
             _dictionaryOwner=context.Load<TOwner>(ownerId,false);
             _context=context;
         }
+
+        public RdfDictionary(EntityId ownerId,IEntityContext context,IEnumerable<KeyValuePair<TKey,TValue>> existingDictionary)
+            :this(ownerId,context)
+        {
+            foreach (var pair in existingDictionary)
+            {
+                Add(pair);
+            }
+        } 
 
         public int Count
         {
@@ -49,6 +58,14 @@ namespace RomanticWeb.Collections
             get
             {
                 return _dictionaryOwner.DictionaryEntries.Select(entry => entry.Value).ToList();
+            }
+        }
+
+        IEnumerable<IEntity> IRdfDictionary.DictionaryEntries
+        {
+            get
+            {
+                return _dictionaryOwner.DictionaryEntries;
             }
         }
 
@@ -136,7 +153,7 @@ namespace RomanticWeb.Collections
 
         public void Add(TKey key,TValue value)
         {
-            var pair=_context.Create<TEntry>(_context.BlankIdGenerator.Generate());
+            var pair=_context.Create<TEntry>(new BlankId(_context.BlankIdGenerator.Generate(),_dictionaryOwner.Id));
             pair.Key=key;
             pair.Value=value;
             _dictionaryOwner.DictionaryEntries.Add(pair);

@@ -23,23 +23,22 @@ namespace RomanticWeb.Dynamic
     public sealed class OntologyAccessor:ImpromptuDictionary
     {
         private readonly IEntityStore _tripleStore;
+        private readonly IEntityContext _context;
         private readonly Entity _entity;
         private readonly Ontology _ontology;
-        private readonly INodeConverter _nodeConverter;
         private readonly IResultTransformerCatalog _resultTransformers;
-        private readonly IEntityContext _entityContext;
+        private readonly INodeConverter _nodeConverter=new FallbackNodeConverter();
 
         /// <summary>
         /// Creates a new instance of <see cref="OntologyAccessor"/>
         /// </summary>
-        internal OntologyAccessor(Entity entity,Ontology ontology,IResultTransformerCatalog resultTransformers,IConverterCatalog converters)
+        internal OntologyAccessor(Entity entity,Ontology ontology,IResultTransformerCatalog resultTransformers)
         {
             _tripleStore=entity.Context.Store;
             _entity=entity;
             _ontology=ontology;
-            _entityContext=entity.Context;
-            _nodeConverter=new NodeConverter(_entityContext,converters);
             _resultTransformers=resultTransformers;
+            _context=entity.Context;
         }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace RomanticWeb.Dynamic
         {
             LogTo.Trace("Reading property {0}",property.Uri);
             var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
-            var objects=_nodeConverter.ConvertNodes(objectValues);
+            var objects=objectValues.Select(node => _nodeConverter.Convert(node,_context));
             var aggregator=_resultTransformers.GetAggregator(aggregate.Aggregation);
             LogTo.Trace("Performing operation {0} on result nodes",aggregate.Aggregation);
             return aggregator.Aggregate(objects);

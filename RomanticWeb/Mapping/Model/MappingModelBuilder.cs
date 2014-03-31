@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Model
@@ -42,38 +44,43 @@ namespace RomanticWeb.Mapping.Model
 
         private PropertyMapping BuildPropertyMapping(IPropertyMappingProvider provider)
         {
-            return new PropertyMapping(
-                provider.PropertyInfo.PropertyType, 
-                provider.PropertyInfo.Name, 
-                provider.GetTerm(_mappingContext.OntologyProvider))
-                       {
-                           Aggregation=provider.Aggregation
-                       };
+            var propertyMapping=new PropertyMapping(
+                provider.PropertyInfo.PropertyType,
+                provider.PropertyInfo.Name,
+                provider.GetTerm(_mappingContext.OntologyProvider));
+            SetConverter(propertyMapping,provider);
+            return propertyMapping;
         }
 
         private PropertyMapping BuildDictionaryMapping(IDictionaryMappingProvider provider)
         {
-            return new DictionaryMapping(
-                provider.PropertyInfo.PropertyType, 
+            var dictionaryMapping=new DictionaryMapping(
+                provider.PropertyInfo.PropertyType,
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider),
                 provider.Key.GetTerm(_mappingContext.OntologyProvider),
-                provider.Value.GetTerm(_mappingContext.OntologyProvider))
-            {
-                Aggregation = provider.Aggregation
-            };
+                provider.Value.GetTerm(_mappingContext.OntologyProvider));
+            SetConverter(dictionaryMapping,provider);
+            return dictionaryMapping;
         }
 
         private CollectionMapping BuildCollectionMapping(ICollectionMappingProvider provider)
         {
-            return new CollectionMapping(
+            var collectionMapping=new CollectionMapping(
                 provider.PropertyInfo.PropertyType,
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider),
-                provider.StoreAs)
+                provider.StoreAs);
+            SetConverter(collectionMapping,provider);
+            return collectionMapping;
+        }
+
+        private void SetConverter(PropertyMapping propertyMapping, IPropertyMappingProvider provider)
+        {
+            if (provider.ConverterType != null && !provider.ConverterType.ContainsGenericParameters)
             {
-                Aggregation = provider.Aggregation
-            };
+                propertyMapping.Converter=(INodeConverter)Activator.CreateInstance(provider.ConverterType);
+            }
         }
     }
 }

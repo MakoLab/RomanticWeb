@@ -6,7 +6,6 @@ using Anotar.NLog;
 using ImpromptuInterface;
 using MethodCache.Attributes;
 using NullGuard;
-using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
@@ -28,12 +27,13 @@ namespace RomanticWeb
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
         private readonly MappingContext _mappingContext;
-        private readonly INodeConverter _nodeConverter;
         private readonly IDictionary<string,Type> _classInterfacesMap;
         private readonly IList<string> _missingClassInterfacesMap;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
+        private readonly IResultTransformerCatalog _transformerCatalog;
 
         private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
+
         #endregion
 
         #region Constructors
@@ -51,13 +51,13 @@ namespace RomanticWeb
             _entityStore=entityStore;
             _entitySource=entitySource;
             _baseUriSelector=baseUriSelector;
-            _nodeConverter=new NodeConverter(this,factory.Converters);
             _mappings=mappings;
             _mappingContext=mappingContext;
             Cache=new DictionaryCache();
             _classInterfacesMap=new Dictionary<string,Type>();
             _missingClassInterfacesMap=new List<string>();
             GraphSelector=namedGraphSelector;
+            _transformerCatalog=new ResultTransformerCatalog();
         }
         #endregion
 
@@ -82,10 +82,16 @@ namespace RomanticWeb
         public IOntologyProvider Ontologies { get { return _factory.Ontologies; } }
 
         /// <inheritdoc />
-        public INodeConverter NodeConverter { get { return _nodeConverter; } }
+        public INamedGraphSelector GraphSelector { get; private set; }
 
         /// <inheritdoc />
-        public INamedGraphSelector GraphSelector { get; private set; }
+        public IResultTransformerCatalog TransformerCatalog
+        {
+            get
+            {
+                return _transformerCatalog;
+            }
+        }
 
         /// <inheritdoc />
         public IMappingsRepository Mappings { get { return _mappings; } }
@@ -257,7 +263,7 @@ namespace RomanticWeb
 
             foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
             {
-                var ontologyAccessor=new OntologyAccessor(entity,ontology,_factory.TransformerCatalog,_factory.Converters);
+                var ontologyAccessor=new OntologyAccessor(entity,ontology,TransformerCatalog);
                 entity[ontology.Prefix]=ontologyAccessor;
             }
 
@@ -273,13 +279,11 @@ namespace RomanticWeb
             }
 
             IEnumerable<IClassMapping> classMappings=entityMapping.Classes;
-            if (classMappings.Any())
+            ITypedEntity typedEntity=null;
+            foreach (var classMapping in classMappings)
             {
-                ITypedEntity typedEntity=entity.AsEntity<ITypedEntity>();
-                foreach (var classMapping in classMappings)
-                {
-                    typedEntity.Types.Add(new EntityId(classMapping.Uri));
-                }
+                typedEntity=typedEntity??entity.AsEntity<ITypedEntity>();
+                typedEntity.Types.Add(new EntityId(classMapping.Uri));
             }
 
             return entity;
@@ -299,10 +303,10 @@ namespace RomanticWeb
         {
             if (mapping==null)
             {
-                throw new ArgumentNullException("mapping",System.String.Format("Mappings not found for type {0}",typeof(T)));
+                throw new ArgumentNullException("mapping",String.Format("Mappings not found for type {0}",typeof(T)));
             }
 
-            var proxy=new EntityProxy(entity,mapping,_factory.TransformerCatalog);
+            var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
             return proxy.ActLike<T>();
         }
 
@@ -310,10 +314,10 @@ namespace RomanticWeb
         {
             if (mapping==null)
             {
-                throw new ArgumentNullException("mapping",System.String.Format("Mappings not found for type {0}",T));
+                throw new ArgumentNullException("mapping",String.Format("Mappings not found for type {0}",T));
             }
 
-            var proxy=new EntityProxy(entity,mapping,_factory.TransformerCatalog);
+            var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
             return proxy.ActLike(T);
         }
 

@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using RomanticWeb.Entities.ResultAggregations;
+using NullGuard;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
@@ -38,9 +38,6 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Gets the property.
         /// </summary>
-        /// <value>
-        /// The property.
-        /// </value>
         public PropertyInfo PropertyInfo
         {
             get
@@ -49,19 +46,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        /// <summary>
-        /// Gets the aggregation.
-        /// </summary>
-        /// <value>
-        /// <see cref="Entities.ResultAggregations.Aggregation.SingleOrDefault"/>
-        /// </value>
-        public virtual Aggregation? Aggregation
-        {
-            get
-            {
-                return Entities.ResultAggregations.Aggregation.SingleOrDefault;
-            }
-        }
+        public Type ConverterType { [return:AllowNull] get; set; }
 
         /// <inheritdoc/>
         public override void Accept(IMappingProviderVisitor mappingProviderVisitor)

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -11,22 +11,24 @@ namespace RomanticWeb.Converters
     /// <summary>Statically typed converter for <see cref="EntityId"/>.</summary>
     public class EntityIdConverter:EntityIdConverter<EntityId>
     {
-        /// <inheritdoc/>
-        protected override EntityId ConvertEntityId(EntityId id)
-        {
-            return id;
-        }
     }
 
     /// <summary>Generic converter for any type of entity id.</summary>
     /// <typeparam name="TEntityId">Type of the entity identifier.</typeparam>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic nad non-generic class")]
-    public abstract class EntityIdConverter<TEntityId>:IUriNodeConverter where TEntityId:EntityId
+    public class EntityIdConverter<TEntityId>:INodeConverter where TEntityId:EntityId
     {
+        private static TypeConverter _converter=TypeDescriptor.GetConverter(typeof(TEntityId));
+
         /// <inheritdoc />
-        public object Convert(IEntity entity, [AllowNull] IPropertyMapping predicate)
+        public object Convert(Node node,IEntityContext context)
         {
-            return ConvertEntityId(entity.Id);
+            if (node.IsBlank)
+            {
+                return node.ToEntityId();
+            }
+
+            return _converter.ConvertFrom(node.Uri);
         }
 
         /// <inheritdoc />
@@ -36,18 +38,9 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc />
-        public IEnumerable<Node> ConvertBack(object obj)
+        public Node ConvertBack(object obj)
         {
-            yield return Node.ForUri(((TEntityId)obj).Uri);
+            return Node.ForUri(((TEntityId)obj).Uri);
         }
-
-        /// <inheritdoc />
-        public bool CanConvertBack(object value,IPropertyMapping predicate)
-        {
-            return value is TEntityId;
-        }
-
-        /// <summary>Creates a <typeparamref name="TEntityId"/> from <see cref="EntityId"/>.</summary>
-        protected abstract TEntityId ConvertEntityId(EntityId id);
     }
 }

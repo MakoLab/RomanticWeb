@@ -1,6 +1,7 @@
-﻿using RomanticWeb.Converters;
-using RomanticWeb.Entities;
+﻿using System.Collections.Generic;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -14,22 +15,8 @@ namespace RomanticWeb
         /// <summary>Gets the mappings.</summary>
         IMappingsRepository Mappings { get; }
 
-        /// <summary>
-        /// Gets the converters.
-        /// </summary>
-        /// <value>
-        /// The converters.
-        /// </value>
-        IConverterCatalog Converters { get; }
-
-        /// <summary>
-        /// Gets the transformer catalog.
-        /// </summary>
-        /// <value>
-        /// The transformer catalog.
-        /// </value>
-        IResultTransformerCatalog TransformerCatalog { get; }
-
+        IList<IConvention> Conventions { get; } 
+            
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();
     }

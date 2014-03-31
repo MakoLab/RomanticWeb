@@ -2,18 +2,13 @@
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
     public abstract class DynamicTestsBase:IntegrationTestsBase
 	{
-        private new TestMappingsRepository Mappings
-        {
-            get { return (TestMappingsRepository)base.Mappings; }
-        }
-
         [Test]
         public void Creating_Entity_should_allow_accessing_existing_literal_properties()
         {

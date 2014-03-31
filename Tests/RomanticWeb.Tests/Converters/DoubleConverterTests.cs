@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Model;
@@ -30,7 +31,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_values_from_literals(string literal, double expectedValue)
         {
             // when
-            var value = Converter.Convert(Node.ForLiteral(literal));
+            var value = Converter.Convert(Node.ForLiteral(literal),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(value, Is.InstanceOf<double>());

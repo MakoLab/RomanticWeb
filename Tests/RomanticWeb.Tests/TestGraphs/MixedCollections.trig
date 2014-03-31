@@ -5,12 +5,12 @@
 <http://data.magi/people/Tomasz>
 {
 	people:Tomasz foaf:homePage _:b1 .
-	_:b1 rdf:first "http://pluskiewicz.pl" ;
+	_:b1 rdf:first <http://pluskiewicz.pl> ;
 		 rdf:rest _:b2 .
-	_:b2 rdf:first "http://t-code.pl" ;
+	_:b2 rdf:first <http://t-code.pl> ;
 		 rdf:rest rdf:nil .
 
-	people:Tomasz foaf:homePage "http://pluskiewicz.com" .
+	people:Tomasz foaf:homePage <http://pluskiewicz.com> .
 	
 	people:Tomasz foaf:givenName _:c1 .
 	_:c1 rdf:first "Tomasz" ;

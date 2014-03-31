@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
@@ -48,6 +49,8 @@ namespace RomanticWeb.Mapping.Fluent
                 return _propertyInfo;
             }
         }
+
+        internal Type ConverterType { get; set; }
 
         /// <summary>
         /// Accepts the specified fluent maps visitor.

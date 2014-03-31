@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Model;
@@ -35,7 +36,7 @@ namespace RomanticWeb.Tests.Converters
         [TestCaseSource("TimeSpanValues")]
         public void Should_convert_values(string literal,Duration expected)
         {
-            var duration=Converter.Convert(Node.ForLiteral(literal));
+            var duration=Converter.Convert(Node.ForLiteral(literal),new Mock<IEntityContext>().Object);
             Assert.That(duration,Is.EqualTo(expected));
         }
     }

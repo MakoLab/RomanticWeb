@@ -48,7 +48,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
+            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog());
 
             // when
             var givenName=accessor.givenName;
@@ -62,7 +62,7 @@ namespace RomanticWeb.Tests
         {
             // given
             _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog(),new Mock<IConverterCatalog>().Object);
+            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog());
 
             // when
             var givenName=accessor.fullName;

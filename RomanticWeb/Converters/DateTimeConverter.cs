@@ -14,7 +14,7 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Gets xsd date datatypes
         /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        protected override IEnumerable<Uri> SupportedDataTypes
         {
             get
             {
@@ -24,14 +24,17 @@ namespace RomanticWeb.Converters
             }
         }
 
-        /// <summary>
-        /// Converts xsd:date, xsd:time and xsd:dateTime into <see cref="DateTime"/>
-        /// </summary>
-        public override object Convert(Node objectNode)
+        public override Node ConvertBack(object value)
         {
-            var dateTime=XmlConvert.ToDateTime(objectNode.Literal,XmlDateTimeSerializationMode.RoundtripKind);
+            // todo: xsd:Time and xsd:Date
+            return Node.ForLiteral(XmlConvert.ToString((DateTime)value,XmlDateTimeSerializationMode.RoundtripKind),Xsd.DateTime); 
+        }
 
-            if (dateTime.Kind==DateTimeKind.Local)
+        protected override object ConvertInternal(Node literalNode)
+        {
+            var dateTime = XmlConvert.ToDateTime(literalNode.Literal,XmlDateTimeSerializationMode.RoundtripKind);
+
+            if (dateTime.Kind == DateTimeKind.Local)
             {
                 return dateTime.ToUniversalTime();
             }

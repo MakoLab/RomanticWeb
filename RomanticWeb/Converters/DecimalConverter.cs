@@ -9,12 +9,12 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Converter for xsd:decimal
     /// </summary>
-    public class DecimalConverter : XsdConverterBase
+    public class DecimalConverter:XsdConverterBase
     {
         /// <summary>
         /// Gets Uri of xsd:decimal
         /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        protected override IEnumerable<Uri> SupportedDataTypes
         {
             get
             {
@@ -22,12 +22,14 @@ namespace RomanticWeb.Converters
             }
         }
         
-        /// <summary>
-        /// Converts xsd:decimal to <see cref="decimal"/>
-        /// </summary>
-        public override object Convert(Node objectNode)
+        public override Node ConvertBack(object value)
         {
-            return XmlConvert.ToDecimal(objectNode.Literal);
+            return Node.ForLiteral(XmlConvert.ToString((Decimal)value),Xsd.Decimal);
+        }
+
+        protected override object ConvertInternal(Node literalNode)
+        {
+            return XmlConvert.ToDecimal(literalNode.Literal);
         }
     }
 }

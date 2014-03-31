@@ -9,15 +9,15 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Default implementation of <see cref="IConverterCatalog"/>
     /// </summary>
-    public sealed class ConverterCatalog:IConverterCatalog
+    public sealed class ConverterCatalog : IConverterCatalog
     {
-        private static readonly Lazy<IReadOnlyCollection<ILiteralNodeConverter>> LiteralConverters;
-        private static readonly Lazy<IReadOnlyCollection<IUriNodeConverter>> ComplexConverters;
+        private static readonly Lazy<IReadOnlyCollection<LiteralNodeConverter>> LiteralConverters;
+        private static readonly Lazy<IReadOnlyCollection<INodeConverter>> ComplexConverters;
 
         static ConverterCatalog()
         {
-            LiteralConverters=new Lazy<IReadOnlyCollection<ILiteralNodeConverter>>(GetLiteralConverters);
-            ComplexConverters = new Lazy<IReadOnlyCollection<IUriNodeConverter>>(GetComplexConverters);
+            LiteralConverters = new Lazy<IReadOnlyCollection<LiteralNodeConverter>>(GetLiteralConverters);
+            ComplexConverters = new Lazy<IReadOnlyCollection<INodeConverter>>(GetComplexConverters);
         }
 
         internal ConverterCatalog()
@@ -25,7 +25,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IUriNodeConverter> UriNodeConverters
+        public IReadOnlyCollection<INodeConverter> UriNodeConverters
         {
             get
             {
@@ -34,7 +34,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters
+        public IReadOnlyCollection<LiteralNodeConverter> LiteralNodeConverters
         {
             get
             {
@@ -42,14 +42,14 @@ namespace RomanticWeb.Converters
             }
         }
 
-        private static IReadOnlyCollection<IUriNodeConverter> GetComplexConverters()
+        private static IReadOnlyCollection<INodeConverter> GetComplexConverters()
         {
-            return new ReadOnlyCollection<IUriNodeConverter>(ContainerFactory.GetInstancesImplementing<IUriNodeConverter>().ToList());
+            return new ReadOnlyCollection<INodeConverter>(ContainerFactory.GetInstancesImplementing<INodeConverter>().ToList());
         }
 
-        private static IReadOnlyCollection<ILiteralNodeConverter> GetLiteralConverters()
+        private static IReadOnlyCollection<LiteralNodeConverter> GetLiteralConverters()
         {
-            return new ReadOnlyCollection<ILiteralNodeConverter>(ContainerFactory.GetInstancesImplementing<ILiteralNodeConverter>().ToList());
+            return new ReadOnlyCollection<LiteralNodeConverter>(ContainerFactory.GetInstancesImplementing<LiteralNodeConverter>().ToList());
         }
     }
 }

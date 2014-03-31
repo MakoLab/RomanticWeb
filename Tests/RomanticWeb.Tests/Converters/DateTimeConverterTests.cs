@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Model;
@@ -23,7 +24,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_date_only(string dateValue)
         {
             // when
-            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue));
+            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(date.Kind, Is.EqualTo(DateTimeKind.Unspecified));
@@ -34,7 +35,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_time_only(string time)
         {
             // when
-            var date = (DateTime)Converter.Convert(Node.ForLiteral(time));
+            var date = (DateTime)Converter.Convert(Node.ForLiteral(time),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(date.Kind,Is.EqualTo(DateTimeKind.Unspecified));
@@ -45,7 +46,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_date_with_time()
         {
             // when
-            var date = (DateTime)Converter.Convert(Node.ForLiteral("2010-03-23T12:30:44"));
+            var date = (DateTime)Converter.Convert(Node.ForLiteral("2010-03-23T12:30:44"),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(date.Kind, Is.EqualTo(DateTimeKind.Unspecified));
@@ -58,7 +59,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_date_with_time_and_timezone(string dateValue, int hour, int minutes)
         {
             // when
-            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue));
+            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(date.Kind, Is.EqualTo(DateTimeKind.Utc));
@@ -71,7 +72,7 @@ namespace RomanticWeb.Tests.Converters
         public void Should_convert_time_and_timezone(string dateValue, int hour, int minutes)
         {
             // when
-            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue));
+            var date = (DateTime)Converter.Convert(Node.ForLiteral(dateValue),new Mock<IEntityContext>().Object);
 
             // then
             Assert.That(date.Kind, Is.EqualTo(DateTimeKind.Utc));

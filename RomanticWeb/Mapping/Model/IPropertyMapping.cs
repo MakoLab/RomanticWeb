@@ -1,5 +1,5 @@
 ﻿using System;
-using RomanticWeb.Entities.ResultAggregations;
+using RomanticWeb.Converters;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -28,9 +28,6 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         Type ReturnType { get; }
 
-        /// <summary>
-        /// Gets the aggregation operation.
-        /// </summary>
-        Aggregation? Aggregation { get; }
+        INodeConverter Converter { get; }
 	}
 }

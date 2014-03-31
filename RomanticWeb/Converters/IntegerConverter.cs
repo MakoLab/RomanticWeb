@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
@@ -10,59 +12,58 @@ namespace RomanticWeb.Converters
     /// </summary>
     public class IntegerConverter:XsdConverterBase
     {
-        /// <summary>
-        /// Gets xsd integral numeric datatypes
-        /// </summary>
-        protected override IEnumerable<Uri> SupportedTypes
+        private static readonly Dictionary<Type,IList<Uri>> IntegerTypes; 
+
+        static IntegerConverter()
+        {
+            IntegerTypes=new Dictionary<Type,IList<Uri>>();
+            IntegerTypes[typeof(int)]=new[] { Xsd.Int };
+            IntegerTypes[typeof(uint)]=new[] { Xsd.UnsignedInt };
+            IntegerTypes[typeof(ushort)]=new[] { Xsd.UnsignedShort };
+            IntegerTypes[typeof(short)]=new[] { Xsd.Short };
+            IntegerTypes[typeof(sbyte)]=new[] { Xsd.Byte };
+            IntegerTypes[typeof(byte)]=new[] { Xsd.UnsignedByte };
+            IntegerTypes[typeof(byte)]=new[] { Xsd.UnsignedByte };
+            IntegerTypes[typeof(long)]=new[] { Xsd.Long,Xsd.Integer,Xsd.NonPositiveInteger,Xsd.NegativeInteger };
+            IntegerTypes[typeof(ulong)]=new[] { Xsd.UnsignedLong,Xsd.NonNegativeInteger,Xsd.PositiveInteger };
+        }
+
+        public static Type[] SupportedTypes
         {
             get
             {
-                yield return Xsd.Integer;
-                yield return Xsd.Int;
-                yield return Xsd.Long;
-                yield return Xsd.Short;
-                yield return Xsd.Byte;
-                yield return Xsd.NonNegativeInteger;
-                yield return Xsd.NonPositiveInteger;
-                yield return Xsd.NegativeInteger;
-                yield return Xsd.PositiveInteger;
-                yield return Xsd.UnsignedByte;
-                yield return Xsd.UnsignedInt;
-                yield return Xsd.UnsignedLong;
-                yield return Xsd.UnsignedShort;
+                return IntegerTypes.Keys.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Gets xsd integral numeric datatypes
+        /// </summary>
+        protected override IEnumerable<Uri> SupportedDataTypes
+        {
+            get
+            {
+                return IntegerTypes.Values.SelectMany(t => t);
+            }
+        }
+
+        public override Node ConvertBack(object value)
+        {
+            return Node.ForLiteral(XmlConvert.ToString((dynamic)value),IntegerTypes[value.GetType()].First());
         }
 
         /// <summary>
         /// Converts xsd:int (and subtypes) into <see cref="long"/>
         /// </summary>
-        public override object Convert(Node objectNode)
+        protected override object ConvertInternal(Node objectNode)
         {
-            switch ((objectNode.DataType!=null?objectNode.DataType.AbsoluteUri:null))
+            var returnType = typeof(Int64);
+            if (objectNode.DataType != null)
             {
-                case Xsd.BaseUri+"unsignedInt":
-                    return UInt32.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"int":
-                    return Int32.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"unsignedShort":
-                    return UInt16.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"short":
-                    return Int16.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"unsignedByte":
-                    return Byte.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"byte":
-                    return SByte.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"long":
-                case Xsd.BaseUri+"integer":
-                case Xsd.BaseUri+"nonPositiveInteger":
-                case Xsd.BaseUri+"negativeInteger":
-                default:
-                    return Int64.Parse(objectNode.Literal);
-                case Xsd.BaseUri+"unsignedLong":
-                case Xsd.BaseUri+"nonNegativeInteger":
-                case Xsd.BaseUri+"positiveInteger":
-                    return UInt64.Parse(objectNode.Literal);
+                returnType = IntegerTypes.Single(pair => pair.Value.Contains(objectNode.DataType, AbsoluteUriComparer.Default)).Key;
             }
+
+            return System.Convert.ChangeType(objectNode.Literal, returnType);
         }
     }
 }

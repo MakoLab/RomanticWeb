@@ -4,14 +4,13 @@ using System.Linq;
 using ImpromptuInterface;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Mapping;
 using RomanticWeb.Model;
-using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
-using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.Linq
@@ -25,15 +24,11 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private IOntologyProvider _ontologies;
 
         [SetUp]
         public void SetUp()
         {
-            _ontologies=new TestOntologyProvider();
-            var mappingContext=new MappingContext(_ontologies);
-            _mappings=new TestMappingsRepository(_ontologies,new NamedGraphsPersonMapping());
-            _mappings.RebuildMappings(mappingContext);
+            _mappings=new TestMappingsRepository(new NamedGraphsPersonMapping());
             _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);
@@ -86,6 +81,24 @@ namespace RomanticWeb.Tests.Linq
         private static IPerson CreatePersonEntity(EntityId id)
         {
             return new { Id=id }.ActLike<IPerson>();
+        }
+
+        internal class NamedGraphsPersonMapping:TestEntityMapping<IPerson>
+        {
+            public NamedGraphsPersonMapping()
+            {
+                Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
+                Property("LastName", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
+                Property("Homepage", Vocabularies.Foaf.homepage, typeof(Uri), new DefaultUriConverter());
+                Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
+                Property("Friend", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>());
+                Property("Age", Vocabularies.Foaf.age, typeof(int), new IntegerConverter());
+                Collection("Friends", new Uri("http://xmlns.com/foaf/0.1/friends"), typeof(IEnumerable<IPerson>), new AsEntityConverter<IPerson>());
+
+                Class(Vocabularies.Foaf.Person);
+
+                RdfList("Interests", Vocabularies.Foaf.interest, typeof(IEnumerable<string>));
+            }
         }
     }
 }

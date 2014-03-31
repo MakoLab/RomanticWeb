@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using RomanticWeb.Mapping.Visitors;
+using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal class InheritanceTreeProvider:IEntityMappingProvider
+    internal class InheritanceTreeProvider : VisitableEntityMappingProviderBase
     {
         private readonly IEntityMappingProvider _mainProvider;
-        private readonly IDictionary<Type,IEntityMappingProvider> _parentProviders;
+        private readonly IDictionary<Type, IEntityMappingProvider> _parentProviders;
+        private ICollection<IPropertyMappingProvider> _propertyProviders;
 
         public InheritanceTreeProvider(IEntityMappingProvider mainProvider,IEnumerable<IEntityMappingProvider> parentProviders)
         {
@@ -17,7 +17,7 @@ namespace RomanticWeb.Mapping.Providers
             _parentProviders=parentProviders.ToDictionary(mp => mp.EntityType,mp => mp);
         }
 
-        public Type EntityType
+        public override Type EntityType
         {
             get
             {
@@ -25,7 +25,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public IEnumerable<IClassMappingProvider> Classes
+        public override IEnumerable<IClassMappingProvider> Classes
         {
             get
             {
@@ -33,77 +33,56 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        public IEnumerable<IPropertyMappingProvider> Properties
+        public override IEnumerable<IPropertyMappingProvider> Properties
         {
             get
             {
-                var providers=new Dictionary<string,IPropertyMappingProvider>();
-                foreach (var property in _mainProvider.Properties)
+                if (_propertyProviders==null)
                 {
-                    providers[property.PropertyInfo.Name]=property;
+                    _propertyProviders=CombineProperties();
                 }
 
-                var parents=new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
-                while (parents.Any())
-                {
-                    var iface=parents.Dequeue();
-                    foreach (var immediateParent in iface.GetImmediateParents())
-                    {
-                        parents.Enqueue(immediateParent);
-                    }
+                return _propertyProviders;
+            }
+        }
 
-                    if (_parentProviders.ContainsKey(iface))
+        private ICollection<IPropertyMappingProvider> CombineProperties()
+        {
+            var providers=new Dictionary<string,IPropertyMappingProvider>();
+            foreach (var property in _mainProvider.Properties)
+            {
+                providers[property.PropertyInfo.Name] = property;
+            }
+
+            var parents=new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
+            while (parents.Any())
+            {
+                var iface=parents.Dequeue();
+                foreach (var immediateParent in iface.GetImmediateParents())
+                {
+                    parents.Enqueue(immediateParent);
+                    if (immediateParent.IsGenericTypeDefinition&&_parentProviders.ContainsKey(immediateParent))
                     {
-                        var provider=_parentProviders[iface];
-                        foreach (var property in provider.Properties)
+                        var parentMapping=_parentProviders[immediateParent];
+                        _parentProviders[iface]=new ClosedGenericEntityMappingProvider(
+                            parentMapping,iface.GetGenericArguments());
+                    }
+                }
+
+                if (_parentProviders.ContainsKey(iface))
+                {
+                    var provider=_parentProviders[iface];
+                    foreach (var property in provider.Properties)
+                    {
+                        if (!providers.ContainsKey(property.PropertyInfo.Name))
                         {
-                            if (!providers.ContainsKey(property.PropertyInfo.Name))
-                            {
-                                providers[property.PropertyInfo.Name] = property;
-                            }
+                            providers[property.PropertyInfo.Name] = property;
                         }
                     }
                 }
-
-                return providers.Values;
-            }
-        }
-
-        public void Accept(IMappingProviderVisitor mappingProviderVisitor)
-        {
-        }
-
-        private class PropertyInfoComparer:IEqualityComparer<PropertyInfo>
-        {
-            public bool Equals(PropertyInfo x,PropertyInfo y)
-            {
-                if (x==null||y==null)
-                {
-                    return false;
-                }
-
-                if (x.DeclaringType!=null&&x.DeclaringType.IsGenericType)
-                {
-                    x=x.DeclaringType.GetGenericTypeDefinition().GetProperty(x.Name);
-                }
-
-                if (y.DeclaringType!=null&&y.DeclaringType.IsGenericType)
-                {
-                    y=y.DeclaringType.GetGenericTypeDefinition().GetProperty(y.Name);
-                }
-
-                return object.Equals(x,y);
             }
 
-            public int GetHashCode(PropertyInfo property)
-            {
-                if (property.DeclaringType!=null&&property.DeclaringType.IsGenericType)
-                {
-                    property=property.DeclaringType.GetGenericTypeDefinition().GetProperty(property.Name);
-                }
-
-                return property.GetHashCode();
-            }
+            return providers.Values;
         }
     }
 }

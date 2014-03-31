@@ -5,7 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
@@ -194,9 +194,20 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.Homepage; });
+            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.HomepageAsEntities; });
             Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
             Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Should_throw_if_a_collection_is_backed_by_a_list_and_a_direct_relation_2()
+        {
+            Mappings.Add(new DefaultGraphPersonMapping());
+            LoadTestFile("MixedCollections.trig");
+
+            // then
+            var cardinalityException=Assert.Throws<ArgumentOutOfRangeException>(() => { var hp=Entity.Homepage; });
+            Assert.That(cardinalityException.ParamName, Is.EqualTo("objectNode"));
         }
 
         [Test]
@@ -206,7 +217,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            Assert.Throws<CardinalityException>(() => { var hp = Entity.Homepage; });
+            Assert.Throws<CardinalityException>(() => { var hp = Entity.HomepageAsEntities; });
         }
 
         [Test]
@@ -399,6 +410,24 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(friends, Has.Count.EqualTo(4));
             friends.Select(friend => friend.FirstName)
                    .Should().Contain(new[] { "Karol", "Gniewko", "Dominik", "Przemek" });
+        }
+
+        [Test]
+        public void Setting_literal_should_convert_to_correct_node()
+        {
+            // given
+            Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
+            Mappings.Add(new NamedGraphsPersonMapping());
+            LoadTestFile("TriplesInNamedGraphs.trig");
+
+            // when
+            Entity.Age=30;
+
+            // then
+            Assert.That(Entity.Age, Is.EqualTo(30));
+            (from quad in EntityContext.Store.Quads
+             where quad.Predicate==Node.ForUri(new Uri("http://xmlns.com/foaf/0.1/age"))
+             select quad).ToList().Should().OnlyContain(q => q.Object.DataType==Xsd.Int);
         }
 
         protected override IMappingProviderSource SetupMappings()

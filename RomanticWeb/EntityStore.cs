@@ -53,7 +53,7 @@ namespace RomanticWeb
                 quads=quads.Where(triple => GraphEquals(triple,graph));
             }
 
-            return quads.Select(triple => triple.Object);
+            return quads.Select(triple => triple.Object).ToList();
         }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)

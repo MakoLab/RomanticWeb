@@ -32,13 +32,13 @@ namespace RomanticWeb.Mapping.Providers
 
         private static bool IsDerivedFrom(Type child,Type parent)
         {
-            var anyInterfaceDerivesFromParent=from iface in child.GetInterfaces()
-                                              where iface.IsGenericType
-                                              let genericDefinition = iface.GetGenericTypeDefinition()
-                                              where genericDefinition==parent
-                                              select iface;
+            var interfaceDerivesFromParent=from iface in child.GetInterfaces()
+                                           where iface.IsGenericType
+                                           let genericDefinition = iface.GetGenericTypeDefinition()
+                                           where genericDefinition==parent
+                                           select iface;
 
-            return parent.IsAssignableFrom(child) || anyInterfaceDerivesFromParent.Any();
+            return parent.IsAssignableFrom(child) || interfaceDerivesFromParent.Any();
         }
 
         private IEnumerable<IEntityMappingProvider> GetParentMappings(IEntityMappingProvider childMapping)

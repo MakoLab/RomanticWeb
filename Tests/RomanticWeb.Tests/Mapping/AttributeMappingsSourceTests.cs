@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Providers;
+using RomanticWeb.Mapping.Sources;
 using RomanticWeb.TestEntities.Animals;
 using RomanticWeb.TestEntities.Generic;
 

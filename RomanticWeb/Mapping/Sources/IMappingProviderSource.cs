@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using RomanticWeb.Mapping.Providers;
 
-namespace RomanticWeb.Mapping.Providers
+namespace RomanticWeb.Mapping.Sources
 {
     /// <summary>
     /// Source for mapping providers

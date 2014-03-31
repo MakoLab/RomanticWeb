@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RomanticWeb.Entities;
@@ -55,7 +53,7 @@ namespace RomanticWeb.JsonLd
                         {
                             foreach (JValue type in (JArray)_property.Value)
                             {
-                                triples.Add(new Triple(CreateNode(subject),Node.a,CreateNode(type.ValueAs<string>())));
+                                triples.Add(new Triple(CreateNode(subject),RdfType,CreateNode(type.ValueAs<string>())));
                             }
                         }
                         else if (IsKeyWord(property))
@@ -322,32 +320,30 @@ namespace RomanticWeb.JsonLd
         {
             if (list==null)
             {
-                return Node.nil;
+                return RdfNil;
             }
-            else
+
+            IList<string> bnodes=new List<string>();
+            foreach (JObject entry in list)
             {
-                IList<string> bnodes=new List<string>();
-                foreach (JObject entry in list)
-                {
-                    bnodes.Add(CreateBlankNodeId(null,identifierMap,ref counter));
-                }
-
-                listTriples.Clear();
-                for (int index=0; index<list.Count; index++)
-                {
-                    string subject=bnodes[index];
-                    JObject item=(JObject)list[index];
-                    Node @object=ConvertObject(item,ref counter,identifierMap);
-                    if (@object!=null)
-                    {
-                        listTriples.Add(new Triple(CreateNode(subject,graphName),Node.first,@object));
-                        Node rest=(index+1<bnodes.Count?CreateNode(bnodes[index+1]):Node.nil);
-                        listTriples.Add(new Triple(CreateNode(subject),Node.rest,rest));
-                    }
-                }
-
-                return (bnodes.Count>0?CreateNode(bnodes[0]):Node.nil);
+                bnodes.Add(CreateBlankNodeId(null,identifierMap,ref counter));
             }
+
+            listTriples.Clear();
+            for (int index=0; index<list.Count; index++)
+            {
+                string subject=bnodes[index];
+                JObject item=(JObject)list[index];
+                Node @object=ConvertObject(item,ref counter,identifierMap);
+                if (@object!=null)
+                {
+                    listTriples.Add(new Triple(CreateNode(subject,graphName),RdfFirst,@object));
+                    Node rest=(index+1<bnodes.Count?CreateNode(bnodes[index+1]):RdfNil);
+                    listTriples.Add(new Triple(CreateNode(subject),RdfRest,rest));
+                }
+            }
+
+            return (bnodes.Count>0?CreateNode(bnodes[0]):RdfNil);
         }
 
         private Node ConvertObject(JToken item,ref int counter,IDictionary<string,string> identifierMap)

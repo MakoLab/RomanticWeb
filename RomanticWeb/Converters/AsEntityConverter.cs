@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using NullGuard;
+﻿using System.Reflection;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
@@ -11,66 +7,26 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Changes <see cref="IEntity"/> type by calling <see cref="EntityExtensions.AsEntity{TInterface}"/> method
     /// </summary>
-    public class AsEntityConverter:IUriNodeConverter
+    public class AsEntityConverter<TEntity>:INodeConverter where TEntity:IEntity
     {
-        private static readonly MethodInfo AsEntityMethod=Info.OfMethod("RomanticWeb","RomanticWeb.Entities.EntityExtensions","AsEntity","IEntity");
+        private static readonly MethodInfo AsEntityMethod=Info.OfMethod("RomanticWeb","RomanticWeb.Entities.EntityExtensions","AsEntity","IEntity").MakeGenericMethod(typeof(TEntity));
+        private static readonly INodeConverter EntityIdConverter=new EntityIdConverter();
 
         /// <summary>
         /// Converts entity
         /// </summary>
-        public object Convert(IEntity entity,IPropertyMapping predicate)
+        public object Convert(Node node,IEntityContext context)
         {
-            var itemType=predicate.ReturnType.FindItemType();
-            if ((itemType!=entity.GetType())&&(!itemType.IsInstanceOfType(entity)))
-            {
-                return AsEntityMethod.MakeGenericMethod(itemType).Invoke(null,new object[] { entity });
-            }
-            
-            return entity;
-        }
-
-        /// <summary>
-        /// Checks whether an entity can be converted.
-        /// </summary>
-        public bool CanConvert(IEntity objectNode,[AllowNull]IPropertyMapping predicate)
-        {
-            return (predicate!=null)&&(PredicateIsEntityOrCollectionThereof(predicate));
+            var entityId=(EntityId)EntityIdConverter.Convert(node,context);
+            return AsEntityMethod.Invoke(null,new object[] { context.Load<IEntity>(entityId,false) });
         }
 
         /// <summary>
         /// Converts an entity back to <see cref="Node" />.
         /// </summary>
-        public IEnumerable<Node> ConvertBack(object obj)
+        public Node ConvertBack(object obj)
         {
-            yield return Node.FromEntityId(((IEntity)obj).Id);
-        }
-
-        /// <summary>
-        /// Checks whether an entity can be converted back to <see cref="Node" />(s).
-        /// </summary>
-        public bool CanConvertBack(object value,[AllowNull]IPropertyMapping predicate)
-        {
-            return (predicate!=null)&&(value is IEntity);
-        }
-
-        private static bool PredicateIsEntityOrCollectionThereof(IPropertyMapping predicate)
-        {
-            if (predicate == null)
-            {
-                return false;
-            }
-
-            if (typeof(IEntity).IsAssignableFrom(predicate.ReturnType))
-            {
-                return true;
-            }
-
-            if (typeof(IEnumerable<IEntity>).IsAssignableFrom(predicate.ReturnType))
-            {
-                return true;
-            }
-
-            return false;
+            return Node.FromEntityId(((IEntity)obj).Id);
         }
     }
 }

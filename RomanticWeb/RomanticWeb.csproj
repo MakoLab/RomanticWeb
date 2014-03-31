@@ -55,6 +55,7 @@
     <Compile Include="AppDomainExtensions.cs" />
     <Compile Include="Collections\IDictionaryEntry.cs" />
     <Compile Include="Collections\IDictionaryOwner.cs" />
+    <Compile Include="Collections\IRdfDictionary.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\IRdfListNode.cs" />
     <Compile Include="Collections\Mapping\DictionaryOwnerMap.cs" />
@@ -72,6 +73,8 @@
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
     <Compile Include="Converters\LiteralConversionMatch.cs" />
+    <Compile Include="Converters\FallbackNodeConverter.cs" />
+    <Compile Include="Converters\StringConverter.cs" />
     <Compile Include="DatasetChanges.cs" />
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
@@ -95,7 +98,6 @@
     <Compile Include="Entities\CardinalityException.cs" />
     <Compile Include="Entities\ResultAggregations\Aggregation.cs" />
     <Compile Include="Entities\AmbiguousPropertyException.cs" />
-    <Compile Include="Converters\RdfListConverter.cs" />
     <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\DecimalConverter.cs" />
@@ -111,7 +113,7 @@
     <Compile Include="Entities\ResultAggregations\SingleResult.cs" />
     <Compile Include="Entities\EntityExtensions.cs" />
     <Compile Include="Entities\ResultPostprocessing\IResultTransformer.cs" />
-    <Compile Include="Entities\ResultPostprocessing\NullTransformer.cs" />
+    <Compile Include="Entities\ResultPostprocessing\SimpleTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\ObservableCollectionTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\RdfListTransformer.cs" />
     <Compile Include="EntityContextFactory.cs" />
@@ -122,7 +124,6 @@
     <Compile Include="EntityContext.cs" />
     <Compile Include="Entities\EntityProxy.cs" />
     <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Converters\IUriNodeConverter.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
@@ -179,7 +180,9 @@
     <Compile Include="Linq\Visitor\QueryVisitorBase.cs" />
     <Compile Include="Mapping\Attributes\AttributeMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
-    <Compile Include="Mapping\Fluent\FluentMappingsSource.cs" />
+    <Compile Include="Mapping\Conventions\DefaultConvertersConvention.cs" />
+    <Compile Include="Mapping\Conventions\EntityIdPropertiesConvention.cs" />
+    <Compile Include="Mapping\Conventions\EntityPropertiesConvention.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Model\DictionaryMapping.cs" />
     <Compile Include="Mapping\Providers\ClassMappingProvider.cs" />
@@ -197,7 +200,6 @@
     <Compile Include="Mapping\Conventions\IDictionaryConvention.cs" />
     <Compile Include="Mapping\Conventions\IPropertyConvention.cs" />
     <Compile Include="Mapping\Conventions\RdfListConvention.cs" />
-    <Compile Include="Dynamic\DynamicDictionaryMappingSource.cs" />
     <Compile Include="Mapping\Fluent\DictionaryMap.cs" />
     <Compile Include="Mapping\Fluent\ITermPart.cs" />
     <Compile Include="Mapping\Fluent\PropertyMapBase.cs" />
@@ -205,7 +207,6 @@
     <Compile Include="Mapping\MappingFrom.cs" />
     <Compile Include="Mapping\MappingFromAttributes.cs" />
     <Compile Include="Mapping\MappingFromFluent.cs" />
-    <Compile Include="Mapping\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Attributes\CollectionAttribute.cs" />
     <Compile Include="Mapping\Extensions.cs" />
     <Compile Include="Mapping\Fluent\ClassMap.cs" />
@@ -220,7 +221,6 @@
     <Compile Include="Mapping\Providers\IDictionaryMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IEntityMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IMappingProviderSource.cs" />
     <Compile Include="Mapping\Providers\InheritanceTreeProvider.cs" />
     <Compile Include="Mapping\Providers\InheritanceMappingBuilder.cs" />
     <Compile Include="Mapping\Providers\IPropertyMappingProvider.cs" />
@@ -230,6 +230,14 @@
     <Compile Include="Mapping\Providers\PropertyMappingProvider.cs" />
     <Compile Include="Mapping\Providers\TermMappingProvider.cs" />
     <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
+    <Compile Include="Mapping\Providers\VisitableEntityMappingProviderBase.cs" />
+    <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />
+    <Compile Include="Mapping\Sources\AttributeMappingsSource.cs" />
+    <Compile Include="Mapping\Sources\ClosedGenericEntityMappingProvider.cs" />
+    <Compile Include="Mapping\Sources\GeneratedDictionaryMappingSource.cs" />
+    <Compile Include="Mapping\Sources\FluentMappingsSource.cs" />
+    <Compile Include="Mapping\Sources\IMappingProviderSource.cs" />
+    <Compile Include="Mapping\Sources\OpenGenericEntityMappingCollector.cs" />
     <Compile Include="Mapping\Visitors\IFluentMapsVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
@@ -241,14 +249,13 @@
     <Compile Include="IEntitySource.cs" />
     <Compile Include="Converters\INodeConverter.cs" />
     <Compile Include="Linq\ExceptionHelper.cs" />
-    <Compile Include="Mapping\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\MappingException.cs" />
     <Compile Include="Mapping\Model\CollectionMapping.cs" />
     <Compile Include="Mapping\Model\IEntityMapping.cs" />
     <Compile Include="Mapping\IMappingsRepository.cs" />
     <Compile Include="Mapping\Model\IPropertyMapping.cs" />
-    <Compile Include="Converters\ILiteralNodeConverter.cs" />
+    <Compile Include="Converters\LiteralNodeConverter.cs" />
     <Compile Include="Mapping\Model\IClassMapping.cs" />
     <Compile Include="Mapping\Fluent\CollectionMap.cs" />
     <Compile Include="Mapping\Fluent\EntityMap.cs" />
@@ -337,7 +344,6 @@
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\Class.cs" />
     <Compile Include="Model\Node.cs" />
-    <Compile Include="Converters\NodeConverter.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="EntityStore.cs" />
     <Compile Include="Model\EntityQuad.cs" />

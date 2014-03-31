@@ -2,7 +2,6 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Animals;
@@ -120,32 +119,6 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             property.StoreAs.Should().Be(asExpected);
-        }
-
-        [Test]
-        public void Property_should_be_mapped_to_SingleOrDefault_result()
-        {
-            // given
-            var mapping=MappingsRepository.MappingFor<IAnimal>();
-
-            // when
-            var propertyMapping=mapping.PropertyFor("Name");
-
-            // then
-            propertyMapping.Aggregation.Should().Be(Aggregation.SingleOrDefault);
-        }
-
-        [Test]
-        public void Dictionary_should_be_mapped_to_Original_result()
-        {
-            // given
-            var mapping=MappingsRepository.MappingFor<IEntityWithDictionary>();
-
-            // when
-            var propertyMapping=mapping.PropertyFor("SettingsDefault");
-
-            // then
-            propertyMapping.Aggregation.Should().Be(Aggregation.Original);
         }
     }
 }

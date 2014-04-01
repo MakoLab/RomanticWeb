@@ -279,6 +279,11 @@
     <Compile Include="NamedGraphs\ISourceGraphSelectionOverride.cs" />
     <Compile Include="NamedGraphs\UnionGraphSelector.cs" />
     <Compile Include="Net\StreamWebResponse.cs" />
+    <Compile Include="Ontologies\CNT.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CNT.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\CompoundOntologyProvider.cs" />
     <Compile Include="Ontologies\DatatypeProperty.cs" />
     <Compile Include="Ontologies\DC.cs">
@@ -356,6 +361,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Ontologies\RDF.owl" />
+    <EmbeddedResource Include="Ontologies\CNT.owl" />
+    <None Include="Ontologies\CNT.tt">
+      <DependentUpon>CNT.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CNT.cs</LastGenOutput>
+    </None>
     <None Include="Ontologies\RDF.tt">
       <DependentUpon>RDF.owl</DependentUpon>
       <Generator>TextTemplatingFileGenerator</Generator>

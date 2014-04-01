@@ -14,6 +14,7 @@ namespace RomanticWeb.Mapping.Fluent
 		{
 		}
 
+        /// <inheritdoc/>
         public ITermPart<ICollectionMap> Term
         {
             get
@@ -44,6 +45,7 @@ namespace RomanticWeb.Mapping.Fluent
             return fluentMapsVisitor.Visit(this);
         }
 
+        /// <inheritdoc />
         public ICollectionMap ConvertElementsWith<TConverter>()
             where TConverter:INodeConverter
         {

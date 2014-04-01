@@ -21,12 +21,16 @@ namespace RomanticWeb.Converters
                 yield return Xsd.Decimal;
             }
         }
-        
+
+        /// <summary>
+        /// Converts the decimal value to a literal node
+        /// </summary>
         public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(XmlConvert.ToString((Decimal)value),Xsd.Decimal);
         }
 
+        /// <inheritdoc />
         protected override object ConvertInternal(Node literalNode)
         {
             return XmlConvert.ToDecimal(literalNode.Literal);

@@ -16,17 +16,17 @@ namespace RomanticWeb.Mapping.Providers
         private readonly IPropertyMappingProvider _propertyMapping;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
+        /// Initializes a new instance of the <see cref="CollectionMappingProvider" /> class.
         /// </summary>
-        /// <param name="termUri">The term URI.</param>
+        /// <param name="propertyMapping">The property mapping.</param>
         /// <param name="storeAs">The storage strategy.</param>
-        /// <param name="property">The property.</param>
         public CollectionMappingProvider(IPropertyMappingProvider propertyMapping,StoreAs storeAs)
         {
             _propertyMapping=propertyMapping;
             ((ICollectionMappingProvider)this).StoreAs = storeAs;
         }
 
+        /// <inheritdoc />
         public Func<IOntologyProvider,Uri> GetTerm
         {
             get
@@ -40,6 +40,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc />
         public PropertyInfo PropertyInfo
         {
             get
@@ -48,6 +49,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc />
         public Type ConverterType
         {
             [return:AllowNull]

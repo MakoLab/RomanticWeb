@@ -16,16 +16,21 @@ namespace RomanticWeb.Converters
             Converters=new ConverterCatalog();
         }
 
+        /// <summary>
+        /// Converts a node to a correct value based on type (URI, blank or literal)
+        /// or it's datatype in the case of literal nodes
+        /// </summary>
         public object Convert(Node objectNode, IEntityContext context)
         {
             if (objectNode.IsLiteral)
             {
                 return ConvertLiteral(objectNode,context);
-                }
+            }
 
             return ConvertUri(objectNode,context);
         }
 
+        /// <inheritdoc/>
         public Node ConvertBack(object value)
         {
             if (value is IEntity)
@@ -41,24 +46,7 @@ namespace RomanticWeb.Converters
             return ConvertOneBack(value);
         }
 
-        private static bool ShouldConvertNodeToLiteral(Node objectNode, out Type type)
-        {
-            type = null;
-            bool shouldConvert = false;
-
-            // convert literal node
-            shouldConvert |= objectNode.IsLiteral;
-            
-            if ((!shouldConvert))
-            {
-                // or convert primitive/string values
-                shouldConvert |= type.IsPrimitive || type == typeof(string);
-            }
-
-            return shouldConvert;
-        }
-
-        private Node ConvertOneBack(object element)
+        private static Node ConvertOneBack(object element)
         {
             if (element is IEntity)
             {
@@ -70,13 +58,11 @@ namespace RomanticWeb.Converters
             {
                 return Node.ForUri((Uri)element);
             }
-
-            ////var converter=_converters.LiteralNodeConverters.Where
-
+            
             return Node.ForLiteral(element.ToString());
         }
 
-        private object ConvertLiteral(Node objectNode,IEntityContext context)
+        private static object ConvertLiteral(Node objectNode,IEntityContext context)
         {
                 var converter = Converters.GetBestConverter(objectNode);
                 if (converter != null)
@@ -87,7 +73,7 @@ namespace RomanticWeb.Converters
             throw new InvalidOperationException();
         }
 
-        private object ConvertUri(Node uriNode,IEntityContext context)
+        private static object ConvertUri(Node uriNode,IEntityContext context)
         {
             return context.Load<IEntity>(uriNode.ToEntityId(),false);
         }

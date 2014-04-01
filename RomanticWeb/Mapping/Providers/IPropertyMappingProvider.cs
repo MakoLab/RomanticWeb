@@ -11,11 +11,11 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Gets the mapped property.
         /// </summary>
-        /// <value>
-        /// The property.
-        /// </value>
         PropertyInfo PropertyInfo { get; }
 
+        /// <summary>
+        /// Gets or sets the type of the converter.
+        /// </summary>
         Type ConverterType { get; set; }
     }
 }

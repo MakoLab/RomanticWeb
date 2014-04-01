@@ -27,6 +27,9 @@ namespace RomanticWeb.Mapping.Attributes
         {
         }
 
+        /// <summary>
+        /// Gets or sets the type of the converter.
+        /// </summary>
         public Type ConverterType { [return:AllowNull]get; set; }
 
         internal virtual IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor,PropertyInfo property)

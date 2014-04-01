@@ -8,6 +8,9 @@ namespace RomanticWeb.Converters
     /// </summary>
     public class DefaultUriConverter:INodeConverter
     {
+        /// <summary>
+        /// Converts an uri node to URI
+        /// </summary>
         public object Convert(Node objectNode,IEntityContext context)
         {
             if (objectNode.IsBlank)

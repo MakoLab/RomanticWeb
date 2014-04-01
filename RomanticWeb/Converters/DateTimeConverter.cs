@@ -24,12 +24,17 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts date value to it's string representation.
+        /// </summary>
+        /// <param name="value">The date-time value.</param>
         public override Node ConvertBack(object value)
         {
             // todo: xsd:Time and xsd:Date
             return Node.ForLiteral(XmlConvert.ToString((DateTime)value,XmlDateTimeSerializationMode.RoundtripKind),Xsd.DateTime); 
         }
 
+        /// <inheritdoc />
         protected override object ConvertInternal(Node literalNode)
         {
             var dateTime = XmlConvert.ToDateTime(literalNode.Literal,XmlDateTimeSerializationMode.RoundtripKind);

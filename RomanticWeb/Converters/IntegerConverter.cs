@@ -28,6 +28,9 @@ namespace RomanticWeb.Converters
             IntegerTypes[typeof(ulong)]=new[] { Xsd.UnsignedLong,Xsd.NonNegativeInteger,Xsd.PositiveInteger };
         }
 
+        /// <summary>
+        /// Gets the supported .NET types.
+        /// </summary>
         public static Type[] SupportedTypes
         {
             get
@@ -46,7 +49,8 @@ namespace RomanticWeb.Converters
                 return IntegerTypes.Values.SelectMany(t => t);
             }
         }
-
+        
+        /// <inheritdoc/>
         public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(XmlConvert.ToString((dynamic)value),IntegerTypes[value.GetType()].First());

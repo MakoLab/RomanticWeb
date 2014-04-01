@@ -54,12 +54,13 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             return observable;
         }
 
+        /// <summary>
+        /// Gets a node for each collection element
+        /// </summary>
         public override IEnumerable<Node> ToNodes(object collection, IEntityProxy proxy, IPropertyMapping property, IEntityContext context)
         {
-            foreach (var value in (IEnumerable)collection)
-            {
-                yield return base.ToNodes(value,proxy,property,context).Single();
-            }
+            return from object value in (IEnumerable)collection 
+                   select base.ToNodes(value,proxy,property,context).Single();
         }
     }
 }

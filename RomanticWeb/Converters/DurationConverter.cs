@@ -21,11 +21,13 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <inheritdoc/>
         public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(((Duration)value).ToString(),Xsd.Duration);
         }
 
+        /// <inheritdoc/>
         protected override object ConvertInternal(Node literalNode)
         {
             return Duration.Parse(literalNode.Literal);

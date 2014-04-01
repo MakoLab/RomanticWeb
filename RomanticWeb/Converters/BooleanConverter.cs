@@ -22,6 +22,9 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <summary>
+        /// Converts a bool value to it's XML string representation
+        /// </summary>
         public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(XmlConvert.ToString((bool)value),Xsd.Boolean);

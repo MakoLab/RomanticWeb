@@ -18,7 +18,6 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryMappingProvider"/> class.
         /// </summary>
-        /// <param name="uri">The URI.</param>
         /// <param name="key">The key mapping provider.</param>
         /// <param name="value">The value mapping provider.</param>
         /// <param name="property">The property.</param>
@@ -57,6 +56,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc/>
         public Func<IOntologyProvider, Uri> GetTerm
         {
             get
@@ -70,6 +70,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc/>
         public PropertyInfo PropertyInfo
         {
             get
@@ -78,6 +79,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc/>
         public Type ConverterType
         {
             [return:AllowNull]

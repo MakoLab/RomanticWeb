@@ -27,6 +27,9 @@ namespace RomanticWeb
         /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
         INamedGraphSelector GraphSelector { get; }
 
+        /// <summary>
+        /// Gets the transformer catalog.
+        /// </summary>
         IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>

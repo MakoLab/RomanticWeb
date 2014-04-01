@@ -23,6 +23,7 @@ namespace RomanticWeb.Converters
             }
         }
 
+        /// <inheritdoc/>
         public override Node ConvertBack(object value)
         {
             if (value is float)
@@ -33,9 +34,10 @@ namespace RomanticWeb.Converters
             return Node.ForLiteral(XmlConvert.ToString((double)value),Xsd.Double);
         }
 
+        /// <inheritdoc/>
         protected override object ConvertInternal(Node literalNode)
         {
-            if (literalNode.Literal == "+INF")
+            if (literalNode.Literal=="+INF")
             {
                 return double.PositiveInfinity;
             }

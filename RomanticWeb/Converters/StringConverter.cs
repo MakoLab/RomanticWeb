@@ -3,13 +3,18 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
 {
+    /// <summary>
+    /// Converts string literals
+    /// </summary>
     public class StringConverter:LiteralNodeConverter
     {
+        /// <inheritdoc/>
         public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(value.ToString(),Xsd.String);
         }
 
+        /// <inheritdoc/>
         public override LiteralConversionMatch CanConvert(Node literalNode)
         {
             var literalConversionMatch=new LiteralConversionMatch
@@ -25,6 +30,7 @@ namespace RomanticWeb.Converters
             return literalConversionMatch;
         }
 
+        /// <inheritdoc/>
         protected override object ConvertInternal(Node objectNode)
         {
             if (!objectNode.IsLiteral)

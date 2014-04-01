@@ -28,6 +28,9 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         Type ReturnType { get; }
 
+        /// <summary>
+        /// Gets the converter.
+        /// </summary>
         INodeConverter Converter { get; }
 	}
 }

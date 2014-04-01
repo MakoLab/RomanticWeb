@@ -10,6 +10,9 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         ITermPart<IPropertyMap> Term { get; }
 
+        /// <Summary>
+        /// Sets the converter type for this property
+        /// </Summary>
         IPropertyMap ConvertWith<TConverter>() where TConverter : INodeConverter;
     }
 }

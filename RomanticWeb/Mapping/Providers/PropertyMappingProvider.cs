@@ -46,6 +46,7 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        /// <inheritdoc/>
         public Type ConverterType { [return:AllowNull] get; set; }
 
         /// <inheritdoc/>

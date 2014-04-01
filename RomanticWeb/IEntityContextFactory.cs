@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using RomanticWeb.Converters;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;
@@ -15,6 +14,9 @@ namespace RomanticWeb
         /// <summary>Gets the mappings.</summary>
         IMappingsRepository Mappings { get; }
 
+        /// <summary>
+        /// Gets the conventions.
+        /// </summary>
         IList<IConvention> Conventions { get; } 
             
         /// <summary>Creates a new instance of entity context.</summary>

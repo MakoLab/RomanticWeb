@@ -23,8 +23,8 @@ namespace RomanticWeb.Mapping.Visitors
         /// <summary>
         /// Visits the specified entity map.
         /// </summary>
-        /// <param name="entityMap">The entity map.</param>
-        IPropertyMappingProvider Visit(PropertyMap entityMap);
+        /// <param name="propertyMap">The entity map.</param>
+        IPropertyMappingProvider Visit(PropertyMap propertyMap);
 
         /// <summary>
         /// Visits the specified dictionary map.

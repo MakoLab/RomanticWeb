@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a property to an RDF predicate.</summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
+    [AttributeUsage(AttributeTargets.Property,AllowMultiple=false,Inherited=false)]
     public class PropertyAttribute:TermMappingAttribute
     {
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyAttribute"/> class.
         /// </summary>
@@ -27,14 +27,11 @@ namespace RomanticWeb.Mapping.Attributes
         {
         }
 
-        #endregion
+        public Type ConverterType { [return:AllowNull]get; set; }
 
-        #region Public methods
         internal virtual IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor,PropertyInfo property)
         {
             return visitor.Visit(this,property);
         }
-
-        #endregion
     }
 }

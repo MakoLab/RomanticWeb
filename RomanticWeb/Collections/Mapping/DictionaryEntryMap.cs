@@ -23,11 +23,11 @@ namespace RomanticWeb.Collections.Mapping
         /// <summary>
         /// Setups the key property mapping.
         /// </summary>
-        protected abstract void SetupKeyProperty(ITermPart<PropertyMap> term);
+        protected abstract void SetupKeyProperty(ITermPart<IPropertyMap> term);
 
         /// <summary>
         /// Setups the value property mapping.
         /// </summary>
-        protected abstract void SetupValueProperty(ITermPart<PropertyMap> term);
+        protected abstract void SetupValueProperty(ITermPart<IPropertyMap> term);
     }
 }

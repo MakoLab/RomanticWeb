@@ -9,12 +9,11 @@ namespace RomanticWeb.Converters
         /// <summary>Check if a converter can convert the given RDF data type.</summary>
         public abstract LiteralConversionMatch CanConvert(Node literalNode);
 
-        [Obsolete("Should not convert literal nodes!")]
         public object Convert(Node objectNode,IEntityContext context)
         {
             if (!objectNode.IsLiteral)
             {
-                ////throw new ArgumentOutOfRangeException("objectNode","Node is not literal");
+                throw new ArgumentOutOfRangeException("objectNode","Node is not literal");
             }
 
             return ConvertInternal(objectNode);

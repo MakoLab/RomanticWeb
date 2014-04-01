@@ -22,38 +22,21 @@ namespace RomanticWeb.Mapping.Fluent
             return new ClassMappingProvider(classMap.NamespacePrefix,classMap.TermName);
         }
 
-        public IPropertyMappingProvider Visit(PropertyMap entityMap)
+        public IPropertyMappingProvider Visit(PropertyMap propertyMap)
         {
-            if (entityMap.TermUri != null)
-            {
-                return new PropertyMappingProvider(entityMap.TermUri, entityMap.PropertyInfo);
-            }
-
-            return new PropertyMappingProvider(entityMap.NamespacePrefix, entityMap.TermName, entityMap.PropertyInfo);
+            return CreatePropertyMapping(propertyMap);
         }
 
         public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap,ITermMappingProvider key,ITermMappingProvider value)
         {
-            if (dictionaryMap.TermUri != null)
-            {
-                return new DictionaryMappingProvider(dictionaryMap.TermUri, key, value, dictionaryMap.PropertyInfo);
-            }
-
-            return new DictionaryMappingProvider(dictionaryMap.NamespacePrefix, dictionaryMap.TermName, key, value, dictionaryMap.PropertyInfo);
+            var propertyMapping=CreatePropertyMapping(dictionaryMap);
+            return new DictionaryMappingProvider(propertyMapping,key,value);
         }
 
         public IPropertyMappingProvider Visit(CollectionMap collectionMap)
         {
-            if (collectionMap.TermUri != null)
-            {
-                return new CollectionMappingProvider(collectionMap.TermUri, collectionMap.StorageStrategy, collectionMap.PropertyInfo);
-            }
-
-            return new CollectionMappingProvider(
-                collectionMap.NamespacePrefix,
-                collectionMap.TermName,
-                collectionMap.StorageStrategy,
-                collectionMap.PropertyInfo);
+            var propertyMapping=CreatePropertyMapping(collectionMap);
+            return new CollectionMappingProvider(propertyMapping,collectionMap.StorageStrategy);
         }
 
         public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)
@@ -84,6 +67,26 @@ namespace RomanticWeb.Mapping.Fluent
             }
 
             return new ValueMappingProvider();
+        }
+
+        private static PropertyMappingProvider CreatePropertyMapping(PropertyMapBase propertyMap)
+        {
+            PropertyMappingProvider propertyMappingProvider;
+            if (propertyMap.TermUri!=null)
+            {
+                propertyMappingProvider=new PropertyMappingProvider(propertyMap.TermUri,propertyMap.PropertyInfo);
+            }
+            else
+            {
+                propertyMappingProvider=new PropertyMappingProvider(propertyMap.NamespacePrefix,propertyMap.TermName,propertyMap.PropertyInfo);
+            }
+
+            if (propertyMap.ConverterType!=null)
+            {
+                propertyMappingProvider.ConverterType=propertyMap.ConverterType;
+            }
+
+            return propertyMappingProvider;
         }
 
         private IEnumerable<IClassMappingProvider> GetClasses(EntityMap entityMap)

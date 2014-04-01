@@ -6,20 +6,15 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
-    /// <summary>
-    /// A mapping definition for collection properties
-    /// </summary>
-	public sealed class CollectionMap:PropertyMapBase<CollectionMap>
+    /// <inheritdoc/>
+    public sealed class CollectionMap:PropertyMapBase,ICollectionMap
     {
         internal CollectionMap(PropertyInfo propertyInfo)
 			: base(propertyInfo)
 		{
 		}
 
-        /// <summary>
-        /// Gets a predicate map part
-        /// </summary>
-        public override ITermPart<CollectionMap> Term
+        public ITermPart<ICollectionMap> Term
         {
             get
             {
@@ -49,7 +44,7 @@ namespace RomanticWeb.Mapping.Fluent
             return fluentMapsVisitor.Visit(this);
         }
 
-        public CollectionMap ConvertElementsWith<TConverter>()
+        public ICollectionMap ConvertElementsWith<TConverter>()
             where TConverter:INodeConverter
         {
             ConverterType=typeof(TConverter);

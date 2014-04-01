@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>A mapping definition for properties.</summary>
-    public sealed class PropertyMap:PropertyMapBase<PropertyMap>
+    public sealed class PropertyMap:PropertyMapBase,IPropertyMap
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMap"/> class.
@@ -17,12 +18,19 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <inheritdoc/>
-        public override ITermPart<PropertyMap> Term
+        public ITermPart<IPropertyMap> Term
         {
             get
             {
                 return new TermPart<PropertyMap>(this);
             }
+        }
+
+        /// <inheritdoc/>
+        public IPropertyMap ConvertWith<TConverter>() where TConverter : INodeConverter
+        {
+            ConverterType = typeof(TConverter);
+            return this;
         }
 
         /// <inheritdoc/>

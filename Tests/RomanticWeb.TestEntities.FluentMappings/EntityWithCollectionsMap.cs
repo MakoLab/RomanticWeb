@@ -13,7 +13,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
             }
         }
 
-        private IEnumerable<CollectionMap> Collections
+        private IEnumerable<ICollectionMap> Collections
         {
             get
             {

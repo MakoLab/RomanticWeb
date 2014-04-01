@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for rdf class
     /// </summary>
-    public sealed class ClassMap:TermMap
+    public sealed class ClassMap:TermMap,IClassMap
     {
         private readonly TermPart<ClassMap> _termPart;
 
@@ -19,7 +19,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Sets the class name 
         /// </summary>
-        public ClassMap Is(string prefix,string className)
+        public IClassMap Is(string prefix,string className)
         {
             return _termPart.Is(prefix,className);
         }
@@ -27,7 +27,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Sets the class name 
         /// </summary>
-        public ClassMap Is(Uri uri)
+        public IClassMap Is(Uri uri)
         {
             return _termPart.Is(uri);
         }

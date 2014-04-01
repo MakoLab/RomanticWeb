@@ -59,6 +59,7 @@
     <Compile Include="Generic\IImplementsGenericWithInt.cs" />
     <Compile Include="IEntityWithCollections.cs" />
     <Compile Include="IEntityWithDictionary.cs" />
+    <Compile Include="IEntityWithExplicitConverters.cs" />
     <Compile Include="Inheritance\FluentChildMap.cs" />
     <Compile Include="Inheritance\IAttributesParent.cs" />
     <Compile Include="Inheritance\IFluentChild.cs" />

@@ -24,6 +24,6 @@ namespace RomanticWeb.Collections.Mapping
         /// <summary>
         /// Setups the entries collection property predicate.
         /// </summary>
-        protected abstract void SetupEntriesCollection(ITermPart<CollectionMap> term);
+        protected abstract void SetupEntriesCollection(ITermPart<ICollectionMap> term);
     }
 }

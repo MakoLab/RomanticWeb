@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Animals;
@@ -119,6 +120,32 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             property.StoreAs.Should().Be(asExpected);
+        }
+
+        [Test]
+        public void Explicit_setting_for_property_converter_should_not_be_replaced_by_convention()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IEntityWithExplicitConverters>();
+
+            // when
+            var property = mapping.PropertyFor("Property");
+
+            // then
+            property.Converter.Should().BeOfType<BooleanConverter>();
+        }
+
+        [Test]
+        public void Explicit_setting_for_collection_converter_should_not_be_replaced_by_convention()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IEntityWithExplicitConverters>();
+
+            // when
+            var property = mapping.PropertyFor("Collection");
+
+            // then
+            property.Converter.Should().BeOfType<BooleanConverter>();
         }
     }
 }

@@ -1,39 +1,65 @@
 ﻿using System;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Visitors;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Providers
 {
     /// <summary>
     /// Mapping provider, which returns a mapping for collection property predicate
     /// </summary>
-    public class CollectionMappingProvider:PropertyMappingProvider,ICollectionMappingProvider
+    public class CollectionMappingProvider:ICollectionMappingProvider
     {
+        private readonly IPropertyMappingProvider _propertyMapping;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
         /// </summary>
         /// <param name="termUri">The term URI.</param>
         /// <param name="storeAs">The storage strategy.</param>
         /// <param name="property">The property.</param>
-        public CollectionMappingProvider(Uri termUri,StoreAs storeAs,PropertyInfo property)
-            :base(termUri,property)
+        public CollectionMappingProvider(IPropertyMappingProvider propertyMapping,StoreAs storeAs)
         {
+            _propertyMapping=propertyMapping;
             ((ICollectionMappingProvider)this).StoreAs = storeAs;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionMappingProvider"/> class.
-        /// </summary>
-        /// <param name="namespacePrefix">The namespace prefix.</param>
-        /// <param name="term">The term.</param>
-        /// <param name="storeAs">The storate strategy.</param>
-        /// <param name="property">The property.</param>
-        public CollectionMappingProvider(string namespacePrefix,string term,StoreAs storeAs,PropertyInfo property)
-            :base(namespacePrefix,term,property)
+        public Func<IOntologyProvider,Uri> GetTerm
         {
-            ((ICollectionMappingProvider)this).StoreAs=storeAs;
+            get
+            {
+                return _propertyMapping.GetTerm;
+            }
+
+            set
+            {
+                _propertyMapping.GetTerm=value;
+            }
+        }
+
+        public PropertyInfo PropertyInfo
+        {
+            get
+            {
+                return _propertyMapping.PropertyInfo;
+            }
+        }
+
+        public Type ConverterType
+        {
+            [return:AllowNull]
+            get
+            {
+                return _propertyMapping.ConverterType;
+            }
+
+            set
+            {
+                _propertyMapping.ConverterType=value;
+            }
         }
 
         /// <summary>
@@ -43,7 +69,7 @@ namespace RomanticWeb.Mapping.Providers
         StoreAs ICollectionMappingProvider.StoreAs { get; set; }
 
         /// <inheritdoc/>
-        public override void Accept(IMappingProviderVisitor mappingProviderVisitor)
+        public void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {
             mappingProviderVisitor.Visit(this);
         }

@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for dictionary properties
     /// </summary>
-    public sealed class DictionaryMap:PropertyMapBase<DictionaryMap>
+    public sealed class DictionaryMap:PropertyMapBase,IDictionaryMap
     {
         private readonly KeyMap _keyMap;
 
@@ -21,7 +21,7 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <inheritdoc/>
-        public override ITermPart<DictionaryMap> Term
+        public ITermPart<IDictionaryMap> Term
         {
             get
             {
@@ -32,7 +32,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets the dictionary key predicate map part
         /// </summary>
-        public ITermPart<DictionaryMap> KeyPredicate
+        public ITermPart<IDictionaryMap> KeyPredicate
         {
             get
             {
@@ -43,7 +43,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Gets the dictionary value predicate map part
         /// </summary>
-        public ITermPart<DictionaryMap> ValuePredicate
+        public ITermPart<IDictionaryMap> ValuePredicate
         {
             get
             {

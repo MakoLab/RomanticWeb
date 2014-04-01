@@ -7,7 +7,6 @@ namespace RomanticWeb.Mapping.Fluent
     /// Allows mapping RDF predicate to a mapped element
     /// </summary>
     public interface ITermPart<out TParentMap>
-        where TParentMap:TermMap
     {
         /// <summary>
         /// Maps the term to a fully qualified URI

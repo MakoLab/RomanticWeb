@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="EntityWithCollectionsMap.cs" />
     <Compile Include="EntityWithDictionaryMap.cs" />
+    <Compile Include="EntityWithExplicitConverters.cs" />
     <Compile Include="HerbivoreMap.cs">
       <SubType>Code</SubType>
     </Compile>

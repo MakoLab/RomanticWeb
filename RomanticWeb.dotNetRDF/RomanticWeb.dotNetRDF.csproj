@@ -22,7 +22,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <FodyPath>..\packages\Fody.1.20.0.0</FodyPath>
-    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings> 
+    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Anotar.NLog">
-      <HintPath>..\packages\Anotar.NLog.Fody.2.7.4.0\Lib\portable-net4+sl4+wp7+windows8\Anotar.NLog.dll</HintPath>
+      <HintPath>..\packages\Anotar.NLog.Fody.2.8.2.0\Lib\portable-net4+sl4+wp7+windows8\Anotar.NLog.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="dotNetRDF, Version=1.0.2.2880, Culture=neutral, PublicKeyToken=6055ffe4c97cc780, processorArchitecture=MSIL">
@@ -92,7 +92,7 @@
       <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NullGuard">
-      <HintPath>..\packages\NullGuard.Fody.1.1.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\NullGuard.dll</HintPath>
+      <HintPath>..\packages\NullGuard.Fody.1.2.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\NullGuard.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Remotion.Linq, Version=1.15.7.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">

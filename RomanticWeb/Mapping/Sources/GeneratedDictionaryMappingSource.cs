@@ -67,7 +67,7 @@ namespace RomanticWeb.Mapping.Sources
                 Thread.GetDomain().DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndSave);
             var defineDynamicModule = assemblyBuilder.DefineDynamicModule("DynamicMappings");
             var typeBuilderHelper = defineDynamicModule.DefineType(owner.Name + "Map", TypeAttributes.Public, ownerMapType);
-            var methodBuilderHelper = typeBuilderHelper.DefineMethod("SetupEntriesCollection", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<CollectionMap>) });
+            var methodBuilderHelper = typeBuilderHelper.DefineMethod("SetupEntriesCollection", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<ICollectionMap>) });
 
             var ilGenerator = methodBuilderHelper.GetILGenerator();
             ilGenerator.Emit(OpCodes.Nop);
@@ -96,7 +96,7 @@ namespace RomanticWeb.Mapping.Sources
 
             var defineDynamicModule = assemblyBuilder.DefineDynamicModule("DynamicMappings");
             var typeBuilderHelper = defineDynamicModule.DefineType(entry.Name + "Map", TypeAttributes.Public, ownerMapType);
-            var methodBuilderHelper = typeBuilderHelper.DefineMethod("SetupKeyProperty", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<PropertyMap>) });
+            var methodBuilderHelper = typeBuilderHelper.DefineMethod("SetupKeyProperty", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<IPropertyMap>) });
 
             var ilGenerator = methodBuilderHelper.GetILGenerator();
             ilGenerator.Emit(OpCodes.Nop);
@@ -107,7 +107,7 @@ namespace RomanticWeb.Mapping.Sources
             ilGenerator.Emit(OpCodes.Pop);
             ilGenerator.Emit(OpCodes.Ret);
 
-            var methodBuilderHelper1 = typeBuilderHelper.DefineMethod("SetupValueProperty", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<PropertyMap>) });
+            var methodBuilderHelper1 = typeBuilderHelper.DefineMethod("SetupValueProperty", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(void), new[] { typeof(ITermPart<IPropertyMap>) });
 
             ilGenerator = methodBuilderHelper1.GetILGenerator();
             ilGenerator.Emit(OpCodes.Nop);

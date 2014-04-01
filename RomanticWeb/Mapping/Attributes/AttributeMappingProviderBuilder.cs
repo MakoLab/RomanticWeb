@@ -21,32 +21,19 @@ namespace RomanticWeb.Mapping.Attributes
 
         public IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute,PropertyInfo property)
         {
-            if (propertyAttribute.Uri != null)
-            {
-                return new PropertyMappingProvider(propertyAttribute.Uri,property);
-            }
-
-            return new PropertyMappingProvider(propertyAttribute.Prefix,propertyAttribute.Term,property);
+            return CreatePropertyMapping(propertyAttribute,property);
         }
 
         public ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute,PropertyInfo property)
         {
-            if (collectionAttribute.Uri != null)
-            {
-                return new CollectionMappingProvider(collectionAttribute.Uri,collectionAttribute.StoreAs,property);
-            }
-
-            return new CollectionMappingProvider(collectionAttribute.Prefix,collectionAttribute.Term,collectionAttribute.StoreAs,property);
+            var prop=CreatePropertyMapping(collectionAttribute,property);
+            return new CollectionMappingProvider(prop,collectionAttribute.StoreAs);
         }
 
         public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute,PropertyInfo property,ITermMappingProvider key,ITermMappingProvider value)
         {
-            if (dictionaryAttribute.Uri != null)
-            {
-                return new DictionaryMappingProvider(dictionaryAttribute.Uri,key,value,property);
-            }
-
-            return new DictionaryMappingProvider(dictionaryAttribute.Prefix,dictionaryAttribute.Term,key,value,property);
+            var prop=CreatePropertyMapping(dictionaryAttribute,property);
+            return new DictionaryMappingProvider(prop,key,value);
         }
 
         public ITermMappingProvider Visit(KeyAttribute keyAttribute)
@@ -82,6 +69,26 @@ namespace RomanticWeb.Mapping.Attributes
         public IEntityMappingProvider Visit(Type entityType)
         {
             return new EntityMappingProvider(entityType, GetClasses(entityType), GetProperties(entityType));
+        }
+
+        private static PropertyMappingProvider CreatePropertyMapping(PropertyAttribute propertyAttribute,PropertyInfo property)
+        {
+            PropertyMappingProvider propertyMappingProvider;
+            if (propertyAttribute.Uri != null)
+            {
+                propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Uri,property);
+            }
+            else
+            {
+                propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Prefix,propertyAttribute.Term,property);
+            }
+
+            if (propertyAttribute.ConverterType != null)
+            {
+                propertyMappingProvider.ConverterType=propertyAttribute.ConverterType;
+            }
+
+            return propertyMappingProvider;
         }
 
         private IList<IPropertyMappingProvider> GetProperties(Type entityType)

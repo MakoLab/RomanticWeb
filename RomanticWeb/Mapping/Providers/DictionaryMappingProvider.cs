@@ -1,13 +1,17 @@
 using System;
 using System.Reflection;
+using NullGuard;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Providers
 {
     /// <summary>
     /// Mapping provider, which returns a mapping for dictionary property predicate
     /// </summary>
-    public class DictionaryMappingProvider:PropertyMappingProvider,IDictionaryMappingProvider
+    public class DictionaryMappingProvider:IDictionaryMappingProvider
     {
+        private readonly IPropertyMappingProvider _property;
+
         private readonly ITermMappingProvider _key;
         private readonly ITermMappingProvider _value;
 
@@ -18,24 +22,9 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="key">The key mapping provider.</param>
         /// <param name="value">The value mapping provider.</param>
         /// <param name="property">The property.</param>
-        public DictionaryMappingProvider(Uri uri,ITermMappingProvider key,ITermMappingProvider value,PropertyInfo property)
-            :base(uri,property)
+        public DictionaryMappingProvider(IPropertyMappingProvider property,ITermMappingProvider key,ITermMappingProvider value)
         {
-            _key=key;
-            _value=value;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DictionaryMappingProvider"/> class.
-        /// </summary>
-        /// <param name="prefix">The prefix.</param>
-        /// <param name="term">The term.</param>
-        /// <param name="key">The key mapping provider.</param>
-        /// <param name="value">The value mapping provider.</param>
-        /// <param name="property">The property.</param>
-        public DictionaryMappingProvider(string prefix,string term,ITermMappingProvider key,ITermMappingProvider value,PropertyInfo property)
-            : base(prefix,term,property)
-        {
+            _property=property;
             _key=key;
             _value=value;
         }
@@ -68,8 +57,43 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
+        public Func<IOntologyProvider, Uri> GetTerm
+        {
+            get
+            {
+                return _property.GetTerm;
+            }
+
+            set
+            {
+                _property.GetTerm = value;
+            }
+        }
+
+        public PropertyInfo PropertyInfo
+        {
+            get
+            {
+                return _property.PropertyInfo;
+            }
+        }
+
+        public Type ConverterType
+        {
+            [return:AllowNull]
+            get
+            {
+                return _property.ConverterType;
+            }
+
+            set
+            {
+                _property.ConverterType = value;
+            }
+        }
+
         /// <inheridoc/>
-        public override void Accept(Visitors.IMappingProviderVisitor mappingProviderVisitor)
+        public void Accept(Visitors.IMappingProviderVisitor mappingProviderVisitor)
         {
             mappingProviderVisitor.Visit(this);
         }

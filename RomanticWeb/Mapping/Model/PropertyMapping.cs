@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using NullGuard;
 using RomanticWeb.Converters;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -26,6 +27,11 @@ namespace RomanticWeb.Mapping.Model
         public Type ReturnType { get; private set; }
 
         public INodeConverter Converter { get; internal set; }
+
+        public void Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
+        }
 
 #pragma warning disable 1591
         public override string ToString()

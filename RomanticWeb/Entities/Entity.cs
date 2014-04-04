@@ -13,12 +13,11 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class Entity : DynamicObject, IEntity
+    public class Entity:DynamicObject,IEntity
     {
         #region Fields
         private readonly IEntityContext _context;
         private readonly EntityId _entityId;
-        private readonly dynamic _asDynamic;
         private readonly IDictionary<string,OntologyAccessor> _ontologyAccessors;
         private bool _isInitialized;
         #endregion
@@ -34,7 +33,6 @@ namespace RomanticWeb.Entities
                 throw new ArgumentException("The identifier must be an absolute URI", "entityId");
             }
 
-            _asDynamic=this;
             _entityId=entityId;
             _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();
         }
@@ -136,7 +134,7 @@ namespace RomanticWeb.Entities
         #region Public methods
         /// <summary>Converts this entity as an dynamic object.</summary>
         /// <returns>Dynamic object beeing same entity.</returns>
-        public dynamic AsDynamic() { return _asDynamic; }
+        public dynamic AsDynamic() { return this; }
 
         /// <summary>Tries to resolve a dynamic member.</summary>
         /// <param name="binder">Binder context with details on which member is going to be resolved.</param>

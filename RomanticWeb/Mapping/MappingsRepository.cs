@@ -21,18 +21,24 @@ namespace RomanticWeb.Mapping
         private readonly IDictionary<Type,IEntityMapping> _mappings;
         private readonly IDictionary<Type,IEntityMappingProvider> _openGenericProviders;
         private readonly IList<IMappingProviderVisitor> _providerVisitors;
+        private readonly IList<IMappingModelVisitor> _modelVisitors;
 
         private MappingModelBuilder _mappingBuilder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
         /// </summary>
-        public MappingsRepository()
+        public MappingsRepository():this(new EntityTypeMatcher())
+        {
+        }
+
+        public MappingsRepository(IMappingModelVisitor matcher)
         {
             _sources=new Dictionary<Tuple<Assembly,Type>,IMappingProviderSource>();
             _mappings=new Dictionary<Type,IEntityMapping>();
             _openGenericProviders=new Dictionary<Type,IEntityMappingProvider>();
             _providerVisitors=new List<IMappingProviderVisitor>();
+            _modelVisitors=new List<IMappingModelVisitor> { matcher };
         }
 
         internal IEnumerable<IMappingProviderSource> Sources
@@ -81,11 +87,11 @@ namespace RomanticWeb.Mapping
 
         /// <inheritdoc />
         [return: AllowNull]
-        public Type MappingFor(Uri classUri)
+        public IEnumerable<Type> MappingsFor(Uri classUri)
         {
-            return (from mapping in _mappings
-                    where mapping.Value.Classes.Any(item => item.Uri.AbsoluteUri == classUri.AbsoluteUri)
-                    select mapping.Key).FirstOrDefault();
+            return from mapping in _mappings
+                   where mapping.Value.Classes.Any(item => item.Uri.AbsoluteUri == classUri.AbsoluteUri)
+                   select mapping.Key;
         }
 
         /// <inheritdoc />
@@ -131,7 +137,7 @@ namespace RomanticWeb.Mapping
 
                 if (provider.EntityType.IsGenericTypeDefinition)
                 {
-                    _openGenericProviders[provider.EntityType] = provider;
+                    _openGenericProviders[provider.EntityType]=provider;
                 }
 
                 StoreMapping(_mappingBuilder.BuildMapping(provider));
@@ -155,10 +161,15 @@ namespace RomanticWeb.Mapping
         {
             if (_mappings.ContainsKey(mapping.EntityType))
             {
-                throw new MappingException(string.Format("Duplicate mapping for type {0}", mapping.EntityType));
+                throw new MappingException(string.Format("Duplicate mapping for type {0}",mapping.EntityType));
             }
 
-            _mappings.Add(mapping.EntityType, mapping);
+            _mappings.Add(mapping.EntityType,mapping);
+
+            foreach (var mappingModelVisitor in _modelVisitors)
+            {
+                mapping.Accept(mappingModelVisitor);
+            }
         }
     }
 }

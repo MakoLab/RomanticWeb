@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using NullGuard;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -25,6 +26,11 @@ namespace RomanticWeb.Mapping.Model
         public static bool operator !=([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
         {
             return !Equals(left,right);
+        }
+
+        public void Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
         }
 
         public override bool Equals([AllowNull]object obj)

@@ -23,6 +23,7 @@ namespace RomanticWeb.Tests.Linq
         private TestMappingsRepository _mappingsRepository;
         private Mock<IEntityContextFactory> _factory;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
+        private TestMatcher _typeMatcher;
 
         public interface IPerson:IEntity
         {
@@ -46,6 +47,7 @@ namespace RomanticWeb.Tests.Linq
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
             var mappingContext=new MappingContext(ontologyProvider,EntityContextFactory.CreateDefaultConventions());
+            _typeMatcher=new TestMatcher();
             _entityContext=new EntityContext(
                 _factory.Object,
                 _mappingsRepository,
@@ -53,7 +55,8 @@ namespace RomanticWeb.Tests.Linq
                 new EntityStore(),
                 new TripleStoreAdapter(_store),
                 _baseUriSelectionPolicy.Object,
-                new TestGraphSelector());
+                new TestGraphSelector(),
+                _typeMatcher);
         }
 
         [Test]
@@ -101,16 +104,17 @@ namespace RomanticWeb.Tests.Linq
         [Repeat(5)]
         public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
         {
-            IList<IEntity> entities = (from resources in _entityContext.AsQueryable<IEntity>()
+            _typeMatcher.Setup<IEntity,IPerson>();
+            IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                      where resources is IPerson
                                      select resources).ToList();
             Assert.That(entities.Count,Is.EqualTo(2));
-            IEntity tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
+            IEntity tomasz=entities.FirstOrDefault(item => item.Id==(EntityId)"http://magi/people/Tomasz");
             Assert.That(tomasz,Is.Not.Null);
             Assert.That(tomasz,Is.InstanceOf<IPerson>());
             Assert.That(tomasz.AsDynamic().foaf.first_givenName,Is.EqualTo("Tomasz"));
             Assert.That(tomasz.AsDynamic().foaf.first_familyName,Is.EqualTo("Pluskiewicz"));
-            IEntity gniewoslaw=entities.Where(item => item.Id==(EntityId)"http://magi/people/Gniewoslaw").FirstOrDefault();
+            IEntity gniewoslaw=entities.FirstOrDefault(item => item.Id==(EntityId)"http://magi/people/Gniewoslaw");
             Assert.That(gniewoslaw,Is.Not.Null);
             Assert.That(gniewoslaw,Is.InstanceOf<IPerson>());
             Assert.That(gniewoslaw.AsDynamic().foaf.first_givenName,Is.EqualTo("Gniewosław"));

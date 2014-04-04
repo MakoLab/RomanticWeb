@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 
@@ -40,18 +39,14 @@ namespace RomanticWeb.Tests.Stubs
                     select mapping).SingleOrDefault();
         }
 
-        public Type MappingFor(Uri classUri)
-        {
-            return _mappings.Where(map => map.Classes.Any(item =>
-                {
-                    Uri uri=item.Uri;
-                    return (uri != null) && (uri.AbsoluteUri == classUri.AbsoluteUri);
-                })).Select(map => map.EntityType).FirstOrDefault();
-        }
-
         public IPropertyMapping MappingForProperty(Uri predicateUri)
         {
             throw new NotImplementedException();
+        }
+
+        internal void Add(IEntityMapping mapping)
+        {
+            _mappings.Add(mapping);
         }
     }
 }

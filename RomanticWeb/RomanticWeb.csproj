@@ -183,11 +183,13 @@
     <Compile Include="Mapping\Conventions\DefaultConvertersConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityIdPropertiesConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityPropertiesConvention.cs" />
+    <Compile Include="Mapping\EntityTypeMatcher.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Fluent\IClassMap.cs" />
     <Compile Include="Mapping\Fluent\ICollectionMap.cs" />
     <Compile Include="Mapping\Fluent\IDictionaryMap.cs" />
     <Compile Include="Mapping\Fluent\IPropertyMap.cs" />
+    <Compile Include="Mapping\IEntityTypeMatcher.cs" />
     <Compile Include="Mapping\Model\DictionaryMapping.cs" />
     <Compile Include="Mapping\Providers\ClassMappingProvider.cs" />
     <Compile Include="Mapping\Providers\CollectionMappingProvider.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="Mapping\Sources\OpenGenericEntityMappingCollector.cs" />
     <Compile Include="Mapping\Visitors\IFluentMapsVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
+    <Compile Include="Mapping\Visitors\IMappingModelVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />

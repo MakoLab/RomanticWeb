@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using NullGuard;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -15,5 +16,10 @@ namespace RomanticWeb.Mapping.Model
         }
 
         public StoreAs StoreAs { get; private set; }
+
+        void IPropertyMapping.Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
+        }
     }
 }

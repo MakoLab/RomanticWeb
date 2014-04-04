@@ -1,0 +1,20 @@
+﻿@base <http://magi/> .
+@prefix magi: <http://magi/ontology#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://data.magi/people/Tomasz>
+{	
+	<people/Tomasz> a foaf:Person, magi:Person, foaf:Agent;
+				    foaf:knows <people/Karol> .
+}
+
+<http://data.magi/people/Karol>
+{
+	<people/Karol> a foaf:Person, magi:Person, foaf:Agent .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic <people/Tomasz>.
+	<http://data.magi/people/Karol> foaf:primaryTopic <people/Karol>.
+}

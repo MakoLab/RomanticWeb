@@ -5,6 +5,7 @@ using ImpromptuInterface;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Tests.Stubs
 {
@@ -40,6 +41,21 @@ namespace RomanticWeb.Tests.Stubs
         public IPropertyMapping PropertyFor(string propertyName)
         {
             return _properties.FirstOrDefault(p => p.Name==propertyName);
+        }
+
+        public void Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
+
+            foreach (var propertyMapping in Properties)
+            {
+                mappingModelVisitor.Visit(propertyMapping);
+            }
+
+            foreach (var classMapping in Classes)
+            {
+                mappingModelVisitor.Visit(classMapping);
+            }
         }
 
         protected void Class(Uri clazz)

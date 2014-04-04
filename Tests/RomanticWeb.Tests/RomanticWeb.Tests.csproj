@@ -116,6 +116,7 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="EntityTypeMatcherTests.cs" />
     <Compile Include="IntegrationTests\DictionaryTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\DictionaryFluentMappingTests.cs" />
     <Compile Include="IntegrationTests\InMemory\DictionaryAttributeMappingTests.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Linq\SparqlTests.cs" />
     <Compile Include="OntologyAccessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stubs\TestMatcher.cs" />
     <Compile Include="Stubs\TestOntologyProvider.cs" />
     <Compile Include="Stubs\TestEntityMapping.cs" />
     <Compile Include="Stubs\TestPropertyInfo.cs" />
@@ -3129,6 +3131,7 @@
     <EmbeddedResource Include="TestGraphs\Dictionary.trig" />
     <EmbeddedResource Include="TestGraphs\BlankNodes2.trig" />
     <EmbeddedResource Include="TestGraphs\RdfLists.trig" />
+    <EmbeddedResource Include="TestGraphs\EntityWithManyTypes.trig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RomanticWeb.JsonLd\RomanticWeb.JsonLd.csproj">

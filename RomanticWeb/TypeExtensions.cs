@@ -109,7 +109,7 @@ namespace System
         /// <summary>
         /// Gets the direct parents of a type.
         /// </summary>
-        public static IEnumerable<Type> GetImmediateParents(this Type type)
+        internal static IEnumerable<Type> GetImmediateParents(this Type type,bool excludeIEntity=true)
         {
             if (type.BaseType!=null)
             {
@@ -117,8 +117,13 @@ namespace System
             }
 
             var allInterfaces=type.GetInterfaces();
-            foreach (var iface in allInterfaces.Except(allInterfaces.SelectMany(i => i.GetInterfaces())).Where(iface => iface!=typeof(IEntity)))
+            foreach (var iface in allInterfaces.Except(allInterfaces.SelectMany(i => i.GetInterfaces())))
             {
+                if (iface==typeof(IEntity)&&excludeIEntity)
+                {
+                    continue;
+                }
+
                 yield return iface;
             }
 

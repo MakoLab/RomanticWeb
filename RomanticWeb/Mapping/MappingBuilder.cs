@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping
@@ -6,6 +7,7 @@ namespace RomanticWeb.Mapping
     /// <summary>
     /// Builder for registering mapping repositories with <see cref="IEntityContextFactory"/>
     /// </summary>
+    [NullGuard(ValidationFlags.All)]
     public sealed class MappingBuilder
     {
         private readonly MappingsRepository _mappingsRepository;

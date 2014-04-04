@@ -46,7 +46,7 @@ namespace RomanticWeb.Tests
                         _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                                     .Returns(new Node[0]);
-                        _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping(typeof(IPerson)));
+                        _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(new EntityMapping(typeof(IPerson)));
                         return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
                     });
             }
@@ -61,6 +61,7 @@ namespace RomanticWeb.Tests
             _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
+            _mappings.Setup(m => m.MappingFor(typeof(ITypedEntity))).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
             _baseUriSelector=new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
@@ -71,7 +72,8 @@ namespace RomanticWeb.Tests
                 _entityStore.Object, 
                 _store.Object,
                 _baseUriSelector.Object,
-                new TestGraphSelector());
+                new TestGraphSelector(),
+                new TestMatcher());
         }
 
         [TearDown]
@@ -132,8 +134,7 @@ namespace RomanticWeb.Tests
         public void Created_typed_entity_should_be_equal_to_Entity_with_same_Id()
         {
             // given
-            _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(new EntityMapping(typeof(IPerson)));
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
+            _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(new EntityMapping(typeof(IPerson)));
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
             var typed = new Entity(new EntityId("http://magi/people/Tomasz"));
@@ -141,7 +142,7 @@ namespace RomanticWeb.Tests
             // then
             Assert.AreEqual(entity, typed);
             Assert.AreEqual(entity.GetHashCode(), typed.GetHashCode());
-            _mappings.Verify(m => m.MappingFor<IPerson>(), Times.Once);
+            _mappings.Verify(m => m.MappingFor(typeof(IPerson)), Times.Once);
         }
 
         [Test]
@@ -183,7 +184,7 @@ namespace RomanticWeb.Tests
             var mockingMapping = new Mock<IEntityMapping>();
             mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>()))
                           .Returns((string prop) => GetMapping(prop));
-            _mappings.Setup(m => m.MappingFor<IPerson>()).Returns(mockingMapping.Object);
+            _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
@@ -250,8 +251,6 @@ namespace RomanticWeb.Tests
         public void Should_be_possible_to_load_entity_without_checking_for_existence()
         {
             // when
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
-                        .Returns(new Node[0]);
             var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"),false);
 
             // then
@@ -311,8 +310,6 @@ namespace RomanticWeb.Tests
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
             _store.Setup(s => s.EntityExist(It.IsAny<EntityId>())).Returns(true);
-            _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
-                        .Returns(new Node[0]);
 
             // when
             var entity=_entityContext.Load<IEntity>(entityId);

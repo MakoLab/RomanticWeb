@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -17,5 +18,7 @@ namespace RomanticWeb.Mapping.Model
 
         /// <summary>Gets the property mapping for a property by name.</summary>
 		IPropertyMapping PropertyFor(string propertyName);
+
+        void Accept(IMappingModelVisitor mappingModelVisitor);
 	}
 }

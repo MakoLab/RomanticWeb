@@ -21,8 +21,9 @@ namespace RomanticWeb
         private static readonly object OntologiesLocker=new Object();
         private static IEnumerable<IOntologyProvider> importedOntologies;
 
+        private readonly EntityTypeMatcher _matcher = new EntityTypeMatcher();
         private readonly IList<IConvention> _conventions;
-        private readonly MappingsRepository _mappingsRepository=new MappingsRepository();
+        private readonly MappingsRepository _mappingsRepository;
         private bool _isInitialized;
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
@@ -39,12 +40,13 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory()
         {
+            // todo: change how defaults are set
+            _namedGraphSelector=new NamedGraphSelector();
+            _mappingsRepository=new MappingsRepository(_matcher);
+
             WithMappings(DefaultMappings);
             _conventions=CreateDefaultConventions().ToList();
             LogTo.Info("Created entity context factory");
-
-            // todo: change how defaults are set
-            _namedGraphSelector=new NamedGraphSelector();
         }
 
         #endregion
@@ -113,7 +115,8 @@ namespace RomanticWeb
                 _entityStoreFactory(),
                 _entitySourceFactory(),
                 _baseUriSelector,
-                _namedGraphSelector);
+                _namedGraphSelector,
+                _matcher);
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>

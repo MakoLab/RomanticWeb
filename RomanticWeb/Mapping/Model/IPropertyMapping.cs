@@ -1,5 +1,6 @@
 ﻿using System;
 using RomanticWeb.Converters;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -32,5 +33,7 @@ namespace RomanticWeb.Mapping.Model
         /// Gets the converter.
         /// </summary>
         INodeConverter Converter { get; }
+
+        void Accept(IMappingModelVisitor mappingModelVisitor);
 	}
 }

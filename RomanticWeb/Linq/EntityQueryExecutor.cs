@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +15,8 @@ namespace RomanticWeb.Linq
     public class EntityQueryExecutor:IQueryExecutor
     {
         #region Fields
+        private static readonly MethodInfo EnumerableCastMethod = Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable");
+        private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappingsRepository;
@@ -76,7 +77,7 @@ namespace RomanticWeb.Linq
             }
 
             RomanticWeb.Linq.Model.Query sparqlQuery=VisitQueryModel(queryModel);
-            var createMethodInfo=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean").MakeGenericMethod(new[] { typeof(T) });
+            var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
             ISet<EntityId> ids=new HashSet<EntityId>();
             var groupedTriples=from triple in _entitySource.ExecuteEntityQuery(sparqlQuery)
                                group triple by new { triple.EntityId } into tripleGroup
@@ -89,13 +90,10 @@ namespace RomanticWeb.Linq
             }
 
             IEnumerable<T> result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
-            foreach (ResultOperatorBase resultOperator in resultOperators)
+            foreach (var resultOperator in resultOperators.OfType<CastResultOperator>())
             {
-                if (resultOperator is CastResultOperator)
-                {
-                    MethodInfo castMethod=typeof(System.Linq.Enumerable).GetMethod("Cast",BindingFlags.Static|BindingFlags.Public,null,new Type[] { typeof(IEnumerable) },null);
-                    result=(IEnumerable<T>)castMethod.MakeGenericMethod(((CastResultOperator)resultOperator).CastItemType).Invoke(null,new object[] { result });
-                }
+                var castMethod=EnumerableCastMethod.MakeGenericMethod(resultOperator.CastItemType);
+                result=(IEnumerable<T>)castMethod.Invoke(null,new object[] { result });
             }
 
             return result;

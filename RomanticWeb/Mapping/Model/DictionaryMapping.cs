@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using NullGuard;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -18,5 +19,10 @@ namespace RomanticWeb.Mapping.Model
         public Uri KeyPredicate { get; private set; }
 
         public Uri ValuePredicate { get; private set; }
+
+        void IPropertyMapping.Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
+        }
     }
 }

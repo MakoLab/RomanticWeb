@@ -18,11 +18,6 @@ namespace RomanticWeb.Mapping
         /// <summary>Gets a mapping for an Entity type.</summary>
         IEntityMapping MappingFor(Type entityType);
 
-        /// <summary>Gets a type mapping for given class Uri.</summary>
-        /// <param name="classUri">Class Uri to be search for.</param>
-        /// <returns>Type mapped to given class Uri or null.</returns>
-        Type MappingFor(Uri classUri);
-
         /// <summary>Gets a property mapping for given predicate Uri.</summary>
         /// <param name="predicateUri">Predicate Uri to be search for.</param>
         /// <returns>Property mapped to given predicate Uri or null.</returns>

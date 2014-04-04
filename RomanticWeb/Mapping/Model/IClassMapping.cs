@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -11,5 +12,7 @@ namespace RomanticWeb.Mapping.Model
         /// Gets the Entity's RDF class URI
         /// </summary>
         Uri Uri { get; }
+
+        void Accept(IMappingModelVisitor mappingModelVisitor);
 	}
 }

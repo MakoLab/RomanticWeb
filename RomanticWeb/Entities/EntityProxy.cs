@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Collections;

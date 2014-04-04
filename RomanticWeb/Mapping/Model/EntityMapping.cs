@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
     [DebuggerDisplay("Entity {EntityType}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    internal class EntityMapping : IEntityMapping
+    internal class EntityMapping:IEntityMapping
     {
         private readonly Type _entityType;
         private readonly List<ClassMapping> _classes;
@@ -48,6 +49,21 @@ namespace RomanticWeb.Mapping.Model
             }
 
             return propertyMapping;
+        }
+
+        public void Accept(IMappingModelVisitor mappingModelVisitor)
+        {
+            mappingModelVisitor.Visit(this);
+
+            foreach (var propertyMapping in Properties)
+            {
+                propertyMapping.Accept(mappingModelVisitor);
+            }
+
+            foreach (var classMapping in Classes)
+            {
+                classMapping.Accept(mappingModelVisitor);
+            }
         }
 
         private class DebuggerViewProxy

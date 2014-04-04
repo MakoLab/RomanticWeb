@@ -1,5 +1,4 @@
-﻿using System;
-using NullGuard;
+﻿using NullGuard;
 
 namespace RomanticWeb.Linq.Model
 {

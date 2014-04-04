@@ -176,6 +176,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TestGraphs\InheritedPropertyGraph.trig" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.ttl" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Fluent
 {

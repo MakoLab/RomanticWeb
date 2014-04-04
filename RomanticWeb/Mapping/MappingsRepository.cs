@@ -90,15 +90,13 @@ namespace RomanticWeb.Mapping
 
         /// <inheritdoc />
         [return: AllowNull]
-        public PropertyInfo MappingForProperty(Uri predicateUri)
+        public IPropertyMapping MappingForProperty(Uri predicateUri)
         {
             return (from mapping in _mappings
                     let type=mapping.Value
                     from property in type.Properties
                     where property.Uri.AbsoluteUri==predicateUri.AbsoluteUri
-                    let propertyMapping=type.EntityType.GetProperty(property.Name,BindingFlags.Public|BindingFlags.Instance)
-                    where propertyMapping!=null
-                    select propertyMapping).FirstOrDefault();
+                    select property).FirstOrDefault();
         }
 
         internal void AddSource(Assembly mappingAssembly,IMappingProviderSource mappingSource)

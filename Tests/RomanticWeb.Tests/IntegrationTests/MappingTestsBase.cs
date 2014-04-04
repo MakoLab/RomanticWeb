@@ -430,6 +430,15 @@ namespace RomanticWeb.Tests.IntegrationTests
              select quad).ToList().Should().OnlyContain(q => q.Object.DataType==Xsd.Int);
         }
 
+        [Test]
+        public void Should_retrieve_value_from_interface_inherited_property()
+        {
+            LoadTestFile("InheritedPropertyGraph.trig");
+            RomanticWeb.TestEntities.Inheritance.Specialized.IInterface entity=EntityContext.Load<RomanticWeb.TestEntities.Inheritance.Specialized.IInterface>(new EntityId(new Uri("http://test.org/test")));
+            entity.Description="test";
+            Assert.That(entity.Description,Is.EqualTo("test"));
+        }
+
         protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();

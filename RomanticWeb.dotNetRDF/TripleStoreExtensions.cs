@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Query.Builder;
 
 namespace RomanticWeb.DotNetRDF
 {

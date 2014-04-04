@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters

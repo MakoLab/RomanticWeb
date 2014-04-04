@@ -7,7 +7,6 @@ using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Linq.Model
 {

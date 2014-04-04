@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,11 +7,8 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
-using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
-using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Linq
 {

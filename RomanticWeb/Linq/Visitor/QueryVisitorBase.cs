@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using NullGuard;
 using RomanticWeb.Linq.Model;
 
 namespace RomanticWeb.Linq.Visitor

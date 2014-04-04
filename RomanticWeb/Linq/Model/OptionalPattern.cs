@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;

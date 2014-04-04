@@ -63,6 +63,8 @@
     <Compile Include="Inheritance\FluentChildMap.cs" />
     <Compile Include="Inheritance\IAttributesParent.cs" />
     <Compile Include="Inheritance\IFluentChild.cs" />
+    <Compile Include="Inheritance\IInterface.cs" />
+    <Compile Include="Inheritance\Specialized\IInterface.cs" />
     <Compile Include="IPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -9,7 +9,6 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Linq
 {

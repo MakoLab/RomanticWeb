@@ -49,7 +49,7 @@ namespace RomanticWeb.Tests.Stubs
                 })).Select(map => map.EntityType).FirstOrDefault();
         }
 
-        public PropertyInfo MappingForProperty(Uri predicateUri)
+        public IPropertyMapping MappingForProperty(Uri predicateUri)
         {
             throw new NotImplementedException();
         }

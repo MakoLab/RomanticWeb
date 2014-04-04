@@ -5,8 +5,6 @@
 // <owner primary="true" current="true"></owner> 
 //-----------------------------------------------------------------------------
 
-using System;
-using System.Diagnostics;
 using System.Text;
 using System.Xml;
 

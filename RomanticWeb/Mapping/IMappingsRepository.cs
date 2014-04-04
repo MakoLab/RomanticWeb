@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping
@@ -27,6 +26,6 @@ namespace RomanticWeb.Mapping
         /// <summary>Gets a property mapping for given predicate Uri.</summary>
         /// <param name="predicateUri">Predicate Uri to be search for.</param>
         /// <returns>Property mapped to given predicate Uri or null.</returns>
-        PropertyInfo MappingForProperty(Uri predicateUri);
+        IPropertyMapping MappingForProperty(Uri predicateUri);
     }
 }

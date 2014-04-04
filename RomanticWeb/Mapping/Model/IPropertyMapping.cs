@@ -34,6 +34,10 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         INodeConverter Converter { get; }
 
+        /// <summary>
+        /// Accepts the specified mapping model visitor.
+        /// </summary>
+        /// <param name="mappingModelVisitor">The mapping model visitor.</param>
         void Accept(IMappingModelVisitor mappingModelVisitor);
 	}
 }

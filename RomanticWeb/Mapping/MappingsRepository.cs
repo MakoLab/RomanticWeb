@@ -28,10 +28,15 @@ namespace RomanticWeb.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
         /// </summary>
-        public MappingsRepository():this(new EntityTypeMatcher())
+        public MappingsRepository():this(new RdfTypeCache())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
+        /// </summary>
+        /// <param name="matcher">The matcher.</param>
+        /// todo: refactor visitors composition 
         public MappingsRepository(IMappingModelVisitor matcher)
         {
             _sources=new Dictionary<Tuple<Assembly,Type>,IMappingProviderSource>();

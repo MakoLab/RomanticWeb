@@ -23,7 +23,7 @@ namespace RomanticWeb.Tests.Linq
         private TestMappingsRepository _mappingsRepository;
         private Mock<IEntityContextFactory> _factory;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private TestMatcher _typeMatcher;
+        private TestCache _typeCache;
 
         public interface IPerson:IEntity
         {
@@ -47,7 +47,7 @@ namespace RomanticWeb.Tests.Linq
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
             var mappingContext=new MappingContext(ontologyProvider,EntityContextFactory.CreateDefaultConventions());
-            _typeMatcher=new TestMatcher();
+            _typeCache=new TestCache();
             _entityContext=new EntityContext(
                 _factory.Object,
                 _mappingsRepository,
@@ -56,7 +56,7 @@ namespace RomanticWeb.Tests.Linq
                 new TripleStoreAdapter(_store),
                 _baseUriSelectionPolicy.Object,
                 new TestGraphSelector(),
-                _typeMatcher);
+                _typeCache);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace RomanticWeb.Tests.Linq
         [Repeat(5)]
         public void Selecting_entities_by_providing_entity_mapped_type_condition_test()
         {
-            _typeMatcher.Setup<IEntity,IPerson>();
+            _typeCache.Setup<IEntity,IPerson>();
             IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                      where resources is IPerson
                                      select resources).ToList();

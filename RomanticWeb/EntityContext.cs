@@ -28,7 +28,7 @@ namespace RomanticWeb
         private readonly MappingContext _mappingContext;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private readonly IResultTransformerCatalog _transformerCatalog;
-        private readonly IEntityTypeMatcher _typeMatcher;
+        private readonly IRdfTypeCache _typeCache;
 
         private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
 
@@ -43,7 +43,7 @@ namespace RomanticWeb
             IEntitySource entitySource,
             IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
-            IEntityTypeMatcher typeMatcher)
+            IRdfTypeCache typeCache)
         {
             LogTo.Info("Creating entity context");
             _factory=factory;
@@ -54,7 +54,7 @@ namespace RomanticWeb
             _mappingContext=mappingContext;
             Cache=new DictionaryCache();
             GraphSelector=namedGraphSelector;
-            _typeMatcher=typeMatcher;
+            _typeCache=typeCache;
             _transformerCatalog=new ResultTransformerCatalog();
         }
         #endregion
@@ -188,7 +188,7 @@ namespace RomanticWeb
         /// <returns>Passed entity beeing a given interface.</returns>
         public T EntityAs<T>(IEntity entity) where T:class,IEntity
         {
-            Type entityType=_typeMatcher.GetMostDerivedMappedType(entity,typeof(T));
+            Type entityType=_typeCache.GetMostDerivedMappedType(entity,typeof(T));
             return EntityAs((Entity)entity,entityType);
         }
 

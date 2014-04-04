@@ -7,18 +7,26 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping
 {
-    public class EntityTypeMatcher : IEntityTypeMatcher, Visitors.IMappingModelVisitor
+    /// <summary>
+    /// Implementation of <see cref="IRdfTypeCache"/>, 
+    /// which built by visiting <see cref="IEntityMapping"/>s
+    /// </summary>
+    public class RdfTypeCache:IRdfTypeCache,Visitors.IMappingModelVisitor
     {
         private readonly IDictionary<Type,ISet<Uri>> _classUris;
         private readonly IDictionary<Type,ISet<Type>> _directlyDerivingTypes;
         private ISet<Uri> _currentClasses;
 
-        public EntityTypeMatcher()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RdfTypeCache"/> class.
+        /// </summary>
+        public RdfTypeCache()
         {
             _classUris = new Dictionary<Type, ISet<Uri>>();
             _directlyDerivingTypes = new Dictionary<Type, ISet<Type>>();
         }
 
+        /// <inheridoc/>
         [return: AllowNull]
         public Type GetMostDerivedMappedType(IEntity entity, Type requestedType)
         {
@@ -34,11 +42,11 @@ namespace RomanticWeb.Mapping
                 return requestedType;
             }
 
-            Type bestMatch = requestedType;
-            var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
+            Type bestMatch=requestedType;
+            var childTypesToCheck=new Queue<Type>(_directlyDerivingTypes[requestedType]);
             while (childTypesToCheck.Any())
             {
-                Type currentParent = childTypesToCheck.Dequeue();
+                Type currentParent=childTypesToCheck.Dequeue();
 
                 if (_directlyDerivingTypes.ContainsKey(currentParent))
                 {
@@ -52,7 +60,7 @@ namespace RomanticWeb.Mapping
                 {
                     if (_classUris[currentParent].IsSupersetOf(types))
                     {
-                        bestMatch = currentParent;
+                        bestMatch=currentParent;
                     }
                 }
             }
@@ -60,6 +68,10 @@ namespace RomanticWeb.Mapping
             return bestMatch;
         }
 
+        /// <summary>
+        /// Sets the currently processed enitty type
+        /// and updates inheritance cache
+        /// </summary>
         public void Visit(IEntityMapping entityMapping)
         {
             if (!_classUris.ContainsKey(entityMapping.EntityType))
@@ -72,21 +84,33 @@ namespace RomanticWeb.Mapping
             _currentClasses=_classUris[entityMapping.EntityType];
         }
 
-        public void Visit(ICollectionMapping entityMapping)
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        public void Visit(ICollectionMapping collectionMapping)
         {
         }
 
-        public void Visit(IDictionaryMapping entityMapping)
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        public void Visit(IDictionaryMapping dictionaryMapping)
         {
         }
 
-        public void Visit(IPropertyMapping entityMapping)
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        public void Visit(IPropertyMapping propertyMapping)
         {
         }
 
-        public void Visit(IClassMapping entityMapping)
+        /// <summary>
+        /// Adds class URI to the current entity's list
+        /// </summary>
+        public void Visit(IClassMapping classMapping)
         {
-            _currentClasses.Add(entityMapping.Uri);
+            _currentClasses.Add(classMapping.Uri);
         }
 
         private void AddAsChildOfParentTypes(Type entityType)

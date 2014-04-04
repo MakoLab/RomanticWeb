@@ -5,11 +5,11 @@ using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestMatcher:IEntityTypeMatcher
+    public class TestCache:IRdfTypeCache
     {
         private readonly IDictionary<Type,Type> _setups;
 
-        public TestMatcher()
+        public TestCache()
         {
             _setups=new Dictionary<Type,Type>();
         }

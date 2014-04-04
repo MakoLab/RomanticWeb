@@ -15,19 +15,19 @@ namespace RomanticWeb
     /// <summary>
     /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
     /// </summary>
-    public class EntityContextFactory:IEntityContextFactory
+    public class EntityContextFactory : IEntityContextFactory
     {
         #region Fields
-        private static readonly object OntologiesLocker=new Object();
+        private static readonly object OntologiesLocker = new Object();
         private static IEnumerable<IOntologyProvider> importedOntologies;
 
-        private readonly EntityTypeMatcher _matcher = new EntityTypeMatcher();
+        private readonly RdfTypeCache _matcher = new RdfTypeCache();
         private readonly IList<IConvention> _conventions;
         private readonly MappingsRepository _mappingsRepository;
         private bool _isInitialized;
         private Func<IEntitySource> _entitySourceFactory;
         private MappingContext _mappingContext;
-        private Func<IEntityStore> _entityStoreFactory=() => new EntityStore();
+        private Func<IEntityStore> _entityStoreFactory = () => new EntityStore();
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
@@ -41,11 +41,11 @@ namespace RomanticWeb
         public EntityContextFactory()
         {
             // todo: change how defaults are set
-            _namedGraphSelector=new NamedGraphSelector();
-            _mappingsRepository=new MappingsRepository(_matcher);
+            _namedGraphSelector = new NamedGraphSelector();
+            _mappingsRepository = new MappingsRepository(_matcher);
 
             WithMappings(DefaultMappings);
-            _conventions=CreateDefaultConventions().ToList();
+            _conventions = CreateDefaultConventions().ToList();
             LogTo.Info("Created entity context factory");
         }
 
@@ -72,6 +72,7 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc/>
         public IList<IConvention> Conventions
         {
             get
@@ -84,11 +85,11 @@ namespace RomanticWeb
         {
             get
             {
-                if (importedOntologies==null)
+                if (importedOntologies == null)
                 {
                     lock (OntologiesLocker)
                     {
-                        importedOntologies=ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
+                        importedOntologies = ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
                     }
                 }
 
@@ -106,7 +107,7 @@ namespace RomanticWeb
 
             EnsureComplete();
             EnsureInitialized();
-            _mappingContext=new MappingContext(_actualOntologyProvider);
+            _mappingContext = new MappingContext(_actualOntologyProvider);
 
             return new EntityContext(
                 this,
@@ -124,7 +125,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
         {
-            _entitySourceFactory=entitySource;
+            _entitySourceFactory = entitySource;
             return this;
         }
 
@@ -147,7 +148,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
         {
-            _entityStoreFactory=entityStoreFactory;
+            _entityStoreFactory = entityStoreFactory;
             return this;
         }
 
@@ -156,7 +157,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
-            var mappingBuilder=new MappingBuilder(_mappingsRepository);
+            var mappingBuilder = new MappingBuilder(_mappingsRepository);
             buildMappings.Invoke(mappingBuilder);
 
             return this;
@@ -165,16 +166,16 @@ namespace RomanticWeb
         /// <summary>Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s.</summary>
         public EntityContextFactory WithBaseUri(Action<BaseUriSelectorBuilder> setupPolicy)
         {
-            var builder=new BaseUriSelectorBuilder();
+            var builder = new BaseUriSelectorBuilder();
             setupPolicy(builder);
-            _baseUriSelector=builder.Build();
+            _baseUriSelector = builder.Build();
             return this;
         }
 
         /// <summary>Exposes a method to define how the default graph name should be obtained.</summary>
         public IEntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
         {
-            _namedGraphSelector=namedGraphSelector;
+            _namedGraphSelector = namedGraphSelector;
             return this;
         }
         #endregion
@@ -224,39 +225,39 @@ namespace RomanticWeb
             EnsureOntologyProvider();
             EnsureMappingsRebuilt();
             EnsureNamedGraphSelector();
-            _isInitialized=true;
+            _isInitialized = true;
         }
 
         private void EnsureOntologyProvider()
         {
-            if (_actualOntologyProvider==null)
+            if (_actualOntologyProvider == null)
             {
-                _actualOntologyProvider=new CompoundOntologyProvider(ImportedOntologies);
+                _actualOntologyProvider = new CompoundOntologyProvider(ImportedOntologies);
             }
         }
 
         private void EnsureMappingsRebuilt()
         {
-            var mappingContext=new MappingContext(_actualOntologyProvider,_conventions);
+            var mappingContext = new MappingContext(_actualOntologyProvider, _conventions);
             _mappingsRepository.RebuildMappings(mappingContext);
         }
 
         private void EnsureNamedGraphSelector()
         {
-            if (_namedGraphSelector==null)
+            if (_namedGraphSelector == null)
             {
-                _namedGraphSelector=new NamedGraphSelector();
+                _namedGraphSelector = new NamedGraphSelector();
             }
         }
 
         private void EnsureComplete()
         {
-            if (_entitySourceFactory==null)
+            if (_entitySourceFactory == null)
             {
                 throw new InvalidOperationException("Entity source factory wasn't set.");
             }
 
-            if (_baseUriSelector==null)
+            if (_baseUriSelector == null)
             {
                 LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
             }

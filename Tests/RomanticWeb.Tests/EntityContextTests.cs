@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests
                 _store.Object,
                 _baseUriSelector.Object,
                 new TestGraphSelector(),
-                new TestMatcher());
+                new TestCache());
         }
 
         [TearDown]

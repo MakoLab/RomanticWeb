@@ -183,13 +183,13 @@
     <Compile Include="Mapping\Conventions\DefaultConvertersConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityIdPropertiesConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityPropertiesConvention.cs" />
-    <Compile Include="Mapping\EntityTypeMatcher.cs" />
+    <Compile Include="Mapping\RdfTypeCache.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Fluent\IClassMap.cs" />
     <Compile Include="Mapping\Fluent\ICollectionMap.cs" />
     <Compile Include="Mapping\Fluent\IDictionaryMap.cs" />
     <Compile Include="Mapping\Fluent\IPropertyMap.cs" />
-    <Compile Include="Mapping\IEntityTypeMatcher.cs" />
+    <Compile Include="Mapping\IRdfTypeCache.cs" />
     <Compile Include="Mapping\Model\DictionaryMapping.cs" />
     <Compile Include="Mapping\Providers\ClassMappingProvider.cs" />
     <Compile Include="Mapping\Providers\CollectionMappingProvider.cs" />

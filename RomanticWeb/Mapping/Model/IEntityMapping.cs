@@ -19,6 +19,10 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>Gets the property mapping for a property by name.</summary>
 		IPropertyMapping PropertyFor(string propertyName);
 
+        /// <summary>
+        /// Accepts the specified mapping model visitor.
+        /// </summary>
+        /// <param name="mappingModelVisitor">The mapping model visitor.</param>
         void Accept(IMappingModelVisitor mappingModelVisitor);
 	}
 }

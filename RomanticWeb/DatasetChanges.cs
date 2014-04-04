@@ -7,7 +7,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb
 {
     /// <summary>
-    /// Represents changes made the triple store
+    /// Represents changes made in the triple store
     /// </summary>
     public sealed class DatasetChanges
     {
@@ -49,7 +49,7 @@ namespace RomanticWeb
         public IEnumerable<EntityId> DeletedEntites { get; private set; }
 
         /// <summary>
-        /// Gets a value idicating whether there are any changes
+        /// Gets a value indicating whether there are any changes
         /// </summary>
         public bool Any 
         {

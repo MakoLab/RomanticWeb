@@ -1,22 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using NullGuard;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
 {
     [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Class {Uri}")]
-    internal class ClassMapping:IClassMapping
+    internal class ClassMapping:IQueryableClassMapping
     {
         private static readonly AbsoluteUriComparer UriComparer=new AbsoluteUriComparer();
+        private readonly Uri _uri;
 
-        public ClassMapping(Uri uri)
+        public ClassMapping(Uri uri,bool isInherited)
         {
-            Uri=uri;
+            _uri = uri;
+            IsInherited=isInherited;
         }
 
-        public Uri Uri { get; private set; }
+        public bool IsInherited { get; private set; }
+
+        public IEnumerable<Uri> Uris
+        {
+            get
+            {
+                yield return _uri;
+            }
+        }
 
         public static bool operator ==([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
         {
@@ -26,6 +39,16 @@ namespace RomanticWeb.Mapping.Model
         public static bool operator !=([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
         {
             return !Equals(left,right);
+        }
+
+        public bool IsMatch(IEnumerable<Uri> entityClasses)
+        {
+            return entityClasses.Contains(_uri,AbsoluteUriComparer.Default);
+        }
+
+        public void AppendTo(ICollection<EntityId> classList)
+        {
+            classList.Add(_uri);
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)
@@ -44,12 +67,12 @@ namespace RomanticWeb.Mapping.Model
 
         public override int GetHashCode()
         {
-            return Uri.GetHashCode();
+            return _uri.GetHashCode();
         }
 
         protected bool Equals([AllowNull]ClassMapping other)
         {
-            return UriComparer.Equals(Uri,other.Uri);
+            return UriComparer.Equals(_uri, other._uri);
         }
     }
 }

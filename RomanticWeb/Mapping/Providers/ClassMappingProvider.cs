@@ -8,13 +8,16 @@ namespace RomanticWeb.Mapping.Providers
     /// </summary>
     public class ClassMappingProvider:TermMappingProviderBase,IClassMappingProvider
     {
+        private readonly Type _entityType;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ClassMappingProvider"/> class.
         /// </summary>
         /// <param name="uri">The URI.</param>
-        public ClassMappingProvider(Uri uri)
+        public ClassMappingProvider(Type entityType,Uri uri)
             :base(uri)
         {
+            _entityType=entityType;
         }
 
         /// <summary>
@@ -22,9 +25,18 @@ namespace RomanticWeb.Mapping.Providers
         /// </summary>
         /// <param name="prefix">The QName prefix.</param>
         /// <param name="term">The QName term.</param>
-        public ClassMappingProvider(string prefix,string term)
+        public ClassMappingProvider(Type entityType,string prefix,string term)
             :base(prefix,term)
         {
+            _entityType=entityType;
+        }
+
+        public Type DeclaringEntityType
+        {
+            get
+            {
+                return _entityType;
+            }
         }
 
         /// <inheritdoc/>

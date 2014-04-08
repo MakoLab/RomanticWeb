@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Mapping.Providers;
@@ -7,19 +8,22 @@ namespace RomanticWeb.Mapping.Fluent
 {
     internal class FluentMappingProviderBuilder:IFluentMapsVisitor
     {
+        private Type _currentType;
+
         public IEntityMappingProvider Visit(EntityMap entityMap)
         {
-            return new EntityMappingProvider(entityMap.Type, GetClasses(entityMap), GetProperties(entityMap));
+            _currentType=entityMap.Type;
+            return new EntityMappingProvider(entityMap.Type,GetClasses(entityMap),GetProperties(entityMap));
         }
 
         public IClassMappingProvider Visit(ClassMap classMap)
         {
             if (classMap.TermUri != null)
             {
-                return new ClassMappingProvider(classMap.TermUri);
+                return new ClassMappingProvider(_currentType,classMap.TermUri);
             }
 
-            return new ClassMappingProvider(classMap.NamespacePrefix,classMap.TermName);
+            return new ClassMappingProvider(_currentType,classMap.NamespacePrefix,classMap.TermName);
         }
 
         public IPropertyMappingProvider Visit(PropertyMap propertyMap)

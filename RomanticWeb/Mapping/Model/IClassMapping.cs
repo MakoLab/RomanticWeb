@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
@@ -7,11 +9,12 @@ namespace RomanticWeb.Mapping.Model
     /// A RDF type mapping for an Entity
     /// </summary>
     public interface IClassMapping
-	{
-        /// <summary>
-        /// Gets the Entity's RDF class URI
-        /// </summary>
-        Uri Uri { get; }
+    {
+        bool IsInherited { get; }
+
+        bool IsMatch(IEnumerable<Uri> classList);
+
+        void AppendTo(ICollection<EntityId> classList);
 
         /// <summary>
         /// Accepts the specified mapping model visitor.

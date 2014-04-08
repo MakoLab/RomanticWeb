@@ -8,6 +8,7 @@ using NullGuard;
 using RomanticWeb.Collections;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -100,10 +101,22 @@ namespace RomanticWeb.Dynamic
         {
             LogTo.Trace("Reading property {0}",property.Uri);
             var objectValues=_tripleStore.GetObjectsForPredicate(entityId,property.Uri,null);
-            var objects=objectValues.Select(node => _nodeConverter.Convert(node,_context));
+            var objects=objectValues.Select(ConvertObject);
             var aggregator=_resultTransformers.GetAggregator(aggregate.Aggregation);
             LogTo.Trace("Performing operation {0} on result nodes",aggregate.Aggregation);
             return aggregator.Aggregate(objects);
+        }
+
+        private object ConvertObject(Node node)
+        {
+            var convertObject=_nodeConverter.Convert(node,_context);
+
+            if (convertObject is IEntity)
+            {
+                return (convertObject as IEntity).AsDynamic();
+            }
+
+            return convertObject;
         }
 
         private class DebuggerViewProxy

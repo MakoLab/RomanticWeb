@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.Entities;
+using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.TestEntities.MixedMappings;
 
 namespace RomanticWeb.Tests
@@ -74,6 +78,50 @@ namespace RomanticWeb.Tests
 
             // then
             immediateParents.Should().BeEmpty();
+        }
+
+        [TestCaseSource("GetCollectionsWithDerivingTypes")]
+        public void GetMostDerivedTypes_should_exclude_base_types(ICollection<Type> types)
+        {
+            // when
+            var mostDerivedTypes=types.GetMostDerivedTypes().ToList();
+
+            // then
+            mostDerivedTypes.Should().HaveCount(3);
+            mostDerivedTypes.Should().NotContain(typeof(IEntity));
+            mostDerivedTypes.Should().NotContain(typeof(IAgent));
+            mostDerivedTypes.Should().NotContain(typeof(IEntity));
+        }
+
+        private static IEnumerable GetCollectionsWithDerivingTypes()
+        {
+            yield return new TestCaseData(new List<Type>
+                                              {
+                                                  typeof(IEntity),
+                                                  typeof(IDerived),
+                                                  typeof(IAgent),
+                                                  typeof(IPerson),
+                                                  typeof(IAlsoPerson),
+                                                  typeof(IDerivedLevel2)
+                                              }).SetDescription("All parents first");
+            yield return new TestCaseData(new List<Type>
+                                              {
+                                                  typeof(IPerson),
+                                                  typeof(IAlsoPerson),
+                                                  typeof(IDerivedLevel2),
+                                                  typeof(IEntity),
+                                                  typeof(IAgent),
+                                                  typeof(IDerived)
+                                              }).SetDescription("All parents last");
+            yield return new TestCaseData(new List<Type>
+                                              {
+                                                  typeof(IPerson),
+                                                  typeof(IDerived),
+                                                  typeof(IAgent),
+                                                  typeof(IAlsoPerson),
+                                                  typeof(IDerivedLevel2),
+                                                  typeof(IEntity)
+                                              }).SetDescription("Parents mixed order");
         }
     }
 }

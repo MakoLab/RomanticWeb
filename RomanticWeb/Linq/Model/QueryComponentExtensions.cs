@@ -127,21 +127,21 @@ namespace RomanticWeb.Linq.Model
             {
                 var classMappings=visitor.MappingsRepository.FindClassMapping(entityType);
 
-                if (classMappings == null)
+                if (classMappings==null)
                 {
                     throw new UnMappedTypeException(entityType);
                 }
 
                 if (classMappings.Any())
                 {
-                    Uri primaryTypeUri=classMappings.First().Uri;
+                    Uri primaryTypeUri=classMappings.First();
                     IEnumerable<Type> inheritedTypes=ContainerFactory.GetTypesImplementing(entityType);
                     IList<Uri> inheritedTypeUris=new List<Uri>();
                     if (inheritedTypes.Any())
                     {
                         foreach (Type inheritedType in inheritedTypes)
                         {
-                            classMappings = visitor.MappingsRepository.FindClassMapping(inheritedType);
+                            classMappings=visitor.MappingsRepository.FindClassMapping(inheritedType);
 
                             if (classMappings == null)
                             {
@@ -150,7 +150,7 @@ namespace RomanticWeb.Linq.Model
 
                             if (classMappings.Any())
                             {
-                                Uri inheritedTypeUri=classMappings.First().Uri;
+                                Uri inheritedTypeUri=classMappings.First();
                                 if ((primaryTypeUri.AbsoluteUri!=inheritedTypeUri.AbsoluteUri)&&(!inheritedTypeUris.Contains(inheritedTypeUri,AbsoluteUriComparer.Default)))
                                 {
                                     inheritedTypeUris.Add(inheritedTypeUri);

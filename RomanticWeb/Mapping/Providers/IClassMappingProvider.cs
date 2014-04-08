@@ -1,3 +1,5 @@
+using System;
+
 namespace RomanticWeb.Mapping.Providers
 {
     /// <summary>
@@ -5,5 +7,6 @@ namespace RomanticWeb.Mapping.Providers
     /// </summary>
     public interface IClassMappingProvider:ITermMappingProvider
     {
+        Type DeclaringEntityType { get; }
     }
 }

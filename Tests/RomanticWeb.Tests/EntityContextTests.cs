@@ -168,7 +168,7 @@ namespace RomanticWeb.Tests
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
-            dynamic entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+            dynamic entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz")).AsDynamic();
 
             // when
             var id=entity.foaf.givenName;

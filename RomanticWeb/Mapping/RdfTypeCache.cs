@@ -13,59 +13,60 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public class RdfTypeCache:IRdfTypeCache,Visitors.IMappingModelVisitor
     {
-        private readonly IDictionary<Type,ISet<Uri>> _classUris;
+        private readonly IDictionary<Type,IList<IClassMapping>> _classMappings;
         private readonly IDictionary<Type,ISet<Type>> _directlyDerivingTypes;
-        private ISet<Uri> _currentClasses;
+        private IList<IClassMapping> _currentClasses;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfTypeCache"/> class.
         /// </summary>
         public RdfTypeCache()
         {
-            _classUris = new Dictionary<Type, ISet<Uri>>();
+            _classMappings=new Dictionary<Type,IList<IClassMapping>>();
             _directlyDerivingTypes = new Dictionary<Type, ISet<Type>>();
         }
 
         /// <inheridoc/>
         [return: AllowNull]
-        public Type GetMostDerivedMappedType(IEntity entity, Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity,Type requestedType)
         {
             if (requestedType==typeof(ITypedEntity))
             {
-                return typeof(ITypedEntity);
+                return new[] { typeof(ITypedEntity) };
             }
 
+            ISet<Type> selectedTypes=new HashSet<Type> { requestedType };
             var types=entity.AsEntity<ITypedEntity>().Types.Select(t => t.Uri).ToList();
 
-            if (!types.Any()||!_directlyDerivingTypes.ContainsKey(requestedType))
+            if (types.Any()&&_directlyDerivingTypes.ContainsKey(requestedType))
             {
-                return requestedType;
-            }
-
-            Type bestMatch=requestedType;
-            var childTypesToCheck=new Queue<Type>(_directlyDerivingTypes[requestedType]);
-            while (childTypesToCheck.Any())
-            {
-                Type currentParent=childTypesToCheck.Dequeue();
-
-                if (_directlyDerivingTypes.ContainsKey(currentParent))
+                var childTypesToCheck=new Queue<Type>(_directlyDerivingTypes[requestedType]);
+                while (childTypesToCheck.Any())
                 {
-                    foreach (var child in _directlyDerivingTypes[currentParent])
+                    Type potentialMatch=childTypesToCheck.Dequeue();
+
+                    if (_directlyDerivingTypes.ContainsKey(potentialMatch))
                     {
-                        childTypesToCheck.Enqueue(child);
+                        foreach (var child in _directlyDerivingTypes[potentialMatch])
+                        {
+                            childTypesToCheck.Enqueue(child);
+                        }
+                    }
+
+                    if (_classMappings.ContainsKey(potentialMatch))
+                    {
+                        foreach (var mapping in _classMappings[potentialMatch])
+                        {
+                            if (mapping.IsMatch(types))
+                            {
+                                selectedTypes.Add(potentialMatch);
+                            }
+                        }
                     }
                 }
-
-                if (_classUris.ContainsKey(currentParent))
-                {
-                    if (_classUris[currentParent].IsSupersetOf(types))
-                    {
-                        bestMatch=currentParent;
-                    }
-                }
             }
 
-            return bestMatch;
+            return selectedTypes.GetMostDerivedTypes();
         }
 
         /// <summary>
@@ -74,14 +75,14 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public void Visit(IEntityMapping entityMapping)
         {
-            if (!_classUris.ContainsKey(entityMapping.EntityType))
+            if (!_classMappings.ContainsKey(entityMapping.EntityType))
             {
-                _classUris.Add(entityMapping.EntityType,new HashSet<Uri>(new AbsoluteUriComparer()));
+                _classMappings.Add(entityMapping.EntityType,new List<IClassMapping>());
             }
 
             AddAsChildOfParentTypes(entityMapping.EntityType);
 
-            _currentClasses=_classUris[entityMapping.EntityType];
+            _currentClasses=_classMappings[entityMapping.EntityType];
         }
 
         /// <summary>
@@ -110,7 +111,10 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public void Visit(IClassMapping classMapping)
         {
-            _currentClasses.Add(classMapping.Uri);
+            if (!classMapping.IsInherited)
+            {
+                _currentClasses.Add(classMapping);
+            }
         }
 
         private void AddAsChildOfParentTypes(Type entityType)

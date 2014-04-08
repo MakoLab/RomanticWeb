@@ -9,14 +9,16 @@ namespace RomanticWeb.Mapping.Attributes
     // todo: refactor similarity with FluentMappingProviderBuilder
     internal class AttributeMappingProviderBuilder:Visitors.IMappingAttributesVisitor
     {
+        private Type _entityType;
+
         public IClassMappingProvider Visit(ClassAttribute attribute)
         {
             if (attribute.Uri!=null)
             {
-                return new ClassMappingProvider(attribute.Uri);
+                return new ClassMappingProvider(_entityType,attribute.Uri);
             }
 
-            return new ClassMappingProvider(attribute.Prefix,attribute.Term);
+            return new ClassMappingProvider(_entityType,attribute.Prefix,attribute.Term);
         }
 
         public IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute,PropertyInfo property)
@@ -68,7 +70,8 @@ namespace RomanticWeb.Mapping.Attributes
 
         public IEntityMappingProvider Visit(Type entityType)
         {
-            return new EntityMappingProvider(entityType, GetClasses(entityType), GetProperties(entityType));
+            _entityType=entityType;
+            return new EntityMappingProvider(entityType,GetClasses(entityType),GetProperties(entityType));
         }
 
         private static PropertyMappingProvider CreatePropertyMapping(PropertyAttribute propertyAttribute,PropertyInfo property)

@@ -60,7 +60,7 @@ namespace RomanticWeb.Tests.Stubs
 
         protected void Class(Uri clazz)
         {
-            _classes.Add(new { Uri=Vocabularies.Foaf.Person }.ActLike<IClassMapping>());
+            _classes.Add(new { Uris=new[] { Vocabularies.Foaf.Person } }.ActLike<IQueryableClassMapping>());
         }
 
         protected void Property(string name,Uri predicate,Type returnType,INodeConverter converter)

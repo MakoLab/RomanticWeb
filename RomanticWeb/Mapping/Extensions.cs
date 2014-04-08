@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -11,39 +11,35 @@ namespace RomanticWeb.Mapping
     /// <summary>Provides useful mappings repository extension methods.</summary>
     public static class Extensions
     {
-        private static Type entityType=typeof(IEntity);
-        private static Type objectType=typeof(object);
-
-        /// <summary>Searches for class mappings.</summary>
-        /// <typeparam name="T">Type of entity.</typeparam>
-        /// <param name="mappingsRepository">Repository to be queried.</param>
-        /// <returns>Class mapping or null.</returns>
-        public static IEnumerable<IClassMapping> FindClassMapping<T>(this IMappingsRepository mappingsRepository) where T:IEntity
-        {
-            return (mappingsRepository!=null?mappingsRepository.FindClassMapping(typeof(T)):new IClassMapping[0]);
-        }
+        private static readonly Type EntityType=typeof(IEntity);
+        private static readonly Type ObjectType=typeof(object);
 
         /// <summary>Searches for class mappings.</summary>
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <param name="type">Type of entity.</param>
         /// <returns>Class mapping or null.</returns>
-        public static IEnumerable<IClassMapping> FindClassMapping(this IMappingsRepository mappingsRepository,Type type)
+        public static IEnumerable<Uri> FindClassMapping(this IMappingsRepository mappingsRepository,Type type)
         {
-            IEnumerable<IClassMapping> result=new IClassMapping[0];
+            IEnumerable<Uri> result=new Uri[0];
             if ((mappingsRepository!=null)&&(type!=null))
             {
                 type=type.FindEntityType();
-                if (entityType.IsAssignableFrom(type))
+                if (EntityType.IsAssignableFrom(type))
                 {
                     IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(type);
                     if (entityMapping!=null)
                     {
-                        result=entityMapping.Classes;
+                        result=entityMapping.Classes.OfType<IQueryableClassMapping>().SelectMany(cm=>cm.Uris).Distinct(AbsoluteUriComparer.Default);
                     }
                 }
             }
 
             return result;
+        }
+
+        public static IEnumerable<Uri> FindClassMapping<T>(this IMappingsRepository mappingsRepository)
+        {
+            return mappingsRepository.FindClassMapping(typeof(T));
         }
 
         /// <summary>Searches for property mappings.</summary>
@@ -92,7 +88,7 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public static IEntityMapping FindEntityMapping(this IMappingsRepository mappingsRepository,Type type)
         {
-            if (!entityType.IsAssignableFrom(type))
+            if (!EntityType.IsAssignableFrom(type))
             {
                 throw new ArgumentOutOfRangeException("type");
             }
@@ -128,7 +124,7 @@ namespace RomanticWeb.Mapping
 
                 if (result==null)
                 {
-                    if ((resultType.IsArray)&&(!entityType.IsAssignableFrom(result=resultType.GetElementType())))
+                    if ((resultType.IsArray)&&(!EntityType.IsAssignableFrom(result=resultType.GetElementType())))
                     {
                         result=null;
                     }
@@ -141,7 +137,7 @@ namespace RomanticWeb.Mapping
 
                 if (result==null)
                 {
-                    if (resultType.BaseType!=objectType)
+                    if (resultType.BaseType!=ObjectType)
                     {
                         result=resultType.BaseType.FindEntityType();
                     }
@@ -154,17 +150,7 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         private static Type FindEntityType(IEnumerable<Type> types)
         {
-            Type result=null;
-            foreach (Type type in types)
-            {
-                if (entityType.IsAssignableFrom(type))
-                {
-                    result=type;
-                    break;
-                }
-            }
-
-            return result;
+            return types.FirstOrDefault(type => EntityType.IsAssignableFrom(type));
         }
 
         [return: AllowNull]

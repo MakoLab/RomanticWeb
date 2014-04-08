@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
@@ -11,20 +12,25 @@ namespace RomanticWeb.Mapping.Model
     internal class EntityMapping:IEntityMapping
     {
         private readonly Type _entityType;
-        private readonly List<ClassMapping> _classes;
-        private readonly List<PropertyMapping> _properties;
+        private readonly List<IClassMapping> _classes;
+        private readonly List<IPropertyMapping> _properties;
 
-        public EntityMapping(Type entityType,IEnumerable<ClassMapping> classes,IEnumerable<PropertyMapping> properties)
+        internal EntityMapping(Type entityType,IEnumerable<IClassMapping> classes,IEnumerable<IPropertyMapping> properties)
+            :this(classes,properties)
         {
             _entityType=entityType;
-            _properties=properties.ToList();
-            _classes=classes.ToList();
-
-            _properties.ForEach(p => p.EntityMapping=this);
+            _properties.OfType<PropertyMapping>().ToList().ForEach(p => p.EntityMapping=this);
         }
 
-        internal EntityMapping(Type entityType):this(entityType,new ClassMapping[0],new PropertyMapping[0])
+        internal EntityMapping(Type entityType):this(entityType,new IClassMapping[0],new PropertyMapping[0])
         {
+        }
+
+        protected EntityMapping(IEnumerable<IClassMapping> classes,IEnumerable<IPropertyMapping> properties)
+        {
+            _entityType=typeof(IEntity);
+            _properties=properties.ToList();
+            _classes=classes.ToList();
         }
 
         public Type EntityType
@@ -60,9 +66,9 @@ namespace RomanticWeb.Mapping.Model
                 propertyMapping.Accept(mappingModelVisitor);
             }
 
-            foreach (var classMapping in Classes)
+            foreach (var clas in Classes)
             {
-                classMapping.Accept(mappingModelVisitor);
+                clas.Accept(mappingModelVisitor);
             }
         }
 

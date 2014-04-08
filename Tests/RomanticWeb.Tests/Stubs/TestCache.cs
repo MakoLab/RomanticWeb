@@ -14,14 +14,16 @@ namespace RomanticWeb.Tests.Stubs
             _setups=new Dictionary<Type,Type>();
         }
 
-        public Type GetMostDerivedMappedType(IEntity entity,Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity,Type requestedType)
         {
             if (_setups.ContainsKey(requestedType))
             {
-                return _setups[requestedType];
+                yield return _setups[requestedType];
             }
-
-            return requestedType;
+            else
+            {
+                yield return requestedType;
+            }
         }
 
         public void Setup<TRequested,TReturned>()

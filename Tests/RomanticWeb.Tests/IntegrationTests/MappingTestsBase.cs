@@ -434,47 +434,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_load_entity_with_all_matching_derived_types()
-        {
-            // given
-            LoadTestFile("EntityWithManyTypes.trig");
-
-            // when
-            var entity=EntityContext.Load<IAgent>(EntityId);
-
-            // then
-            entity.Should().BeAssignableTo<TestEntities.Foaf.IPerson>();
-        }
-
-        [Test]
-        public void Should_load_associated_entities_with_all_matching_derived_types()
-        {
-            // given
-            LoadTestFile("EntityWithManyTypes.trig");
-            var entity=EntityContext.Load<IAgent>(EntityId);
-
-            // when
-            var karol=entity.KnowsOne;
-
-            // then
-            karol.Should().BeAssignableTo<TestEntities.Foaf.IPerson>();
-        }
-
-        [Test]
-        public void Should_change_entity_type_best_matching_derived_type()
-        {
-            // given
-            LoadTestFile("EntityWithManyTypes.trig");
-            var entity=EntityContext.Load<ITypedEntity>(EntityId);
-
-            // when
-            var agent=entity.AsEntity<IAgent>();
-
-            // then
-            agent.Should().BeAssignableTo<TestEntities.Foaf.IPerson>();
-        }
-
-        [Test]
         public void Should_retrieve_value_from_interface_inherited_property()
         {
             LoadTestFile("InheritedPropertyGraph.trig");

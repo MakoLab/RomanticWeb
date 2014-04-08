@@ -137,5 +137,18 @@ namespace System
                 }
             }
         }
+
+        internal static IEnumerable<Type> GetMostDerivedTypes(this ICollection<Type> types)
+        {
+            var result=new List<Type>(types.Count);
+
+            foreach (var type in types.Where(type => !result.Any(type.IsAssignableFrom)))
+            {
+                result.RemoveAll(t => t.IsAssignableFrom(type));
+                result.Add(type);
+            }
+
+            return result;
+        } 
     }
 }

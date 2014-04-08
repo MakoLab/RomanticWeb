@@ -92,15 +92,6 @@ namespace RomanticWeb.Mapping
 
         /// <inheritdoc />
         [return: AllowNull]
-        public IEnumerable<Type> MappingsFor(Uri classUri)
-        {
-            return from mapping in _mappings
-                   where mapping.Value.Classes.Any(item => item.Uri.AbsoluteUri == classUri.AbsoluteUri)
-                   select mapping.Key;
-        }
-
-        /// <inheritdoc />
-        [return: AllowNull]
         public IPropertyMapping MappingForProperty(Uri predicateUri)
         {
             return (from mapping in _mappings

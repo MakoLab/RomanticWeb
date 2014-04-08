@@ -16,13 +16,17 @@ namespace RomanticWeb.Tests.Mapping
         public void Mapped_type_should_have_mapped_class()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IAnimal>();
+            var mapping=MappingsRepository.MappingFor<ICarnivore>();
 
             // when
-            var classMapping=mapping.Classes.First();
+            var classMappings=mapping.Classes.ToList();
 
             // then
-            Assert.That(classMapping.Uri,Is.EqualTo(new Uri("http://example/livingThings#Animal")));
+            classMappings.Should().HaveCount(2);
+            classMappings.Should()
+                         .Contain(c => c.IsInherited && c.IsMatch(new[] { new Uri("http://example/livingThings#Animal") }));
+            classMappings.Should()
+                         .Contain(c => !c.IsInherited && c.IsMatch(new[] { new Uri("http://example/livingThings#Carnivore") }));
         }
 
         [Test]
@@ -146,6 +150,20 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             property.Converter.Should().BeOfType<BooleanConverter>();
+        }
+
+        [Test]
+        public void Multimapping_should_not_throw_when_getting_derived_properties()
+        {
+            // given
+            IEntityMapping herbivoreMapping=MappingsRepository.MappingFor<IHerbivore>();
+            IEntityMapping carnivoreMapping=MappingsRepository.MappingFor<ICarnivore>();
+
+            // when
+            var multiMapping=new MultiMapping(herbivoreMapping,carnivoreMapping);
+
+            // then
+            Assert.DoesNotThrow(() => multiMapping.PropertyFor("Name"));
         }
     }
 }

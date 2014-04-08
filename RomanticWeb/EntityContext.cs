@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -21,6 +20,7 @@ namespace RomanticWeb
     public class EntityContext:IEntityContext
     {
         #region Fields
+        private static readonly EntityMapping EntityMapping=new EntityMapping(typeof(IEntity));
         private readonly IEntityContextFactory _factory;
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
@@ -31,7 +31,6 @@ namespace RomanticWeb
         private readonly IRdfTypeCache _typeCache;
 
         private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
-
         #endregion
 
         #region Constructors
@@ -188,8 +187,8 @@ namespace RomanticWeb
         /// <returns>Passed entity beeing a given interface.</returns>
         public T EntityAs<T>(IEntity entity) where T:class,IEntity
         {
-            Type entityType=_typeCache.GetMostDerivedMappedType(entity,typeof(T));
-            return EntityAs((Entity)entity,entityType);
+            var entityTypes=_typeCache.GetMostDerivedMappedTypes(entity,typeof(T));
+            return EntityAs((Entity)entity,typeof(T),entityTypes.ToArray());
         }
 
         #endregion
@@ -231,12 +230,10 @@ namespace RomanticWeb
                 throw new UnMappedTypeException(typeof(T));
             }
 
-            IEnumerable<IClassMapping> classMappings=entityMapping.Classes;
-            ITypedEntity typedEntity=null;
-            foreach (var classMapping in classMappings)
+            var types=entity.AsEntity<ITypedEntity>().Types;
+            foreach (var classMapping in entityMapping.Classes)
             {
-                typedEntity=typedEntity??entity.AsEntity<ITypedEntity>();
-                typedEntity.Types.Add(new EntityId(classMapping.Uri));
+                classMapping.AppendTo(types);
             }
 
             return entity;
@@ -252,11 +249,37 @@ namespace RomanticWeb
             return entityId;
         }
 
-        private dynamic EntityAs(Entity entity,Type type)
+        private dynamic EntityAs(Entity entity,Type requested,Type[] types)
+        {
+            IEntityMapping mapping;
+            if (types.Length==1)
+            {
+                mapping=GetMapping(types[0]);
+            }
+            else if (types.Length==0)
+            {
+                types=new[] { requested };
+                mapping=GetMapping(requested);
+            }
+            else
+            {
+                mapping=new MultiMapping(types.Select(GetMapping).ToArray());                
+            }
+
+            return EntityAs(entity,mapping,types);
+        }
+
+        private dynamic EntityAs(Entity entity,IEntityMapping mapping,params Type[] types)
+        {
+            var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
+            return Impromptu.DynamicActLike(proxy,types);
+        }
+
+        private IEntityMapping GetMapping(Type type)
         {
             if (type==typeof(IEntity))
             {
-                return entity;
+                return EntityMapping;
             }
 
             var mapping=_mappings.MappingFor(type);
@@ -265,8 +288,7 @@ namespace RomanticWeb
                 throw new UnMappedTypeException(type);
             }
 
-            var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
-            return Impromptu.DynamicActLike(proxy,type);
+            return mapping;
         }
         #endregion
     }

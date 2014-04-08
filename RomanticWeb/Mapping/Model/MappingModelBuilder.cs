@@ -9,6 +9,8 @@ namespace RomanticWeb.Mapping.Model
     {
         private readonly MappingContext _mappingContext;
 
+        private Type _currentType;
+
         public MappingModelBuilder(MappingContext mappingContext)
         {
             _mappingContext=mappingContext;
@@ -16,6 +18,7 @@ namespace RomanticWeb.Mapping.Model
 
         public IEntityMapping BuildMapping(IEntityMappingProvider mapping)
         {
+            _currentType=mapping.EntityType;
             var classes=mapping.Classes.Select(BuildMapping);
             var properties=mapping.Properties.Select(BuildMapping);
 
@@ -39,7 +42,7 @@ namespace RomanticWeb.Mapping.Model
 
         private ClassMapping BuildMapping(IClassMappingProvider mapping)
         {
-            return new ClassMapping(mapping.GetTerm(_mappingContext.OntologyProvider));
+            return new ClassMapping(mapping.GetTerm(_mappingContext.OntologyProvider),mapping.DeclaringEntityType!=_currentType);
         }
 
         private PropertyMapping BuildPropertyMapping(IPropertyMappingProvider provider)

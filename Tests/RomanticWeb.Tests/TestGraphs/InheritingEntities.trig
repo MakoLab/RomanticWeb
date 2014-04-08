@@ -1,0 +1,21 @@
+﻿@base <http://magi/> .
+@prefix data: <http://data.magi/people/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+data:Tomasz
+{	
+	<people/Tomasz> a foaf:Person ; 
+					foaf:givenName "Tomasz" ; 
+					foaf:familyName "Pluskiewicz".
+}
+
+data:Karol
+{
+	<people/Karol> foaf:givenName "Karol" .
+}
+
+<http://app.magi/graphs>
+{
+	data:Tomasz foaf:primaryTopic <people/Tomasz>.
+	data:Karol foaf:primaryTopic <people/Karol>.
+}

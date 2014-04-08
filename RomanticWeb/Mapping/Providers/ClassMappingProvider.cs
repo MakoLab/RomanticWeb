@@ -11,8 +11,9 @@ namespace RomanticWeb.Mapping.Providers
         private readonly Type _entityType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClassMappingProvider"/> class.
+        /// Initializes a new instance of the <see cref="ClassMappingProvider" /> class.
         /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
         /// <param name="uri">The URI.</param>
         public ClassMappingProvider(Type entityType,Uri uri)
             :base(uri)
@@ -21,8 +22,9 @@ namespace RomanticWeb.Mapping.Providers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClassMappingProvider"/> class.
+        /// Initializes a new instance of the <see cref="ClassMappingProvider" /> class.
         /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
         /// <param name="prefix">The QName prefix.</param>
         /// <param name="term">The QName term.</param>
         public ClassMappingProvider(Type entityType,string prefix,string term)
@@ -31,6 +33,7 @@ namespace RomanticWeb.Mapping.Providers
             _entityType=entityType;
         }
 
+        /// <inheritdoc/>
         public Type DeclaringEntityType
         {
             get

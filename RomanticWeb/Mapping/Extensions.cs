@@ -37,6 +37,10 @@ namespace RomanticWeb.Mapping
             return result;
         }
 
+        /// <summary>Searches for class mappings.</summary>
+        /// <param name="mappingsRepository">Repository to be queried.</param>
+        /// <typeparam name="T">Type of entity.</typeparam>
+        /// <returns>Class mapping or null.</returns>
         public static IEnumerable<Uri> FindClassMapping<T>(this IMappingsRepository mappingsRepository)
         {
             return mappingsRepository.FindClassMapping(typeof(T));

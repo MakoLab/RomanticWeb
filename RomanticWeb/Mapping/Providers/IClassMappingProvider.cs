@@ -7,6 +7,9 @@ namespace RomanticWeb.Mapping.Providers
     /// </summary>
     public interface IClassMappingProvider:ITermMappingProvider
     {
+        /// <summary>
+        /// Gets the type, where this class was declared.
+        /// </summary>
         Type DeclaringEntityType { get; }
     }
 }

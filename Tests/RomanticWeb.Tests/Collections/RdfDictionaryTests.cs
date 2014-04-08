@@ -311,7 +311,6 @@ namespace RomanticWeb.Tests.Collections
         internal class TestPair:IDictionaryEntry<string, int>
         {
             private readonly EntityId _id;
-            private IEntityContext _context;
 
             public TestPair(EntityId id)
             {
@@ -330,7 +329,7 @@ namespace RomanticWeb.Tests.Collections
             {
                 get
                 {
-                    return _context;
+                    return null;
                 }
             }
 
@@ -341,8 +340,6 @@ namespace RomanticWeb.Tests.Collections
 
         internal class TestOwner:IDictionaryOwner<TestPair,string,int>
         {
-            private IEntityContext _context;
-
             public TestOwner(EntityId id)
             {
                 Id=id;
@@ -355,7 +352,7 @@ namespace RomanticWeb.Tests.Collections
             {
                 get
                 {
-                    return _context;
+                    return null;
                 }
             }
 

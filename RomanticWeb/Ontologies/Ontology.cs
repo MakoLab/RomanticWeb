@@ -20,7 +20,7 @@ namespace RomanticWeb.Ontologies
         /// <param name="prefix">Prefix of the ontology's base Uri.</param>
         /// <param name="baseUri">Ontology base Uri.</param>
         /// <param name="terms">A collection of RDF classes and properties</param>
-        public Ontology(string prefix,string baseUri,params Term[] terms):this(String.Empty,prefix,baseUri,terms)
+        public Ontology(string prefix,Uri baseUri,params Term[] terms):this(String.Empty,prefix,baseUri,terms)
         {
         }
 
@@ -29,7 +29,7 @@ namespace RomanticWeb.Ontologies
         /// <param name="prefix">Prefix of the ontology's base Uri.</param>
         /// <param name="baseUri">Ontology base Uri.</param>
         /// <param name="terms">A collection of RDF classes and properties</param>
-        public Ontology([AllowNull] string displayName,string prefix,string baseUri,params Term[] terms):this(displayName,new NamespaceSpecification(prefix,baseUri),terms)
+        public Ontology([AllowNull] string displayName,string prefix,Uri baseUri,params Term[] terms):this(displayName,new NamespaceSpecification(prefix,baseUri),terms)
         {
         }
 

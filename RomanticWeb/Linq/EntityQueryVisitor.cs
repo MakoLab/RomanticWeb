@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using NullGuard;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
@@ -392,7 +391,7 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected override System.Linq.Expressions.Expression VisitTypeBinaryExpression(System.Linq.Expressions.TypeBinaryExpression expression)
         {
-            var classMappings=_entityContext.Mappings.FindClassMapping(expression.TypeOperand);
+            var classMappings=MappingsRepository.FindMappedClasses(expression.TypeOperand);
             if (classMappings.Any())
             {
                 Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression.Expression);

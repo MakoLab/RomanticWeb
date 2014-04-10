@@ -44,7 +44,7 @@ namespace RomanticWeb.Ontologies
             namespaceSpecification=(
                 from attribute in ontologyElement.Attributes()
                 where attribute.Name.LocalName=="about"
-                select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value),attribute.Value)).FirstOrDefault();
+                select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value),new Uri(attribute.Value))).FirstOrDefault();
             displayName=(
                 from child in ontologyElement.Descendants()
                 where (child.Name.LocalName=="label")||(child.Name.LocalName=="title")

@@ -32,7 +32,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             {
                 if (_entityContext==null)
                 {
-                    _entityContext= Factory.CreateContext();
+                    _entityContext=Factory.CreateContext();
                 }
 
                 return _entityContext;
@@ -66,6 +66,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                .WithOntology(new LifeOntology())
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
                                                .WithMappings(BuildMappings)
+                                               .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
                                                .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
@@ -106,7 +107,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             {
                 get
                 {
-                    yield return new Ontology("life", "http://example/livingThings#");
+                    yield return new Ontology("life",new Uri("http://example/livingThings#"));
                 }
             }
 

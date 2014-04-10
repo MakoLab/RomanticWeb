@@ -10,10 +10,10 @@ namespace RomanticWeb.Ontologies
     public sealed class NamespaceSpecification
     {
         /// <summary>Creates a new insance of <see cref="NamespaceSpecification"/>.</summary>
-        public NamespaceSpecification(string prefix, string baseUri)
+        public NamespaceSpecification(string prefix,Uri baseUri)
         {
-            Prefix = prefix;
-            BaseUri = new Uri(baseUri);
+            Prefix=prefix;
+            BaseUri=baseUri;
         }
 
         /// <summary>Gets the namespace URI.</summary>
@@ -22,20 +22,25 @@ namespace RomanticWeb.Ontologies
         /// <summary>Gets the namespace prefix.</summary>
         public string Prefix { get; private set; }
 
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return Prefix.GetHashCode()^BaseUri.AbsoluteUri.GetHashCode();
-        }
-
-        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(obj,null)) { return true; }
-            if (ReferenceEquals(obj,this)) { return true; }
-            if (!(obj is NamespaceSpecification)) { return false; }
-            NamespaceSpecification namespaceSpecification=(NamespaceSpecification)obj;
-            return Prefix.Equals(namespaceSpecification.Prefix)&&(BaseUri.AbsoluteUri.Equals(namespaceSpecification.BaseUri.AbsoluteUri));
+            if (ReferenceEquals(null,obj)) { return false; }
+            if (ReferenceEquals(this,obj)) { return true; }
+
+            return obj is NamespaceSpecification&&Equals((NamespaceSpecification)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (BaseUri.GetHashCode() * 397)^Prefix.GetHashCode();
+            }
+        }
+
+        private bool Equals(NamespaceSpecification other)
+        {
+            return BaseUri.Equals(other.BaseUri)&&string.Equals(Prefix,other.Prefix);
         }
     }
 }

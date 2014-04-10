@@ -57,12 +57,13 @@ namespace RomanticWeb.Tests.Linq
             _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap(),new TestAdressMap());
             var mappingContext=new MappingContext(ontologyProvider,EntityContextFactory.CreateDefaultConventions());
             _typeCache=new TestCache();
+            var entitySource=new TripleStoreAdapter(_store) { MetaGraphUri=new Uri("http://app.magi/graphs") };
             _entityContext=new EntityContext(
                 _factory.Object,
                 _mappingsRepository,
                 mappingContext,
                 new EntityStore(),
-                new TripleStoreAdapter(_store),
+                entitySource,
                 _baseUriSelectionPolicy.Object,
                 new TestGraphSelector(),
                 _typeCache);

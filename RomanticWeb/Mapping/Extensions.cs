@@ -18,7 +18,7 @@ namespace RomanticWeb.Mapping
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <param name="type">Type of entity.</param>
         /// <returns>Class mapping or null.</returns>
-        public static IEnumerable<Uri> FindClassMapping(this IMappingsRepository mappingsRepository,Type type)
+        public static IEnumerable<Uri> FindMappedClasses(this IMappingsRepository mappingsRepository,Type type)
         {
             IEnumerable<Uri> result=new Uri[0];
             if ((mappingsRepository!=null)&&(type!=null))
@@ -41,9 +41,9 @@ namespace RomanticWeb.Mapping
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <typeparam name="T">Type of entity.</typeparam>
         /// <returns>Class mapping or null.</returns>
-        public static IEnumerable<Uri> FindClassMapping<T>(this IMappingsRepository mappingsRepository)
+        public static IEnumerable<Uri> FindMappedClasses<T>(this IMappingsRepository mappingsRepository)
         {
-            return mappingsRepository.FindClassMapping(typeof(T));
+            return mappingsRepository.FindMappedClasses(typeof(T));
         }
 
         /// <summary>Searches for property mappings.</summary>

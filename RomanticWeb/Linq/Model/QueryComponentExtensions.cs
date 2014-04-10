@@ -126,7 +126,7 @@ namespace RomanticWeb.Linq.Model
             EntityTypeConstrain result=null;
             if (entityType!=null)
             {
-                var classMappings=visitor.MappingsRepository.FindClassMapping(entityType);
+                var classMappings=visitor.MappingsRepository.FindMappedClasses(entityType);
 
                 if (classMappings==null)
                 {
@@ -142,7 +142,7 @@ namespace RomanticWeb.Linq.Model
                     {
                         foreach (Type inheritedType in inheritedTypes)
                         {
-                            classMappings=visitor.MappingsRepository.FindClassMapping(inheritedType);
+                            classMappings=visitor.MappingsRepository.FindMappedClasses(inheritedType);
 
                             if (classMappings == null)
                             {

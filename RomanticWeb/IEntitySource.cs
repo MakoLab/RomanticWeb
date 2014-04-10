@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Model;
@@ -8,6 +9,8 @@ namespace RomanticWeb
     /// <summary>A source for triples, loaded from physical triple stores.</summary>
     public interface IEntitySource
     {
+        Uri MetaGraphUri { get; set; }
+
         /// <summary>Loads an entity into the given <see cref="IEntityStore"/></summary>
         void LoadEntity(IEntityStore store,EntityId entityId);
 

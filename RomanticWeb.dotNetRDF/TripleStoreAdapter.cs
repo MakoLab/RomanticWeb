@@ -20,7 +20,6 @@ namespace RomanticWeb.DotNetRDF
     {
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
-        private Uri _metaGraphUri=new Uri("http://app.magi/graphs");
 
         /// <summary>Creates a new instance of <see cref="TripleStoreAdapter"/></summary>
         /// <param name="store">The underlying triple store</param>
@@ -32,18 +31,7 @@ namespace RomanticWeb.DotNetRDF
         }
 
         /// <summary>Uri of the meta graph, which contains information about Entities' named graphs.</summary>
-        public Uri MetaGraphUri
-        {
-            get
-            {
-                return _metaGraphUri;
-            }
-
-            set
-            {
-                _metaGraphUri=value;
-            }
-        }
+        public Uri MetaGraphUri { get; set; }
 
         /// <summary>Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>.</summary>
         public void LoadEntity(IEntityStore store,EntityId entityId)
@@ -68,7 +56,7 @@ namespace RomanticWeb.DotNetRDF
         {
             var ask=QueryBuilder.Ask()
                                 .Graph(
-                                    _metaGraphUri,
+                                    MetaGraphUri,
                                     graph => graph.Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri)));
             ask.Prefixes.Import(_namespaces);
             return ExecuteAsk(ask.BuildQuery());

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Anotar.NLog;
 using RomanticWeb.ComponentModel.Composition;
+using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -31,6 +33,7 @@ namespace RomanticWeb
         private CompoundOntologyProvider _actualOntologyProvider;
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
+        private Uri _metaGraphUri;
 
         #endregion
 
@@ -100,6 +103,32 @@ namespace RomanticWeb
         #endregion
 
         #region Public methods
+
+        public static EntityContextFactory FromConfigurationSection()
+        {
+            var configuration = (ConfigurationSectionHandler)System.Configuration.ConfigurationManager.GetSection("romanticWeb");
+
+            var ontologies = from element in configuration.Ontologies.Cast<OntologyElement>()
+                             select new Ontology(element.Prefix, element.Uri);
+            var mappingAssemblies = from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
+                                    select Assembly.Load(element.Assembly);
+
+            var entityContextFactory=new EntityContextFactory().WithOntology(new OntologyProviderBase(ontologies)).WithMappings(m =>
+                {
+                    foreach (var mappingAssembly in mappingAssemblies)
+                    {
+                        m.Fluent.FromAssembly(mappingAssembly);
+                        m.Attributes.FromAssembly(mappingAssembly);
+                    }
+                }).WithMetaGraphUri(configuration.MetaGraphUri);
+            if (configuration.BaseUris.Default!=null)
+            {
+                entityContextFactory.WithBaseUri(b => b.Default.Is(configuration.BaseUris.Default));
+            }
+
+            return entityContextFactory;
+        }
+
         /// <summary>Creates a new instance of entity context.</summary>
         public IEntityContext CreateContext()
         {
@@ -109,12 +138,15 @@ namespace RomanticWeb
             EnsureInitialized();
             _mappingContext = new MappingContext(_actualOntologyProvider);
 
+            var entitySource=_entitySourceFactory();
+            entitySource.MetaGraphUri=_metaGraphUri;
+
             return new EntityContext(
                 this,
                 Mappings,
                 _mappingContext,
                 _entityStoreFactory(),
-                _entitySourceFactory(),
+                entitySource,
                 _baseUriSelector,
                 _namedGraphSelector,
                 _matcher);
@@ -173,9 +205,15 @@ namespace RomanticWeb
         }
 
         /// <summary>Exposes a method to define how the default graph name should be obtained.</summary>
-        public IEntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
+        public EntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
         {
             _namedGraphSelector = namedGraphSelector;
+            return this;
+        }
+
+        public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
+        {
+            _metaGraphUri=metaGraphUri;
             return this;
         }
         #endregion

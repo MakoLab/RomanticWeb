@@ -53,7 +53,6 @@ namespace RomanticWeb.Converters
                 return Node.FromEntityId(((IEntity)element).Id);
             }
 
-            // todo: this is a hack, and should be in a complex type converter
             if (element is Uri)
             {
                 return Node.ForUri((Uri)element);

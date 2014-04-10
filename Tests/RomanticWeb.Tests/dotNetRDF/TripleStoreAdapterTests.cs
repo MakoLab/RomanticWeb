@@ -37,7 +37,10 @@ namespace RomanticWeb.Tests.dotNetRDF
 
         private TripleStoreAdapter Create<TStore>(Mock<TStore> store) where TStore:class,ITripleStore
         {
-            var tripleStoreAdapter=new TripleStoreAdapter(store.Object);
+            var tripleStoreAdapter=new TripleStoreAdapter(store.Object)
+                                       {
+                                           MetaGraphUri=new Uri("http://app.magi/graphs")
+                                       };
             var metagraph=new Graph { BaseUri=tripleStoreAdapter.MetaGraphUri };
             store.Setup(s => s.HasGraph(tripleStoreAdapter.MetaGraphUri)).Returns(true);
             store.Setup(s => s[tripleStoreAdapter.MetaGraphUri]).Returns(metagraph);

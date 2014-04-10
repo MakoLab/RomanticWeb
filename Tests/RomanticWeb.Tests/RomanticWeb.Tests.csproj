@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -104,6 +105,7 @@
     <Compile Include="Collections\DictionaryTransformerTests.cs" />
     <Compile Include="Collections\RdfDictionaryTests.cs" />
     <Compile Include="Collections\RdfListAdapterTests.cs" />
+    <Compile Include="ConfigurationTests.cs" />
     <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
@@ -761,6 +763,7 @@
     </Content>
     <None Include="..\App.config">
       <Link>App.config</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Fody.targets" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.json" />

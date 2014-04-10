@@ -141,7 +141,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <inheritdoc />
-        public override bool TrySetMember(SetMemberBinder binder,object value)
+        public override bool TrySetMember(SetMemberBinder binder,[AllowNull]object value)
         {
             if ((_entity.Id is BlankId)&&(((BlankId)_entity.Id).RootEntityId==null))
             {
@@ -160,9 +160,13 @@ namespace RomanticWeb.Entities
                 var graphUri=SelectNamedGraph(property);
                 var resultTransformer=_resultTransformers.GetTransformer(property);
 
-                var newValues=resultTransformer.ToNodes(value,this,property,Context);
-                _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
+                IEnumerable<Node> newValues=new Node[0];
+                if (value!=null)
+                {
+                    newValues=resultTransformer.ToNodes(value,this,property,Context);
+                }
 
+                _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);
                 return true;
             }
             catch

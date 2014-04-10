@@ -59,12 +59,8 @@ namespace RomanticWeb
         #endregion
 
         #region Properties
-        // TODO: Consider hiding this Cache member.
-
         /// <summary>Gets the cache of this entity contxt.</summary>
         public ICache Cache { get; set; }
-
-        // TODO: Consider hiding this Store member.
 
         /// <summary>Gets the underlying in-memory store.</summary>
         public IEntityStore Store { get { return _entityStore; } }

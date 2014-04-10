@@ -28,7 +28,7 @@ namespace RomanticWeb.Linq.Model
         /// <param name="entityAccessor">Entity accessor to be searched through.</param>
         /// <remarks>This method performs a deep search for all items that match given type and its derivatives.</remarks>
         /// <returns>Enumeration of found components matching given type.</returns>
-        internal static IEnumerable<T> FindAllComponents<T>(this EntityAccessor entityAccessor) where T:IQueryComponent
+        internal static IEnumerable<T> FindAllComponents<T>(this StrongEntityAccessor entityAccessor) where T:IQueryComponent
         {
             return entityAccessor.GetQueryComponentNavigator().FindAllComponents<T>(new List<Query>());
         }
@@ -88,15 +88,16 @@ namespace RomanticWeb.Linq.Model
             return result;
         }
 
-        internal static EntityAccessor GetEntityAccessor(this IQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        internal static StrongEntityAccessor GetEntityAccessor(this IQueryVisitor visitor,Remotion.Linq.Clauses.FromClauseBase sourceExpression)
         {
-            EntityAccessor entityAccessor=null;
+            StrongEntityAccessor entityAccessor=null;
             if (typeof(IEntity).IsAssignableFrom(sourceExpression.ItemType))
             {
-                entityAccessor=visitor.Query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression.FromExpression==sourceExpression.FromExpression).FirstOrDefault();
+                entityAccessor=visitor.Query.FindAllComponents<StrongEntityAccessor>()
+                    .Where(item => (item.SourceExpression!=null)&&(item.SourceExpression.FromExpression==sourceExpression.FromExpression)).FirstOrDefault();
                 if (entityAccessor==null)
                 {
-                    entityAccessor=new EntityAccessor(new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
+                    entityAccessor=new StrongEntityAccessor(new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
                     EntityTypeConstrain constrain=visitor.CreateTypeConstrain(sourceExpression);
                     if ((constrain!=null)&&(!entityAccessor.Elements.Contains(constrain)))
                     {

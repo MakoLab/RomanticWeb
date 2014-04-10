@@ -7,10 +7,13 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Linq
 {
@@ -18,26 +21,26 @@ namespace RomanticWeb.Linq
     internal class EntityQueryModelVisitor:QueryModelVisitorBase,IQueryVisitor
     {
         #region Fields
-        private readonly IMappingsRepository _mappingsRepository;
-        private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
+        private readonly IEntityContext _entityContext;
         private EntityQueryVisitor _visitor;
         private Query _query;
-        private EntityAccessor _mainFromComponent;
+        private StrongEntityAccessor _mainFromComponent;
         private QueryComponent _result;
         private Identifier _subject;
+        private IPropertyMapping _propertyMapping;
         #endregion
 
         #region Constructors
         /// <summary>Default constructor with mappings repository passed.</summary>
-        /// <param name="mappingsRepository">Mappings repository to be used to resolve properties.</param>
-        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
-        public EntityQueryModelVisitor(IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy):this(new Query(),mappingsRepository,baseUriSelectionPolicy)
+        /// <param name="entityContext">Entity context.</param>
+        public EntityQueryModelVisitor(IEntityContext entityContext):this(new Query(),entityContext)
         {
         }
 
-        internal EntityQueryModelVisitor(Query query,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        internal EntityQueryModelVisitor(Query query,IEntityContext context)
         {
-            _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_mappingsRepository=mappingsRepository,_baseUriSelectionPolicy=baseUriSelectionPolicy);
+            _entityContext=context;
+            _visitor=new EntityQueryVisitor(_query=(Query)(_result=query),_entityContext);
             _subject=null;
         }
         #endregion
@@ -47,10 +50,13 @@ namespace RomanticWeb.Linq
         public Query Query { get { return _query; } }
 
         /// <summary>Gets the mappings repository.</summary>
-        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _mappingsRepository; } }
+        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _entityContext.Mappings; } }
 
         /// <summary>Gets a resulting query.</summary>
         internal QueryComponent Result { get { return _result; } }
+
+        /// <summary>Gets the value converter for property selectors.</summary>
+        internal IPropertyMapping PropertyMapping { get { return _propertyMapping; } }
         #endregion
 
         #region Public methods
@@ -66,10 +72,11 @@ namespace RomanticWeb.Linq
         /// <param name="queryModel">Query model containing given select clause.</param>
         public override void VisitSelectClause(SelectClause selectClause,Remotion.Linq.QueryModel queryModel)
         {
-            QuerySourceReferenceExpression querySource=(QuerySourceReferenceExpression)selectClause.Selector;
-            _visitor.VisitExpression(querySource);
-            _query=(Query)_visitor.RetrieveComponent();
-            _mainFromComponent=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression==querySource.ReferencedQuerySource).First();
+            QuerySourceReferenceExpression querySource=FindQuerySource(selectClause.Selector);
+            _visitor.VisitExpression(selectClause.Selector);
+            QueryComponent component=_visitor.RetrieveComponent();
+            _query=_visitor.Query;
+            _mainFromComponent=_query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression==querySource.ReferencedQuerySource).First();
             if (_query.Subject==null)
             {
                 _query.Subject=_mainFromComponent.About;
@@ -79,11 +86,28 @@ namespace RomanticWeb.Linq
             }
 
             _subject=_query.Subject;
-
             queryModel.MainFromClause.Accept(this,queryModel);
             _query.Select.Add(_mainFromComponent);
             VisitBodyClauses(queryModel.BodyClauses,queryModel);
             VisitResultOperators(queryModel.ResultOperators,queryModel);
+            if ((component is Identifier)&&(selectClause.Selector is System.Linq.Expressions.MemberExpression))
+            {
+                System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)selectClause.Selector;
+                if (!(memberExpression.Member is PropertyInfo))
+                {
+                    throw new NotSupportedException(System.String.Format("Selection on members of type '{0}' are not supported.",memberExpression.Member.MemberType));
+                }
+
+                _propertyMapping=_entityContext.Mappings.FindPropertyMapping((PropertyInfo)memberExpression.Member);
+                if (typeof(IEntity).IsAssignableFrom(_propertyMapping.ReturnType))
+                {
+                    OverrideEntitySelector((Identifier)component);
+                }
+                else
+                {
+                    OverrideLiteralSelector(this.GetEntityAccessor((FromClauseBase)FindQuerySource(memberExpression).ReferencedQuerySource));
+                }
+            }
         }
 
         /// <summary>Visits a where clause.</summary>
@@ -126,7 +150,7 @@ namespace RomanticWeb.Linq
         public override void VisitAdditionalFromClause(AdditionalFromClause fromClause,QueryModel queryModel,int index)
         {
             VisitQuerableFromClause(fromClause,queryModel,index);
-            EntityAccessor entityAccessor=_visitor.GetEntityAccessor(fromClause);
+            StrongEntityAccessor entityAccessor=_visitor.GetEntityAccessor(fromClause);
             if (entityAccessor!=null)
             {
                 if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
@@ -294,6 +318,56 @@ namespace RomanticWeb.Linq
             }
 
             _query.Limit=Convert.ToInt32(((System.Linq.Expressions.ConstantExpression)takeResultOperation.Count).Value);
+        }
+
+        private void OverrideEntitySelector(Identifier identifier)
+        {
+            string variableNameBase=identifier.Name;
+            UnboundConstrain genericConstrain=new UnboundConstrain(identifier,new Identifier(variableNameBase+"P"),new Identifier(variableNameBase+"O"));
+            _mainFromComponent.Elements.Add(genericConstrain);
+            _query.Select.Clear();
+            _query.Select.Add(genericConstrain);
+            UnspecifiedEntityAccessor entityAccessor=new UnspecifiedEntityAccessor(identifier,_mainFromComponent);
+            entityAccessor.Elements.Add(genericConstrain);
+            _query.Select.Add(entityAccessor);
+            int indexOf=-1;
+            if ((indexOf=_query.Elements.IndexOf(_mainFromComponent))!=-1)
+            {
+                _query.Elements.RemoveAt(indexOf);
+                _query.Elements.Insert(indexOf,entityAccessor);
+            }
+            else
+            {
+                _query.Elements.Add(entityAccessor);
+            }
+
+            if (_mainFromComponent.Elements[0] is UnboundConstrain)
+            {
+                _mainFromComponent.Elements.RemoveAt(0);
+            }
+        }
+
+        private void OverrideLiteralSelector(StrongEntityAccessor entityAccessor)
+        {
+            if (_mainFromComponent.Elements[0] is UnboundConstrain)
+            {
+                entityAccessor.Elements.Add(new Filter(new BinaryOperator(MethodNames.Equal,((UnboundConstrain)_mainFromComponent.Elements[0]).Predicate,new Literal(_propertyMapping.Uri))));
+            }
+        }
+
+        private QuerySourceReferenceExpression FindQuerySource(System.Linq.Expressions.Expression expression)
+        {
+            QuerySourceReferenceExpression result=null;
+            if (expression is QuerySourceReferenceExpression)
+            {
+                result=(QuerySourceReferenceExpression)expression;
+            }
+            else if (expression is System.Linq.Expressions.MemberExpression)
+            {
+                result=FindQuerySource(((System.Linq.Expressions.MemberExpression)expression).Expression);
+            }
+
+            return result;
         }
         #endregion
     }

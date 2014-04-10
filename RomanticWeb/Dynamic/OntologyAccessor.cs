@@ -82,7 +82,7 @@ namespace RomanticWeb.Dynamic
                 var graphOverride=new UnionGraphSelector();
                 var head=((IEntity)result).AsEntity<IRdfListNode>();
                 ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(graphOverride);
-                var rdfListAdapter=new RdfListAdapter<dynamic>(_entity.Context,head,graphOverride);
+                var rdfListAdapter=new RdfListAdapter<dynamic>(_entity.Context,_entity,head,graphOverride);
                 result=new ReadOnlyCollection<dynamic>(rdfListAdapter);
             }
 

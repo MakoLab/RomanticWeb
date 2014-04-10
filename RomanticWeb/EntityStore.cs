@@ -45,7 +45,7 @@ namespace RomanticWeb
         {
             var quads=from triple in _entityQuads
                       where triple.Predicate==Node.ForUri(predicate)
-                         && triple.Subject==Node.ForUri(entityId.Uri)
+                         &&triple.Subject==(entityId is BlankId?Node.ForBlank(((BlankId)entityId).Identifier,((BlankId)entityId).RootEntityId,((BlankId)entityId).Graph):Node.ForUri(entityId.Uri))
                       select triple;
 
             if (graph!=null)
@@ -111,7 +111,7 @@ namespace RomanticWeb
 
         private bool GraphEquals(EntityQuad triple,Uri graph)
         {
-            return (triple.Subject.IsBlank?graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri):triple.Graph.Uri.AbsoluteUri==graph.AbsoluteUri);
+            return (triple.Graph.Uri.AbsoluteUri==graph.AbsoluteUri)||((triple.Subject.IsBlank)&&(graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
         }
     }
 }

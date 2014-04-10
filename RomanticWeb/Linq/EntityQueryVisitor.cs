@@ -21,8 +21,7 @@ namespace RomanticWeb.Linq
     public class EntityQueryVisitor:ThrowingExpressionTreeVisitor,IQueryVisitor
     {
         #region Fields
-        private readonly IMappingsRepository _mappingsRepository;
-        private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
+        private readonly IEntityContext _entityContext;
         private Query _query;
         private Stack<IQueryComponentNavigator> _currentComponent;
         private QueryComponent _lastComponent;
@@ -32,12 +31,10 @@ namespace RomanticWeb.Linq
         #region Constructors
         /// <summary>Creates an instance of the query visitor.</summary>
         /// <param name="query">Query to be filled.</param>
-        /// <param name="mappingsRepository">Mappings repository used to resolve strongly typed properties and types.</param>
-        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
-        internal EntityQueryVisitor(Query query,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy):base()
+        /// <param name="entityContext">Entity context.</param>
+        internal EntityQueryVisitor(Query query,IEntityContext entityContext):base()
         {
-            _mappingsRepository=mappingsRepository;
-            _baseUriSelectionPolicy=baseUriSelectionPolicy;
+            _entityContext=entityContext;
             _currentComponent=new Stack<IQueryComponentNavigator>();
             _query=query;
             _itemNameOverride=null;
@@ -49,7 +46,7 @@ namespace RomanticWeb.Linq
         Query IQueryVisitor.Query { get { return _query; } }
 
         /// <summary>Gets the mappings repository.</summary>
-        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _mappingsRepository; } }
+        IMappingsRepository IQueryVisitor.MappingsRepository { get { return _entityContext.Mappings; } }
 
         /// <summary>Gets an associated query.</summary>
         internal Query Query { get { return _query; } }
@@ -58,7 +55,7 @@ namespace RomanticWeb.Linq
         internal string ItemNameOverride { get { return _itemNameOverride; } set { _itemNameOverride=value; } }
 
         /// <summary>Gets the mappings repository.</summary>
-        internal IMappingsRepository MappingsRepository { get { return _mappingsRepository; } }
+        internal IMappingsRepository MappingsRepository { get { return _entityContext.Mappings; } }
         #endregion
 
         #region Public methods
@@ -79,7 +76,7 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited.</returns>
         protected override System.Linq.Expressions.Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            EntityAccessor entityAccessor=this.GetEntityAccessor(GetSourceExpression(expression));
+            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(GetSourceExpression(expression));
             if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
             {
                 _query.Elements.Add(entityAccessor);
@@ -208,7 +205,7 @@ namespace RomanticWeb.Linq
                             int count=types.Count();
                             if (count>0)
                             {
-                                EntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
                                 if (entityAccessor!=null)
                                 {
                                     EntityTypeConstrain constrain=new EntityTypeConstrain(types.Select(item => item.Uri).First(),(count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
@@ -263,7 +260,7 @@ namespace RomanticWeb.Linq
             }
             else if ((typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType))&&(expression.Member is PropertyInfo))
             {
-                IPropertyMapping propertyMapping=_mappingsRepository.FindPropertyMapping((PropertyInfo)expression.Member);
+                IPropertyMapping propertyMapping=_entityContext.Mappings.FindPropertyMapping((PropertyInfo)expression.Member);
                 Remotion.Linq.Clauses.FromClauseBase target=GetMemberTarget(expression);
                 if ((propertyMapping!=null)&&(target!=null))
                 {
@@ -312,7 +309,7 @@ namespace RomanticWeb.Linq
         protected override System.Linq.Expressions.Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
             Remotion.Linq.Clauses.FromClauseBase sourceExpression=(Remotion.Linq.Clauses.FromClauseBase)((QuerySourceReferenceExpression)expression.QueryModel.SelectClause.Selector).ReferencedQuerySource;
-            EntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
+            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
             if (entityAccessor!=null)
             {
                 Query query=_query.CreateSubQuery(entityAccessor.About);
@@ -321,7 +318,7 @@ namespace RomanticWeb.Linq
                     query.Elements.Add(entityAccessor);
                 }
 
-                EntityQueryModelVisitor queryModelVisitor=new EntityQueryModelVisitor(query,_mappingsRepository,_baseUriSelectionPolicy);
+                EntityQueryModelVisitor queryModelVisitor=new EntityQueryModelVisitor(query,_entityContext);
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
                 HandleComponent(queryModelVisitor.Result);
                 CleanupComponent(_lastComponent);
@@ -347,7 +344,7 @@ namespace RomanticWeb.Linq
                 HandleComponent(_query.Subject);
                 BinaryOperator binaryOperator=((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
                 Filter filter=new Filter(binaryOperator);
-                EntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
+                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
                 if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
                 {
                     _query.Elements.Add(entityAccessor);
@@ -370,13 +367,13 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected virtual System.Linq.Expressions.Expression VisitEntityProperty(EntityPropertyExpression expression)
         {
-            EntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
+            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
             if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
             {
                 _query.Elements.Add(entityAccessor);
             }
 
-            Identifier memberIdentifier=(_query.FindAllComponents<EntityAccessor>()
+            Identifier memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
                 .Where(item => item.SourceExpression.FromExpression==expression.Expression)
                 .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name.CamelCase())));
             EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
@@ -395,11 +392,11 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected override System.Linq.Expressions.Expression VisitTypeBinaryExpression(System.Linq.Expressions.TypeBinaryExpression expression)
         {
-            var classMappings=_mappingsRepository.FindClassMapping(expression.TypeOperand);
+            var classMappings=_entityContext.Mappings.FindClassMapping(expression.TypeOperand);
             if (classMappings.Any())
             {
                 Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression.Expression);
-                EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression==sourceExpression).FirstOrDefault();
+                StrongEntityAccessor entityAccessor=_query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression==sourceExpression).FirstOrDefault();
                 if (entityAccessor==null)
                 {
                     entityAccessor=this.GetEntityAccessor(sourceExpression);
@@ -489,7 +486,7 @@ namespace RomanticWeb.Linq
                 {
                     PropertyInfo propertyInfo=(PropertyInfo)memberExpression.Member;
                     string itemName=propertyInfo.Name.CamelCase();
-                    EntityAccessor entityAccessor=_query.FindAllComponents<EntityAccessor>().Where(item => item.SourceExpression.FromExpression==memberExpression).FirstOrDefault();
+                    StrongEntityAccessor entityAccessor=_query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression.FromExpression==memberExpression).FirstOrDefault();
                     if (entityAccessor!=null)
                     {
                         itemName=_query.RetrieveIdentifier(entityAccessor.About.Name);
@@ -558,14 +555,14 @@ namespace RomanticWeb.Linq
 
         private object ResolveRelativeUriIfNecessery(object value)
         {
-            if ((value!=null)&&(_baseUriSelectionPolicy!=null))
+            if ((value!=null)&&(_entityContext.BaseUriSelector!=null))
             {
                 if (value is Uri)
                 {
                     Uri uri=(Uri)value;
                     if (!uri.IsAbsoluteUri)
                     {
-                        value=new Uri(_baseUriSelectionPolicy.SelectBaseUri(new EntityId(uri)),uri);
+                        value=new Uri(_entityContext.BaseUriSelector.SelectBaseUri(new EntityId(uri)),uri);
                     }
                 }
                 else if (value is EntityId)
@@ -573,7 +570,7 @@ namespace RomanticWeb.Linq
                     EntityId entityId=(EntityId)value;
                     if (!entityId.Uri.IsAbsoluteUri)
                     {
-                        value=entityId.MakeAbsolute(_baseUriSelectionPolicy.SelectBaseUri(entityId));
+                        value=entityId.MakeAbsolute(_entityContext.BaseUriSelector.SelectBaseUri(entityId));
                     }
                 }
             }

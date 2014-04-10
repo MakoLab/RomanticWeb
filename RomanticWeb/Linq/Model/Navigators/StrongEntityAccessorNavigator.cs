@@ -2,20 +2,20 @@
 
 namespace RomanticWeb.Linq.Model.Navigators
 {
-    /// <summary>Navigates entity accessor.</summary>
-    internal class EntityAccessorNavigator:QueryComponentNavigatorBase
+    /// <summary>Navigates strong (with graph) entity accessor.</summary>
+    internal class StrongEntityAccessorNavigator:QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated entity accessor.</summary>
         /// <param name="entityAccessor">Nagivated entity accessor.</param>
-        internal EntityAccessorNavigator(EntityAccessor entityAccessor):base(entityAccessor)
+        internal StrongEntityAccessorNavigator(StrongEntityAccessor entityAccessor):base(entityAccessor)
         {
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a navigated component.</summary>
-        public EntityAccessor NavigatedComponent { get { return (EntityAccessor)((IQueryComponentNavigator)this).NavigatedComponent; } }
+        public StrongEntityAccessor NavigatedComponent { get { return (StrongEntityAccessor)((IQueryComponentNavigator)this).NavigatedComponent; } }
         #endregion
 
         #region Public methods

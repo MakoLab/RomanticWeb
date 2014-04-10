@@ -171,7 +171,7 @@ namespace RomanticWeb.Linq.Model
             return System.String.Format(
                 "{3} SELECT {1} {0}WHERE {0}{{{0}{2}{0}}}",
                 Environment.NewLine,
-                System.String.Join(" ",_select.Select(item => (item is EntityAccessor?System.String.Format("?G{0} ?{0}",((EntityAccessor)item).About.Name):item.ToString()))),
+                System.String.Join(" ",_select.Select(item => (item is StrongEntityAccessor?System.String.Format("?G{0} ?{0}",((StrongEntityAccessor)item).About.Name):item.ToString()))),
                 System.String.Join(Environment.NewLine,_elements),
                 System.String.Join(Environment.NewLine,_prefixes));
         }

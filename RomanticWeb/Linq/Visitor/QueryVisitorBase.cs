@@ -15,7 +15,7 @@ namespace RomanticWeb.Linq.Visitor
         #region Public methods
         /// <summary>Visit a query component.</summary>
         /// <param name="component">Component to be visited.</param>
-        public void VisitComponent(IQueryComponent component)
+        public virtual void VisitComponent(IQueryComponent component)
         {
             Type componentType=GetType();
             MethodInfo componentMethodInfo=null;
@@ -85,9 +85,13 @@ namespace RomanticWeb.Linq.Visitor
         /// <param name="filter">Filter to be visited.</param>
         protected abstract void VisitFilter(Filter filter);
 
-        /// <summary>Visit an entity accessor.</summary>
-        /// <param name="entityAccessor">Entity accessor to be visited.</param>
-        protected abstract void VisitEntityAccessor(EntityAccessor entityAccessor);
+        /// <summary>Visit an unspecified entity accessor.</summary>
+        /// <param name="entityAccessor">Unspecified entity accessor to be visited.</param>
+        protected abstract void VisitUnspecifiedEntityAccessor(UnspecifiedEntityAccessor entityAccessor);
+
+        /// <summary>Visit a strong entity accessor.</summary>
+        /// <param name="entityAccessor">Strong entity accessor to be visited.</param>
+        protected abstract void VisitStrongEntityAccessor(StrongEntityAccessor entityAccessor);
 
         /// <summary>Visit an optional patterns.</summary>
         /// <param name="optionalPattern">Optional patterns to be visited.</param>

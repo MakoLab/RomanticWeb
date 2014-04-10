@@ -44,6 +44,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                                             new[]
                                                 {
                                                     typeof(IEntityContext),
+                                                    typeof(IEntity),
                                                     typeof(IRdfListNode),
                                                     typeof(OverridingGraphSelector)
                                                 });
@@ -60,7 +61,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
 
             var paremeters=parent.GraphSelectionOverride??new OverridingGraphSelector(parent.Id,parent.EntityMapping,property);
             ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(paremeters);
-            return ctor.Invoke(new object[] { context, head, paremeters });
+            return ctor.Invoke(new object[] { context, parent, head, paremeters });
         }
 
         /// <summary>
@@ -84,9 +85,9 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                 var genericArguments = property.ReturnType.GetGenericArguments();
                 var ctor =
                     typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                            .GetConstructor(new[] { typeof(IEntityContext), typeof(OverridingGraphSelector) });
+                                            .GetConstructor(new[] { typeof(IEntityContext), typeof(IEntity), typeof(OverridingGraphSelector) });
                 var paremeters = proxy.GraphSelectionOverride ?? new OverridingGraphSelector(proxy.Id, proxy.EntityMapping, property);
-                var rdfList = (IRdfListAdapter)ctor.Invoke(new object[] { context, paremeters });
+                var rdfList = (IRdfListAdapter)ctor.Invoke(new object[] { context, proxy, paremeters });
 
                 foreach (var item in (IEnumerable)value)
                 {

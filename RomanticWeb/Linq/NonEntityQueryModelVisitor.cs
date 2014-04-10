@@ -173,7 +173,7 @@ namespace RomanticWeb.Linq
 
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            _result=_visitor.Query.Elements.Where(item => item is EntityAccessor).First();
+            _result=_visitor.Query.Elements.Where(item => item is StrongEntityAccessor).First();
         }
 
         private void VisitContainsResultOperator(ContainsResultOperator containsResultOperator,Remotion.Linq.QueryModel queryModel,int index)

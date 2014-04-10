@@ -10,18 +10,13 @@ namespace RomanticWeb.Tests.Stubs
     {
         public Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
         {
-            var nonBlankId = entityId;
-            while (nonBlankId is BlankId)
+            EntityId nonBlankId=entityId;
+            if (nonBlankId is BlankId)
             {
-                nonBlankId = ((BlankId)entityId).RootEntityId;
-
-                if (nonBlankId == null)
-                {
-                    throw new ArgumentException("Blank node must have parent id", "entityId");
-                }
+                nonBlankId=((BlankId)nonBlankId).RootEntityId;
             }
 
-            return new Uri(nonBlankId.Uri.AbsoluteUri.Replace("magi", "data.magi"));
+            return new Uri(System.Text.RegularExpressions.Regex.Replace((nonBlankId!=null?nonBlankId.Uri.AbsoluteUri:((BlankId)entityId).Graph.AbsoluteUri),"((?<!data.)magi)","data.magi"));
         }
     }
 }

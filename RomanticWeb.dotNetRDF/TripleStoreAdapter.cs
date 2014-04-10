@@ -80,13 +80,15 @@ namespace RomanticWeb.DotNetRDF
         public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel)
         {
             SparqlQueryVariables variables;
-            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel, out variables));
+            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out variables));
             return from result in resultSet
-                   let id=new EntityId(((IUriNode)result[variables.Entity]).Uri)
-                   let s = result[variables.Subject].WrapNode(id)
-                   let p = result[variables.Predicate].WrapNode(id)
-                   let o = result[variables.Object].WrapNode(id)
-                   let g = result[variables.MetaGraph].WrapNode(id)
+                   let id=(result[variables.Entity] is IBlankNode?
+                    new BlankId(((IBlankNode)result[variables.Entity]).InternalID,null,((IUriNode)result[variables.MetaGraph]).Uri):
+                    new EntityId(((IUriNode)result[variables.Entity]).Uri))
+                   let s=result[variables.Subject].WrapNode(id)
+                   let p=result[variables.Predicate].WrapNode(id)
+                   let o=result[variables.Object].WrapNode(id)
+                   let g=result[variables.MetaGraph].WrapNode(id)
                    select new EntityQuad(id,s,p,o,g);
         }
 
@@ -146,7 +148,7 @@ namespace RomanticWeb.DotNetRDF
             var parser=new SparqlUpdateParser();
             foreach (var entityId in entitiesToDelete)
             {
-                var delete =new SparqlParameterizedString(Resource.AsString("Queries.DeleteEntity.ru"));
+                var delete=new SparqlParameterizedString(Resource.AsString("Queries.DeleteEntity.ru"));
                 delete.SetUri("entityId",entityId.Uri);
                 delete.SetUri("metaGraph",MetaGraphUri);
 
@@ -163,7 +165,7 @@ namespace RomanticWeb.DotNetRDF
             return GetSparqlQuery(sparqlQuery,out variables);
         }
 
-        private SparqlQuery GetSparqlQuery(Query sparqlQuery, out SparqlQueryVariables variables)
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out SparqlQueryVariables variables)
         {
             GenericSparqlQueryVisitor queryVisitor=new GenericSparqlQueryVisitor();
             queryVisitor.MetaGraphUri=MetaGraphUri;

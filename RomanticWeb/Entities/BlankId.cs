@@ -17,7 +17,11 @@ namespace RomanticWeb.Entities
         private readonly Uri _graph;
         private readonly EntityId _root;
 
-        internal BlankId(string identifier,EntityId root=null,Uri graphUri=null):this(CreateBlankNodeUri(identifier,graphUri),root)
+        /// <summary>Constructor for creating blank node idenifiers from scratch.</summary>
+        /// <param name="identifier">Internal identifier.</param>
+        /// <param name="root">Optional owning <see cref="IEntity" />'s identifier.</param>
+        /// <param name="graphUri">Optional graph Uri.</param>
+        public BlankId(string identifier,EntityId root=null,Uri graphUri=null):this(CreateBlankNodeUri(identifier,graphUri),root)
         {
             _identifier=identifier;
             _graph=graphUri;
@@ -36,6 +40,13 @@ namespace RomanticWeb.Entities
         /// <summary>Gets the identifier of a root non-blank entity.</summary>
         [AllowNull]
         public EntityId RootEntityId { get { return _root; } }
+
+        /// <summary>Gets the internal identifier of this blank node.</summary>
+        public string Identifier { get { return _identifier; } }
+
+        /// <summary>Gets the graph Uri of this blank node.</summary>
+        [AllowNull]
+        public Uri Graph { get { return _graph; } }
 
         internal static Uri CreateBlankNodeUri(string blankNodeId,Uri graphUri)
         {

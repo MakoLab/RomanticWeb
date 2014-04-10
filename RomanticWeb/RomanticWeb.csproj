@@ -128,6 +128,8 @@
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="Linq\IQueryVisitor.cs" />
+    <Compile Include="Linq\Model\Navigators\UnspecifiedEntityAccessorNavigator.cs" />
+    <Compile Include="Linq\Model\UnspecifiedEntityAccessor.cs" />
     <Compile Include="Linq\Model\EntityTypeConstrain.cs" />
     <Compile Include="Linq\Model\Navigators\EntityTypeConstrainNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\OptionalPatternNavigator.cs" />
@@ -148,7 +150,7 @@
     <Compile Include="Linq\IVariableNamingStrategy.cs" />
     <Compile Include="Linq\Model\Navigators\BinaryOperatorNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\CallNavigator.cs" />
-    <Compile Include="Linq\Model\Navigators\EntityAccessorNavigator.cs" />
+    <Compile Include="Linq\Model\Navigators\StrongEntityAccessorNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\FilterNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\EntityConstrainNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\QueryNavigator.cs" />
@@ -161,7 +163,7 @@
     <Compile Include="Linq\Model\Call.cs" />
     <Compile Include="Linq\Model\BinaryOperator.cs" />
     <Compile Include="Linq\Model\QueryElement.cs" />
-    <Compile Include="Linq\Model\EntityAccessor.cs" />
+    <Compile Include="Linq\Model\StrongEntityAccessor.cs" />
     <Compile Include="Linq\Model\Filter.cs" />
     <Compile Include="Linq\Model\Identifier.cs" />
     <Compile Include="Linq\Model\UnaryOperator.cs" />

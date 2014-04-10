@@ -94,6 +94,7 @@ namespace RomanticWeb
         public IMappingsRepository Mappings { get { return _mappings; } }
 
         /// <inheritdoc />
+        [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
         #endregion
 

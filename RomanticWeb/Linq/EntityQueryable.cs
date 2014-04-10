@@ -18,7 +18,7 @@ namespace RomanticWeb.Linq
         /// <param name="mappingsRepository">Repository of mappings to be used when resolving strong types to ontologies.</param>
         /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
         public EntityQueryable(IEntityContext entityContext,IEntitySource entitySource,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
-            :base(QueryParser.CreateDefault(),new EntityQueryExecutor(entityContext,entitySource,mappingsRepository,baseUriSelectionPolicy))
+            :base(QueryParser.CreateDefault(),new EntityQueryExecutor(entityContext,entitySource))
         {
         }
 

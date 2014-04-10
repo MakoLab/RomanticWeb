@@ -14,21 +14,23 @@ namespace RomanticWeb.Collections
     {
         private readonly IEntityContext _context;
         private readonly ISourceGraphSelectionOverride _namedGraphOverride;
+        private readonly IEntity _owner;
         private IRdfListNode _head;
         private IRdfListNode _tail;
 
-        public RdfListAdapter(IEntityContext context,IRdfListNode head,ISourceGraphSelectionOverride namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,IEntity owner,IRdfListNode head,ISourceGraphSelectionOverride namedGraphOverride)
         {
             Count=0;
             _context=context;
+            _owner=owner;
             _namedGraphOverride=namedGraphOverride;
             _head=_tail=head;
 
             Initialize();
         }
 
-        public RdfListAdapter(IEntityContext context,ISourceGraphSelectionOverride namedGraphOverride)
-            :this(context,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,IEntity owner,ISourceGraphSelectionOverride namedGraphOverride)
+            : this(context,owner,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
         {
         }
 
@@ -130,7 +132,7 @@ namespace RomanticWeb.Collections
             }
 
             DeleteNode(nodeWithPredecessor.Item1,nodeWithPredecessor.Item2);
-            
+
             return true;
         }
 
@@ -170,7 +172,7 @@ namespace RomanticWeb.Collections
             else
             {
                 IRdfListNode previousNode=GetNodeAt(index-1);
-                DeleteNode(previousNode.Rest, previousNode);
+                DeleteNode(previousNode.Rest,previousNode);
             }
         }
 
@@ -178,10 +180,10 @@ namespace RomanticWeb.Collections
         {
             if (previousNode!=null)
             {
-                previousNode.Rest = nodeToDelete.Rest;
-                if (nodeToDelete.Rest.Id == Vocabularies.Rdf.nil)
+                previousNode.Rest=nodeToDelete.Rest;
+                if (nodeToDelete.Rest.Id==Vocabularies.Rdf.nil)
                 {
-                    _tail = previousNode;
+                    _tail=previousNode;
                 }
             }
             else
@@ -231,9 +233,9 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode InsertNodeAfter(IRdfListNode existingNode,T item)
         {
-            var newNode = CreateNode();
+            var newNode=CreateNode();
             newNode.First=item;
-            newNode.Rest = existingNode.Rest;
+            newNode.Rest=existingNode.Rest;
             existingNode.Rest=newNode;
             Count++;
 
@@ -259,7 +261,7 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode CreateNode()
         {
-            var nodeId=new BlankId(_context.BlankIdGenerator.Generate());
+            var nodeId=_owner.CreateBlankId();
             var newNode=_context.Create<IRdfListNode>(nodeId);
             var proxy=newNode.UnwrapProxy() as IEntityProxy;
 
@@ -322,10 +324,10 @@ namespace RomanticWeb.Collections
                 }
                 else
                 {
-                    _currentNode = _currentNode.Rest;
+                    _currentNode=_currentNode.Rest;
                 }
 
-                if (_currentNode==null || _currentNode.Id == Vocabularies.Rdf.nil)
+                if (_currentNode==null||_currentNode.Id==Vocabularies.Rdf.nil)
                 {
                     return false;
                 }

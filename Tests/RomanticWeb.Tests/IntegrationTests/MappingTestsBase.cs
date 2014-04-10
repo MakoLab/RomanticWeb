@@ -235,7 +235,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Assert.That(Entity.FirstName, Is.EqualTo("Michał"));
-            Assert.That(EntityStore.Quads, Has.Count.EqualTo(4));
+            Assert.That(EntityStore.Quads, Has.Count.EqualTo(5));
         }
 
         [Test]

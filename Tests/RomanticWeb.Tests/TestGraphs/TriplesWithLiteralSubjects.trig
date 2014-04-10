@@ -1,13 +1,22 @@
 ﻿@base <http://magi/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
 @prefix dummy: <http://example.com> .
+
+<http://data.magi/addresses/Address>
+{
+	<addresses/Address>	a schema:PostalAddress ;
+						schema:addressLocality "Łódź" ;
+						schema:streetAddress "Demokratyczna 46" .
+}
 
 <http://data.magi/people/Tomasz>
 {
 	<people/Tomasz> a foaf:Person;
 					foaf:givenName "Tomasz" ;
 					foaf:familyName "Pluskiewicz" ;
-					dummy:test "Test" .
+					dummy:test "Test" ;
+					schema:address <addresses/Address> .
 }
 
 <http://data.magi/people/Gniewoslaw>
@@ -15,7 +24,12 @@
 	<people/Gniewoslaw> a foaf:Person;
 						foaf:givenName "Gniewosław" ;
 						foaf:familyName "Rzepka" ;
-						foaf:knows <people/Tomasz> .
+						foaf:knows <people/Tomasz> ;
+						schema:address [
+							a schema:PostalAddress ;
+							schema:addressLocality "Łódź" ;
+							schema:streetAddress "Rzgowska 30" ;
+						] .
 }
 
 <http://data.magi/people/Karol>
@@ -32,4 +46,5 @@
 	<http://data.magi/people/Karol> foaf:primaryTopic <people/Karol>.
 	<http://data.magi/people/Gniewoslaw> foaf:primaryTopic <people/Gniewoslaw>.
 	<http://data.magi/people/Tomasz> foaf:primaryTopic <people/Tomasz>.
+	<http://data.magi/addresses/Address> foaf:primaryTopic <addresses/Address>.
 }

@@ -143,6 +143,11 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool TrySetMember(SetMemberBinder binder,object value)
         {
+            if ((_entity.Id is BlankId)&&(((BlankId)_entity.Id).RootEntityId==null))
+            {
+                throw new InvalidOperationException(System.String.Format("Entity <'{0}'> is a blank node not attached to any non-blank node resource and is in a read-only mode.",_entity.Id));
+            }
+
             try
             {
                 _entity.EnsureIsInitialized();

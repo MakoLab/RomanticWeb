@@ -40,6 +40,8 @@ namespace RomanticWeb.Tests.Linq
             _entityContext=new Mock<IEntityContext>(MockBehavior.Strict);
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>(),false)).Returns((EntityId id,bool checkIfExists) => CreatePersonEntity(id));
             _entityContext.Setup(context => context.Store).Returns(_entityStore.Object);
+            _entityContext.SetupGet(context => context.Mappings).Returns(_mappings);
+            _entityContext.SetupGet(context => context.BaseUriSelector).Returns(_baseUriSelectionPolicy.Object);
 
             _persons=new EntityQueryable<IPerson>(_entityContext.Object,_entitySource.Object,_mappings,_baseUriSelectionPolicy.Object);
             _testQueries=GetTestQueries();

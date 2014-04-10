@@ -21,8 +21,8 @@ namespace RomanticWeb.Linq.Model
     #endregion
 
     /// <summary>Provides details about entity accessor.</summary>
-    [QueryComponentNavigator(typeof(EntityAccessorNavigator))]
-    public class EntityAccessor:QueryElement,ISelectableQueryComponent
+    [QueryComponentNavigator(typeof(StrongEntityAccessorNavigator))]
+    public class StrongEntityAccessor:QueryElement,ISelectableQueryComponent
     {
         #region Fields
         private Identifier _about;
@@ -34,7 +34,7 @@ namespace RomanticWeb.Linq.Model
         #region Constructors
         /// <summary>Default constructor with aboutness assuming that a source is a variable.</summary>
         /// <param name="about">Points to the primary topic of given entity accessor.</param>
-        internal EntityAccessor(Identifier about):this()
+        internal StrongEntityAccessor(Identifier about):this()
         {
             About=about;
             _source=SourceTypes.Variable;
@@ -43,14 +43,14 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Default constructor with aboutness and its source passed.</summary>
         /// <param name="about">Specifies an entity identifier given accesor uses.</param>
         /// <param name="sourceExpression">Source of this entity accessor.</param>
-        internal EntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression):this()
+        internal StrongEntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression):this()
         {
             About=about;
             _source=SourceTypes.Member;
             _sourceExpression=sourceExpression;
         }
 
-        private EntityAccessor():base()
+        private StrongEntityAccessor():base()
         {
             ObservableCollection<QueryElement> elements=new ObservableCollection<QueryElement>();
             elements.CollectionChanged+=OnElementsCollectionChanged;
@@ -121,7 +121,7 @@ namespace RomanticWeb.Linq.Model
                 "GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}",
                 Environment.NewLine,
                 (_about!=null?_about.ToString():System.String.Empty),
-                System.String.Join(Environment.NewLine,_elements.Select(item => (item is EntityAccessor?(_about!=null?item.ToString().Replace("?s ",_about.ToString()):item.ToString()):item.ToString()))));
+                System.String.Join(Environment.NewLine,_elements.Select(item => (item is StrongEntityAccessor?(_about!=null?item.ToString().Replace("?s ",_about.ToString()):item.ToString()):item.ToString()))));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -131,10 +131,10 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(EntityAccessor))&&
-                (_about!=null?_about.Equals(((EntityAccessor)operand)._about):Object.Equals(((EntityAccessor)operand)._about,null))&&
-                (_sourceExpression!=null?_sourceExpression.Equals(((EntityAccessor)operand)._sourceExpression):Object.Equals(((EntityAccessor)operand)._sourceExpression,null))&&
-                (_source==((EntityAccessor)operand)._source);
+            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(StrongEntityAccessor))&&
+                (_about!=null?_about.Equals(((StrongEntityAccessor)operand)._about):Object.Equals(((StrongEntityAccessor)operand)._about,null))&&
+                (_sourceExpression!=null?_sourceExpression.Equals(((StrongEntityAccessor)operand)._sourceExpression):Object.Equals(((StrongEntityAccessor)operand)._sourceExpression,null))&&
+                (_source==((StrongEntityAccessor)operand)._source);
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -142,7 +142,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(EntityAccessor).FullName.GetHashCode()^(_about!=null?_about.GetHashCode():0)^(_sourceExpression!=null?_sourceExpression.GetHashCode():0)^_source.GetHashCode();
+            return typeof(StrongEntityAccessor).FullName.GetHashCode()^(_about!=null?_about.GetHashCode():0)^(_sourceExpression!=null?_sourceExpression.GetHashCode():0)^_source.GetHashCode();
         }
         #endregion
 

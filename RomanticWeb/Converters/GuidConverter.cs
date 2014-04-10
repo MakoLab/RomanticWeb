@@ -3,10 +3,8 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
 {
-    /// <summary>
-    /// Converter for GUID literal nodes
-    /// </summary>
-    public class GuidConverter : INodeConverter
+    /// <summary>Converter for GUID literal nodes.</summary>
+    public class GuidConverter:INodeConverter
     {
         /// <inheritdoc />
         public object Convert(Node objectNode,IEntityContext context)
@@ -14,6 +12,7 @@ namespace RomanticWeb.Converters
             return Guid.Parse(objectNode.Literal);
         }
 
+        /// <inheritdoc />
         public Node ConvertBack(object value)
         {
             throw new NotImplementedException();

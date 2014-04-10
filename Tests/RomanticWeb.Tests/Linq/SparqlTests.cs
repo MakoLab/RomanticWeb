@@ -25,6 +25,13 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
         private TestCache _typeCache;
 
+        public interface IAddress:IEntity
+        {
+            string City { get; set; }
+
+            string Street { get; set; }
+        }
+
         public interface IPerson:IEntity
         {
             string FirstName { get; }
@@ -32,6 +39,8 @@ namespace RomanticWeb.Tests.Linq
             string Surname { get; }
 
             List<IPerson> Knows { get; }
+
+            IAddress Address { get; }
         }
 
         [SetUp]
@@ -45,7 +54,7 @@ namespace RomanticWeb.Tests.Linq
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
             
             var ontologyProvider=new CompoundOntologyProvider(new DefaultOntologiesProvider());
-            _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap());
+            _mappingsRepository=new TestMappingsRepository(new TestPersonMap(),new TestTypedEntityMap(),new TestAdressMap());
             var mappingContext=new MappingContext(ontologyProvider,EntityContextFactory.CreateDefaultConventions());
             _typeCache=new TestCache();
             _entityContext=new EntityContext(
@@ -152,32 +161,84 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        public void Selecting_entitys_literal_property()
+        {
+            string firstName=(from resources in _entityContext.AsQueryable<IPerson>()
+                              where resources.Id==(EntityId)"http://magi/people/Gniewoslaw"
+                              select resources.FirstName).FirstOrDefault();
+            Assert.That(firstName,Is.EqualTo("Gniewosław"));
+        }
+
+        [Test]
+        public void Selecting_entitys_blank_node_IEntity_property()
+        {
+            IAddress address=(from resources in _entityContext.AsQueryable<IPerson>()
+                              where resources.Id==(EntityId)"http://magi/people/Gniewoslaw"
+                              select resources.Address).FirstOrDefault();
+            Assert.That(address,Is.Not.Null);
+            Assert.That(address.City,Is.EqualTo("Łódź"));
+            Assert.That(address.Street,Is.EqualTo("Rzgowska 30"));
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Selected_entitys_blank_node_IEntity_property_should_be_read_only()
+        {
+            IAddress address=(from resources in _entityContext.AsQueryable<IPerson>()
+                              where resources.Id==(EntityId)"http://magi/people/Gniewoslaw"
+                              select resources.Address).FirstOrDefault();
+            address.Street="test";
+        }
+
+        [Test]
+        public void Selecting_entitys_IEntity_property()
+        {
+            IAddress address=(from resources in _entityContext.AsQueryable<IPerson>()
+                              where resources.Id==(EntityId)"http://magi/people/Tomasz"
+                              select resources.Address).FirstOrDefault();
+            Assert.That(address,Is.Not.Null);
+            Assert.That(address.City,Is.EqualTo("Łódź"));
+            Assert.That(address.Street,Is.EqualTo("Demokratyczna 46"));
+        }
+
+        [Test]
         public void Selecting_generic_entities_by_relative_child_EntityId()
         {
             // given
-            var relativeId = new EntityId("/people/Tomasz");
+            var relativeId=new EntityId("/people/Tomasz");
 
             // when
-            var tomasz = (from person in _entityContext.AsQueryable<IPerson>()
-                          where person.Id == relativeId
+            var tomasz=(from person in _entityContext.AsQueryable<IPerson>()
+                        where person.Id==relativeId
                           select person).SingleOrDefault();
 
             // then
             tomasz.Should().NotBeNull();
         }
 
-        private class TestPersonMap : TestEntityMapping<IPerson>
+        private class TestPersonMap:TestEntityMapping<IPerson>
         {
             public TestPersonMap()
             {
                 Class(Vocabularies.Foaf.Person);
-                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>());
-                Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
-                Property("Surname", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
+                Collection("Knows",Vocabularies.Foaf.knows,typeof(List<IPerson>),new AsEntityConverter<IPerson>());
+                Property("FirstName",Vocabularies.Foaf.givenName,typeof(string),new StringConverter());
+                Property("Surname",Vocabularies.Foaf.familyName,typeof(string),new StringConverter());
+                Property("Address",new Uri("http://schema.org/address"),typeof(IAddress),new AsEntityConverter<IAddress>());
             }
         }
 
-        private class TestTypedEntityMap : TestEntityMapping<ITypedEntity>
+        private class TestAdressMap:TestEntityMapping<IAddress>
+        {
+            public TestAdressMap()
+            {
+                Class(new Uri("http://schema.org/PostalAddress"));
+                Property("City",new Uri("http://schema.org/addressLocality"),typeof(string),new StringConverter());
+                Property("Street",new Uri("http://schema.org/streetAddress"),typeof(string),new StringConverter());
+            }
+        }
+
+        private class TestTypedEntityMap:TestEntityMapping<ITypedEntity>
         {
             public TestTypedEntityMap()
             {

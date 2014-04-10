@@ -19,7 +19,6 @@ namespace RomanticWeb.Linq
         private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
-        private readonly IMappingsRepository _mappingsRepository;
         private readonly EntityQueryModelVisitor _modelVisitor;
         #endregion
 
@@ -27,14 +26,11 @@ namespace RomanticWeb.Linq
         /// <summary>Creates an instance of the query executor aware of the entities queried.</summary>
         /// <param name="entityContext">Entity factory to be used when creating objects.</param>
         /// <param name="entitySource">Entity source.</param>
-        /// <param name="mappingsRepository">Mappings repository to resolve strongly typed properties and types.</param>
-        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
-        public EntityQueryExecutor(IEntityContext entityContext,IEntitySource entitySource,IMappingsRepository mappingsRepository,[AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        public EntityQueryExecutor(IEntityContext entityContext,IEntitySource entitySource)
         {
             _entityContext=entityContext;
             _entitySource=entitySource;
-            _mappingsRepository=mappingsRepository;
-            _modelVisitor=new EntityQueryModelVisitor(_mappingsRepository,baseUriSelectionPolicy);
+            _modelVisitor=new EntityQueryModelVisitor(entityContext);
         }
         #endregion
 
@@ -77,20 +73,30 @@ namespace RomanticWeb.Linq
             }
 
             RomanticWeb.Linq.Model.Query sparqlQuery=VisitQueryModel(queryModel);
-            var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
-            ISet<EntityId> ids=new HashSet<EntityId>();
-            var groupedTriples=from triple in _entitySource.ExecuteEntityQuery(sparqlQuery)
-                               group triple by new { triple.EntityId } into tripleGroup
-                               select tripleGroup;
-
-            foreach (var triples in groupedTriples)
+            IEnumerable<RomanticWeb.Model.EntityQuad> quads=_entitySource.ExecuteEntityQuery(sparqlQuery);
+            IEnumerable<T> result=null;
+            if (!typeof(IEntity).IsAssignableFrom(typeof(T)))
             {
-                ids.Add(triples.Key.EntityId);
-                _entityContext.Store.AssertEntity(triples.Key.EntityId,triples);
+                result=quads.Select(triple => (T)_modelVisitor.PropertyMapping.Converter.Convert(triple.Object,_entityContext));
+            }
+            else
+            {
+                ISet<EntityId> ids=new HashSet<EntityId>();
+                    var groupedTriples=from triple in quads
+                                   group triple by new { triple.EntityId } into tripleGroup
+                                   select tripleGroup;
+
+                foreach (var triples in groupedTriples)
+                {
+                    ids.Add(triples.Key.EntityId);
+                    _entityContext.Store.AssertEntity(triples.Key.EntityId,triples);
+                }
+
+                var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
+                result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
             }
 
-            IEnumerable<T> result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
-            foreach (var resultOperator in resultOperators.OfType<CastResultOperator>())
+            foreach (CastResultOperator resultOperator in resultOperators.OfType<CastResultOperator>())
             {
                 var castMethod=EnumerableCastMethod.MakeGenericMethod(resultOperator.CastItemType);
                 result=(IEnumerable<T>)castMethod.Invoke(null,new object[] { result });

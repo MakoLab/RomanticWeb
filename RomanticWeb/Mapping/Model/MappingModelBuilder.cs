@@ -48,6 +48,7 @@ namespace RomanticWeb.Mapping.Model
         private PropertyMapping BuildPropertyMapping(IPropertyMappingProvider provider)
         {
             var propertyMapping=new PropertyMapping(
+                provider.PropertyInfo.DeclaringType,
                 provider.PropertyInfo.PropertyType,
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider));
@@ -58,6 +59,7 @@ namespace RomanticWeb.Mapping.Model
         private PropertyMapping BuildDictionaryMapping(IDictionaryMappingProvider provider)
         {
             var dictionaryMapping=new DictionaryMapping(
+                provider.PropertyInfo.DeclaringType,
                 provider.PropertyInfo.PropertyType,
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider),
@@ -70,6 +72,7 @@ namespace RomanticWeb.Mapping.Model
         private CollectionMapping BuildCollectionMapping(ICollectionMappingProvider provider)
         {
             var collectionMapping=new CollectionMapping(
+                provider.PropertyInfo.DeclaringType,
                 provider.PropertyInfo.PropertyType,
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider),

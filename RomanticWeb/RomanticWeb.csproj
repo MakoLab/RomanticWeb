@@ -135,7 +135,9 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\IQueryVisitor.cs" />
+    <Compile Include="Linq\IVariableNamingConvention.cs" />
     <Compile Include="Linq\Model\Navigators\UnspecifiedEntityAccessorNavigator.cs" />
     <Compile Include="Linq\Model\UnspecifiedEntityAccessor.cs" />
     <Compile Include="Linq\Model\EntityTypeConstrain.cs" />

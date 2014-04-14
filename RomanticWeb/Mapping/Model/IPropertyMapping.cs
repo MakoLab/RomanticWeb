@@ -30,6 +30,11 @@ namespace RomanticWeb.Mapping.Model
         Type ReturnType { get; }
 
         /// <summary>
+        /// Gets the property's declaring type
+        /// </summary>
+        Type DeclaringType { get; }
+
+        /// <summary>
         /// Gets the converter.
         /// </summary>
         INodeConverter Converter { get; }

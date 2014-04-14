@@ -55,7 +55,7 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _typesMapping=new TestPropertyMapping(typeof(IEnumerable<EntityId>),"Types",Vocabularies.Rdf.type);
+            _typesMapping=new TestPropertyMapping(typeof(ITypedEntity),typeof(IEnumerable<EntityId>),"Types",Vocabularies.Rdf.type);
             _factory = new Mock<IEntityContextFactory>();
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
@@ -337,7 +337,7 @@ namespace RomanticWeb.Tests
 
         private static PropertyMapping GetMapping(string propertyName)
         {
-            return new TestPropertyMapping(typeof(int),propertyName,new Uri("http://unittest/"+propertyName));
+            return new TestPropertyMapping(typeof(IEntity),typeof(int),propertyName,new Uri("http://unittest/"+propertyName));
         }
     }
 }

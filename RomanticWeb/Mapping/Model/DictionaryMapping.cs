@@ -9,8 +9,7 @@ namespace RomanticWeb.Mapping.Model
     [DebuggerDisplay("Dictionary {Name}")]
     internal class DictionaryMapping:PropertyMapping,IDictionaryMapping
     {
-        public DictionaryMapping(Type returnType,string name,Uri predicateUri,Uri keyPredicate,Uri valuePredicate)
-            :base(returnType,name,predicateUri)
+        public DictionaryMapping(Type declaringType,Type returnType,string name,Uri predicateUri,Uri keyPredicate,Uri valuePredicate): base(declaringType,returnType,name,predicateUri)
         {
             ValuePredicate=valuePredicate;
             KeyPredicate=keyPredicate;

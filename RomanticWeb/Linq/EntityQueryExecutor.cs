@@ -66,8 +66,8 @@ namespace RomanticWeb.Linq
         /// <returns>Enumeration of resulting entities matching given query.</returns>
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            IEnumerable<ResultOperatorBase> resultOperators=queryModel.ResultOperators.Where(item => item is CastResultOperator).ToArray();
-            foreach (ResultOperatorBase resultOperator in resultOperators)
+            IEnumerable<CastResultOperator> resultOperators=queryModel.ResultOperators.OfType<CastResultOperator>().ToArray();
+            foreach (CastResultOperator resultOperator in resultOperators)
             {
                 queryModel.ResultOperators.Remove(resultOperator);
             }
@@ -96,7 +96,7 @@ namespace RomanticWeb.Linq
                 result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
             }
 
-            foreach (CastResultOperator resultOperator in resultOperators.OfType<CastResultOperator>())
+            foreach (CastResultOperator resultOperator in resultOperators)
             {
                 var castMethod=EnumerableCastMethod.MakeGenericMethod(resultOperator.CastItemType);
                 result=(IEnumerable<T>)castMethod.Invoke(null,new object[] { result });

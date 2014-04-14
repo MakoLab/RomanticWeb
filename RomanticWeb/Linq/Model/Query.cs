@@ -33,10 +33,12 @@ namespace RomanticWeb.Linq.Model
         private IList<ISelectableQueryComponent> _select;
         private IList<QueryElement> _elements;
         private IVariableNamingStrategy _variableNamingStrategy;
+        private IVariableNamingConvention _variableNamingConvention;
         private Identifier _subject;
         private QueryForms _queryForm;
         private int _offset=-1;
         private int _limit=-1;
+        private IDictionary<IExpression,bool> _orderBy=new Dictionary<IExpression,bool>();
         #endregion
 
         #region Constructors
@@ -60,6 +62,7 @@ namespace RomanticWeb.Linq.Model
             elements.CollectionChanged+=OnCollectionChanged;
             _elements=elements;
             _variableNamingStrategy=new UniqueVariableNamingStrategy(this);
+            _variableNamingConvention=new CamelCaseVariableNamingConvention();
             if ((_subject=subject)!=null)
             {
                 _subject.OwnerQuery=this;
@@ -72,6 +75,7 @@ namespace RomanticWeb.Linq.Model
         internal Query(Identifier subject,IVariableNamingStrategy variableNamingStrategy):this(subject)
         {
             _variableNamingStrategy=variableNamingStrategy;
+            _variableNamingConvention=new CamelCaseVariableNamingConvention();
         }
         #endregion
 
@@ -96,6 +100,10 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Gets or sets the limit.</summary>
         public int Limit { get { return _limit; } set { _limit=(value>=0?value:-1); } }
+
+        /// <summary>Gets a map of order by clauses.</summary>
+        /// <remarks>Key is the expression on which the sorting should be performed and the value determines the direction, where <b>true</b> means descending and <b>false</b> is for ascending (default).</remarks>
+        public IDictionary<IExpression,bool> OrderBy { get { return _orderBy; } }
 
         /// <summary>Gets an owning query.</summary>
         internal override Query OwnerQuery
@@ -153,7 +161,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>Variable name with unique name.</returns>
         public string CreateVariableName(string identifier)
         {
-            return _variableNamingStrategy.GetNameForIdentifier(identifier);
+            return _variableNamingStrategy.GetNameForIdentifier(CreateIdentifier(identifier));
         }
 
         /// <summary>Retrieves an identifier from a passed variable name.</summary>
@@ -162,6 +170,14 @@ namespace RomanticWeb.Linq.Model
         public string RetrieveIdentifier(string variableName)
         {
             return _variableNamingStrategy.ResolveNameToIdentifier(variableName);
+        }
+
+        /// <summary>Creates an identifier from given name.</summary>
+        /// <param name="name">Name.</param>
+        /// <returns>Identifier created from given name.</returns>
+        public string CreateIdentifier(string name)
+        {
+            return _variableNamingConvention.GetIdentifierForName(name);
         }
 
         /// <summary>Creates a string representation of this query.</summary>

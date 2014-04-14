@@ -13,6 +13,7 @@ using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Linq
 {
@@ -166,65 +167,29 @@ namespace RomanticWeb.Linq
         protected override System.Linq.Expressions.Expression VisitMethodCallExpression(System.Linq.Expressions.MethodCallExpression expression)
         {
             Call call=null;
+            bool isEntityExtensionMethod=((expression.Method.DeclaringType==typeof(EntityExtensions))&&(expression.Arguments.Count==2)&&
+                (expression.Arguments.Count==expression.Method.GetParameters().Length)&&(expression.Arguments[1] is System.Linq.Expressions.ConstantExpression));
             switch (expression.Method.Name)
             {
                 case "StartsWith":
                 case "EndsWith":
                 case "Contains":
                 case "Substring":
-                    if (expression.Method.DeclaringType==typeof(string))
-                    {
-                        call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name));
-                    }
-                    else
-                    {
-                        goto default;
-                    }
+                    if (expression.Method.DeclaringType==typeof(string)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name)); }
+                    else { goto default; }
 
                     break;
                 case "IsMatch":
-                    if (expression.Method.DeclaringType==typeof(Regex))
-                    {
-                        call=new Call(MethodNames.Regex);
-                    }
-                    else
-                    {
-                        goto default;
-                    }
+                    if (expression.Method.DeclaringType==typeof(Regex)) { call=new Call(MethodNames.Regex); }
+                    else { goto default; }
 
                     break;
                 case "Is":
-                    if ((expression.Method.DeclaringType==typeof(EntityExtensions))&&(expression.Arguments.Count==2)&&(expression.Arguments.Count==expression.Method.GetParameters().Length)&&
-                        (expression.Arguments[1] is System.Linq.Expressions.ConstantExpression))
-                    {
-                        object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
-                        if ((objectValue!=null)&&(typeof(IEnumerable).IsAssignableFrom(objectValue.GetType()))&&(objectValue.GetType().FindItemType()==typeof(EntityId)))
-                        {
-                            IEnumerable<EntityId> types=(IEnumerable<EntityId>)objectValue;
-                            int count=types.Count();
-                            if (count>0)
-                            {
-                                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
-                                if (entityAccessor!=null)
-                                {
-                                    EntityTypeConstrain constrain=new EntityTypeConstrain(types.Select(item => item.Uri).First(),(count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
-                                    entityAccessor.Elements.Add(constrain);
-                                    _lastComponent=constrain;
-                                    return expression;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            return base.VisitMethodCallExpression(expression);
-                        }
-                    }
-                    else
-                    {
-                        goto default;
-                    }
-
-                    break;
+                    if (isEntityExtensionMethod) { return VisitIsMethodCall(expression); }
+                    else { goto default; }
+                case "Predicate":
+                    if (isEntityExtensionMethod) { return VisitPredicateMethodCall(expression); }
+                    else { goto default; }
                 default:
                     return base.VisitMethodCallExpression(expression);
             }
@@ -238,6 +203,94 @@ namespace RomanticWeb.Linq
 
             _lastComponent=call;
             return expression;
+        }
+
+        /// <summary>Visits an <see cref="EntityExtensions.Is()" /> method call.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Returns visited expression.</returns>
+        protected virtual System.Linq.Expressions.Expression VisitIsMethodCall(System.Linq.Expressions.MethodCallExpression expression)
+        {
+            object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
+            if ((objectValue!=null)&&(typeof(IEnumerable).IsAssignableFrom(objectValue.GetType()))&&(objectValue.GetType().FindItemType()==typeof(EntityId)))
+            {
+                IEnumerable<EntityId> types=(IEnumerable<EntityId>)objectValue;
+                int count=types.Count();
+                if (count>0)
+                {
+                    StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                    if (entityAccessor!=null)
+                    {
+                        EntityTypeConstrain constrain=new EntityTypeConstrain(types.Select(item => item.Uri).First(),(count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
+                        entityAccessor.Elements.Add(constrain);
+                        _lastComponent=constrain;
+                    }
+                }
+
+                return expression;
+            }
+            else
+            {
+                return base.VisitMethodCallExpression(expression);
+            }
+        }
+
+        /// <summary>Visits an <see cref="EntityExtensions.Predicate()" /> method call.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Returns visited expression.</returns>
+        protected virtual System.Linq.Expressions.Expression VisitPredicateMethodCall(System.Linq.Expressions.MethodCallExpression expression)
+        {
+            object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
+            if ((objectValue!=null)&&(objectValue is Uri))
+            {
+                Uri predicate=(Uri)objectValue;
+                if (!predicate.IsAbsoluteUri)
+                {
+                    predicate=new Uri(_entityContext.BaseUriSelector.SelectBaseUri(new EntityId(predicate)),predicate.ToString());
+                }
+
+                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                if (entityAccessor!=null)
+                {
+                    Type type=null;
+                    string name=null;
+                    if (predicate==Rdf.subject)
+                    {
+                        name="Id";
+                        type=typeof(IEntity);
+                    }
+                    else
+                    {
+                        IPropertyMapping propertyMapping=_entityContext.Mappings.MappingFor(entityAccessor.SourceExpression.ItemType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri==predicate.AbsoluteUri);
+
+                        if (propertyMapping==null)
+                        {
+                            ExceptionHelper.ThrowMappingException(predicate);
+                        }
+
+                        if (propertyMapping.DeclaringType!=entityAccessor.SourceExpression.ItemType)
+                        {
+                            propertyMapping=_entityContext.Mappings.MappingFor(propertyMapping.DeclaringType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri==predicate.AbsoluteUri);
+
+                            if (propertyMapping==null)
+                            {
+                                ExceptionHelper.ThrowMappingException(predicate);
+                            }
+                        }
+
+                        type=propertyMapping.EntityMapping.EntityType;
+                        name=propertyMapping.Name;
+                    }
+
+                    System.Linq.Expressions.MemberExpression propertyExpression=System.Linq.Expressions.Expression.Property(expression.Arguments[0],type,name);
+                    return VisitMemberExpression(propertyExpression);
+                }
+
+                return expression;
+            }
+            else
+            {
+                return base.VisitMethodCallExpression(expression);
+            }
         }
 
         /// <summary>Visits a member expression.</summary>
@@ -355,7 +408,7 @@ namespace RomanticWeb.Linq
             }
             else
             {
-                return base.VisitMemberExpression(expression.Expression);
+                _lastComponent=this.GetEntityAccessor(expression.Target).About;
             }
 
             return expression;
@@ -374,7 +427,7 @@ namespace RomanticWeb.Linq
 
             Identifier memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
                 .Where(item => item.SourceExpression.FromExpression==expression.Expression)
-                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name.CamelCase())));
+                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name)));
             EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
             if (!entityAccessor.Elements.Contains(constrain))
             {

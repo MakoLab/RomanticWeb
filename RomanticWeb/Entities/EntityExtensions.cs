@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
+using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
@@ -105,9 +108,41 @@ namespace RomanticWeb.Entities
             return ((entity!=null)&&(types!=null)&&entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any());
         }
 
-        /// <summary>
-        /// Forces lazy initialization of <paramref name="entity"/>
-        /// </summary>
+        /// <summary>Gets an enumeration of all entity predicats that are currently set.</summary>
+        /// <param name="entity">Entity for which predicates will be gathered.</param>
+        /// <returns>Enumeration of predicate Uri's.</returns>
+        public static IEnumerable<Uri> Predicates(this IEntity entity)
+        {
+            IEnumerable<Uri> result=null;
+            if (entity!=null)
+            {
+                result=entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Subject.Uri);
+            }
+
+            return result;
+        }
+
+        /// <summary>Gets the value of the given predicate.</summary>
+        /// <param name="entity">Entity for which the value should be get.</param>
+        /// <param name="predicate">Uri of the predicate the value should be get.</param>
+        /// <remarks>This method returns strongly typed values as defined in the mappings.</remarks>
+        /// <returns>Value of the given predicate or <b>null</b>.</returns>
+        public static object Predicate(this IEntity entity,Uri predicate)
+        {
+            object result=null;
+            if ((entity!=null)&&(predicate!=null))
+            {
+                IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
+                if (propertyMapping!=null)
+                {
+                    result=Impromptu.InvokeGet(entity,propertyMapping.Name);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>Forces lazy initialization of <paramref name="entity"/>.</summary>
         public static void ForceInitialize(this IEntity entity)
         {
             entity=UnwrapProxy(entity);
@@ -140,6 +175,13 @@ namespace RomanticWeb.Entities
             }
 
             return entity;
+        }
+
+        private static IEnumerable<EntityQuad> WhereQuadDescribesEntity(this IEnumerable<EntityQuad> quads,IEntity entity)
+        {
+            return quads.Where(item => (item.EntityId==entity.Id)&&
+                (((item.Subject.IsUri)&&(!(entity.Id is BlankId))&&(item.Subject.Uri.AbsoluteUri==entity.Id.Uri.AbsoluteUri))||
+                ((item.Subject.IsBlank)&&(entity.Id is BlankId)&&(item.Subject.BlankNode==((BlankId)entity.Id).Identifier))));
         }
     }
 }

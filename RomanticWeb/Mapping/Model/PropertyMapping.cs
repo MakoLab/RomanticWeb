@@ -11,8 +11,9 @@ namespace RomanticWeb.Mapping.Model
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     internal class PropertyMapping:IPropertyMapping
     {
-        public PropertyMapping(Type returnType,string name,Uri predicateUri)
+        public PropertyMapping(Type declaringType,Type returnType,string name,Uri predicateUri)
         {
+            DeclaringType=declaringType;
             ReturnType=returnType;
             Name=name;
             Uri=predicateUri;
@@ -23,6 +24,8 @@ namespace RomanticWeb.Mapping.Model
         public Uri Uri { get; private set; }
 
         public string Name { get; private set; }
+
+        public Type DeclaringType { get; private set; }
 
         public Type ReturnType { get; private set; }
 

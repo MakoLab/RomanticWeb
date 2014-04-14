@@ -118,6 +118,7 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="Linq\SparqlResultModifiersTests.cs" />
     <Compile Include="Mapping\ClassMappingTests.cs" />
     <Compile Include="RdfTypeCacheTests.cs" />
     <Compile Include="IntegrationTests\InMemory\LoadingTests.cs" />
@@ -3139,6 +3140,7 @@
     <EmbeddedResource Include="TestGraphs\RdfLists.trig" />
     <EmbeddedResource Include="TestGraphs\EntityWithManyTypes.trig" />
     <EmbeddedResource Include="TestGraphs\InheritingEntities.trig" />
+    <EmbeddedResource Include="TestGraphs\SuperTripleOperations.trig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RomanticWeb.JsonLd\RomanticWeb.JsonLd.csproj">

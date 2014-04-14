@@ -222,6 +222,27 @@ namespace RomanticWeb.Linq
             }
         }
 
+        /// <summary>Visits order by clauses.</summary>
+        /// <param name="orderings">Order by clauses to be visited.</param>
+        /// <param name="queryModel">Query model containing given body clause.</param>
+        /// <param name="orderByClause">First order by clause.</param>
+        protected override void VisitOrderings(ObservableCollection<Ordering> orderings,QueryModel queryModel,OrderByClause orderByClause)
+        {
+            foreach (Ordering ordering in orderings)
+            {
+                _visitor.VisitExpression(ordering.Expression);
+                QueryComponent component=_visitor.RetrieveComponent();
+                if (component is IExpression)
+                {
+                    IExpression expression=(IExpression)component;
+                    if (!_query.OrderBy.ContainsKey(expression))
+                    {
+                        _query.OrderBy[expression]=(ordering.OrderingDirection==OrderingDirection.Desc);
+                    }
+                }
+            }
+        }
+
         /// <summary>Visits a from clause.</summary>
         /// <param name="fromClause">From clause to be visited.</param>
         /// <param name="queryModel">Query model containing given from clause.</param>

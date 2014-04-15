@@ -7,6 +7,7 @@ using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Sources;
+using RomanticWeb.Mapping.Validation;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping
@@ -22,6 +23,7 @@ namespace RomanticWeb.Mapping
         private readonly IDictionary<Type,IEntityMappingProvider> _openGenericProviders;
         private readonly IList<IMappingProviderVisitor> _providerVisitors;
         private readonly IList<IMappingModelVisitor> _modelVisitors;
+        private readonly MappingProvidersValidator _validator=new MappingProvidersValidator();
 
         private MappingModelBuilder _mappingBuilder;
 
@@ -60,7 +62,9 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public void RebuildMappings(MappingContext mappingContext)
         {
+            _providerVisitors.Clear();
             _providerVisitors.Add(new ConventionsVisitor(mappingContext.Conventions));
+            _providerVisitors.Add(_validator);
             _mappingBuilder=new MappingModelBuilder(mappingContext);
             var dictionaryMappingsProvider=new GeneratedDictionaryMappingSource(mappingContext.OntologyProvider);
             _providerVisitors.Add(dictionaryMappingsProvider);

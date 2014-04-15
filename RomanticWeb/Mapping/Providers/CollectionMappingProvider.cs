@@ -75,5 +75,10 @@ namespace RomanticWeb.Mapping.Providers
         {
             mappingProviderVisitor.Visit(this);
         }
+
+        public override string ToString()
+        {
+            return _propertyMapping.ToString();
+        }
     }
 }

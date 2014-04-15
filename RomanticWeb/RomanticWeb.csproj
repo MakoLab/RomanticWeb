@@ -259,6 +259,7 @@
     <Compile Include="Mapping\Sources\FluentMappingsSource.cs" />
     <Compile Include="Mapping\Sources\IMappingProviderSource.cs" />
     <Compile Include="Mapping\Sources\OpenGenericEntityMappingCollector.cs" />
+    <Compile Include="Mapping\Validation\MappingProvidersValidator.cs" />
     <Compile Include="Mapping\Visitors\IFluentMapsVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingModelVisitor.cs" />

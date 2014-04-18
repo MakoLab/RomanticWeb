@@ -9,7 +9,7 @@
     <description>JSON processor for RomanticWeb</description>
     <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright MakoLab 2014</copyright>
-    <tags>rdf orm</tags>
+    <tags>rdf orm jsonld json-ld json lnked-data</tags>
     <dependencies>
       <dependency id="Newtonsoft.Json"/>
       <dependency id="RomanticWeb" />

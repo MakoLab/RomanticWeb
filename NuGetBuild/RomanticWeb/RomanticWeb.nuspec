@@ -9,8 +9,9 @@
     <description>An ORM (object-relational mapper) to RDF triples</description>
     <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright MakoLab 2014</copyright>
-    <tags>rdf orm</tags>
+    <tags>rdf orm semantic linq sparql</tags>
     <dependencies>
+      <dependency id="RomanticWeb.Fody" />
       <dependency id="NLog" />
     </dependencies>
     <frameworkAssemblies>

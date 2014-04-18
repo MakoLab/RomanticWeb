@@ -44,20 +44,10 @@
   </Target>
   <Import Project="..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" />
   <Target Name="AfterBuild">
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.dotNetRDF" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.JsonLd" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.Fody" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.CQRS" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.CQRS.Testing" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.CQRS.NEventStore" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Balthazar" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Melchior" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Casper" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Casper.Core" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Web" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Web.Testing" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\Magi.Web.Serialization.dotNetRDF" />
+    <ItemGroup>
+      <Nuspecs Include="$(SolutionDir)NuGetBuild\**\*.nuspec"/>
+    </ItemGroup>
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="%(Nuspecs.RelativeDir)" />
     <ItemGroup>
       <NugetsToMove Include="$(SolutionDir)NuGetBuild\**\*.nupkg"/>
     </ItemGroup>

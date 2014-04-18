@@ -9,9 +9,8 @@
     <description>Fody plugin, which enables support for dictionaries in RomanticWeb</description>
     <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright MakoLab 2014</copyright>
-    <tags>rdf orm</tags>
+    <tags>rdf orm fody cecil</tags>
     <dependencies>
-      <dependency id="RomanticWeb" />
       <dependency id="Fody" />
     </dependencies>
   </metadata>

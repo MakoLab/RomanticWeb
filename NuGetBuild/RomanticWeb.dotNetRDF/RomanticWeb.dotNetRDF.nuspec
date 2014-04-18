@@ -9,7 +9,7 @@
     <description>Integration with triple stores using dotNetRDF</description>
     <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright MakoLab 2014</copyright>
-    <tags>rdf orm</tags>
+    <tags>rdf orm semanticwweb sparql linq</tags>
     <dependencies>
       <dependency id="RomanticWeb" />
       <dependency id="dotNetRDF" version="(,1.0.3]" />

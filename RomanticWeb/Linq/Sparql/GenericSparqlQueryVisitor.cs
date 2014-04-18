@@ -99,6 +99,10 @@ namespace RomanticWeb.Linq.Sparql
                     target=(call.Arguments.Count>0?call.Arguments.First():null);
                     arguments=(call.Arguments.Count>1?call.Arguments.Skip(1).ToList():new List<IExpression>());
                     break;
+                case MethodNames.StartsWith:
+                    functionName="STRSTARTS";
+                    
+                    break;
             }
 
             if (target!=null)

@@ -195,6 +195,12 @@ namespace RomanticWeb.Linq
             }
 
             HandleComponent(call);
+            if ((!expression.Method.IsStatic)&&(expression.Object!=null))
+            {
+                VisitExpression(expression.Object);
+                CleanupComponent(_lastComponent);
+            }
+
             foreach (System.Linq.Expressions.Expression argument in expression.Arguments)
             {
                 VisitExpression(argument);

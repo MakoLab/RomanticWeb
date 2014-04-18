@@ -106,8 +106,7 @@ namespace RomanticWeb
 
         public static EntityContextFactory FromConfigurationSection()
         {
-            var configuration = (ConfigurationSectionHandler)System.Configuration.ConfigurationManager.GetSection("romanticWeb");
-
+            var configuration=ConfigurationSectionHandler.Default;
             var ontologies = from element in configuration.Ontologies.Cast<OntologyElement>()
                              select new Ontology(element.Prefix, element.Uri);
             var mappingAssemblies = from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()

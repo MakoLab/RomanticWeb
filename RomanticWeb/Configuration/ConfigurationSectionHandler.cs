@@ -10,6 +10,15 @@ namespace RomanticWeb.Configuration
         private const string MappingAssembliesElementName="mappingAssemblies";
         private const string OntologiesElementName="ontologies";
 
+        public static ConfigurationSectionHandler Default
+        {
+            get
+            {
+                return (ConfigurationSectionHandler)ConfigurationManager.GetSection("romanticWeb")
+                       ??new ConfigurationSectionHandler();
+            }
+        }
+
         [ConfigurationProperty(MappingAssembliesElementName)]
         [ConfigurationCollection(typeof(MappingAssembliesCollection))]
         public MappingAssembliesCollection MappingAssemblies

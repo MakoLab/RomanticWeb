@@ -1,0 +1,26 @@
+Install [this VSIX extensions](http://visualstudiogallery.msdn.microsoft.com/0855e23e-4c4c-4c82-8b39-24ab5c5a7f79) for Markdown syntax highlighting
+
+## Introduction
+This readme contains description of how Magi/RomanticWeb packages are built
+
+## Steps
+### Build solution
+Projects, which are packaged as NuGet packages have an additional import in their csproj file:
+
+> &lt;Import Project="$(SolutionDir)\NugetBuild\NugetBuild.targets"/>
+
+Additionally a variable is defined if a dll is packaged as part of another nuget (as with the example of most Magi.Balthzar.* projects, which are packaged together with Magi.Balthzar.Web):
+
+> &lt;PropertyGroup>
+>    &lt;DestinationNugetPackage>Magi.Balthzar&lt;/DestinationNugetPackage>
+> &lt;/PropertyGroup>
+
+The NugetBuild.targets, causes the output dll be copied to a folder, where it will be picked up by nuget when creating a package. The folder is $(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\bin. If DestinationNugetPackage is not set, the project's name is used.
+
+### NuGetBuild folders and nuspec files
+
+Each intended NuGet package is defined in a nuspec file. The NuGetBuild folder contains a subfolder for each package. This folder also contains additional files to packge and (after building in Release) the binaries to package, copied automatically when building relevant projects.
+
+### Package nugets
+
+There is an project called NugetPackaging, which executes NuGet pack command for each package as defined in it's csproj. This creates nupkg files, which are then copied to the NuGet, which can be used as a package source or to deploy to a real NuGet server.

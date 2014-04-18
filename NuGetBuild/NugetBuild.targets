@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <DestinationNugetPackage Condition="'$(DestinationNugetPackage)'==''">$(AssemblyName)</DestinationNugetPackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" Condition="Exists('$(OutputPath)$(AssemblyName).xml')" />
+    <OutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
+  </ItemGroup>
+
+  <Target Name="CopyNugetBinaries" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(OutputFiles)" 
+          DestinationFolder="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\Lib\net40" />
+  </Target>
+
+  <!--
+  <PropertyGroup>
+    <DestinationNugetPackage>Replace with package name</DestinationNugetPackage>
+  </PropertyGroup>
+  -->
+  
+  <!--
+  <Import Project="$(SolutionDir)\NugetBuild\NugetBuild.targets"/>
+  -->
+</Project>

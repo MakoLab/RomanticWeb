@@ -17,7 +17,6 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <FodyPath>..\..\packages\Fody.1.20.0.0</FodyPath>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -38,8 +37,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF">
-      <HintPath>..\..\packages\dotNetRDF.1.0.2.2880\lib\net40\dotNetRDF.dll</HintPath>
+    <Reference Include="dotNetRDF, Version=1.0.3.0, Culture=neutral, PublicKeyToken=6055ffe4c97cc780, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\dotNetRDF.1.0.3\lib\net40\dotNetRDF.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FluentAssertions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,8 +57,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.core.dll</HintPath>
@@ -84,7 +84,7 @@
       <HintPath>..\..\packages\Remotion.Linq.1.15.7.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Resourcer">
-      <HintPath>..\..\packages\Resourcer.Fody.1.1.1.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>
+      <HintPath>..\..\packages\Resourcer.Fody.1.2.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -766,7 +766,6 @@
       <Link>App.config</Link>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Fody.targets" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.json" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.json" />
     <Content Include="JsonLd\test-suite\tests\fromRdf-0001-out.jsonld">
@@ -3192,7 +3191,13 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="Fody.targets" />
+  <Import Project="..\..\packages\Fody.1.23.2\build\Fody.targets" Condition="Exists('..\..\packages\Fody.1.23.2\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Fody.1.23.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.1.23.2\build\Fody.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -149,6 +149,17 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        [TestCase("",2)]
+        [TestCase("Pluskiewicz",1)]
+        public void Selecting_filtered_entities(string searchString,int expectedCount)
+        {
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where resources.Surname.Contains(searchString)
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(expectedCount));
+        }
+
+        [Test]
         [Repeat(5)]
         public void Selecting_entities_by_providing_nested_predicate_value_condition_test()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Anotar.NLog;
 using Resourcer;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
@@ -159,6 +160,7 @@ namespace RomanticWeb.DotNetRDF
             queryVisitor.MetaGraphUri=MetaGraphUri;
             queryVisitor.VisitQuery(sparqlQuery);
             variables=queryVisitor.Variables;
+            LogTo.Info("RomanticWeb.dotNetRDF.TripleStoreAdapter parsed query: {0}",queryVisitor.CommandText);
             SparqlQueryParser parser=new SparqlQueryParser();
             return parser.ParseFromString(queryVisitor.CommandText);
         }

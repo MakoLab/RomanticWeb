@@ -19,7 +19,7 @@ namespace RomanticWeb.Linq
         private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
-        private readonly EntityQueryModelVisitor _modelVisitor;
+        private EntityQueryModelVisitor _modelVisitor;
         #endregion
 
         #region Constructors
@@ -30,7 +30,6 @@ namespace RomanticWeb.Linq
         {
             _entityContext=entityContext;
             _entitySource=entitySource;
-            _modelVisitor=new EntityQueryModelVisitor(entityContext);
         }
         #endregion
 
@@ -82,7 +81,7 @@ namespace RomanticWeb.Linq
             else
             {
                 ISet<EntityId> ids=new HashSet<EntityId>();
-                    var groupedTriples=from triple in quads
+                var groupedTriples=from triple in quads
                                    group triple by new { triple.EntityId } into tripleGroup
                                    select tripleGroup;
 
@@ -109,6 +108,7 @@ namespace RomanticWeb.Linq
         #region Non-public methods
         private RomanticWeb.Linq.Model.Query VisitQueryModel(QueryModel queryModel)
         {
+            _modelVisitor=new EntityQueryModelVisitor(_entityContext);
             _modelVisitor.VisitQueryModel(queryModel);
             return _modelVisitor.Query;
         }

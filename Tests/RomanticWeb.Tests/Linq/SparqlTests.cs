@@ -228,6 +228,22 @@ namespace RomanticWeb.Tests.Linq
             tomasz.Should().NotBeNull();
         }
 
+        [Test]
+        public void Materializing_query_twice()
+        {
+            IEnumerable<IPerson> query=_entityContext.AsQueryable<IPerson>().Where(person => person.FirstName.Length>0);
+            foreach (IPerson person in query)
+            {
+                Assert.That(person,Is.Not.Null);
+            }
+
+            foreach (IPerson person in query)
+            {
+                Assert.That(person.FirstName,Is.Not.Null);
+                Assert.That(person.FirstName.Length,Is.GreaterThan(0));
+            }
+        }
+
         private class TestPersonMap:TestEntityMapping<IPerson>
         {
             public TestPersonMap()

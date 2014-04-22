@@ -171,6 +171,14 @@ namespace RomanticWeb.Linq
                 (expression.Arguments.Count==expression.Method.GetParameters().Length)&&(expression.Arguments[1] is System.Linq.Expressions.ConstantExpression));
             switch (expression.Method.Name)
             {
+                case "Abs":
+                case "Round":
+                case "Ceiling":
+                case "Floor":
+                    if (expression.Method.DeclaringType==typeof(Math)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name)); }
+                    else { goto default; }
+
+                    break;
                 case "StartsWith":
                 case "EndsWith":
                 case "Contains":
@@ -328,6 +336,27 @@ namespace RomanticWeb.Linq
                 {
                     ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
                 }
+            }
+            else if (expression.Member is PropertyInfo)
+            {
+                PropertyInfo propertyInfo=(PropertyInfo)expression.Member;
+                Call call=null;
+                switch (propertyInfo.Name)
+                {
+                    case "Length":
+                        if (propertyInfo.DeclaringType==typeof(string)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),propertyInfo.Name)); }
+                        else { goto default; }
+
+                        break;
+                    default:
+                    return base.VisitMemberExpression(expression);
+                }
+
+                HandleComponent(call);
+                VisitExpression(expression.Expression);
+                CleanupComponent(_lastComponent);
+                _lastComponent=call;
+                return expression;
             }
 
             return base.VisitMemberExpression(expression);

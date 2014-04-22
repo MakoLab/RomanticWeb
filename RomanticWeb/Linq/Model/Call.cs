@@ -135,6 +135,22 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Distinct.</summary>
         Distinct=0x00000008,
+
+        /// <summary>Ceiling.</summary>
+        Ceiling=0x00000009,
+
+        /// <summary>Ceiling.</summary>
+        Floor=0x0000000A,
+
+        /// <summary>Round.</summary>
+        Round=0x0000000B,
+        #endregion
+        #region Result modifiers
+        /// <summary>Offset operator.</summary>
+        Offset=0x0000000E,
+
+        /// <summary>Limit operator.</summary>
+        Limit=0x0000000F,
         #endregion
         #region String functions
         /// <summary>String starts with.</summary>
@@ -153,15 +169,17 @@ namespace RomanticWeb.Linq.Model
         Replace=0x00000500,
 
         /// <summary>Substring.</summary>
-        Substring=0x00000500,
-        #endregion
-        #region Result modifiers
-        /// <summary>Offset operator.</summary>
-        Offset=0x00000009,
+        Substring=0x00000600,
 
-        /// <summary>Limit operator.</summary>
-        Limit=0x0000000A
-#endregion
+        /// <summary>Convertion to upper case.</summary>
+        ToUpper=0x00000700,
+
+        /// <summary>Convertion to lower case.</summary>
+        ToLower=0x00000800,
+
+        /// <summary>String length.</summary>
+        Length=0x00000900
+        #endregion
     }
     #endregion
 

@@ -14,6 +14,7 @@ namespace RomanticWeb.Linq.Sparql
     public class GenericSparqlQueryVisitor:QueryVisitorBase
     {
         #region Fields
+        private static IDictionary<MethodNames,string> MethodNameMap=new Dictionary<MethodNames,string>();
         private readonly Stack<StrongEntityAccessor> _currentEntityAccessor=new Stack<StrongEntityAccessor>();
         private StringBuilder _commandText;
         private string _metaGraphVariableName;
@@ -25,6 +26,20 @@ namespace RomanticWeb.Linq.Sparql
         private StrongEntityAccessor _entityAccessorToExpand=null;
         private IDictionary<Identifier,string> _variableNameOverride=new Dictionary<Identifier,string>();
         private IList<IQueryComponent> _supressedComponents=new List<IQueryComponent>();
+        #endregion
+
+        #region Constructors
+        static GenericSparqlQueryVisitor()
+        {
+            MethodNameMap[MethodNames.Any]="EXISTS";
+            MethodNameMap[MethodNames.StartsWith]="STRSTARTS";
+            MethodNameMap[MethodNames.EndsWith]="STRENDS";
+            MethodNameMap[MethodNames.Length]="STRLEN";
+            MethodNameMap[MethodNames.ToUpper]="UCASE";
+            MethodNameMap[MethodNames.ToLower]="LCASE";
+            MethodNameMap[MethodNames.Substring]="SUBSTR";
+            MethodNameMap[MethodNames.Ceiling]="CEIL";
+        }
         #endregion
 
         #region Properties
@@ -91,17 +106,19 @@ namespace RomanticWeb.Linq.Sparql
             switch (call.Member)
             {
                 case MethodNames.Any:
-                    functionName="EXISTS";
                     openingBracket=closingBracket=" ";
-                    break;
+                    goto default;
                 case MethodNames.In:
                     targetAccessor=separator=" ";
                     target=(call.Arguments.Count>0?call.Arguments.First():null);
                     arguments=(call.Arguments.Count>1?call.Arguments.Skip(1).ToList():new List<IExpression>());
-                    break;
-                case MethodNames.StartsWith:
-                    functionName="STRSTARTS";
-                    
+                    goto default;
+                default:
+                    if (MethodNameMap.ContainsKey(call.Member))
+                    {
+                        functionName=MethodNameMap[call.Member];
+                    }
+
                     break;
             }
 

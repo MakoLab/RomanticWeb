@@ -224,7 +224,7 @@ namespace RomanticWeb.Linq.Sparql
                 }
 
                 VisitComponent(binaryOperator.LeftOperand);
-                _commandText.Append(operatorString);
+                _commandText.AppendFormat(" {0} ",operatorString);
                 VisitComponent(binaryOperator.RightOperand);
             }
         }

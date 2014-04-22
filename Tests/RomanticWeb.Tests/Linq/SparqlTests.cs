@@ -41,6 +41,8 @@ namespace RomanticWeb.Tests.Linq
             List<IPerson> Knows { get; }
 
             IAddress Address { get; }
+
+            DateTime CreatedOn { get; }
         }
 
         [SetUp]
@@ -244,6 +246,24 @@ namespace RomanticWeb.Tests.Linq
             }
         }
 
+        [Test]
+        public void Selecting_by_dates()
+        {
+            IList<IPerson> persons=(from person in _entityContext.AsQueryable<IPerson>()
+                                    where person.CreatedOn<=DateTime.Now
+                                    select person).ToList();
+            Assert.That(persons.Count,Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Selecting_with_multiple_filter_transformatons()
+        {
+            IList<IPerson> persons=(from person in _entityContext.AsQueryable<IPerson>()
+                                    where person.Surname.ToLower().Contains("k")
+                                    select person).ToList();
+            Assert.That(persons.Count,Is.EqualTo(2));
+        }
+
         private class TestPersonMap:TestEntityMapping<IPerson>
         {
             public TestPersonMap()
@@ -253,6 +273,7 @@ namespace RomanticWeb.Tests.Linq
                 Property("FirstName",Vocabularies.Foaf.givenName,typeof(string),new StringConverter());
                 Property("Surname",Vocabularies.Foaf.familyName,typeof(string),new StringConverter());
                 Property("Address",new Uri("http://schema.org/address"),typeof(IAddress),new AsEntityConverter<IAddress>());
+                Property("CreatedOn",new Uri("http://purl.org/dc/elements/1.1/date"),typeof(DateTime),new DateTimeConverter());
             }
         }
 

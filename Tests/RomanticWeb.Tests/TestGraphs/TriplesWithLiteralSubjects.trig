@@ -2,6 +2,8 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <http://schema.org/> .
 @prefix dummy: <http://example.com> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://data.magi/addresses/Address>
 {
@@ -16,6 +18,7 @@
 					foaf:givenName "Tomasz" ;
 					foaf:familyName "Pluskiewicz" ;
 					dummy:test "Test" ;
+					dc:date "2014-04-20"^^xsd:dateTime ;
 					schema:address <addresses/Address> .
 }
 
@@ -25,6 +28,7 @@
 						foaf:givenName "Gniewosław" ;
 						foaf:familyName "Rzepka" ;
 						foaf:knows <people/Tomasz> ;
+						dc:date "2014-04-21"^^xsd:dateTime ;
 						schema:address [
 							a schema:PostalAddress ;
 							schema:addressLocality "Łódź" ;
@@ -38,7 +42,8 @@
 					foaf:givenName "Karol" ;
 					foaf:familyName "Szczepański" ;
 					foaf:knows <people/Tomasz> ;
-					foaf:knows <people/Gniewoslaw> .
+					foaf:knows <people/Gniewoslaw> ;
+					dc:date "2014-04-19"^^xsd:dateTime .
 }
 
 <http://app.magi/graphs>

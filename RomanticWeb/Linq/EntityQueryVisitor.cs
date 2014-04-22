@@ -187,6 +187,8 @@ namespace RomanticWeb.Linq
                 case "EndsWith":
                 case "Contains":
                 case "Substring":
+                case "ToLower":
+                case "ToUpper":
                     if (expression.Method.DeclaringType==typeof(string)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name)); }
                     goto default;
                 case "IsMatch":

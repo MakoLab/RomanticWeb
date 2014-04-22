@@ -171,35 +171,40 @@ namespace RomanticWeb.Linq
                 (expression.Arguments.Count==expression.Method.GetParameters().Length)&&(expression.Arguments[1] is System.Linq.Expressions.ConstantExpression));
             switch (expression.Method.Name)
             {
+                case "Next":
+                    if (expression.Method.DeclaringType==typeof(Random)) { call=new Call(MethodNames.RandomInt); }
+                    goto default;
+                case "NextDouble":
+                    if (expression.Method.DeclaringType==typeof(Random)) { call=new Call(MethodNames.RandomFloat); }
+                    goto default;
                 case "Abs":
                 case "Round":
                 case "Ceiling":
                 case "Floor":
                     if (expression.Method.DeclaringType==typeof(Math)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name)); }
-                    else { goto default; }
-
-                    break;
+                    goto default;
                 case "StartsWith":
                 case "EndsWith":
                 case "Contains":
                 case "Substring":
                     if (expression.Method.DeclaringType==typeof(string)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),expression.Method.Name)); }
-                    else { goto default; }
-
-                    break;
+                    goto default;
                 case "IsMatch":
                     if (expression.Method.DeclaringType==typeof(Regex)) { call=new Call(MethodNames.Regex); }
-                    else { goto default; }
-
-                    break;
+                    goto default;
                 case "Is":
                     if (isEntityExtensionMethod) { return VisitIsMethodCall(expression); }
-                    else { goto default; }
+                    goto default;
                 case "Predicate":
                     if (isEntityExtensionMethod) { return VisitPredicateMethodCall(expression); }
-                    else { goto default; }
+                    goto default;
                 default:
-                    return base.VisitMethodCallExpression(expression);
+                    if (call==null)
+                    {
+                        return base.VisitMethodCallExpression(expression);
+                    }
+
+                    break;
             }
 
             HandleComponent(call);
@@ -339,27 +344,68 @@ namespace RomanticWeb.Linq
             }
             else if (expression.Member is PropertyInfo)
             {
-                PropertyInfo propertyInfo=(PropertyInfo)expression.Member;
-                Call call=null;
-                switch (propertyInfo.Name)
-                {
-                    case "Length":
-                        if (propertyInfo.DeclaringType==typeof(string)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),propertyInfo.Name)); }
-                        else { goto default; }
-
-                        break;
-                    default:
-                    return base.VisitMemberExpression(expression);
-                }
-
-                HandleComponent(call);
-                VisitExpression(expression.Expression);
-                CleanupComponent(_lastComponent);
-                _lastComponent=call;
-                return expression;
+                return VisitPropertyExpression(expression);
             }
 
             return base.VisitMemberExpression(expression);
+        }
+
+        /// <summary>Visits a property expression.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Expression visited</returns>
+        protected virtual System.Linq.Expressions.Expression VisitPropertyExpression(System.Linq.Expressions.MemberExpression expression)
+        {
+            PropertyInfo propertyInfo=(PropertyInfo)expression.Member;
+            Call call=null;
+            bool isParameterles=true;
+            switch (propertyInfo.Name)
+            {
+                case "Length":
+                    if (propertyInfo.DeclaringType==typeof(string))
+                    {
+                        call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),propertyInfo.Name));
+                        isParameterles=false;
+                    }
+
+                    goto default;
+                case "Year":
+                case "Month":
+                case "Day":
+                case "Hour":
+                case "Minute":
+                case "Second":
+                case "Millisecond":
+                    if (propertyInfo.DeclaringType==typeof(DateTime))
+                    {
+                        call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),propertyInfo.Name));
+                        isParameterles=true;
+                    }
+
+                    goto default;
+                case "Now":
+                    if (propertyInfo.DeclaringType==typeof(DateTime)) { call=new Call((MethodNames)Enum.Parse(typeof(MethodNames),propertyInfo.Name)); }
+                    goto default;
+                case "Today":
+                    if (propertyInfo.DeclaringType==typeof(DateTime)) { call=new Call(MethodNames.Now); }
+                    goto default;
+                default:
+                    if (call==null)
+                    {
+                        return base.VisitMemberExpression(expression);
+                    }
+
+                    break;
+            }
+
+            HandleComponent(call);
+            if (!isParameterles)
+            {
+                VisitExpression(expression.Expression);
+                CleanupComponent(_lastComponent);
+            }
+
+            _lastComponent=call;
+            return expression;
         }
 
         /// <summary>Visits a constant expression.</summary>

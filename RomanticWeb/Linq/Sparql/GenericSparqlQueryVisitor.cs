@@ -39,6 +39,12 @@ namespace RomanticWeb.Linq.Sparql
             MethodNameMap[MethodNames.ToLower]="LCASE";
             MethodNameMap[MethodNames.Substring]="SUBSTR";
             MethodNameMap[MethodNames.Ceiling]="CEIL";
+            MethodNameMap[MethodNames.Hour]="HOURS";
+            MethodNameMap[MethodNames.Minute]="MINUTES";
+            MethodNameMap[MethodNames.Second]="SECONDS";
+            MethodNameMap[MethodNames.Milisecond]="SECONDS";
+            MethodNameMap[MethodNames.RandomFloat]="RAND";
+            MethodNameMap[MethodNames.RandomInt]="RAND";
         }
         #endregion
 
@@ -112,6 +118,9 @@ namespace RomanticWeb.Linq.Sparql
                     targetAccessor=separator=" ";
                     target=(call.Arguments.Count>0?call.Arguments.First():null);
                     arguments=(call.Arguments.Count>1?call.Arguments.Skip(1).ToList():new List<IExpression>());
+                    goto default;
+                case MethodNames.RandomInt:
+                    closingBracket+="*1000000000";
                     goto default;
                 default:
                     if (MethodNameMap.ContainsKey(call.Member))

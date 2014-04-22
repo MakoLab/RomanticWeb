@@ -144,6 +144,12 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Round.</summary>
         Round=0x0000000B,
+
+        /// <summary>Random integer number.</summary>
+        RandomInt=0x0000000C,
+
+        /// <summary>Random floating point number.</summary>
+        RandomFloat=0x0000000D,
         #endregion
         #region Result modifiers
         /// <summary>Offset operator.</summary>
@@ -178,7 +184,18 @@ namespace RomanticWeb.Linq.Model
         ToLower=0x00000800,
 
         /// <summary>String length.</summary>
-        Length=0x00000900
+        Length=0x00000900,
+        #endregion
+        #region Date-time functions
+        /// <summary>Gets currend date and time.</summary>
+        Now=0x00001000,
+        Year=0x00002000,
+        Month=0x00003000,
+        Day=0x00004000,
+        Hour=0x00005000,
+        Minute=0x00006000,
+        Second=0x00007000,
+        Milisecond=0x00008000
         #endregion
     }
     #endregion

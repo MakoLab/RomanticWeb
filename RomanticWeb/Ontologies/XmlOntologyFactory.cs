@@ -31,7 +31,11 @@ namespace RomanticWeb.Ontologies
             if (ontologyElement==null)
             {
                 isOwlBasedFile=false;
-                ontologyElement=(from element in document.Descendants() where element.Name.LocalName=="Description" select element).FirstOrDefault();
+                ontologyElement=(
+                    from element in document.Descendants() 
+                    where (element.Name.LocalName=="Description")&&(element.Descendants("type").Any(item => 
+                        (item.Attribute("resource")!=null)&&(item.Attribute("resource").Value=="http://www.w3.org/2002/07/owl#Ontology")))
+                    select element).FirstOrDefault();
                 if (ontologyElement==null)
                 {
                     throw new ArgumentOutOfRangeException("Provided stream does not contain ontology information suitable for usage.");

@@ -13,6 +13,7 @@
     <dependencies>
       <dependency id="Fody" />
       <dependency id="NLog" />
+      <dependency id="Remotion.Linq" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration"  />

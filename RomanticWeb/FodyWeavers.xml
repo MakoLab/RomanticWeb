@@ -7,7 +7,6 @@
   <Costura>
     <IncludeAssemblies>
       ImpromptuInterface
-      Remotion.Linq
     </IncludeAssemblies>
   </Costura>
 </Weavers>

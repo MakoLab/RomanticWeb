@@ -189,7 +189,7 @@ namespace RomanticWeb.Tests.Linq
                             "?s ?p ?o . "+
                             "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
                             "?person0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                            "FILTER (?firstName0=\"Karol\"^^xsd:string) "+
+                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) "+
                         "} "+
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
@@ -217,7 +217,7 @@ namespace RomanticWeb.Tests.Linq
                                         "GRAPH ?Gfriend0 { "+
                                             "?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
                                             "?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                                            "FILTER (?firstName0=\"Karol\"^^xsd:string) "+
+                                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) "+
                                         "} "+
                                         "GRAPH <http://app.magi/graphs> { "+
                                             "?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . "+
@@ -245,7 +245,7 @@ namespace RomanticWeb.Tests.Linq
                             "?s ?p ?o . "+
                             "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
                             "?person0 <http://xmlns.com/foaf/0.1/friends> ?friend0 . "+
-                            "FILTER (?firstName0=\"Karol\"^^xsd:string) " +
+                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) " +
                         "} "+
                         "GRAPH <http://app.magi/graphs> { "+
                             "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+

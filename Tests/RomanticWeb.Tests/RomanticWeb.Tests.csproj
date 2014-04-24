@@ -42,6 +42,9 @@
       <HintPath>..\..\packages\dotNetRDF.1.0.3\lib\net40\dotNetRDF.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="dotNetRDF.Data.Virtuoso">
+      <HintPath>..\..\packages\dotNetRDF.Data.Virtuoso.1.0.3\lib\net40\dotNetRDF.Data.Virtuoso.dll</HintPath>
+    </Reference>
     <Reference Include="FluentAssertions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\FluentAssertions.2.2.0.0\lib\net45\FluentAssertions.dll</HintPath>
@@ -79,6 +82,9 @@
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="OpenLink.Data.Virtuoso">
+      <HintPath>..\..\packages\dotNetRDF.Data.Virtuoso.1.0.3\lib\net40\OpenLink.Data.Virtuoso.dll</HintPath>
+    </Reference>
     <Reference Include="Remotion.Linq, Version=1.15.7.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Remotion.Linq.1.15.7.0\lib\net45\Remotion.Linq.dll</HintPath>
@@ -105,7 +111,9 @@
     <Compile Include="Collections\DictionaryTransformerTests.cs" />
     <Compile Include="Collections\RdfDictionaryTests.cs" />
     <Compile Include="Collections\RdfListAdapterTests.cs" />
-    <Compile Include="ConfigurationTests.cs" />
+    <Compile Include="Configuration\ConfigurationSectionTests.cs" />
+    <Compile Include="Configuration\ExternallyConfiguredStoreElementTests.cs" />
+    <Compile Include="Configuration\StoresConfigurationSectionTests.cs" />
     <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
@@ -188,6 +196,9 @@
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\SimpleObject.ttl" />
+    <Content Include="config.ttl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="FodyWeavers.xml" />
     <Content Include="JsonLd\test-suite\tests\fromRdf-0001-in.nq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

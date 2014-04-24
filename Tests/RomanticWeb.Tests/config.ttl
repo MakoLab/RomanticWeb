@@ -1,0 +1,7 @@
+﻿@prefix dnr: <http://www.dotnetrdf.org/configuration#> .
+
+_:store a dnr:TripleStore ;
+  dnr:type "VDS.RDF.TripleStore" .
+
+<urn:by:uri> a dnr:TripleStore ;
+  dnr:type "VDS.RDF.TripleStore" .

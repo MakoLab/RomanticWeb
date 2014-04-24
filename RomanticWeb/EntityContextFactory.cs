@@ -104,13 +104,13 @@ namespace RomanticWeb
 
         #region Public methods
 
-        public static EntityContextFactory FromConfigurationSection()
+        public static EntityContextFactory FromConfiguration(string factoryName)
         {
-            var configuration=ConfigurationSectionHandler.Default;
-            var ontologies = from element in configuration.Ontologies.Cast<OntologyElement>()
-                             select new Ontology(element.Prefix, element.Uri);
-            var mappingAssemblies = from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
-                                    select Assembly.Load(element.Assembly);
+            var configuration=ConfigurationSectionHandler.Default.Factories[factoryName];
+            var ontologies=from element in configuration.Ontologies.Cast<OntologyElement>()
+                           select new Ontology(element.Prefix,element.Uri);
+            var mappingAssemblies=from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
+                                  select Assembly.Load(element.Assembly);
 
             var entityContextFactory=new EntityContextFactory().WithOntology(new OntologyProviderBase(ontologies)).WithMappings(m =>
                 {
@@ -135,7 +135,7 @@ namespace RomanticWeb
 
             EnsureComplete();
             EnsureInitialized();
-            _mappingContext = new MappingContext(_actualOntologyProvider);
+            _mappingContext=new MappingContext(_actualOntologyProvider);
 
             var entitySource=_entitySourceFactory();
             entitySource.MetaGraphUri=_metaGraphUri;

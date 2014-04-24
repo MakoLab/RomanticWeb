@@ -11,7 +11,7 @@
     <copyright>Copyright MakoLab 2014</copyright>
     <tags>rdf orm semantic linq sparql</tags>
     <dependencies>
-      <dependency id="RomanticWeb.Fody" />
+      <dependency id="Fody" />
       <dependency id="NLog" />
     </dependencies>
     <frameworkAssemblies>

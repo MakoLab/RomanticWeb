@@ -65,6 +65,8 @@
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="Configuration\BaseUriElement.cs" />
+    <Compile Include="Configuration\FactoriesCollection.cs" />
+    <Compile Include="Configuration\FactoryElement.cs" />
     <Compile Include="Configuration\MappingAssembliesCollection.cs" />
     <Compile Include="Configuration\MappingAssemblyElement.cs" />
     <Compile Include="Configuration\OntologiesCollection.cs" />

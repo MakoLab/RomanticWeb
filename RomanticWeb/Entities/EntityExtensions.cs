@@ -139,9 +139,9 @@ namespace RomanticWeb.Entities
                     .FirstOrDefault();
                 if (@object!=null)
                 {
-                    if (@object.IsUri)
+                    if ((@object.IsUri)||(@object.IsBlank))
                     {
-                        result=entity.Context.Load<IEntity>(new EntityId(@object.Uri));
+                        result=entity.Context.Load<IEntity>(@object.ToEntityId(),false);
                     }
                     else
                     {

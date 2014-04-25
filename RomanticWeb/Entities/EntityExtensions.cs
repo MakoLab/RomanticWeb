@@ -116,7 +116,7 @@ namespace RomanticWeb.Entities
             IEnumerable<Uri> result=null;
             if (entity!=null)
             {
-                result=entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Subject.Uri);
+                result=entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Predicate.Uri);
             }
 
             return result;

@@ -132,10 +132,29 @@ namespace RomanticWeb.Entities
             object result=null;
             if ((entity!=null)&&(predicate!=null))
             {
-                IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
-                if (propertyMapping!=null)
+                Node @object=entity.Context.Store.Quads
+                    .WhereQuadDescribesEntity(entity)
+                    .Where(item => item.Predicate.Uri.AbsoluteUri==predicate.AbsoluteUri)
+                    .Select(item => item.Object)
+                    .FirstOrDefault();
+                if (@object!=null)
                 {
-                    result=Impromptu.InvokeGet(entity,propertyMapping.Name);
+                    if (@object.IsUri)
+                    {
+                        result=entity.Context.Load<IEntity>(new EntityId(@object.Uri));
+                    }
+                    else
+                    {
+                        IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
+                        if (propertyMapping!=null)
+                        {
+                            result=Impromptu.InvokeGet(entity,propertyMapping.Name);
+                        }
+                        else
+                        {
+                            result=@object.ToString();
+                        }
+                    }
                 }
             }
 

@@ -52,6 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Build\RomanticWebAssemblyInfo.cs">
+      <Link>Properties\RomanticWebAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Context.cs" />
     <Compile Include="ContextExtensions.cs" />
     <Compile Include="IJsonLdProcessor.cs" />

@@ -65,6 +65,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Build\RomanticWebAssemblyInfo.cs">
+      <Link>Properties\RomanticWebAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Dictionaries\DictionaryEntityNames.cs" />
     <Compile Include="Dictionaries\CecilDictionaryEntityNames.cs" />
     <Compile Include="Dictionaries\DictionaryMappingMeta.cs" />
@@ -104,7 +110,6 @@
     <ItemGroup>
       <OutputFiles Include="$(OutputPath)$(AssemblyName).*" />
     </ItemGroup>
-    <Copy SourceFiles="@(OutputFiles)"
-          DestinationFolder="$(SolutionDir)NuGetBuild\RomanticWeb\" />
+    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)NuGetBuild\RomanticWeb\" />
   </Target>
 </Project>

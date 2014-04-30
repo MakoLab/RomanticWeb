@@ -51,7 +51,7 @@ namespace RomanticWeb.Ontologies
 
         /// <summary>Creates an ontology from given stream.</summary>
         /// <param name="fileStream">Stream containing a serialized ontology data.</param>
-        /// <param name="contentType">Explicitely passed content type of the data stored in the given stream.</param>
+        /// <param name="contentType">Explicitly passed content type of the data stored in the given stream.</param>
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public static Ontology Create(Stream fileStream,string contentType)
         {

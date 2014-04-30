@@ -59,8 +59,8 @@
       <HintPath>..\..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.core.dll</HintPath>
@@ -85,9 +85,9 @@
     <Reference Include="OpenLink.Data.Virtuoso">
       <HintPath>..\..\packages\dotNetRDF.Data.Virtuoso.1.0.3\lib\net40\OpenLink.Data.Virtuoso.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq, Version=1.15.7.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+    <Reference Include="Remotion.Linq, Version=1.15.13.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Remotion.Linq.1.15.7.0\lib\net45\Remotion.Linq.dll</HintPath>
+      <HintPath>..\..\packages\Remotion.Linq.1.15.13.0\lib\portable-net45+wp80+win\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Resourcer">
       <HintPath>..\..\packages\Resourcer.Fody.1.2.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>

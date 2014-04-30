@@ -4,7 +4,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Defines a contract for converting literal nodes.</summary>
-    public abstract class LiteralNodeConverter:INodeConverter
+    public abstract class LiteralNodeConverter:ILiteralNodeConverter
     {
         /// <summary>Check if a converter can convert the given RDF data type.</summary>
         public abstract LiteralConversionMatch CanConvert(Node literalNode);

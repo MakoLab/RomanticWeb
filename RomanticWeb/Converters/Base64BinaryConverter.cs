@@ -4,19 +4,10 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converts Base64 literals.</summary>
-    public class Base64BinaryConverter:INodeConverter
+    public class Base64BinaryConverter:LiteralNodeConverter
     {
-        /// <summary>Converts given Base64 binary literal into an array of bytes.</summary>
-        /// <param name="objectNode">Node with Base64 binary literal.</param>
-        /// <param name="context"></param>
-        /// <returns>Array of bytes or null if the passed node is also null.</returns>
-        public object Convert(Node objectNode,IEntityContext context)
-        {
-            return (objectNode.Literal!=null?System.Convert.FromBase64String(objectNode.Literal):null);
-        }
-
         /// <summary>Converts given array of bytes to it's base64 representation.</summary>
-        public Node ConvertBack(object value)
+        public override Node ConvertBack(object value)
         {
             return Node.ForLiteral(System.Convert.ToBase64String((byte[])value),Xsd.Base64Binary);
         }
@@ -24,7 +15,7 @@ namespace RomanticWeb.Converters
         /// <summary>Checks for ability to convert given data type.</summary>
         /// <param name="literalNode"></param>
         /// <returns><b>true</b> if the data type is Base64 binary; otherwise <b>false</b>.</returns>
-        public LiteralConversionMatch CanConvert(Node literalNode)
+        public override LiteralConversionMatch CanConvert(Node literalNode)
         {
             var match=new LiteralConversionMatch
                        {
@@ -37,6 +28,14 @@ namespace RomanticWeb.Converters
             }
 
             return match;
+        }
+
+        /// <summary>Converts given Base64 binary literal into an array of bytes.</summary>
+        /// <param name="objectNode">Node with Base64 binary literal.</param>
+        /// <returns>Array of bytes or null if the passed node is also null.</returns>
+        protected override object ConvertInternal(Node objectNode)
+        {
+            return (objectNode.Literal != null ? System.Convert.FromBase64String(objectNode.Literal) : null);
         }
     }
 }

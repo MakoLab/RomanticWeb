@@ -34,7 +34,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<LiteralNodeConverter> LiteralNodeConverters
+        public IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters
         {
             get
             {

@@ -30,6 +30,15 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Reelase\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
@@ -45,16 +54,16 @@
   <Import Project="..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>
-      <Nuspecs Include="$(SolutionDir)NuGetBuild\**\*.nuspec"/>
+      <Nuspecs Include="$(SolutionDir)NuGetBuild\**\*.nuspec" />
     </ItemGroup>
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="%(Nuspecs.RelativeDir)" />
     <ItemGroup>
-      <NugetsToMove Include="$(SolutionDir)NuGetBuild\**\*.nupkg"/>
+      <NugetsToMove Include="$(SolutionDir)NuGetBuild\**\*.nupkg" />
     </ItemGroup>
     <ItemGroup>
-      <BinariesToClean Include="$(SolutionDir)NuGetBuild\**\Lib\**\*.*"/>
+      <BinariesToClean Include="$(SolutionDir)NuGetBuild\**\Lib\**\*.*" />
     </ItemGroup>
-    <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet"/>
+    <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
     <Delete Files="@(BinariesToClean)" />
   </Target>
 </Project>

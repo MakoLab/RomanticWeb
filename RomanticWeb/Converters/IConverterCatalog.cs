@@ -21,6 +21,6 @@ namespace RomanticWeb.Converters
         /// <value>
         /// The literal node converters.
         /// </value>
-        IReadOnlyCollection<LiteralNodeConverter> LiteralNodeConverters { get; }
+        IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
     }
 }

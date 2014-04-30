@@ -63,10 +63,10 @@ namespace RomanticWeb.Converters
 
         private static object ConvertLiteral(Node objectNode,IEntityContext context)
         {
-                var converter = Converters.GetBestConverter(objectNode);
-                if (converter != null)
+            var converter=Converters.GetBestConverter(objectNode);
+            if (converter!=null)
             {
-                    return converter.Convert(objectNode, context);
+                return converter.Convert(objectNode,context);
             }
 
             throw new InvalidOperationException();

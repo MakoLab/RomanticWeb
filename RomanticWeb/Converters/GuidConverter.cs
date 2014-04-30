@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using RomanticWeb.Model;
 
 namespace RomanticWeb.Converters
@@ -6,16 +7,32 @@ namespace RomanticWeb.Converters
     /// <summary>Converter for GUID literal nodes.</summary>
     public class GuidConverter:INodeConverter
     {
+        private static readonly Regex UrnUuidRegex=new Regex(@"^urn:uuid:",RegexOptions.IgnoreCase);
+
         /// <inheritdoc />
         public object Convert(Node objectNode,IEntityContext context)
         {
-            return Guid.Parse(objectNode.Literal);
+            if (objectNode.IsLiteral)
+            {
+                return Guid.Parse(objectNode.Literal);
+            }
+
+            if (objectNode.IsUri && UrnUuidRegex.IsMatch(objectNode.Uri.ToString()))
+            {
+                Guid guid;
+                if (Guid.TryParse(UrnUuidRegex.Replace(objectNode.Uri.ToString(), string.Empty), out guid))
+                {
+                    return guid;
+                }
+            }
+
+            throw new ArgumentException(string.Format("Cannot convert node '{0}' to guid",objectNode),"objectNode");
         }
 
         /// <inheritdoc />
         public Node ConvertBack(object value)
         {
-            throw new NotImplementedException();
+            return Node.ForLiteral(value.ToString());
         }
 
         /// <inheritdoc />

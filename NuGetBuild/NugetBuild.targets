@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" Condition="Exists('$(OutputPath)$(AssemblyName).xml')" />
+    <OutputFiles Include="$(OutputPath)$(AssemblyName).pdb" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
     <OutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
   </ItemGroup>
 

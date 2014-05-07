@@ -483,19 +483,26 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected virtual System.Linq.Expressions.Expression VisitEntityIdUri(System.Linq.Expressions.MemberExpression expression)
         {
-            Remotion.Linq.Clauses.FromClauseBase target=GetMemberTarget(expression);
-            if (target!=null)
+            bool isInSelectScenario=(_currentComponent.Count==0);
+            StrongEntityAccessor entityAccessor=(isInSelectScenario?this.GetEntityAccessor(GetMemberTarget(expression)):this.GetEntityAccessor(GetSourceExpression(expression)));
+            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
             {
-                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(target);
+                _query.Elements.Add(entityAccessor);
+            }
+
+            if (isInSelectScenario)
+            {
                 _lastComponent=entityAccessor;
-                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
-                {
-                    _query.Elements.Add(entityAccessor);
-                }
             }
             else
             {
-                ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
+                _lastComponent=(from entityConstrain in entityAccessor.Elements.OfType<EntityConstrain>()
+                                where entityConstrain.Value is Identifier
+                                let identifier=(Identifier)entityConstrain.Value
+                                let property=(PropertyInfo)((System.Linq.Expressions.MemberExpression)expression.Expression).Member
+                                where (_query.RetrieveIdentifier(identifier.Name)==_query.CreateIdentifier(property.Name))&&(identifier.NativeType==property.PropertyType)
+                                select identifier).First();
+                HandleComponent(_lastComponent);
             }
 
             return expression;

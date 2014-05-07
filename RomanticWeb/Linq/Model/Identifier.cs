@@ -9,22 +9,34 @@ namespace RomanticWeb.Linq.Model
     {
         #region Fields
         /// <summary>Gets a meta-identiefier that refers to current context's subject.</summary>
-        public static readonly Identifier Current=new Identifier("s");
+        public static readonly Identifier Current=new Identifier("s",typeof(object));
         private string _name;
+        private Type _nativeType;
         #endregion
 
         #region Constructors
         /// <summary>Base constructor with name passed.</summary>
         /// <param name="name">Name of this identifier.</param>
-        public Identifier(string name):base()
+        public Identifier(string name):this(name,typeof(object))
+        {
+        }
+
+        /// <summary>Base constructor with name passed.</summary>
+        /// <param name="name">Name of this identifier.</param>
+        /// <param name="nativeType">Native type of the identifier.</param>
+        public Identifier(string name,Type nativeType):base()
         {
             _name=name;
+            _nativeType=nativeType;
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a name of this identifier.</summary>
         public string Name { get { return _name; } }
+
+        /// <summary>Gets a native type represented by given identifier.</summary>
+        public Type NativeType { get { return _nativeType; } }
 
         /// <summary>Gets an enumeration of selectable expressions.</summary>
         IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return new IExpression[] { this }; } }

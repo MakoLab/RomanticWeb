@@ -29,6 +29,7 @@ namespace RomanticWeb.Tests.Stubs
                             new DatatypeProperty("familyName"),
                             new DatatypeProperty("givenName"),
                             new DatatypeProperty("nick"),
+                            new DatatypeProperty("gender"),
                             new Class("Person"),
                             new Class("Agent"),
                             new Class("Document"));

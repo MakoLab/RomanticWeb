@@ -120,7 +120,7 @@ namespace RomanticWeb.Tests.Linq
             IList<IEntity> entities=(from resources in _entityContext.AsQueryable<IEntity>()
                                      where resources is IPerson
                                      select resources).ToList();
-            Assert.That(entities.Count,Is.EqualTo(2));
+            Assert.That(entities.Count,Is.EqualTo(3));
             IEntity tomasz=entities.FirstOrDefault(item => item.Id==(EntityId)"http://magi/people/Tomasz");
             Assert.That(tomasz,Is.Not.Null);
             Assert.That(tomasz,Is.InstanceOf<IPerson>());
@@ -131,6 +131,11 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(gniewoslaw,Is.InstanceOf<IPerson>());
             Assert.That(gniewoslaw.AsDynamic().foaf.first_givenName,Is.EqualTo("Gniewosław"));
             Assert.That(gniewoslaw.AsDynamic().foaf.first_familyName,Is.EqualTo("Rzepka"));
+            IEntity dominik=entities.FirstOrDefault(item => item.Id==(EntityId)"http://magi/people/Dominik");
+            Assert.That(dominik,Is.Not.Null);
+            Assert.That(dominik,Is.InstanceOf<IPerson>());
+            Assert.That(dominik.AsDynamic().foaf.first_givenName,Is.EqualTo("Dominik"));
+            Assert.That((string)dominik.AsDynamic().foaf.firstOrDefault_familyName,Is.Null);
         }
 
         [Test]
@@ -139,7 +144,7 @@ namespace RomanticWeb.Tests.Linq
         {
             IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
                                      select resources).ToList();
-            Assert.That(entities.Count,Is.EqualTo(2));
+            Assert.That(entities.Count,Is.EqualTo(3));
             IPerson tomasz=entities.Where(item => item.Id==(EntityId)"http://magi/people/Tomasz").FirstOrDefault();
             Assert.That(tomasz,Is.Not.Null);
             Assert.That(tomasz,Is.InstanceOf<IEntity>());
@@ -148,6 +153,10 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(gniewoslaw,Is.Not.Null);
             Assert.That(gniewoslaw,Is.InstanceOf<IEntity>());
             Assert.That(gniewoslaw.Surname,Is.EqualTo("Rzepka"));
+            IPerson dominik=entities.Where(item => item.Id==(EntityId)"http://magi/people/Dominik").FirstOrDefault();
+            Assert.That(dominik,Is.Not.Null);
+            Assert.That(dominik,Is.InstanceOf<IEntity>());
+            Assert.That(dominik.Surname,Is.Null);
         }
 
         [Test]
@@ -224,7 +233,7 @@ namespace RomanticWeb.Tests.Linq
             // when
             var tomasz=(from person in _entityContext.AsQueryable<IPerson>()
                         where person.Id==relativeId
-                          select person).SingleOrDefault();
+                        select person).SingleOrDefault();
 
             // then
             tomasz.Should().NotBeNull();
@@ -262,6 +271,50 @@ namespace RomanticWeb.Tests.Linq
                                     where person.Surname.ToLower().Contains("k")
                                     select person).ToList();
             Assert.That(persons.Count,Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Select_EntityIds_property()
+        {
+            IList<Uri> uris=(from person in _entityContext.AsQueryable<IPerson>()
+                             select person.Id.Uri).ToList();
+            Assert.That(uris.Count,Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Select_where_property_is_not_null()
+        {
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where resources.Address!=null
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Select_where_property_is_null()
+        {
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where resources.Address==null
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Select_where_literal_property_is_not_null()
+        {
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where resources.Surname!=null
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Select_where_literal_property_is_null()
+        {
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where resources.Surname==null
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(1));
         }
 
         private class TestPersonMap:TestEntityMapping<IPerson>

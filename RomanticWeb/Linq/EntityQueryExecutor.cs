@@ -73,27 +73,7 @@ namespace RomanticWeb.Linq
 
             RomanticWeb.Linq.Model.Query sparqlQuery=VisitQueryModel(queryModel);
             IEnumerable<RomanticWeb.Model.EntityQuad> quads=_entitySource.ExecuteEntityQuery(sparqlQuery);
-            IEnumerable<T> result=null;
-            if (!typeof(IEntity).IsAssignableFrom(typeof(T)))
-            {
-                result=quads.Select(triple => (T)_modelVisitor.PropertyMapping.Converter.Convert(triple.Object,_entityContext));
-            }
-            else
-            {
-                ISet<EntityId> ids=new HashSet<EntityId>();
-                var groupedTriples=from triple in quads
-                                   group triple by new { triple.EntityId } into tripleGroup
-                                   select tripleGroup;
-
-                foreach (var triples in groupedTriples)
-                {
-                    ids.Add(triples.Key.EntityId);
-                    _entityContext.Store.AssertEntity(triples.Key.EntityId,triples);
-                }
-
-                var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
-                result=ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
-            }
+            IEnumerable<T> result=(!typeof(IEntity).IsAssignableFrom(typeof(T))?CreateLiteralResultSet<T>(quads):CreateEntityResultSet<T>(quads));
 
             foreach (CastResultOperator resultOperator in resultOperators)
             {
@@ -111,6 +91,38 @@ namespace RomanticWeb.Linq
             _modelVisitor=new EntityQueryModelVisitor(_entityContext);
             _modelVisitor.VisitQueryModel(queryModel);
             return _modelVisitor.Query;
+        }
+
+        private IEnumerable<T> CreateLiteralResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads)
+        {
+            IEnumerable<T> result;
+            if (!(_modelVisitor.PropertyMapping is EntityQueryModelVisitor.IdentifierPropertyMapping))
+            {
+                result=quads.Select(triple => (T)_modelVisitor.PropertyMapping.Converter.Convert(triple.Object,_entityContext));
+            }
+            else
+            {
+                result=quads.Select(triple => (T)Convert.ChangeType(triple.Subject.Uri,typeof(T)));
+            }
+
+            return result;
+        }
+
+        private IEnumerable<T> CreateEntityResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads)
+        {
+            ISet<EntityId> ids=new HashSet<EntityId>();
+            var groupedTriples=from triple in quads
+                               group triple by new { triple.EntityId } into tripleGroup
+                               select tripleGroup;
+
+            foreach (var triples in groupedTriples)
+            {
+                ids.Add(triples.Key.EntityId);
+                _entityContext.Store.AssertEntity(triples.Key.EntityId,triples);
+            }
+
+            var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
+            return ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
         }
         #endregion
     }

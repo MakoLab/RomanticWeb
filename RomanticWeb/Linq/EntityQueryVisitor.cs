@@ -390,6 +390,9 @@ namespace RomanticWeb.Linq
                 case "Today":
                     if (propertyInfo.DeclaringType==typeof(DateTime)) { call=new Call(MethodNames.Now); }
                     goto default;
+                case "Uri":
+                    if (typeof(EntityId).IsAssignableFrom(propertyInfo.DeclaringType)) { return VisitEntityIdUri((System.Linq.Expressions.MemberExpression)expression.Expression); }
+                    goto default;
                 default:
                     if (call==null)
                     {
@@ -407,6 +410,7 @@ namespace RomanticWeb.Linq
             }
 
             _lastComponent=call;
+
             return expression;
         }
 
@@ -430,9 +434,14 @@ namespace RomanticWeb.Linq
             {
                 HandleComponent(_lastComponent=new Literal(((IEntity)expression.Value).Id.Uri));
             }
-            else
+            else if (expression.Value!=null)
             {
                 HandleComponent(_lastComponent=new Literal(ResolveRelativeUriIfNecessery(expression.Value)));
+            }
+            else
+            {
+                Type valueType=FindLiteralType();
+                HandleComponent(_lastComponent=new Literal(valueType));
             }
 
             return expression;
@@ -464,6 +473,29 @@ namespace RomanticWeb.Linq
                 NonEntityQueryModelVisitor queryModelVisitor=new NonEntityQueryModelVisitor(this);
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
                 _lastComponent=queryModelVisitor.Result;
+            }
+
+            return expression;
+        }
+
+        /// <summary>Visits an Uri property expression called on <see cref="EntityId" />.</summary>
+        /// <param name="expression">Expression to be visited.</param>
+        /// <returns>Expression visited</returns>
+        protected virtual System.Linq.Expressions.Expression VisitEntityIdUri(System.Linq.Expressions.MemberExpression expression)
+        {
+            Remotion.Linq.Clauses.FromClauseBase target=GetMemberTarget(expression);
+            if (target!=null)
+            {
+                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(target);
+                _lastComponent=entityAccessor;
+                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+                {
+                    _query.Elements.Add(entityAccessor);
+                }
+            }
+            else
+            {
+                ExceptionHelper.ThrowInvalidCastException(typeof(IEntity),expression.Member.DeclaringType);
             }
 
             return expression;
@@ -510,7 +542,7 @@ namespace RomanticWeb.Linq
 
             Identifier memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
                 .Where(item => item.SourceExpression.FromExpression==expression.Expression)
-                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name)));
+                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
             EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
             if (!entityAccessor.Elements.Contains(constrain))
             {
@@ -711,6 +743,48 @@ namespace RomanticWeb.Linq
             }
 
             return value;
+        }
+
+        private Type FindLiteralType()
+        {
+            Type result=null;
+            foreach (IQueryComponentNavigator componentNavigator in _currentComponent)
+            {
+                result=FindLiteralType(componentNavigator.NavigatedComponent);
+                if (result!=null)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        private Type FindLiteralType(IQueryComponent component)
+        {
+            Type result=null;
+            if (component!=null)
+            {
+                if (component is BinaryOperator)
+                {
+                    BinaryOperator binaryOperator=(BinaryOperator)component;
+                    result=FindLiteralType(binaryOperator.LeftOperand);
+                    if (result==null)
+                    {
+                        result=FindLiteralType(binaryOperator.RightOperand);
+                    }
+                }
+                else if (component is Identifier)
+                {
+                    result=((Identifier)component).NativeType;
+                }
+                else if (component is Alias)
+                {
+                    result=FindLiteralType(((Alias)component).Component);
+                }
+            }
+
+            return result;
         }
         #endregion
     }

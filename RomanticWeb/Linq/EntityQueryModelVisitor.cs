@@ -15,6 +15,7 @@ using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Linq
 {
@@ -91,24 +92,7 @@ namespace RomanticWeb.Linq
             _query.Select.Add(_mainFromComponent);
             VisitBodyClauses(queryModel.BodyClauses,queryModel);
             VisitResultOperators(queryModel.ResultOperators,queryModel);
-            if ((component is Identifier)&&(selectClause.Selector is System.Linq.Expressions.MemberExpression))
-            {
-                System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)selectClause.Selector;
-                if (!(memberExpression.Member is PropertyInfo))
-                {
-                    throw new NotSupportedException(System.String.Format("Selection on members of type '{0}' are not supported.",memberExpression.Member.MemberType));
-                }
-
-                _propertyMapping=_entityContext.Mappings.FindPropertyMapping((PropertyInfo)memberExpression.Member);
-                if (typeof(IEntity).IsAssignableFrom(_propertyMapping.ReturnType))
-                {
-                    OverrideEntitySelector((Identifier)component);
-                }
-                else
-                {
-                    OverrideLiteralSelector(this.GetEntityAccessor((FromClauseBase)FindQuerySource(memberExpression).ReferencedQuerySource));
-                }
-            }
+            OverrideSelector(component,selectClause.Selector);
         }
 
         /// <summary>Visits a where clause.</summary>
@@ -310,7 +294,7 @@ namespace RomanticWeb.Linq
             Call count=new Call(MethodNames.Count);
             count.Arguments.Add(distinct);
             _query.Select.Clear();
-            Alias alias=new Alias(count,new Identifier(_query.CreateVariableName(_query.RetrieveIdentifier(_mainFromComponent.About.Name)+"Count")));
+            Alias alias=new Alias(count,new Identifier(_query.CreateVariableName(_query.RetrieveIdentifier(_mainFromComponent.About.Name)+"Count"),typeof(int)));
             _query.Select.Add(alias);
         }
 
@@ -342,10 +326,40 @@ namespace RomanticWeb.Linq
             _query.Limit=Convert.ToInt32(((System.Linq.Expressions.ConstantExpression)takeResultOperation.Count).Value);
         }
 
+        private void OverrideSelector(QueryComponent component,System.Linq.Expressions.Expression selector)
+        {
+            if ((component is Identifier)&&(selector is System.Linq.Expressions.MemberExpression))
+            {
+                System.Linq.Expressions.MemberExpression memberExpression=(System.Linq.Expressions.MemberExpression)selector;
+                if (!(memberExpression.Member is PropertyInfo))
+                {
+                    throw new NotSupportedException(System.String.Format("Selection on members of type '{0}' are not supported.",memberExpression.Member.MemberType));
+                }
+
+                PropertyInfo propertyInfo=(PropertyInfo)memberExpression.Member;
+                if (typeof(IEntity).IsAssignableFrom(propertyInfo.DeclaringType))
+                {
+                    _propertyMapping=_entityContext.Mappings.FindPropertyMapping((PropertyInfo)memberExpression.Member);
+                    if (typeof(IEntity).IsAssignableFrom(_propertyMapping.ReturnType))
+                    {
+                        OverrideEntitySelector((Identifier)component);
+                    }
+                    else
+                    {
+                        OverrideLiteralSelector(this.GetEntityAccessor((FromClauseBase)FindQuerySource(memberExpression).ReferencedQuerySource));
+                    }
+                }
+            }
+            else if (component is StrongEntityAccessor)
+            {
+                _propertyMapping=IdentifierPropertyMapping.Default;
+                OverrideIdentifierSelector((StrongEntityAccessor)component);
+            }
+        }
+
         private void OverrideEntitySelector(Identifier identifier)
         {
-            string variableNameBase=identifier.Name;
-            UnboundConstrain genericConstrain=new UnboundConstrain(identifier,new Identifier(variableNameBase+"P"),new Identifier(variableNameBase+"O"));
+            UnboundConstrain genericConstrain=new UnboundConstrain(identifier,new Identifier(identifier.Name+"P"),new Identifier(identifier.Name+"O"));
             _mainFromComponent.Elements.Add(genericConstrain);
             _query.Select.Clear();
             _query.Select.Add(genericConstrain);
@@ -377,6 +391,21 @@ namespace RomanticWeb.Linq
             }
         }
 
+        private void OverrideIdentifierSelector(StrongEntityAccessor entityAccessor)
+        {
+            IdentifierEntityAccessor identifierEntityAccessor=new IdentifierEntityAccessor(entityAccessor.About,entityAccessor);
+            int indexOf=-1;
+            if ((indexOf=_query.Elements.IndexOf(entityAccessor))!=-1)
+            {
+                _query.Elements.RemoveAt(indexOf);
+                _query.Elements.Insert(indexOf,identifierEntityAccessor);
+            }
+
+            _query.Select.Clear();
+            _query.Select.Add(identifierEntityAccessor);
+            _mainFromComponent=identifierEntityAccessor;
+        }
+
         private QuerySourceReferenceExpression FindQuerySource(System.Linq.Expressions.Expression expression)
         {
             QuerySourceReferenceExpression result=null;
@@ -392,5 +421,39 @@ namespace RomanticWeb.Linq
             return result;
         }
         #endregion
+
+        internal sealed class IdentifierPropertyMapping:IPropertyMapping
+        {
+            /// <summary>Gets the default instance of the <see cref="IdentifierPropertyMapping" />.</summary>
+            public static readonly IdentifierPropertyMapping Default=new IdentifierPropertyMapping();
+
+            private IdentifierPropertyMapping()
+            {
+            }
+
+            /// <inheritdoc />
+            IEntityMapping IPropertyMapping.EntityMapping { get { return null; } }
+
+            /// <inheritdoc />
+            Uri IPropertyMapping.Uri { get { return Rdf.subject; } }
+
+            /// <inheritdoc />
+            public string Name { get { return "Id"; } }
+
+            /// <inheritdoc />
+            public Type ReturnType { get { return typeof(EntityId); } }
+
+            /// <inheritdoc />
+            public Type DeclaringType { get { return typeof(IEntity); } }
+
+            /// <inheritdoc />
+            INodeConverter IPropertyMapping.Converter { get { return null; } }
+
+            /// <inheritdoc />
+            void IPropertyMapping.Accept(Mapping.Visitors.IMappingModelVisitor mappingModelVisitor)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

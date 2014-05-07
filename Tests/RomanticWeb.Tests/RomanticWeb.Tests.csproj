@@ -126,6 +126,8 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="IntegrationTests\WritingTestsBase.cs" />
+    <Compile Include="IntegrationTests\InMemory\WritingTests.cs" />
     <Compile Include="Linq\SparqlResultModifiersTests.cs" />
     <Compile Include="Mapping\ClassMappingTests.cs" />
     <Compile Include="RdfTypeCacheTests.cs" />
@@ -192,6 +194,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TestGraphs\LargeDataset.nq" />
     <EmbeddedResource Include="TestGraphs\InheritedPropertyGraph.trig" />
     <EmbeddedResource Include="JsonLd\TestCases\AcmeStore.ttl" />
     <EmbeddedResource Include="JsonLd\TestCases\NestedEntity.ttl" />

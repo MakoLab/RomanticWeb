@@ -9,20 +9,31 @@ namespace RomanticWeb.Linq.Model
     {
         #region Fields
         private object _value;
+        private Type _valueType;
         #endregion
 
         #region Constructors
+        /// <summary>Constructor for creating <b>null</b> literals of given type.</summary>
+        /// <param name="valueType"></param>
+        public Literal(Type valueType):base()
+        {
+            _valueType=valueType;
+        }
+
         /// <summary>Base constructor with value passed.</summary>
         /// <param name="value">Value of this literal.</param>
         public Literal(object value):base()
         {
-            _value=value;
+            _valueType=(_value=value).GetType();
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a value of this literal.</summary>
-        public object Value { get { return _value; } }
+        public object Value { [return:AllowNull] get { return _value; } }
+
+        /// <summary>Gets the type of value.</summary>
+        public Type ValueType { get { return _valueType; } }
         #endregion
 
         #region Public methods

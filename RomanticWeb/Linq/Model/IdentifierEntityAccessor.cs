@@ -5,22 +5,23 @@ using System.Collections.Specialized;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Linq.Model
 {
-    /// <summary>Provides details about entity accessor.</summary>
-    [QueryComponentNavigator(typeof(UnspecifiedEntityAccessorNavigator))]
-    public class UnspecifiedEntityAccessor:StrongEntityAccessor
+    /// <summary>Provides details about identifier entity accessor.</summary>
+    [QueryComponentNavigator(typeof(IdentifierEntityAccessorNavigator))]
+    public class IdentifierEntityAccessor:StrongEntityAccessor
     {
         #region Fields
         private StrongEntityAccessor _entityAccessor;
         #endregion
 
         #region Constructors
-        /// <summary>Default constructor with aboutness assuming that a source is a variable.</summary>
+        /// <summary>Default constructor with aboutness and a strong entity accessor.</summary>
         /// <param name="about">Points to the primary topic of given entity accessor.</param>
         /// <param name="entityAccessor">Strong entity accessor.</param>
-        internal UnspecifiedEntityAccessor(Identifier about,StrongEntityAccessor entityAccessor):base(about)
+        internal IdentifierEntityAccessor(Identifier about,StrongEntityAccessor entityAccessor):base(about)
         {
             _entityAccessor=entityAccessor;
         }
@@ -29,7 +30,7 @@ namespace RomanticWeb.Linq.Model
         /// <param name="about">Specifies an entity identifier given accesor uses.</param>
         /// <param name="sourceExpression">Source of this entity accessor.</param>
         /// <param name="entityAccessor">Strong entity accessor.</param>
-        internal UnspecifiedEntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression,StrongEntityAccessor entityAccessor):base(about,sourceExpression)
+        internal IdentifierEntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression,StrongEntityAccessor entityAccessor):base(about,sourceExpression)
         {
             _entityAccessor=entityAccessor;
         }
@@ -60,21 +61,17 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this graph.</returns>
         public override string ToString()
         {
-            IEnumerable<string> elements=Elements.Select(item => 
+            IList<string> elements=Elements.Select(item => 
                     (item is StrongEntityAccessor?(About!=null?item.ToString().Replace("?s ",About.ToString()):(_entityAccessor.About!=null?_entityAccessor.About.ToString():item.ToString())):
-                    item.ToString()));
-            string strongEntityAccessor=_entityAccessor.ToString();
-            foreach (IQueryComponent component in Elements)
-            {
-                strongEntityAccessor=strongEntityAccessor.Replace(component.ToString(),System.String.Empty);
-            }
+                    item.ToString())).ToList();
+            elements.Add(System.String.Format("BIND(<{0}> AS {1}Fake)",Rdf.predicate,(About!=null?About.ToString():_entityAccessor.About!=null?_entityAccessor.About.ToString():System.String.Empty)));
+            elements.Add(System.String.Format("BIND(<{0}> AS {1}Fake)",Rdf.@object,(About!=null?About.ToString():_entityAccessor.About!=null?_entityAccessor.About.ToString():System.String.Empty)));
 
             return System.String.Format(
-                "{3} UNION {{{0}GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}}}{0}",
+                "GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}",
                 Environment.NewLine,
-                (About!=null?About.ToString():(_entityAccessor.About!=null?_entityAccessor.About.ToString():System.String.Empty)),
-                System.String.Join(Environment.NewLine,elements),
-                strongEntityAccessor);
+                (About!=null?About.ToString():System.String.Empty),
+                System.String.Join(Environment.NewLine,elements));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -85,8 +82,8 @@ namespace RomanticWeb.Linq.Model
         public override bool Equals([AllowNull] object operand)
         {
             if (Object.Equals(operand,null)) { return false; }
-            if (operand.GetType()!=typeof(UnspecifiedEntityAccessor)) { return false; }
-            UnspecifiedEntityAccessor accessor=(UnspecifiedEntityAccessor)operand;
+            if (operand.GetType()!=typeof(IdentifierEntityAccessor)) { return false; }
+            IdentifierEntityAccessor accessor=(IdentifierEntityAccessor)operand;
             return (About!=null?About.Equals(accessor.About):Object.Equals(accessor.About,null))&&
                 (SourceExpression!=null?SourceExpression.Equals(accessor.SourceExpression):Object.Equals(accessor.SourceExpression,null))&&
                 (Source==accessor.Source)&&(_entityAccessor.Equals(accessor._entityAccessor));
@@ -97,7 +94,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(UnspecifiedEntityAccessor).FullName.GetHashCode()^(About!=null?About.GetHashCode():0)^
+            return typeof(IdentifierEntityAccessor).FullName.GetHashCode()^(About!=null?About.GetHashCode():0)^
                 (SourceExpression!=null?SourceExpression.GetHashCode():0)^Source.GetHashCode()^_entityAccessor.GetHashCode();
         }
         #endregion

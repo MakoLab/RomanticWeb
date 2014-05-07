@@ -65,6 +65,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                .WithOntology(new DefaultOntologiesProvider())
                                                .WithOntology(new LifeOntology())
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
+                                               .WithOntology(new ChemOntology())
                                                .WithMappings(BuildMappings)
                                                .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
                                                .WithEntityStore(() => _entityStore);
@@ -118,6 +119,27 @@ namespace RomanticWeb.Tests.IntegrationTests
                     return new Uri("http://example/livingThings#"+rdfTermName);
                 }
              
+                return null;
+            }
+        }
+
+        public class ChemOntology:IOntologyProvider
+        {
+            public IEnumerable<Ontology> Ontologies
+            {
+                get
+                {
+                    yield return new Ontology("chem",new Uri("http://chem.com/vocab/"));
+                }
+            }
+
+            public Uri ResolveUri(string prefix,string rdfTermName)
+            {
+                if (prefix=="chem")
+                {
+                    return new Uri("http://chem.com/vocab/"+rdfTermName);
+                }
+
                 return null;
             }
         }

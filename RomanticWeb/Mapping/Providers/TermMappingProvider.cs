@@ -44,6 +44,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="mappingProviderVisitor">The visitor.</param>
         public abstract void Accept(IMappingProviderVisitor mappingProviderVisitor);
 
+        // TODO: Consider a mechanism of ignoring missing ontology providers. Use case: partial publications, i.e. updated assembly with new mappings, but not published prefix mapping.
         private static Uri GetTermUri(IOntologyProvider ontologyProvider,string namespacePrefix,string termName)
         {
             var resolvedUri=ontologyProvider.ResolveUri(namespacePrefix,termName);

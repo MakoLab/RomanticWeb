@@ -1,7 +1,12 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Foaf;
+using RomanticWeb.TestEntities.LargeDataset;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -92,6 +97,22 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             agent.Should().BeAssignableTo<TestEntities.Foaf.IPerson>();
+        }
+
+        [Test]
+        [TestCase(2)]
+        public void Should_load_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+            DateTime startedAt=DateTime.Now;
+
+            // when
+            IEnumerable<IProduct> entities=EntityContext.AsQueryable<IProduct>().ToList();
+
+            // then
+            TimeSpan testLength=DateTime.Now-startedAt;
+            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
         }
 
         protected override void ChildSetup()

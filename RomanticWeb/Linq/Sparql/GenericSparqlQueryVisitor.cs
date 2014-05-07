@@ -23,9 +23,12 @@ namespace RomanticWeb.Linq.Sparql
         private string _predicateVariableName;
         private string _objectVariableName;
         private string _scalarVariableName;
+        private bool _cancelLast=false;
         private StrongEntityAccessor _entityAccessorToExpand=null;
         private IDictionary<Identifier,string> _variableNameOverride=new Dictionary<Identifier,string>();
         private IList<IQueryComponent> _supressedComponents=new List<IQueryComponent>();
+        private IList<IQueryComponent> _injectedComponents=new List<IQueryComponent>();
+        private VisitedEntityConstrainCollection _visitedEntityConstrains;
         #endregion
 
         #region Constructors
@@ -178,6 +181,10 @@ namespace RomanticWeb.Linq.Sparql
             {
                 VisitComplexEntityContrain(binaryOperator);
             }
+            else if (IsBinaryOperatorEntityIsNullCheck(binaryOperator))
+            {
+                VisitEntityIsNullCheck(binaryOperator);
+            }
             else
             {
                 string operatorString;
@@ -233,12 +240,18 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="entityConstrain">Entity constrain to be visited.</param>
         protected override void VisitEntityConstrain(EntityConstrain entityConstrain)
         {
+            int startIndex=_commandText.Length;
             VisitComponent(_currentEntityAccessor.Peek().About);
             _commandText.Append(" ");
             VisitComponent(entityConstrain.Predicate);
             _commandText.Append(" ");
             VisitComponent(entityConstrain.Value);
             _commandText.Append(" . ");
+            int length=_commandText.Length-startIndex;
+            if (!_visitedEntityConstrains.ContainsKey(entityConstrain))
+            {
+                _visitedEntityConstrains[entityConstrain]=new KeyValuePair<int,int>(startIndex,length);
+            }
         }
 
         /// <summary>Visit an entity type constrain.</summary>
@@ -293,48 +306,55 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="literal">Literal to be visited.</param>
         protected override void VisitLiteral(Literal literal)
         {
-            string valueString;
-            switch (literal.Value.GetType().FullName)
+            if (literal.Value==null)
             {
-                default:
-                    if (literal.Value is EntityId)
-                    {
-                        valueString=String.Format("<{0}>",literal.Value);
-                    }
-                    else
-                    {
-                        valueString=String.Format("\"{0}\"",literal.Value);
-                    }
-
-                    break;
-                case "System.Byte":
-                case "System.SByte":
-                case "System.Int16":
-                case "System.UInt16":
-                case "System.Int32":
-                case "System.UInt32":
-                case "System.Int64":
-                case "System.UInt64":
-                    valueString=literal.Value.ToString();
-                    break;
-                case "System.Char":
-                case "System.String":
-                    valueString=String.Format("\"{0}\"^^xsd:string",literal.Value);
-                    break;
-                case "System.Single":
-                case "System.Double":
-                case "System.Decimal":
-                    valueString=String.Format(CultureInfo.InvariantCulture,"{0}",literal.Value);
-                    break;
-                case "System.DateTime":
-                    valueString=String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
-                    break;
-                case "System.Uri":
-                    valueString=String.Format("<{0}>",literal.Value);
-                    break;
+                VisitNullLiteral(literal.ValueType);
             }
+            else
+            {
+                string valueString;
+                switch (literal.ValueType.FullName)
+                {
+                    default:
+                        if (literal.Value is EntityId)
+                        {
+                            valueString=String.Format("<{0}>",literal.Value);
+                        }
+                        else
+                        {
+                            valueString=String.Format("\"{0}\"",literal.Value);
+                        }
 
-            _commandText.Append(valueString);
+                        break;
+                    case "System.Byte":
+                    case "System.SByte":
+                    case "System.Int16":
+                    case "System.UInt16":
+                    case "System.Int32":
+                    case "System.UInt32":
+                    case "System.Int64":
+                    case "System.UInt64":
+                        valueString=literal.Value.ToString();
+                        break;
+                    case "System.Char":
+                    case "System.String":
+                        valueString=String.Format("\"{0}\"^^xsd:string",literal.Value);
+                        break;
+                    case "System.Single":
+                    case "System.Double":
+                    case "System.Decimal":
+                        valueString=String.Format(CultureInfo.InvariantCulture,"{0}",literal.Value);
+                        break;
+                    case "System.DateTime":
+                        valueString=String.Format(CultureInfo.InvariantCulture,"\"{0}\"^^xsd:dateTime",literal.Value);
+                        break;
+                    case "System.Uri":
+                        valueString=String.Format("<{0}>",literal.Value);
+                        break;
+                }
+
+                _commandText.Append(valueString);
+            }
         }
 
         /// <summary>Visit a list.</summary>
@@ -381,9 +401,29 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="filter">Filter to be visited.</param>
         protected override void VisitFilter(Filter filter)
         {
+            int startIndex=_commandText.Length;
             _commandText.Append("FILTER (");
             VisitComponent(filter.Expression);
             _commandText.Append(") ");
+            int length=_commandText.Length-startIndex;
+            if (_cancelLast)
+            {
+                _commandText.Remove(startIndex,length);
+            }
+        }
+
+        /// <summary>Visit an identifier entity accessor.</summary>
+        /// <param name="entityAccessor">Identifier entity accessor to be visited.</param>
+        protected override void VisitIdentifierEntityAccessor(IdentifierEntityAccessor entityAccessor)
+        {
+            Call predicateBind=new Call(MethodNames.Bind);
+            predicateBind.Arguments.Add(new Alias(new Literal(Rdf.predicate),new Identifier(entityAccessor.About.Name+"_Predicate")));
+            Call objectBind=new Call(MethodNames.Bind);
+            objectBind.Arguments.Add(new Alias(new Literal(Rdf.@object),new Identifier(entityAccessor.About.Name+"_Object")));
+            _injectedComponents.Add(predicateBind);
+            _injectedComponents.Add(objectBind);
+            VisitStrongEntityAccessor(entityAccessor.EntityAccessor);
+            _injectedComponents.Clear();
         }
 
         /// <summary>Visit an unspecified entity accessor.</summary>
@@ -423,6 +463,15 @@ namespace RomanticWeb.Linq.Sparql
             foreach (QueryElement element in entityAccessor.Elements)
             {
                 VisitComponent(element);
+            }
+
+            foreach (IQueryComponent element in _injectedComponents)
+            {
+                VisitComponent(element);
+                if (element is Call)
+                {
+                    _commandText.Append(" ");
+                }
             }
 
             if ((_entityAccessorToExpand!=null)&&(_entityAccessorToExpand.Equals(entityAccessor)))
@@ -503,12 +552,51 @@ namespace RomanticWeb.Linq.Sparql
             }
         }
 
+        private void VisitEntityIsNullCheck(BinaryOperator binaryOperator)
+        {
+            if (binaryOperator.Member==MethodNames.Equal)
+            {
+                EntityConstrain entityConstrain;
+                _commandText.Append("NOT EXISTS {");
+                VisitComponent(_currentEntityAccessor.Peek().About);
+                _commandText.Append(" ");
+                if ((binaryOperator.RightOperand is Literal)&&(((Literal)binaryOperator.RightOperand).Value==null))
+                {
+                    entityConstrain=_currentEntityAccessor.Peek().Elements.OfType<EntityConstrain>().Where(item => item.Value==binaryOperator.LeftOperand).First();
+                    VisitComponent(entityConstrain.Predicate);
+                    _commandText.Append(" ");
+                    VisitComponent(binaryOperator.LeftOperand);
+                }
+                else
+                {
+                    entityConstrain=_currentEntityAccessor.Peek().Elements.OfType<EntityConstrain>().Where(item => item.Value==binaryOperator.RightOperand).First();
+                    VisitComponent(entityConstrain.Predicate);
+                    _commandText.Append(" ");
+                    VisitComponent(binaryOperator.RightOperand);
+                }
+
+                _commandText.Append("}");
+                _visitedEntityConstrains.Remove(entityConstrain);
+            }
+            else
+            {
+                _cancelLast=true;
+            }
+        }
+
         private bool IsBinaryOperatorComplexEntityContrain(BinaryOperator binaryOperator)
         {
             return ((binaryOperator.Member==MethodNames.Or)||(binaryOperator.Member==MethodNames.And))&&
                 ((binaryOperator.LeftOperand is EntityConstrain)||(binaryOperator.RightOperand is EntityConstrain)||
                 ((binaryOperator.LeftOperand is BinaryOperator)&&(IsBinaryOperatorComplexEntityContrain((BinaryOperator)binaryOperator.LeftOperand)))||
                 ((binaryOperator.RightOperand is BinaryOperator)&&(IsBinaryOperatorComplexEntityContrain((BinaryOperator)binaryOperator.RightOperand))));
+        }
+
+        private bool IsBinaryOperatorEntityIsNullCheck(BinaryOperator binaryOperator)
+        {
+            return ((binaryOperator.Member==MethodNames.Equal)||(binaryOperator.Member==MethodNames.NotEqual))&&
+                (((binaryOperator.RightOperand is Literal)&&(((Literal)binaryOperator.RightOperand).Value==null))||
+                ((binaryOperator.LeftOperand is Literal)&&(((Literal)binaryOperator.LeftOperand).Value==null)));
         }
 
         private void ProcessSelectable(bool isSubQuery,ISelectableQueryComponent expression,Func<string,string> createVariableName)
@@ -528,6 +616,25 @@ namespace RomanticWeb.Linq.Sparql
                         ((UnspecifiedEntityAccessor)expression).About.Name,
                         ((UnspecifiedEntityAccessor)expression).EntityAccessor.About.Name,
                         _metaGraphVariableName);
+                }
+                else if (expression is IdentifierEntityAccessor)
+                {
+                    if ((_metaGraphVariableName==null)&&(_entityVariableName==null))
+                    {
+                        _metaGraphVariableName=String.Format("G{0}",((StrongEntityAccessor)expression).About.Name);
+                        _entityVariableName=((StrongEntityAccessor)expression).About.Name+"_Distinct";
+                    }
+
+                    _subjectVariableName=((StrongEntityAccessor)expression).About.Name;
+                    _predicateVariableName=((StrongEntityAccessor)expression).About.Name+"_Predicate";
+                    _objectVariableName=((StrongEntityAccessor)expression).About.Name+"_Object";
+                    _commandText.AppendFormat(
+                        "DISTINCT(?{2}) AS ?{1} ?{0} ?{3} ?{4} ",
+                        _metaGraphVariableName,
+                        _entityVariableName,
+                        ((StrongEntityAccessor)expression).About.Name,
+                        _predicateVariableName,
+                        _objectVariableName);
                 }
                 else if (expression is StrongEntityAccessor)
                 {
@@ -576,7 +683,7 @@ namespace RomanticWeb.Linq.Sparql
         {
             if (_commandText==null)
             {
-                _commandText=new StringBuilder();
+                _visitedEntityConstrains=new VisitedEntityConstrainCollection(_commandText=new StringBuilder());
             }
 
             if (prefixes==null)
@@ -664,6 +771,11 @@ namespace RomanticWeb.Linq.Sparql
             {
                 _commandText.Append("} ");
             }
+        }
+
+        private void VisitNullLiteral(Type literalType)
+        {
+            throw new NotSupportedException("Null literals are not supported in SPARQL.");
         }
         #endregion
     }

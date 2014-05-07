@@ -150,6 +150,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Random floating point number.</summary>
         RandomFloat=0x0000000D,
+
+        /// <summary>Binds a constant to a variable.</summary>
+        Bind=0x00000010,
         #endregion
         #region Result modifiers
         /// <summary>Offset operator.</summary>

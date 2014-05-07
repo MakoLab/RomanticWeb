@@ -70,6 +70,8 @@
     <Compile Include="Inheritance\IInterface.cs" />
     <Compile Include="Inheritance\Specialized\IInterface.cs" />
     <Compile Include="IPerson.cs" />
+    <Compile Include="LargeDataset\IProduct.cs" />
+    <Compile Include="LargeDataset\IQuantitativeFloatProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

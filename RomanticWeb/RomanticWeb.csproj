@@ -147,6 +147,8 @@
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\IQueryVisitor.cs" />
     <Compile Include="Linq\IVariableNamingConvention.cs" />
+    <Compile Include="Linq\Model\IdentifierEntityAccessor.cs" />
+    <Compile Include="Linq\Model\Navigators\IdentifierEntityAccessorNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\UnspecifiedEntityAccessorNavigator.cs" />
     <Compile Include="Linq\Model\UnspecifiedEntityAccessor.cs" />
     <Compile Include="Linq\Model\EntityTypeConstrain.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Linq\Model\EntityConstrain.cs" />
     <Compile Include="Linq\Model\QueryComponent.cs" />
     <Compile Include="Linq\Sparql\SparqlQueryVariables.cs" />
+    <Compile Include="Linq\Sparql\VisitedEntityConstrainCollection.cs" />
     <Compile Include="Linq\UniqueVariableNamingStrategy.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />

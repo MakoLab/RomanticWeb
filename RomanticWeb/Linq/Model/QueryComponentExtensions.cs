@@ -97,8 +97,9 @@ namespace RomanticWeb.Linq.Model
                     .Where(item => (item.SourceExpression!=null)&&(item.SourceExpression.FromExpression==sourceExpression.FromExpression)).FirstOrDefault();
                 if (entityAccessor==null)
                 {
-                    entityAccessor=new StrongEntityAccessor(new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName.CamelCase())),sourceExpression);
                     EntityTypeConstrain constrain=visitor.CreateTypeConstrain(sourceExpression);
+                    Identifier identifier=new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName),sourceExpression.ItemType.FindEntityType());
+                    entityAccessor=new StrongEntityAccessor(identifier,sourceExpression);
                     if ((constrain!=null)&&(!entityAccessor.Elements.Contains(constrain)))
                     {
                         entityAccessor.Elements.Add(constrain);

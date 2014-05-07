@@ -231,8 +231,24 @@ namespace RomanticWeb.Linq.Sparql
                 }
 
                 VisitComponent(binaryOperator.LeftOperand);
-                _commandText.AppendFormat(" {0} ",operatorString);
+                bool leftOperandCanceled=_cancelLast;
+                _cancelLast=false;
+                int startIndex=_commandText.Length;
+                if (!leftOperandCanceled)
+                {
+                    _commandText.AppendFormat(" {0} ",operatorString);
+                }
+
                 VisitComponent(binaryOperator.RightOperand);
+                bool rightOperandCanceled=_cancelLast;
+                _cancelLast=false;
+                int length=_commandText.Length-startIndex;
+                if (rightOperandCanceled)
+                {
+                    _commandText=_commandText.Remove(startIndex,length);
+                }
+
+                _cancelLast=leftOperandCanceled&&rightOperandCanceled;
             }
         }
 

@@ -327,6 +327,17 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(entities.Count,Is.EqualTo(1));
         }
 
+        [Test]
+        public void Select_entities_with_multiple_where_statemens()
+        {
+            Uri searchedUri=new Uri("http://magi/addresses/Address");
+            IList<IPerson> entities=(from resources in _entityContext.AsQueryable<IPerson>()
+                                     where (resources.Address!=null)
+                                     where (resources.Address.Id.Uri==searchedUri)
+                                     select resources).ToList();
+            Assert.That(entities.Count,Is.EqualTo(1));
+        }
+
         private class TestPersonMap:TestEntityMapping<IPerson>
         {
             public TestPersonMap()

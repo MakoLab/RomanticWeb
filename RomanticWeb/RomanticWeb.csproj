@@ -195,7 +195,7 @@
     <Compile Include="Linq\Model\EntityConstrain.cs" />
     <Compile Include="Linq\Model\QueryComponent.cs" />
     <Compile Include="Linq\Sparql\SparqlQueryVariables.cs" />
-    <Compile Include="Linq\Sparql\VisitedEntityConstrainCollection.cs" />
+    <Compile Include="Linq\Sparql\VisitedComponentCollection.cs" />
     <Compile Include="Linq\UniqueVariableNamingStrategy.cs" />
     <Compile Include="Linq\EntityQueryable.cs" />
     <Compile Include="Linq\EntityQueryExecutor.cs" />

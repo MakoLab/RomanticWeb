@@ -28,7 +28,7 @@ namespace RomanticWeb.Linq.Sparql
         private IDictionary<Identifier,string> _variableNameOverride=new Dictionary<Identifier,string>();
         private IList<IQueryComponent> _supressedComponents=new List<IQueryComponent>();
         private IList<IQueryComponent> _injectedComponents=new List<IQueryComponent>();
-        private VisitedEntityConstrainCollection _visitedEntityConstrains;
+        private VisitedComponentCollection _visitedComponents;
         #endregion
 
         #region Constructors
@@ -264,9 +264,9 @@ namespace RomanticWeb.Linq.Sparql
             VisitComponent(entityConstrain.Value);
             _commandText.Append(" . ");
             int length=_commandText.Length-startIndex;
-            if (!_visitedEntityConstrains.ContainsKey(entityConstrain))
+            if (!_visitedComponents.ContainsKey(entityConstrain))
             {
-                _visitedEntityConstrains[entityConstrain]=new KeyValuePair<int,int>(startIndex,length);
+                _visitedComponents[entityConstrain]=new KeyValuePair<int,int>(startIndex,length);
             }
         }
 
@@ -426,6 +426,8 @@ namespace RomanticWeb.Linq.Sparql
             {
                 _commandText.Remove(startIndex,length);
             }
+
+            _cancelLast=false;
         }
 
         /// <summary>Visit an identifier entity accessor.</summary>
@@ -592,7 +594,7 @@ namespace RomanticWeb.Linq.Sparql
                 }
 
                 _commandText.Append("}");
-                _visitedEntityConstrains.Remove(entityConstrain);
+                _visitedComponents.Remove(entityConstrain);
             }
             else
             {
@@ -699,7 +701,7 @@ namespace RomanticWeb.Linq.Sparql
         {
             if (_commandText==null)
             {
-                _visitedEntityConstrains=new VisitedEntityConstrainCollection(_commandText=new StringBuilder());
+                _visitedComponents=new VisitedComponentCollection(_commandText=new StringBuilder());
             }
 
             if (prefixes==null)

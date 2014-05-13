@@ -128,7 +128,7 @@ namespace RomanticWeb.Entities
         /// <param name="predicate">Uri of the predicate the value should be get.</param>
         /// <remarks>This method returns strongly typed values as defined in the mappings.</remarks>
         /// <returns>Value of the given predicate or <b>null</b>.</returns>
-        [AllowNull]
+        [return: AllowNull]
         public static object Predicate(this IEntity entity,Uri predicate)
         {
             object result=null;

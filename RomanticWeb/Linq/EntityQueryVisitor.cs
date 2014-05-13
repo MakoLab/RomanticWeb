@@ -501,7 +501,12 @@ namespace RomanticWeb.Linq
                                 let identifier=(Identifier)entityConstrain.Value
                                 let property=(PropertyInfo)((System.Linq.Expressions.MemberExpression)expression.Expression).Member
                                 where (_query.RetrieveIdentifier(identifier.Name)==_query.CreateIdentifier(property.Name))&&(identifier.NativeType==property.PropertyType)
-                                select identifier).First();
+                                select identifier).FirstOrDefault();
+                if (_lastComponent==null)
+                {
+                    _lastComponent=entityAccessor.About;
+                }
+
                 HandleComponent(_lastComponent);
             }
 

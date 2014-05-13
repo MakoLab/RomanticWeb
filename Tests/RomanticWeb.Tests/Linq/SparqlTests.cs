@@ -338,6 +338,17 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(entities.Count,Is.EqualTo(1));
         }
 
+        [Test]
+        public void Select_where_subquery_matches()
+        {
+            Uri searched=new Uri("http://magi/people/Tomasz");
+            IEnumerable<IPerson> persons=from person in _entityContext.AsQueryable<IPerson>()
+                                         from known in person.Knows
+                                         where known.Id.Uri==searched
+                                         select person;
+            Assert.That(persons.Count(),Is.EqualTo(1));
+        }
+
         private class TestPersonMap:TestEntityMapping<IPerson>
         {
             public TestPersonMap()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
+using NullGuard;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
@@ -113,7 +114,7 @@ namespace RomanticWeb.Entities
         /// <returns>Enumeration of predicate Uri's.</returns>
         public static IEnumerable<Uri> Predicates(this IEntity entity)
         {
-            IEnumerable<Uri> result=null;
+            IEnumerable<Uri> result=new Uri[0];
             if (entity!=null)
             {
                 result=entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Predicate.Uri);
@@ -127,6 +128,7 @@ namespace RomanticWeb.Entities
         /// <param name="predicate">Uri of the predicate the value should be get.</param>
         /// <remarks>This method returns strongly typed values as defined in the mappings.</remarks>
         /// <returns>Value of the given predicate or <b>null</b>.</returns>
+        [AllowNull]
         public static object Predicate(this IEntity entity,Uri predicate)
         {
             object result=null;

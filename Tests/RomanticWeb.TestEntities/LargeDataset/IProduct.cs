@@ -54,5 +54,8 @@ namespace RomanticWeb.TestEntities.LargeDataset
 
         [Collection("chem","msdsFile")]
         IEnumerable<IEntity> MsdsFile { get; set; }
+
+        [Collection("chem","function")]
+        IEnumerable<EntityId> Function { get; set; }
     }
 }

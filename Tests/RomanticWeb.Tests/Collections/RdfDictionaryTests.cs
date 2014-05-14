@@ -24,7 +24,7 @@ namespace RomanticWeb.Tests.Collections
             _contextMock=new Mock<IEntityContext>(MockBehavior.Strict);
             _contextMock.Setup(c => c.BlankIdGenerator).Returns(new DefaultBlankNodeIdGenerator());
             _contextMock.Setup(c => c.Create<TestPair>(It.IsAny<EntityId>())).Returns((EntityId entityId) => CreateKeyValuePair(entityId));
-            _contextMock.Setup(c => c.Load<TestOwner>(Id, false)).Returns(_owner);
+            _contextMock.Setup(c => c.Load<TestOwner>(Id)).Returns(_owner);
             _context=_contextMock.Object;
         }
 

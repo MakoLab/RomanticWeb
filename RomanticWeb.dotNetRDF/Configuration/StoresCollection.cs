@@ -5,6 +5,9 @@ using System.Xml;
 
 namespace RomanticWeb.DotNetRDF.Configuration
 {
+    /// <summary>
+    /// Configuration elements for dotNetRDF triple stores
+    /// </summary>
     public class StoresCollection:ConfigurationElementCollection,IEnumerable<StoreElement>
     {
         private static readonly IDictionary<string, Func<StoresCollection, StoreElement>> StoreElementFactories;
@@ -18,11 +21,16 @@ namespace RomanticWeb.DotNetRDF.Configuration
             StoreElementFactories["external"] = self => new ExternallyConfiguredStoreElement(self._parent);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StoresCollection"/> class.
+        /// </summary>
+        /// <param name="parent">The parent configuraion section.</param>
         public StoresCollection(StoresConfigurationSection parent)
         {
             _parent = parent;
         }
 
+        /// <inheritdoc/>
         IEnumerator<StoreElement> IEnumerable<StoreElement>.GetEnumerator()
         {
             foreach (var storeElement in this)
@@ -36,17 +44,26 @@ namespace RomanticWeb.DotNetRDF.Configuration
             DeserializeElement(reader, false);
         }
 
+        /// <summary>
+        /// Not implemented
+        /// </summary>
         protected override ConfigurationElement CreateNewElement()
         {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Gets <see cref="StoreElement.Name"/>
+        /// </summary>
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((StoreElement)element).Name;
         }
 
-        protected override bool OnDeserializeUnrecognizedElement(string elementName,System.Xml.XmlReader reader)
+        /// <summary>
+        /// Tries to deserialize a store element node
+        /// </summary>
+        protected override bool OnDeserializeUnrecognizedElement(string elementName,XmlReader reader)
         {
             if (StoreElementFactories.ContainsKey(elementName))
             {

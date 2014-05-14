@@ -22,6 +22,7 @@ namespace RomanticWeb.Ontologies
         /// <summary>Gets the namespace prefix.</summary>
         public string Prefix { get; private set; }
 
+#pragma warning disable 1591
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null,obj)) { return false; }
@@ -37,6 +38,7 @@ namespace RomanticWeb.Ontologies
                 return (BaseUri.GetHashCode() * 397)^Prefix.GetHashCode();
             }
         }
+#pragma warning restore
 
         private bool Equals(NamespaceSpecification other)
         {

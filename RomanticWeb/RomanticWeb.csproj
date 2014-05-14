@@ -133,6 +133,8 @@
     <Compile Include="Entities\ResultPostprocessing\SimpleTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\ObservableCollectionTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\RdfListTransformer.cs" />
+    <Compile Include="IEntityCache.cs" />
+    <Compile Include="InMemoryEntityCache.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="FluentCompare.cs" />

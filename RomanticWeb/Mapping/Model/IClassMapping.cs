@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
@@ -10,6 +9,11 @@ namespace RomanticWeb.Mapping.Model
     /// </summary>
     public interface IClassMapping
     {
+        /// <summary>
+        /// Gets the RDF class URI.
+        /// </summary>
+        Uri Uri { get; }
+
         /// <summary>
         /// Gets a value indicating whether [is inherited] from base class' mapping.
         /// </summary>
@@ -24,12 +28,6 @@ namespace RomanticWeb.Mapping.Model
         /// <param name="classList">The class list.</param>
         /// <returns>true is class list indicates class membership</returns>
         bool IsMatch(IEnumerable<Uri> classList);
-
-        /// <summary>
-        /// Appends mapped URIs to the class list.
-        /// </summary>
-        /// <param name="classList">The class list.</param>
-        void AppendTo(ICollection<EntityId> classList);
 
         /// <summary>
         /// Accepts the specified mapping model visitor.

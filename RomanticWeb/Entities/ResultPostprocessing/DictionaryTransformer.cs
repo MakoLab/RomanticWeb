@@ -62,10 +62,8 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             if (dictionary==null)
             {
                 dictionary=(IRdfDictionary)dictionaryType.GetConstructors()
-                                                         .Single(c => c.GetParameters().Count()==3)
+                                                         .Single(c => c.GetParameters().Length==3)
                                                          .Invoke(new[] { proxy.Id,context,value });
-
-                return dictionary.DictionaryEntries.Select(entity => Node.FromEntityId(entity.Id));
             }
 
             return dictionary.DictionaryEntries.Select(entity => Node.FromEntityId(entity.Id));

@@ -15,10 +15,9 @@ namespace RomanticWeb.Mapping.Conventions
         /// <summary>
         /// Initializes a new instance of the <see cref="ConventionsVisitor"/> class.
         /// </summary>
-        /// <param name="conventions">The conventions.</param>
-        public ConventionsVisitor(IEnumerable<IConvention> conventions)
+        public ConventionsVisitor(MappingContext mappingContext)
         {
-            _conventions=conventions.ToList();
+            _conventions=mappingContext.Conventions.ToList();
         }
 
         /// <summary>

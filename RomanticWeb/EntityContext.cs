@@ -2,7 +2,6 @@
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
-using MethodCache.Attributes;
 using NullGuard;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
@@ -51,16 +50,14 @@ namespace RomanticWeb
             _baseUriSelector=baseUriSelector;
             _mappings=mappings;
             _mappingContext=mappingContext;
-            Cache=new DictionaryCache();
             GraphSelector=namedGraphSelector;
             _typeCache=typeCache;
             _transformerCatalog=new ResultTransformerCatalog();
+            EntityCache=new InMemoryEntityCache();
         }
         #endregion
 
         #region Properties
-        /// <summary>Gets the cache of this entity contxt.</summary>
-        public ICache Cache { get; set; }
 
         /// <summary>Gets the underlying in-memory store.</summary>
         public IEntityStore Store { get { return _entityStore; } }
@@ -92,6 +89,8 @@ namespace RomanticWeb
         /// <inheritdoc />
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
+
+        internal IEntityCache EntityCache { get; private set; }
         #endregion
 
         #region Public methods
@@ -107,27 +106,14 @@ namespace RomanticWeb
             return new EntityQueryable<T>(this,_entitySource,_mappings,_baseUriSelector);
         }
 
-        /// <inheritdoc />
-        [return: AllowNull]
-        public T Load<T>(EntityId entityId) where T:class,IEntity
-        {
-            return Load<T>(entityId,true);
-        }
-
         /// <summary>Loads an entity from the underlying data source.</summary>
         /// <param name="entityId">IRI of the entity to be loaded.</param>
-        /// <param name="checkIfExist">Determines whether to check if entity does exist or not.</param>
         /// <returns>Loaded entity.</returns>
-        [return: AllowNull]
-        public T Load<T>(EntityId entityId,bool checkIfExist) where T:class,IEntity
+        public T Load<T>(EntityId entityId) where T:class,IEntity
         {
-            IEntity entity=LoadInternal(entityId,checkIfExist);
-            if (entity==null)
-            {
-                return null;
-            }
-
-            return EntityAs<T>(entity);
+            entityId = EnsureAbsoluteEntityId(entityId);
+            LogTo.Info("Loading entity {0}", entityId);
+            return EntityAs<T>(LoadInternal(entityId));
         }
 
         /// <inheritdoc />
@@ -135,18 +121,10 @@ namespace RomanticWeb
         {
             if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
             {
-                return (T)(IEntity)Create(entityId);
+                return (T)(IEntity)CreateInternal(entityId, true);
             }
 
-            return EntityAs<T>(BuildEntityTypes<T>(Create(entityId)));
-        }
-
-        /// <inheritdoc />
-        public Entity Create(EntityId entityId)
-        {
-            entityId=EnsureAbsoluteEntityId(entityId);
-            LogTo.Info("Creating entity {0}",entityId);
-            return Create(entityId,true);
+            return EntityAs<T>(BuildEntityTypes<T>(CreateInternal(entityId, true)));
         }
 
         /// <inheritdoc />
@@ -178,45 +156,51 @@ namespace RomanticWeb
             _entitySource.LoadEntity(Store,entity.Id);
         }
 
-        /// <summary>Transforms given entity into a strongly typed interface.</summary>
-        /// <typeparam name="T">Type of the interface to transform given entity to.</typeparam>
-        /// <param name="entity">Entity to be transformed.</param>
-        /// <returns>Passed entity beeing a given interface.</returns>
+        /// <inheritdoc />
         public T EntityAs<T>(IEntity entity) where T:class,IEntity
         {
             var entityTypes=_typeCache.GetMostDerivedMappedTypes(entity,typeof(T));
             return EntityAs((Entity)entity,typeof(T),entityTypes.ToArray());
         }
 
+        /// <inheritdoc />
+        public bool Exists(EntityId entityId)
+        {
+            entityId = EnsureAbsoluteEntityId(entityId);
+            return _entitySource.EntityExist(entityId);
+        }
+
         #endregion
 
         #region Non-public methods
-        [Cache]
-        [return: AllowNull]
-        private Entity LoadInternal(EntityId entityId,bool checkIfExist)
+        private Entity LoadInternal(EntityId entityId)
         {
-            entityId=EnsureAbsoluteEntityId(entityId);
-            LogTo.Info("Loading entity {0}",entityId);
-
-            if ((entityId is BlankId)||(!checkIfExist)||(_entitySource.EntityExist(entityId)))
-            {
-                return Create(entityId,false);
-            }
-
-            return null;
+            return CreateInternal(entityId, entityId is BlankId);
         }
 
-        private Entity Create(EntityId entityId,bool entityExists)
+        private Entity CreateInternal(EntityId entityId,bool markAsInitialized)
         {
-            var entity=new Entity(entityId,this,entityExists);
-
-            foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
+            entityId = EnsureAbsoluteEntityId(entityId);
+            if (!EntityCache.HasEntity(entityId))
             {
-                var ontologyAccessor=new OntologyAccessor(entity,ontology,TransformerCatalog);
-                entity[ontology.Prefix]=ontologyAccessor;
+                LogTo.Info("Creating entity {0}", entityId);
+                var entity=new Entity(entityId,this);
+
+                foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
+                {
+                    var ontologyAccessor=new OntologyAccessor(entity,ontology,TransformerCatalog);
+                    entity[ontology.Prefix]=ontologyAccessor;
+                }
+
+                if (markAsInitialized)
+                {
+                    entity.MarkAsInitialized();
+                }
+
+                EntityCache.Add(entity);
             }
 
-            return entity;
+            return EntityCache.Get(entityId);
         }
 
         private Entity BuildEntityTypes<T>(Entity entity)
@@ -230,7 +214,7 @@ namespace RomanticWeb
             var types=entity.AsEntity<ITypedEntity>().Types;
             foreach (var classMapping in entityMapping.Classes)
             {
-                classMapping.AppendTo(types);
+                types.Add(classMapping.Uri);
             }
 
             return entity;

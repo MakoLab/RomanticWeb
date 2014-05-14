@@ -16,7 +16,7 @@ namespace RomanticWeb.Collections
 
         public RdfDictionary(EntityId ownerId,IEntityContext context)
         {
-            _dictionaryOwner=context.Load<TOwner>(ownerId,false);
+            _dictionaryOwner=context.Load<TOwner>(ownerId);
             _context=context;
         }
 

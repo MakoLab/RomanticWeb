@@ -190,14 +190,28 @@ namespace RomanticWeb.Linq.Model
         Length=0x00000900,
         #endregion
         #region Date-time functions
-        /// <summary>Gets currend date and time.</summary>
-        Now=0x00001000,
-        Year=0x00002000,
-        Month=0x00003000,
-        Day=0x00004000,
-        Hour=0x00005000,
-        Minute=0x00006000,
-        Second=0x00007000,
+        /// <summary>Gets current date and time.</summary>
+        Now = 0x00001000,
+
+        /// <summary>Gets current year.</summary>
+        Year = 0x00002000,
+
+        /// <summary>Gets current month.</summary>
+        Month = 0x00003000,
+
+        /// <summary>Gets current day of month.</summary>
+        Day = 0x00004000,
+
+        /// <summary>Gets current hour.</summary>
+        Hour = 0x00005000,
+
+        /// <summary>Gets current minute.</summary>
+        Minute = 0x00006000,
+
+        /// <summary>Gets current second.</summary>
+        Second = 0x00007000,
+
+        /// <summary>Gets current milisecond.</summary>
         Milisecond=0x00008000
         #endregion
     }

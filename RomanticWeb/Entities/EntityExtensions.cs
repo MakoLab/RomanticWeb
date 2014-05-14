@@ -143,7 +143,7 @@ namespace RomanticWeb.Entities
                 {
                     if ((@object.IsUri)||(@object.IsBlank))
                     {
-                        result=entity.Context.Load<IEntity>(@object.ToEntityId(),false);
+                        result=entity.Context.Load<IEntity>(@object.ToEntityId());
                     }
                     else
                     {

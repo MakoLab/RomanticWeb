@@ -45,7 +45,8 @@ namespace RomanticWeb
         {
             // todo: change how defaults are set
             _namedGraphSelector = new NamedGraphSelector();
-            _mappingsRepository = new MappingsRepository(_matcher);
+            _mappingsRepository = new MappingsRepository();
+            _mappingsRepository.AddVisitor(_matcher);
 
             WithMappings(DefaultMappings);
             _conventions = CreateDefaultConventions().ToList();
@@ -104,6 +105,9 @@ namespace RomanticWeb
 
         #region Public methods
 
+        /// <summary>
+        /// Creates a factory defined in the configuration section.
+        /// </summary>
         public static EntityContextFactory FromConfiguration(string factoryName)
         {
             var configuration=ConfigurationSectionHandler.Default.Factories[factoryName];
@@ -210,6 +214,9 @@ namespace RomanticWeb
             return this;
         }
 
+        /// <summary>
+        /// Sets the meta graph Uri
+        /// </summary>
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
             _metaGraphUri=metaGraphUri;

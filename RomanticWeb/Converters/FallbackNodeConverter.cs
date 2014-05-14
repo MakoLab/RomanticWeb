@@ -74,7 +74,7 @@ namespace RomanticWeb.Converters
 
         private static object ConvertUri(Node uriNode,IEntityContext context)
         {
-            return context.Load<IEntity>(uriNode.ToEntityId(),false);
+            return context.Load<IEntity>(uriNode.ToEntityId());
         }
     }
 }

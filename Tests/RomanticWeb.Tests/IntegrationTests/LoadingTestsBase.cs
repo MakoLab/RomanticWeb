@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.TestEntities.LargeDataset;
@@ -113,6 +116,18 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             TimeSpan testLength=DateTime.Now-startedAt;
             testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
+        }
+
+        [Test]
+        public void Should_find_entities_with_subquery()
+        {
+            LoadTestFile("LargeDataset.nq");
+            EntityId searched=new EntityId("http://chem.com/vocab/AdhereSealPromoteAdhesion");
+            IEnumerable<IProduct> products=from product in EntityContext.AsQueryable<IProduct>()
+                                           from func in product.Function
+                                           where func==searched
+                                           select product;
+            Assert.That(products.Count(),Is.Not.EqualTo(0));
         }
 
         protected override void ChildSetup()

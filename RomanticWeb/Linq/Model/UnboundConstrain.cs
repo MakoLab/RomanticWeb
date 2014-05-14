@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
 
@@ -23,11 +24,10 @@ namespace RomanticWeb.Linq.Model
         /// <param name="subject">Subject.</param>
         /// <param name="predicate">Predicate.</param>
         /// <param name="value">Object.</param>
-        public UnboundConstrain(IExpression subject,IExpression predicate,IExpression value)
+        /// <param name="targetExpression">Target expression that was source of this constrain.</param>
+        public UnboundConstrain(IExpression subject,IExpression predicate,IExpression value,Expression targetExpression):base(predicate,value,targetExpression)
         {
             Subject=subject;
-            Predicate=predicate;
-            Value=value;
         }
         #endregion
 

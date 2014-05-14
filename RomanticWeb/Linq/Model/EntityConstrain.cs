@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
 
@@ -22,10 +23,12 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Constructs a complete entity constrain.</summary>
         /// <param name="predicate">Predicate.</param>
         /// <param name="value">Object.</param>
-        public EntityConstrain(IExpression predicate,IExpression value)
+        /// <param name="targetExpression">Target expression that was source of this constrain.</param>
+        public EntityConstrain(IExpression predicate,IExpression value,Expression targetExpression)
         {
             Predicate=predicate;
             Value=value;
+            TargetExpression=targetExpression;
         }
         #endregion
 
@@ -65,6 +68,9 @@ namespace RomanticWeb.Linq.Model
                 }
             }
         }
+
+        /// <summary>Gets the target expression that generated this constrain.</summary>
+        public Expression TargetExpression { get; private set; }
 
         /// <summary>Gets an owning query.</summary>
         internal override Query OwnerQuery

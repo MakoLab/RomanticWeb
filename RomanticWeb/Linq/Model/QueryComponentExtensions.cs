@@ -116,13 +116,13 @@ namespace RomanticWeb.Linq.Model
             Type entityType=sourceExpression.ItemType.FindEntityType();
             if ((entityType!=null)&&(entityType!=typeof(IEntity)))
             {
-                result=visitor.CreateTypeConstrain(entityType);
+                result=visitor.CreateTypeConstrain(entityType,sourceExpression.FromExpression);
             }
 
             return result;
         }
 
-        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor,Type entityType)
+        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor,Type entityType,System.Linq.Expressions.Expression sourceExpression)
         {
             EntityTypeConstrain result=null;
             if (entityType!=null)
@@ -161,7 +161,7 @@ namespace RomanticWeb.Linq.Model
                         }
                     }
 
-                    result=new EntityTypeConstrain(primaryTypeUri,inheritedTypeUris.ToArray());
+                    result=new EntityTypeConstrain(primaryTypeUri,sourceExpression,inheritedTypeUris.ToArray());
                 }
             }
 

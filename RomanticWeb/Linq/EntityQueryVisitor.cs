@@ -76,13 +76,28 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited.</returns>
         protected override System.Linq.Expressions.Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(GetSourceExpression(expression));
-            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            Remotion.Linq.Clauses.FromClauseBase sourceExpression=GetSourceExpression(expression);
+            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
+            if (entityAccessor!=null)
             {
-                _query.Elements.Add(entityAccessor);
+                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+                {
+                    _query.Elements.Add(entityAccessor);
+                }
+
+                _lastComponent=_query;
+            }
+            else
+            {
+                _lastComponent=(from entityConstrain in _query.FindAllComponents<EntityConstrain>()
+                                where entityConstrain.GetType()==typeof(EntityConstrain)
+                                let identifier=entityConstrain.Value as Identifier
+                                let targetExpression=this.GetSourceExpression(sourceExpression.FromExpression).FromExpression
+                                where (identifier!=null)&&(targetExpression!=null)&&(entityConstrain.TargetExpression==targetExpression)
+                                select identifier).FirstOrDefault();
+                HandleComponent(_lastComponent);
             }
 
-            _lastComponent=_query;
             return expression;
         }
 
@@ -241,7 +256,10 @@ namespace RomanticWeb.Linq
                     StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
                     if (entityAccessor!=null)
                     {
-                        EntityTypeConstrain constrain=new EntityTypeConstrain(types.Select(item => item.Uri).First(),(count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
+                        EntityTypeConstrain constrain=new EntityTypeConstrain(
+                            types.Select(item => item.Uri).First(),
+                            entityAccessor.SourceExpression.FromExpression,
+                            (count>1?types.Skip(1).Select(item => item.Uri).ToArray():new Uri[0]));
                         entityAccessor.Elements.Add(constrain);
                         _lastComponent=constrain;
                     }
@@ -552,13 +570,24 @@ namespace RomanticWeb.Linq
                 _query.Elements.Add(entityAccessor);
             }
 
-            Identifier memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
-                .Where(item => item.SourceExpression.FromExpression==expression.Expression)
-                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
-            EntityConstrain constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier);
-            if (!entityAccessor.Elements.Contains(constrain))
+            Identifier memberIdentifier=null;
+            EntityConstrain constrain=_query.FindAllComponents<EntityConstrain>()
+                .Where(item => item.GetType()==typeof(EntityConstrain))
+                .FirstOrDefault(item => item.TargetExpression==expression.Target.FromExpression);
+            if (constrain==null)
             {
-                entityAccessor.Elements.Add(constrain);
+                memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
+                    .Where(item => item.SourceExpression.FromExpression==expression.Expression)
+                    .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
+                constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier,expression.Target.FromExpression);
+                if (!entityAccessor.Elements.Contains(constrain))
+                {
+                    entityAccessor.Elements.Add(constrain);
+                }
+            }
+            else
+            {
+                memberIdentifier=(Identifier)constrain.Value;
             }
 
             HandleComponent(memberIdentifier);
@@ -582,7 +611,7 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add(entityAccessor);
                 }
 
-                EntityTypeConstrain typeConstrain=this.CreateTypeConstrain(expression.TypeOperand);
+                EntityTypeConstrain typeConstrain=this.CreateTypeConstrain(expression.TypeOperand,entityAccessor.SourceExpression.FromExpression);
                 _lastComponent=typeConstrain;
                 if ((_currentComponent.Count>0)&&(_currentComponent.Peek() is BinaryOperatorNavigator))
                 {

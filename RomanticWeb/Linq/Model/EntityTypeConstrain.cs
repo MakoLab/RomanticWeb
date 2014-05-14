@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using NullGuard;
 using RomanticWeb.Linq.Model.Navigators;
 
@@ -11,7 +12,7 @@ namespace RomanticWeb.Linq.Model
     public class EntityTypeConstrain:EntityConstrain
     {
         #region Fields
-        private Literal _typePredicate=new Literal(RomanticWeb.Vocabularies.Rdf.type);
+        private static Literal TypePredicate=new Literal(RomanticWeb.Vocabularies.Rdf.type);
         private IEnumerable<Literal> _inheritedTypes=new Literal[0];
         #endregion
 
@@ -23,10 +24,10 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Constructor with entity type Uri passed.</summary>
         /// <param name="type">Entity type</param>
+        /// <param name="targetExpression">Target expression that was source of this constrain.</param>
         /// <param name="inheritedTypes">Optional inherited types of the entity.</param>
-        public EntityTypeConstrain(Uri type,params Uri[] inheritedTypes):base()
+        public EntityTypeConstrain(Uri type,Expression targetExpression,params Uri[] inheritedTypes):base(TypePredicate,new Literal(type),targetExpression)
         {
-            Value=new Literal(type);
             _inheritedTypes=inheritedTypes.Select(item => new Literal(item));
         }
         #endregion
@@ -35,7 +36,7 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Gets or sets a predicate for this constrain.</summary>
         public override IExpression Predicate
         {
-            get { return _typePredicate; }
+            get { return TypePredicate; }
             set { }
         }
 
@@ -73,7 +74,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this entity type constrain.</returns>
         public override string ToString()
         {
-            return System.String.Format("?s {0} {1}",_typePredicate,(Value!=null?Value.ToString():"?o"));
+            return System.String.Format("?s {0} {1}",TypePredicate,(Value!=null?Value.ToString():"?o"));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>

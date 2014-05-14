@@ -82,7 +82,7 @@ namespace RomanticWeb.Linq
             if (_query.Subject==null)
             {
                 _query.Subject=_mainFromComponent.About;
-                UnboundConstrain genericConstrain=new UnboundConstrain(new Identifier("s"),new Identifier("p"),new Identifier("o"));
+                UnboundConstrain genericConstrain=new UnboundConstrain(new Identifier("s"),new Identifier("p"),new Identifier("o"),_mainFromComponent.SourceExpression.FromExpression);
                 _mainFromComponent.Elements.Insert(0,genericConstrain);
                 _query.Select.Add(genericConstrain);
             }
@@ -271,7 +271,10 @@ namespace RomanticWeb.Linq
                     }
                 }
 
-                EntityConstrain constrain=new EntityConstrain(new Identifier(_mainFromComponent.About.Name+"_p"),new Identifier(_mainFromComponent.About.Name+"_o"));
+                EntityConstrain constrain=new EntityConstrain(
+                    new Identifier(_mainFromComponent.About.Name+"_p"),
+                    new Identifier(_mainFromComponent.About.Name+"_o"),
+                    containsResultOperator.Item);
                 if (!_mainFromComponent.Elements.Contains(constrain))
                 {
                     _mainFromComponent.Elements.Add(constrain);
@@ -359,7 +362,7 @@ namespace RomanticWeb.Linq
 
         private void OverrideEntitySelector(Identifier identifier)
         {
-            UnboundConstrain genericConstrain=new UnboundConstrain(identifier,new Identifier(identifier.Name+"P"),new Identifier(identifier.Name+"O"));
+            UnboundConstrain genericConstrain=new UnboundConstrain(identifier,new Identifier(identifier.Name+"P"),new Identifier(identifier.Name+"O"),_mainFromComponent.SourceExpression.FromExpression);
             _mainFromComponent.Elements.Add(genericConstrain);
             _query.Select.Clear();
             _query.Select.Add(genericConstrain);

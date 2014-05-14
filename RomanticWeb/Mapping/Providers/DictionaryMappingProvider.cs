@@ -100,6 +100,7 @@ namespace RomanticWeb.Mapping.Providers
             mappingProviderVisitor.Visit(this);
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return _property.ToString();

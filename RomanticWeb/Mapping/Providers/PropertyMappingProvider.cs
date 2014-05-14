@@ -55,9 +55,11 @@ namespace RomanticWeb.Mapping.Providers
             mappingProviderVisitor.Visit(this);
         }
 
+#pragma warning disable 1591
         public override string ToString()
         {
             return string.Format("Property {0}",PropertyInfo.Name);
         }
+#pragma warning restore
     }
 }

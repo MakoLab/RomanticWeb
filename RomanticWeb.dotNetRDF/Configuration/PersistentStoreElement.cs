@@ -7,6 +7,9 @@ using VDS.RDF;
 
 namespace RomanticWeb.DotNetRDF.Configuration
 {
+    /// <summary>
+    /// Configuration of a third-party triple store
+    /// </summary>
     public class PersistentStoreElement:StoreElement
     {
         private static readonly IDictionary<string,Func<StorageProviderElement>> ProviderElementFactories;
@@ -38,11 +41,18 @@ namespace RomanticWeb.DotNetRDF.Configuration
             }
         }
 
+        /// <summary>
+        /// Creates a <see cref="PersistentTripleStore"/>
+        /// </summary>
         public override ITripleStore CreateTripleStore()
         {
             return new PersistentTripleStore(StorageProvider.CreateStorageProvider());
         }
 
+        /// <summary>
+        /// Tries to deserialize known elements representing third-party triple store connector,
+        /// like Virtuoso, AllegroGraph and others
+        /// </summary>
         protected override bool OnDeserializeUnrecognizedElement(string elementName,XmlReader reader)
         {
             if (ProviderElementFactories.ContainsKey(elementName))

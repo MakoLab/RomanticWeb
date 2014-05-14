@@ -21,6 +21,14 @@ namespace RomanticWeb.Mapping.Model
             IsInherited=isInherited;
         }
 
+        public Uri Uri
+        {
+            get
+            {
+                return _uri;
+            }
+        }
+
         public bool IsInherited { get; private set; }
 
         public IEnumerable<Uri> Uris
@@ -44,11 +52,6 @@ namespace RomanticWeb.Mapping.Model
         public bool IsMatch(IEnumerable<Uri> entityClasses)
         {
             return entityClasses.Contains(_uri,AbsoluteUriComparer.Default);
-        }
-
-        public void AppendTo(ICollection<EntityId> classList)
-        {
-            classList.Add(_uri);
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)

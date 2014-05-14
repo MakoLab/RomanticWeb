@@ -21,31 +21,20 @@ namespace RomanticWeb.Mapping
         private readonly IDictionary<Tuple<Assembly,Type>,IMappingProviderSource> _sources;
         private readonly IDictionary<Type,IEntityMapping> _mappings;
         private readonly IDictionary<Type,IEntityMappingProvider> _openGenericProviders;
-        private readonly IList<IMappingProviderVisitor> _providerVisitors;
-        private readonly IList<IMappingModelVisitor> _modelVisitors;
-        private readonly MappingProvidersValidator _validator=new MappingProvidersValidator();
+        private IList<IMappingProviderVisitor> _providerVisitors;
 
         private MappingModelBuilder _mappingBuilder;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
-        /// </summary>
-        public MappingsRepository():this(new RdfTypeCache())
-        {
-        }
+        private IList<IMappingModelVisitor> _visitors=new List<IMappingModelVisitor>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
         /// </summary>
-        /// <param name="matcher">The matcher.</param>
-        /// todo: refactor visitors composition 
-        public MappingsRepository(IMappingModelVisitor matcher)
+        internal MappingsRepository()
         {
-            _sources=new Dictionary<Tuple<Assembly,Type>,IMappingProviderSource>();
-            _mappings=new Dictionary<Type,IEntityMapping>();
-            _openGenericProviders=new Dictionary<Type,IEntityMappingProvider>();
-            _providerVisitors=new List<IMappingProviderVisitor>();
-            _modelVisitors=new List<IMappingModelVisitor> { matcher };
+            _sources = new Dictionary<Tuple<Assembly, Type>, IMappingProviderSource>();
+            _mappings = new Dictionary<Type, IEntityMapping>();
+            _openGenericProviders = new Dictionary<Type, IEntityMappingProvider>();
         }
 
         internal IEnumerable<IMappingProviderSource> Sources
@@ -62,15 +51,12 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public void RebuildMappings(MappingContext mappingContext)
         {
-            _providerVisitors.Clear();
-            _providerVisitors.Add(new ConventionsVisitor(mappingContext.Conventions));
-            _providerVisitors.Add(_validator);
+            _providerVisitors = GetDefaultProviderVisitors(mappingContext).ToArray();
             _mappingBuilder=new MappingModelBuilder(mappingContext);
-            var dictionaryMappingsProvider=new GeneratedDictionaryMappingSource(mappingContext.OntologyProvider);
-            _providerVisitors.Add(dictionaryMappingsProvider);
+            var modelVisitors = GetDefaultModelVisitors(mappingContext).Union(_visitors).ToArray();
 
-            CreateMappings(Sources.ToArray());
-            CreateMappings(dictionaryMappingsProvider);
+            CreateMappings(Sources.ToArray(), modelVisitors);
+            CreateMappings(_providerVisitors.OfType<IMappingProviderSource>().ToArray(), modelVisitors);
         }
 
         /// <summary>Gets a mapping for an Entity type.</summary>
@@ -118,7 +104,25 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        private void CreateMappings(params IMappingProviderSource[] sources)
+        [Obsolete]
+        internal void AddVisitor(IMappingModelVisitor mappingModelVisitor)
+        {
+            _visitors.Add(mappingModelVisitor);
+        }
+
+        private static IEnumerable<IMappingProviderVisitor> GetDefaultProviderVisitors(MappingContext context)
+        {
+            yield return new ConventionsVisitor(context);
+            yield return new MappingProvidersValidator();
+            yield return new GeneratedDictionaryMappingSource(context.OntologyProvider);
+        }
+
+        private static IEnumerable<IMappingModelVisitor> GetDefaultModelVisitors(MappingContext context)
+        {
+            yield break;
+        }
+
+        private void CreateMappings(IMappingProviderSource[] sources, IMappingModelVisitor[] modelVisitors)
         {
             var mappings=from source in sources
                          from provider in source.GetMappingProviders()
@@ -140,7 +144,7 @@ namespace RomanticWeb.Mapping
                     _openGenericProviders[provider.EntityType]=provider;
                 }
 
-                StoreMapping(_mappingBuilder.BuildMapping(provider));
+                StoreMapping(_mappingBuilder.BuildMapping(provider),modelVisitors);
             }
         }
 
@@ -157,7 +161,7 @@ namespace RomanticWeb.Mapping
             return _mappingBuilder.BuildMapping(provider);
         }
 
-        private void StoreMapping(IEntityMapping mapping)
+        private void StoreMapping(IEntityMapping mapping,IEnumerable<IMappingModelVisitor> modelVisitors)
         {
             if (_mappings.ContainsKey(mapping.EntityType))
             {
@@ -166,7 +170,7 @@ namespace RomanticWeb.Mapping
 
             _mappings.Add(mapping.EntityType,mapping);
 
-            foreach (var mappingModelVisitor in _modelVisitors)
+            foreach (var mappingModelVisitor in modelVisitors)
             {
                 mapping.Accept(mappingModelVisitor);
             }

@@ -35,7 +35,6 @@ namespace RomanticWeb.Tests
 
                 yield return new Lazy<IEntity>(() =>
                     {
-                        _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                                     .Returns(new Node[0]);
                         return _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -43,7 +42,6 @@ namespace RomanticWeb.Tests
                 yield return new Lazy<IEntity>(
                     () =>
                     {
-                        _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
                         _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                                     .Returns(new Node[0]);
                         _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(new EntityMapping(typeof(IPerson)));
@@ -135,7 +133,6 @@ namespace RomanticWeb.Tests
         {
             // given
             _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(new EntityMapping(typeof(IPerson)));
-            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
             var typed = new Entity(new EntityId("http://magi/people/Tomasz"));
 
@@ -167,7 +164,6 @@ namespace RomanticWeb.Tests
             // when
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             dynamic entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz")).AsDynamic();
 
             // when
@@ -187,7 +183,6 @@ namespace RomanticWeb.Tests
             _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
@@ -205,7 +200,6 @@ namespace RomanticWeb.Tests
             // given
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(),It.IsAny<Uri>(),It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(true);
             var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
             var name=entity.AsDynamic().foaf.givenName;
             entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
@@ -235,23 +229,10 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Load_should_return_null_if_entity_doesnt_exist()
-        {
-            // given
-            _store.Setup(s => s.EntityExist(new EntityId("http://magi/people/Tomasz"))).Returns(false);
-
-            // when
-            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-
-            // then
-            Assert.That(entity,Is.Null);
-        }
-
-        [Test]
         public void Should_be_possible_to_load_entity_without_checking_for_existence()
         {
             // when
-            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"),false);
+            var entity=_entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
 
             // then
             Assert.That(entity,Is.Not.Null);
@@ -309,7 +290,6 @@ namespace RomanticWeb.Tests
             var entityId=new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
-            _store.Setup(s => s.EntityExist(It.IsAny<EntityId>())).Returns(true);
 
             // when
             var entity=_entityContext.Load<IEntity>(entityId);

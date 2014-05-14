@@ -32,7 +32,8 @@ namespace RomanticWeb.Tests
             var _context=new Mock<IEntityContext>();
             _store=new Mock<IEntityStore>(MockBehavior.Strict);
             _context.Setup(c => c.Store).Returns(_store.Object);
-            _entity=new Entity(new EntityId(Uri),_context.Object,true);
+            _entity=new Entity(new EntityId(Uri),_context.Object);
+            _entity.MarkAsInitialized();
             _nodeProcessor=new Mock<INodeConverter>();
         }
 

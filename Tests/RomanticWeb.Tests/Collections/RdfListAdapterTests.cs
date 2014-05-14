@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests.Collections
             rdfNilMock.Setup(m => m.Id).Returns(Vocabularies.Rdf.nil);
             _contextMock=new Mock<IEntityContext>();
             _contextMock.Setup(c => c.BlankIdGenerator).Returns(new DefaultBlankNodeIdGenerator());
-            _contextMock.Setup(c => c.Load<IRdfListNode>(Vocabularies.Rdf.nil,false)).Returns((EntityId entityId,bool check) => CreateListNode(entityId));
+            _contextMock.Setup(c => c.Load<IRdfListNode>(Vocabularies.Rdf.nil)).Returns((EntityId entityId) => CreateListNode(entityId));
             _contextMock.Setup(c => c.Create<IRdfListNode>(It.IsAny<BlankId>())).Returns((EntityId entityId) => CreateListNode(entityId));
             _context=_contextMock.Object;
             _entity=new Mock<IEntity>();

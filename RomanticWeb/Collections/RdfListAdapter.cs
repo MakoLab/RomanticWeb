@@ -30,7 +30,7 @@ namespace RomanticWeb.Collections
         }
 
         public RdfListAdapter(IEntityContext context,IEntity owner,ISourceGraphSelectionOverride namedGraphOverride)
-            : this(context,owner,context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false),namedGraphOverride)
+            : this(context,owner,context.Load<IRdfListNode>(Vocabularies.Rdf.nil),namedGraphOverride)
         {
         }
 
@@ -109,7 +109,7 @@ namespace RomanticWeb.Collections
                 currentNode=currentNode.Rest;
             }
 
-            _head=_tail=_context.Load<IRdfListNode>(Vocabularies.Rdf.nil,false);
+            _head=_tail=_context.Load<IRdfListNode>(Vocabularies.Rdf.nil);
         }
 
         public bool Contains(T item)

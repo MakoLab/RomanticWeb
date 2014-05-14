@@ -4,10 +4,16 @@ using NullGuard;
 
 namespace RomanticWeb.Configuration
 {
+    /// <summary>
+    /// Configuration element to set base Uri for
+    /// </summary>
     public class BaseUriElement:ConfigurationElement
     {
-        public const string DefaultUriAttributeName="default";
+        private const string DefaultUriAttributeName="default";
 
+        /// <summary>
+        /// Gets or sets the default base Uri.
+        /// </summary>
         [ConfigurationProperty(DefaultUriAttributeName)]
         [UriValidator]
         public Uri Default

@@ -37,7 +37,7 @@ namespace RomanticWeb.Tests.Linq
             _entityStore.Setup(s => s.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
 
             _entityContext=new Mock<IEntityContext>(MockBehavior.Strict);
-            _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>(),false)).Returns((EntityId id,bool checkIfExists) => CreatePersonEntity(id));
+            _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>())).Returns((EntityId id) => CreatePersonEntity(id));
             _entityContext.Setup(context => context.Store).Returns(_entityStore.Object);
             _entityContext.SetupGet(context => context.Mappings).Returns(_mappings);
             _entityContext.SetupGet(context => context.BaseUriSelector).Returns(_baseUriSelectionPolicy.Object);

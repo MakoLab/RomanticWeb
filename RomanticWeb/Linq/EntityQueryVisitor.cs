@@ -80,12 +80,12 @@ namespace RomanticWeb.Linq
             StrongEntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
             if (entityAccessor!=null)
             {
-                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
-                {
-                    _query.Elements.Add(entityAccessor);
-                }
+            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+            {
+                _query.Elements.Add(entityAccessor);
+            }
 
-                _lastComponent=_query;
+            _lastComponent=_query;
             }
             else
             {
@@ -241,15 +241,15 @@ namespace RomanticWeb.Linq
             return expression;
         }
 
-        /// <summary>Visits an <see cref="EntityExtensions.Is()" /> method call.</summary>
+        /// <summary>Visits an <see cref="EntityExtensions.Is(RomanticWeb.Entities.IEntity,System.Uri)" /> method call.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Returns visited expression.</returns>
         protected virtual System.Linq.Expressions.Expression VisitIsMethodCall(System.Linq.Expressions.MethodCallExpression expression)
         {
             object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
-            if ((objectValue!=null)&&(typeof(IEnumerable).IsAssignableFrom(objectValue.GetType()))&&(objectValue.GetType().FindItemType()==typeof(EntityId)))
+            if ((objectValue is IEnumerable)&&(objectValue.GetType().FindItemType()==typeof(EntityId)))
             {
-                IEnumerable<EntityId> types=(IEnumerable<EntityId>)objectValue;
+                var types=(IEnumerable<EntityId>)objectValue;
                 int count=types.Count();
                 if (count>0)
                 {
@@ -273,21 +273,21 @@ namespace RomanticWeb.Linq
             }
         }
 
-        /// <summary>Visits an <see cref="EntityExtensions.Predicate()" /> method call.</summary>
+        /// <summary>Visits an <see cref="EntityExtensions.Predicate" /> method call.</summary>
         /// <param name="expression">Expression to be visited.</param>
         /// <returns>Returns visited expression.</returns>
         protected virtual System.Linq.Expressions.Expression VisitPredicateMethodCall(System.Linq.Expressions.MethodCallExpression expression)
         {
             object objectValue=((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
-            if ((objectValue!=null)&&(objectValue is Uri))
+            if (objectValue is Uri)
             {
-                Uri predicate=(Uri)objectValue;
+                var predicate=(Uri)objectValue;
                 if (!predicate.IsAbsoluteUri)
                 {
                     predicate=new Uri(_entityContext.BaseUriSelector.SelectBaseUri(new EntityId(predicate)),predicate.ToString());
                 }
 
-                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(GetSourceExpression(expression.Arguments[0]));
                 if (entityAccessor!=null)
                 {
                     Type type=null;
@@ -375,7 +375,7 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected virtual System.Linq.Expressions.Expression VisitPropertyExpression(System.Linq.Expressions.MemberExpression expression)
         {
-            PropertyInfo propertyInfo=(PropertyInfo)expression.Member;
+            var propertyInfo=(PropertyInfo)expression.Member;
             Call call=null;
             bool isParameterles=true;
             switch (propertyInfo.Name)
@@ -577,13 +577,13 @@ namespace RomanticWeb.Linq
             if (constrain==null)
             {
                 memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
-                    .Where(item => item.SourceExpression.FromExpression==expression.Expression)
-                    .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
+                .Where(item => item.SourceExpression.FromExpression==expression.Expression)
+                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
                 constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier,expression.Target.FromExpression);
-                if (!entityAccessor.Elements.Contains(constrain))
-                {
-                    entityAccessor.Elements.Add(constrain);
-                }
+            if (!entityAccessor.Elements.Contains(constrain))
+            {
+                entityAccessor.Elements.Add(constrain);
+            }
             }
             else
             {

@@ -49,13 +49,6 @@ namespace RomanticWeb
         /// <summary>Loads an existing typed entity.</summary>
         /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
         /// <param name="entityId">Entity identifier</param>
-        /// <param name="checkIfExist"></param>
-        /// <returns>Typed instance of an entity wih given identifier or null.</returns>
-        T Load<T>(EntityId entityId,bool checkIfExist) where T:class,IEntity;
-
-        /// <summary>Loads an existing typed entity.</summary>
-        /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
-        /// <param name="entityId">Entity identifier</param>
         /// <returns>Typed instance of an entity wih given identifier or null.</returns>
         T Load<T>(EntityId entityId) where T:class,IEntity;
 
@@ -85,5 +78,10 @@ namespace RomanticWeb
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
         T EntityAs<T>(IEntity entity)where T:class,IEntity;
+
+        /// <summary>
+        /// Checks if the entity exists.
+        /// </summary>
+        bool Exists(EntityId entityId);
     }
 }

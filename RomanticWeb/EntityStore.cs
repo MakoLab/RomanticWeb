@@ -75,27 +75,12 @@ namespace RomanticWeb
             }
         }
 
-        public void ReplacePredicateValues(EntityId entityId,Node propertyUri,IEnumerable<Node> valueNodes,Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId,Node propertyUri,Func<IEnumerable<Node>> getNewValues,Uri graphUri)
         {
             var subjectNode=Node.FromEntityId(entityId);
-            var quadsRemoved = from quad in Quads
-                               where quad.EntityId == entityId
-                               && quad.Predicate == propertyUri
-                               && quad.Subject == subjectNode
-                               select quad;
+            RemoveTriples(entityId,subjectNode,propertyUri,graphUri);
 
-            if (graphUri != null)
-            {
-                quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad,graphUri));
-            }
-
-            foreach (var entityTriple in quadsRemoved.ToList())
-            {
-                _entityQuads.Remove(entityTriple);
-                _removedTriples.Add(entityTriple);
-            }
-
-            foreach (var valueNode in valueNodes)
+            foreach (var valueNode in getNewValues())
             {
                 var triple=new EntityQuad(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
                 _entityQuads.Add(triple);
@@ -107,6 +92,39 @@ namespace RomanticWeb
         public void Delete(EntityId entityId)
         {
             _deletedEntites.Add(entityId);
+        }
+
+        private void RemoveTriples(EntityId entityId, Node subjectNode, Node propertyUri=null, Uri graphUri=null)
+        {
+            var quadsRemoved = from quad in Quads
+                               where quad.EntityId == entityId && quad.Subject == subjectNode
+                               select quad;
+
+            if (propertyUri!=null)
+            {
+                quadsRemoved=quadsRemoved.Where(quad => quad.Predicate==propertyUri);
+            }
+
+            if (graphUri != null)
+            {
+                quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad, graphUri));
+            }
+
+            foreach (var entityTriple in quadsRemoved.ToList())
+            {
+                RemoveTriple(entityTriple);
+            }
+        }
+
+        private void RemoveTriple(EntityQuad entityTriple)
+        {
+            _entityQuads.Remove(entityTriple);
+            _removedTriples.Add(entityTriple);
+
+            if (entityTriple.Object.IsBlank)
+            {
+                RemoveTriples(entityTriple.EntityId, entityTriple.Object);
+            }
         }
 
         private bool GraphEquals(EntityQuad triple,Uri graph)

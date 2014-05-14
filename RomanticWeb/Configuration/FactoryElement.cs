@@ -4,6 +4,9 @@ using System.Xml;
 
 namespace RomanticWeb.Configuration
 {
+    /// <summary>
+    /// Configuration of a ecntity context factory
+    /// </summary>
     public class FactoryElement:ConfigurationElement
     {
         private const string NameAttributeName="name";
@@ -12,6 +15,9 @@ namespace RomanticWeb.Configuration
         private const string MappingAssembliesElementName="mappingAssemblies";
         private const string OntologiesElementName="ontologies";
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
         [ConfigurationProperty(NameAttributeName,IsKey=true,IsRequired=true)]
         public string Name
         {
@@ -19,6 +25,9 @@ namespace RomanticWeb.Configuration
             set { this[NameAttributeName]=value; }
         }
 
+        /// <summary>
+        /// Gets or sets the mapping assemblies.
+        /// </summary>
         [ConfigurationProperty(MappingAssembliesElementName)]
         [ConfigurationCollection(typeof(MappingAssembliesCollection))]
         public MappingAssembliesCollection MappingAssemblies
@@ -27,6 +36,9 @@ namespace RomanticWeb.Configuration
             set { this[MappingAssembliesElementName] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the ontologies configuration element collection.
+        /// </summary>
         [ConfigurationProperty(OntologiesElementName)]
         [ConfigurationCollection(typeof(OntologiesCollection))]
         public OntologiesCollection Ontologies
@@ -35,6 +47,9 @@ namespace RomanticWeb.Configuration
             set { this[OntologiesElementName] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the base uri configuration element.
+        /// </summary>
         [ConfigurationProperty(BaseUrisName)]
         public BaseUriElement BaseUris
         {
@@ -42,6 +57,9 @@ namespace RomanticWeb.Configuration
             set { this[BaseUrisName] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the meta graph URI.
+        /// </summary>
         [ConfigurationProperty(MetaGraphUriAttributeName, IsRequired = true)]
         [UriValidator]
         public Uri MetaGraphUri

@@ -160,10 +160,10 @@ namespace RomanticWeb.Entities
                 var graphUri=SelectNamedGraph(property);
                 var resultTransformer=_resultTransformers.GetTransformer(property);
 
-                IEnumerable<Node> newValues=new Node[0];
+                Func<IEnumerable<Node>> newValues=() => new Node[0];
                 if (value!=null)
                 {
-                    newValues=resultTransformer.ToNodes(value,this,property,Context);
+                    newValues=() => resultTransformer.ToNodes(value,this,property,Context);
                 }
 
                 _store.ReplacePredicateValues(Id,propertyUri,newValues,graphUri);

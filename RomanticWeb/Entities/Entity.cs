@@ -40,11 +40,9 @@ namespace RomanticWeb.Entities
         /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
         /// <param name="entityId">IRI of the entity.</param>
         /// <param name="context">Entity context to be attached to this entity.</param>
-        /// <param name="isInitialized">Sets the entiy to initialized or not initialized state.</param>
-        internal Entity(EntityId entityId,IEntityContext context,bool isInitialized=false):this(entityId)
+        internal Entity(EntityId entityId,IEntityContext context):this(entityId)
         {
             _context=context;
-            _isInitialized=isInitialized;
         }
         #endregion
 
@@ -202,6 +200,11 @@ namespace RomanticWeb.Entities
                 _context.InitializeEnitity(this);
                 _isInitialized=true;
             }
+        }
+
+        internal void MarkAsInitialized()
+        {
+            _isInitialized=true;
         }
 
         private bool TryGetOntologyAccessor(GetMemberBinder binder,out object result)

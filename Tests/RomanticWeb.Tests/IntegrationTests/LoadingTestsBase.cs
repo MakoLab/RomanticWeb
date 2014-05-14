@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping.Model;
-using RomanticWeb.NamedGraphs;
-using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.TestEntities.LargeDataset;
 using RomanticWeb.Tests.Stubs;

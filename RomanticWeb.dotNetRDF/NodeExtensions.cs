@@ -66,7 +66,7 @@ namespace RomanticWeb.DotNetRDF
                 return nodeFactory.CreateLiteralNode(node.Literal);
             }
 
-            throw new NotImplementedException("Cannot unwrap blank nodes yet");
+            return nodeFactory.CreateBlankNode(node.BlankNode);
         }
 
         /// <summary>Gets the graph node's Uri.</summary>

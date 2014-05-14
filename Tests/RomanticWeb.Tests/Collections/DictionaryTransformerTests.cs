@@ -32,7 +32,7 @@ namespace RomanticWeb.Tests.Collections
             _owner=new Owner(Id);
             _property=CreateDictionaryProperty();
             _context=new Mock<IEntityContext>(MockBehavior.Strict);
-            _context.Setup(c => c.Load<Owner>(Id,false)).Returns(_owner);
+            _context.Setup(c => c.Load<Owner>(Id)).Returns(_owner);
             _provider=new Mock<IDictionaryTypeProvider>(MockBehavior.Strict);
             _provider.Setup(p => p.GetEntryType(_property)).Returns(typeof(DictionaryPair));
             _provider.Setup(p => p.GetOwnerType(_property)).Returns(typeof(Owner));

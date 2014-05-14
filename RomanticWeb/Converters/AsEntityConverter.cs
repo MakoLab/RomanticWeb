@@ -18,7 +18,7 @@ namespace RomanticWeb.Converters
         public object Convert(Node node,IEntityContext context)
         {
             var entityId=(EntityId)EntityIdConverter.Convert(node,context);
-            return AsEntityMethod.Invoke(null,new object[] { context.Load<IEntity>(entityId,false) });
+            return AsEntityMethod.Invoke(null,new object[] { context.Load<IEntity>(entityId) });
         }
 
         /// <summary>

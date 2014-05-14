@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.DotNetRDF.Configuration
 {
-    public interface ITripleStoreFactory
+    internal interface ITripleStoreFactory
     {
         ITripleStore CreateTripleStore();
     }

@@ -4,10 +4,8 @@ using System.Linq;
 using System.Reflection;
 using NullGuard;
 using Remotion.Linq;
-using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Linq
 {
@@ -16,7 +14,7 @@ namespace RomanticWeb.Linq
     {
         #region Fields
         private static readonly MethodInfo EnumerableCastMethod = Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable");
-        private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId,Boolean");
+        private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
         private EntityQueryModelVisitor _modelVisitor;
@@ -122,7 +120,7 @@ namespace RomanticWeb.Linq
             }
 
             var createMethodInfo=EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
-            return ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id,false }));
+            return ids.Select(id => (T)createMethodInfo.Invoke(_entityContext,new object[] { id }));
         }
         #endregion
     }

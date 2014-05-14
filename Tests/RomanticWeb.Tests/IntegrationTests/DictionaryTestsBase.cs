@@ -144,7 +144,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             dict.Should().HaveCount(2);
-            dict.Should().Contain(5, 10).And.Contain(15, 20);
+            dict.Should().Contain(5, 10).And.Contain(15, 25);
             var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("http://data.magi/element/CustomKeyValue")));
             quads.Should().HaveCount(6, "Actual triples were: {0}", SerializeStore());
         }

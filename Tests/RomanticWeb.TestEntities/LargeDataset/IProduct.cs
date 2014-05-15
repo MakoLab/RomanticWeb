@@ -44,10 +44,10 @@ namespace RomanticWeb.TestEntities.LargeDataset
         double? SpecificGravity { get; set; }
 
         [Property("chem","industrySegment")]
-        IEntity Industry { get; set; }
+        EntityId Industry { get; set; }
 
         [Property("chem","grade")]
-        IEntity Grade { get; set; }
+        EntityId Grade { get; set; }
 
         [Property("chem","productCategory")]
         IEntity ProductCategory { get; set; }

@@ -126,6 +126,26 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(products.Count(),Is.Not.EqualTo(0));
         }
 
+        [Test]
+        public void Select_with_multiple_combined_statements()
+        {
+            LoadTestFile("LargeDataset.nq");
+            IQueryable<IProduct> result=null;
+            var fUri=new EntityId("http://chem.com/vocab/PotEncapsulate");
+            result=from product in EntityContext.AsQueryable<IProduct>()
+                   from func in product.Function
+                   where func==fUri
+                   select product;
+
+            var iUri=new EntityId("http://chem.com/vocab/LifeSciences");
+            result=from product in result??EntityContext.AsQueryable<IProduct>()
+                   where product.Industry==iUri
+                   select product;
+
+            IEnumerable<IProduct> products=result.ToList();
+            Assert.That(products.Count(),Is.Not.EqualTo(0));
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

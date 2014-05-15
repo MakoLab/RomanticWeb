@@ -9,6 +9,7 @@ using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -220,6 +221,13 @@ namespace RomanticWeb
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
             _metaGraphUri=metaGraphUri;
+            return this;
+        }
+
+        [Obsolete("To be refactorized")]
+        public EntityContextFactory WithMappingModelVisitor(IMappingModelVisitor mappingModelVisitor)
+        {
+            _mappingsRepository.AddVisitor(mappingModelVisitor);
             return this;
         }
         #endregion

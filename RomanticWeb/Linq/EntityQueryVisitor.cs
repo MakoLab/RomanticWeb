@@ -92,7 +92,7 @@ namespace RomanticWeb.Linq
                 _lastComponent=(from entityConstrain in _query.FindAllComponents<EntityConstrain>()
                                 where entityConstrain.GetType()==typeof(EntityConstrain)
                                 let identifier=entityConstrain.Value as Identifier
-                                let targetExpression=this.GetSourceExpression(sourceExpression.FromExpression).FromExpression
+                                let targetExpression=sourceExpression.FromExpression
                                 where (identifier!=null)&&(targetExpression!=null)&&(entityConstrain.TargetExpression==targetExpression)
                                 select identifier).FirstOrDefault();
                 HandleComponent(_lastComponent);
@@ -573,17 +573,17 @@ namespace RomanticWeb.Linq
             Identifier memberIdentifier=null;
             EntityConstrain constrain=_query.FindAllComponents<EntityConstrain>()
                 .Where(item => item.GetType()==typeof(EntityConstrain))
-                .FirstOrDefault(item => item.TargetExpression==expression.Target.FromExpression);
+                .FirstOrDefault(item => item.TargetExpression==expression.Expression);
             if (constrain==null)
             {
                 memberIdentifier=(_query.FindAllComponents<StrongEntityAccessor>()
-                .Where(item => item.SourceExpression.FromExpression==expression.Expression)
-                .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
-                constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier,expression.Target.FromExpression);
-            if (!entityAccessor.Elements.Contains(constrain))
-            {
-                entityAccessor.Elements.Add(constrain);
-            }
+                    .Where(item => item.SourceExpression.FromExpression==expression.Expression)
+                    .Select(item => item.About).FirstOrDefault())??(new Identifier(_query.CreateVariableName(expression.Name),expression.EntityProperty.PropertyType));
+                constrain=new EntityConstrain(new Literal(expression.PropertyMapping.Uri),memberIdentifier,expression.Expression);
+                if (!entityAccessor.Elements.Contains(constrain))
+                {
+                    entityAccessor.Elements.Add(constrain);
+                }
             }
             else
             {

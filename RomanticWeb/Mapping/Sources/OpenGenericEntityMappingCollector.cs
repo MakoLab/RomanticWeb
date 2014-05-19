@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
@@ -25,17 +26,17 @@ namespace RomanticWeb.Mapping.Sources
 
         public void Visit(ICollectionMappingProvider collectionMappingProvider)
         {
-            PropertyMappingProviders.Add(new CollectionMapping(collectionMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(collectionMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new CollectionMapping(collectionMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(collectionMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IPropertyMappingProvider propertyMappingProvider)
         {
-            PropertyMappingProviders.Add(new PropertyMapping(propertyMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(propertyMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new PropertyMapping(propertyMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(propertyMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IDictionaryMappingProvider dictionaryMappingProvider)
         {
-            PropertyMappingProviders.Add(new DictionaryMapping(dictionaryMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(dictionaryMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new DictionaryMapping(dictionaryMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(dictionaryMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IClassMappingProvider classMappingProvider)

@@ -99,19 +99,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [TestCase(2)]
-        public void Should_load_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
+        [Timeout(2*1000)]
+        public void Should_load_entities_from_large_dataset_in_a_timely_fashion_way()
         {
             // given
             LoadTestFile("LargeDataset.nq");
-            DateTime startedAt=DateTime.Now;
 
             // when
-            IEnumerable<IProduct> entities=EntityContext.AsQueryable<IProduct>().ToList();
-
-            // then
-            TimeSpan testLength=DateTime.Now-startedAt;
-            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
+            EntityContext.AsQueryable<IProduct>().ToList();
         }
 
         [Test]

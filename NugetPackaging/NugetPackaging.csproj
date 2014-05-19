@@ -40,7 +40,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -52,18 +54,4 @@
     <Error Condition="!Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets'))" />
   </Target>
   <Import Project="..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" />
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <Nuspecs Include="$(SolutionDir)NuGetBuild\**\*.nuspec" />
-    </ItemGroup>
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="%(Nuspecs.RelativeDir)" />
-    <ItemGroup>
-      <NugetsToMove Include="$(SolutionDir)NuGetBuild\**\*.nupkg" />
-    </ItemGroup>
-    <ItemGroup>
-      <BinariesToClean Include="$(SolutionDir)NuGetBuild\**\Lib\**\*.*" />
-    </ItemGroup>
-    <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
-    <Delete Files="@(BinariesToClean)" />
-  </Target>
 </Project>

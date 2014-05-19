@@ -13,9 +13,12 @@ Additionally a variable is defined if a dll is packaged as part of another nuget
 
 > &lt;PropertyGroup>
 >    &lt;DestinationNugetPackage>Magi.Balthzar&lt;/DestinationNugetPackage>
+>    &lt;BuildNuGetPackage>false&lt;BuildNuGetPackage>
 > &lt;/PropertyGroup>
 
-The NugetBuild.targets, causes the output dll be copied to a folder, where it will be picked up by nuget when creating a package. The folder is $(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\bin. If DestinationNugetPackage is not set, the project's name is used.
+The NugetBuild.targets, causes the output dll be copied to a folder, where it will be picked up by nuget when creating a package. The folder is $(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\bin. If `DestinationNugetPackage` is not set, the project's name is used.
+
+The `BuildNuGetPackage` property is optional and the property, when set to false a package will not be created during this projects' build. This has to be set for projects, which don't have a dedicated package (eg. Magi.Balthazar.Contracts, which is packaged as part of Magi.Balthazar). Thus it will be present in most cases where `DestinationNugetPackage` is set.
 
 ### NuGetBuild folders and nuspec files
 

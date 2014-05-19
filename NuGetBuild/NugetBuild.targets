@@ -1,23 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <DestinationNugetPackage Condition="'$(DestinationNugetPackage)'==''">$(AssemblyName)</DestinationNugetPackage>
+    <BuildNuGetPackage Condition="'$(BuildNuGetPackage)'==''">true</BuildNuGetPackage>
   </PropertyGroup>
 
   <ItemGroup>
-    <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" Condition="Exists('$(OutputPath)$(AssemblyName).xml')" />
-    <OutputFiles Include="$(OutputPath)$(AssemblyName).pdb" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" />
+    <OutputFiles Include="$(OutputPath)$(AssemblyName).pdb" />
     <OutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
+    <NugetsToMove Include="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\*.nupkg" />
+    <BinariesToClean Include="$(SolutionDir)NuGetBuild\**\Lib\**\*.*" />
   </ItemGroup>
 
   <Target Name="CopyNugetBinaries" AfterTargets="AfterBuild">
-    <Copy SourceFiles="@(OutputFiles)" 
+    <Copy SourceFiles="@(OutputFiles)" ContinueOnError="true" 
           DestinationFolder="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\Lib\net40" />
   </Target>
 
+  <Import Project="..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" />
+  <Target Name="PepitaPackage" AfterTargets="CopyNugetBinaries" Condition="'$(BuildNuGetPackage)' != 'false'">
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)" 
+                                     MetadataAssembly="$(OutputPath)$(AssemblyName).dll" />
+    <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
+  </Target>
+
+  <!--
+  <Target Name="CleanNuGet" AfterTargets="Clean" Condition="'$(BuildNuGetPackage)' != 'false'">
+    
+    <Delete Files="@(BinariesToClean)" />
+    <Delete Files="@(NugetsToMove)"/>
+  </Target>
+  -->
+  
   <!--
   <PropertyGroup>
     <DestinationNugetPackage>Replace with package name</DestinationNugetPackage>
+    <BuildNuGetPackage>false</BuildNuGetPackage>
   </PropertyGroup>
   -->
   

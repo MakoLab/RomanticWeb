@@ -64,6 +64,7 @@
     <Compile Include="Collections\IRdfDictionary.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\IRdfListNode.cs" />
+    <Compile Include="Collections\Mapping\ListEntryMap.cs" />
     <Compile Include="Collections\Mapping\DictionaryOwnerMap.cs" />
     <Compile Include="Collections\Mapping\DictionaryEntryMap.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Sources\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\Sources\ClosedGenericEntityMappingProvider.cs" />
+    <Compile Include="Mapping\Sources\AutomaticListMappingSource.cs" />
     <Compile Include="Mapping\Sources\GeneratedDictionaryMappingSource.cs" />
     <Compile Include="Mapping\Sources\FluentMappingsSource.cs" />
     <Compile Include="Mapping\Sources\IMappingProviderSource.cs" />

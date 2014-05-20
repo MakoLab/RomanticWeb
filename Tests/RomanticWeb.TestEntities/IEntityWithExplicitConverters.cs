@@ -10,7 +10,7 @@ namespace RomanticWeb.TestEntities
         [Property("urn:not:important",ConverterType=typeof(BooleanConverter))]
         int Property { get; }
 
-        [Property("urn:not:important",ConverterType=typeof(BooleanConverter))]
+        [Collection("urn:not:important",ConverterType=typeof(BooleanConverter))]
         IList<string> Collection { get; }
     }
 }

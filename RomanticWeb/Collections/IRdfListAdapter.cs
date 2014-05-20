@@ -1,9 +1,13 @@
+using RomanticWeb.Converters;
+using RomanticWeb.Entities;
+
 namespace RomanticWeb.Collections
 {
-    internal interface IRdfListAdapter
+    internal interface IRdfListAdapter<TOwner,TConverter,T>
+        where TConverter:INodeConverter
     {
-        IRdfListNode Head { get; }
+        IRdfListNode<TOwner,TConverter,T> Head { get; }
 
-        void Add(object item);
+        void Add(T item);
     }
 }

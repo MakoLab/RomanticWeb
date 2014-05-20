@@ -19,245 +19,67 @@ namespace RomanticWeb.Fody
             Cache=new DictionaryCache();
         }
 
-        public MethodReference PropertyMapIsUriRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef));
-            }
-        }
+        public MethodReference PropertyMapIsUriRef { get { return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef)); } }
 
-        public MethodReference PropertyMapIsQNameRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef));
-            }
-        }
+        public MethodReference PropertyMapIsQNameRef { get { return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef)); } }
 
-        public MethodReference CollectionMapIsUriRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef));
-            }
-        }
+        public MethodReference CollectionMapIsUriRef { get { return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef)); } }
 
-        public MethodReference CollectionMapIsQNameRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef));
-            }
-        }
+        public MethodReference CollectionMapIsQNameRef { get { return ModuleDefinition.Import(TermPartIsQNameMethodRef.Resolve().MakeHostInstanceGeneric(CollectionMapTypeRef)); } }
 
-        public TypeReference DictionaryAttributeTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("DictionaryAttribute"));
-            }
-        }
+        public TypeReference DictionaryAttributeTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("DictionaryAttribute")); } }
 
-        public TypeReference KeyAttributeTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("KeyAttribute"));
-            }
-        }
+        public TypeReference KeyAttributeTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("KeyAttribute")); } }
 
-        public TypeReference ValueAttributeTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("ValueAttribute"));
-            }
-        }
+        public TypeReference ValueAttributeTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("ValueAttribute")); } }
 
-        public TypeReference SystemTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(typeof(Type));
-            }
-        }
+        public TypeReference SystemTypeRef { get { return ModuleDefinition.Import(typeof(Type)); } }
 
-        public TypeReference DictionaryEntryTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("IDictionaryEntry`2"));
-            }
-        }
+        public TypeReference ListEntryTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("IRdfListNode`1")); } }
 
-        public TypeReference DictionaryOwnerTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("IDictionaryOwner`3"));
-            }
-        }
+        public TypeReference DictionaryEntryTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("IDictionaryEntry`2")); } }
 
-        public TypeReference CollectionMapTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("CollectionMap"));
-            }
-        }
+        public TypeReference DictionaryOwnerTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("IDictionaryOwner`3")); } }
 
-        public TypeReference TermPartTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartType);
-            }
-        }
+        public TypeReference CollectionMapTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("CollectionMap")); } }
 
-        public TypeReference DictionaryOwnerMapTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("DictionaryOwnerMap`4"));
-            }
-        }
+        public TypeReference TermPartTypeRef { get { return ModuleDefinition.Import(TermPartType); } }
 
-        public TypeReference DictionaryEntryMapTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("DictionaryEntryMap`3"));
-            }
-        }
+        public TypeReference DictionaryOwnerMapTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("DictionaryOwnerMap`4")); } }
 
-        public TypeReference PropertyMapTermPartTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartType.MakeGenericInstanceType(PropertyMapType));
-            }
-        }
+        public TypeReference DictionaryEntryMapTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("DictionaryEntryMap`3")); } }
 
-        public TypeReference PropertyMapTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(PropertyMapType);
-            }
-        }
+        public TypeReference PropertyMapTermPartTypeRef { get { return ModuleDefinition.Import(TermPartType.MakeGenericInstanceType(PropertyMapType)); } }
 
-        public MethodReference CompilerGeneratedAttributeCtorRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(CompilerGeneratedAttributeType.GetConstructors().Single());
-            }
-        }
+        public TypeReference PropertyMapTypeRef { get { return ModuleDefinition.Import(PropertyMapType); } }
 
-        public MethodReference TermPartIsQNameMethodRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartType.FindMethod("Is","String","String"));
-            }
-        }
+        public MethodReference CompilerGeneratedAttributeCtorRef { get { return ModuleDefinition.Import(CompilerGeneratedAttributeType.GetConstructors().Single()); } }
 
-        public MethodReference TermPartIsUriMethodRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(TermPartType.FindMethod("Is","Uri"));
-            }
-        }
+        public MethodReference TermPartIsQNameMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is","String","String")); } }
 
-        public FieldReference ObjectFieldRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="object"));
-            }
-        }
+        public MethodReference TermPartIsUriMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is","Uri")); } }
 
-        public FieldReference PredicateFieldRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="predicate"));
-            }
-        }
+        public FieldReference ObjectFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="object")); } }
 
-        public MethodReference UriStringConstructorRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(ModuleDefinition.Import(typeof(Uri)).Resolve().FindConstructor("String"));
-            }
-        }
+        public FieldReference PredicateFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="predicate")); } }
 
-        public TypeDefinition TermPartType
-        {
-            get
-            {
-                return _references.Orm.FindType("ITermPart`1");
-            }
-        }
+        public MethodReference UriStringConstructorRef { get { return ModuleDefinition.Import(ModuleDefinition.Import(typeof(Uri)).Resolve().FindConstructor("String")); } }
 
-        public TypeReference EntityMapTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("EntityMap"));
-            }
-        }
+        public TypeDefinition TermPartType { get { return _references.Orm.FindType("ITermPart`1"); } }
 
-        public TypeReference EntityTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(_references.Orm.FindType("IEntity"));
-            }
-        }
+        public TypeReference EntityMapTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("EntityMap")); } }
 
-        public TypeReference DictionaryTypeRef
-        {
-            get
-            {
-                return ModuleDefinition.Import(typeof(IDictionary<,>));
-            }
-        }
+        public TypeReference EntityTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("IEntity")); } }
 
-        private ModuleDefinition ModuleDefinition
-        {
-            get
-            {
-                return _moduleWeaver.ModuleDefinition;
-            }
-        }
+        public TypeReference DictionaryTypeRef { get { return ModuleDefinition.Import(typeof(IDictionary<,>)); } }
 
-        private TypeDefinition PropertyMapType
-        {
-            get
-            {
-                return _references.Orm.FindType("PropertyMap");
-            }
-        }
+        private ModuleDefinition ModuleDefinition { get { return _moduleWeaver.ModuleDefinition; } }
 
-        private TypeDefinition RdfVocabularyType
-        {
-            get
-            {
-                return _references.Orm.FindType("RomanticWeb.Vocabularies.Rdf");
-            }
-        }
+        private TypeDefinition PropertyMapType { get { return _references.Orm.FindType("PropertyMap"); } }
 
-        private TypeDefinition CompilerGeneratedAttributeType
-        {
-            get
-            {
-                return ModuleDefinition.Import(typeof(CompilerGeneratedAttribute)).Resolve();
-            }
-        }
+        private TypeDefinition RdfVocabularyType { get { return _references.Orm.FindType("RomanticWeb.Vocabularies.Rdf"); } }
+
+        private TypeDefinition CompilerGeneratedAttributeType { get { return ModuleDefinition.Import(typeof(CompilerGeneratedAttribute)).Resolve(); } }
 
         private DictionaryCache Cache { get; set; }
     }

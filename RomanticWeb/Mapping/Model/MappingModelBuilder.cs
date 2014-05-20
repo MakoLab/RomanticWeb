@@ -77,16 +77,29 @@ namespace RomanticWeb.Mapping.Model
                 provider.PropertyInfo.Name,
                 provider.GetTerm(_mappingContext.OntologyProvider),
                 provider.StoreAs);
-            SetConverter(collectionMapping,provider);
+            bool converterSet=SetConverter(collectionMapping,provider);
+            if ((provider.ElementConverterType!=null)&&(!provider.ElementConverterType.ContainsGenericParameters))
+            {
+                collectionMapping.ElementConverter=(INodeConverter)Activator.CreateInstance(provider.ElementConverterType);
+            }
+            else if (converterSet)
+            {
+                collectionMapping.ElementConverter=collectionMapping.Converter;
+            }
+
             return collectionMapping;
         }
 
-        private void SetConverter(PropertyMapping propertyMapping, IPropertyMappingProvider provider)
+        private bool SetConverter(PropertyMapping propertyMapping,IPropertyMappingProvider provider)
         {
-            if (provider.ConverterType != null && !provider.ConverterType.ContainsGenericParameters)
+            bool result=false;
+            if ((provider.ConverterType!=null)&&(!provider.ConverterType.ContainsGenericParameters)&&(!provider.ConverterType.IsInterface))
             {
                 propertyMapping.Converter=(INodeConverter)Activator.CreateInstance(provider.ConverterType);
+                result=true;
             }
+
+            return result;
         }
     }
 }

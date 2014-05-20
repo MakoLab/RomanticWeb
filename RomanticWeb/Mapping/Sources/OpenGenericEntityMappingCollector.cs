@@ -26,17 +26,17 @@ namespace RomanticWeb.Mapping.Sources
 
         public void Visit(ICollectionMappingProvider collectionMappingProvider)
         {
-            PropertyMappingProviders.Add(new CollectionMapping(collectionMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(collectionMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new CollectionMapping(collectionMappingProvider,_currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(collectionMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IPropertyMappingProvider propertyMappingProvider)
         {
-            PropertyMappingProviders.Add(new PropertyMapping(propertyMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(propertyMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new PropertyMapping(propertyMappingProvider,_currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(propertyMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IDictionaryMappingProvider dictionaryMappingProvider)
         {
-            PropertyMappingProviders.Add(new DictionaryMapping(dictionaryMappingProvider, _currentEntityMapping.EntityType.MakeGenericType(_genricArguments).FindProperty(dictionaryMappingProvider.PropertyInfo.Name)));
+            PropertyMappingProviders.Add(new DictionaryMapping(dictionaryMappingProvider,_currentEntityMapping.EntityType.MakeGenericType(_genricArguments).GetProperty(dictionaryMappingProvider.PropertyInfo.Name)));
         }
 
         public void Visit(IClassMappingProvider classMappingProvider)
@@ -64,24 +64,11 @@ namespace RomanticWeb.Mapping.Sources
 
             public Func<IOntologyProvider,Uri> GetTerm
             {
-                get
-                {
-                    return _inner.GetTerm;
+                get { return _inner.GetTerm; }
+                set { _inner.GetTerm=value; }
                 }
 
-                set
-                {
-                    _inner.GetTerm=value;
-                }
-            }
-
-            public PropertyInfo PropertyInfo
-            {
-                get
-                {
-                    return _property;
-                }
-            }
+            public PropertyInfo PropertyInfo { get { return _property; } }
 
             public Type ConverterType { get; set; }
 
@@ -95,50 +82,35 @@ namespace RomanticWeb.Mapping.Sources
         {
             private readonly IDictionaryMappingProvider _openGeneric;
 
-            public DictionaryMapping(IDictionaryMappingProvider openGeneric, PropertyInfo property)
-                : base(openGeneric, property)
+            public DictionaryMapping(IDictionaryMappingProvider openGeneric,PropertyInfo property) :base(openGeneric,property)
             {
-                _openGeneric = openGeneric;
+                _openGeneric=openGeneric;
             }
 
-            public ITermMappingProvider Value
-            {
-                get
-                {
-                    return _openGeneric.Value;
-                }
-            }
+            public ITermMappingProvider Value { get { return _openGeneric.Value; } }
 
-            public ITermMappingProvider Key
-            {
-                get
-                {
-                    return _openGeneric.Key;
-                }
-            }
+            public ITermMappingProvider Key { get { return _openGeneric.Key; } }
         }
 
         private class CollectionMapping:PropertyMapping,ICollectionMappingProvider
         {
             private readonly ICollectionMappingProvider _openGeneric;
 
-            public CollectionMapping(ICollectionMappingProvider openGeneric, PropertyInfo property)
-                : base(openGeneric, property)
+            public CollectionMapping(ICollectionMappingProvider openGeneric,PropertyInfo property):base(openGeneric,property)
             {
-                _openGeneric = openGeneric;
+                _openGeneric=openGeneric;
             }
 
             public StoreAs StoreAs
             {
-                get
-                {
-                    return _openGeneric.StoreAs;
+                get { return _openGeneric.StoreAs; }
+                set { _openGeneric.StoreAs=value; }
                 }
 
-                set
+            public Type ElementConverterType
                 {
-                    _openGeneric.StoreAs=value;
-                }
+                get { return _openGeneric.ElementConverterType; }
+                set { _openGeneric.ElementConverterType=value; }
             }
         }
     }

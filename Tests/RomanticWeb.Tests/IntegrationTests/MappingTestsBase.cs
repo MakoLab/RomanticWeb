@@ -29,50 +29,50 @@ namespace RomanticWeb.Tests.IntegrationTests
             get { return (TestMappingSource)base.Mappings; }
         }
 
-		[Test]
-		public void Property_should_be_mapped_to_default_graph()
-		{
-			// given
+        [Test]
+        public void Property_should_be_mapped_to_default_graph()
+        {
+            // given
             Mappings.Add(new DefaultGraphPersonMapping());
-			LoadTestFile("TriplesWithLiteralSubjects.trig");
+            LoadTestFile("TriplesWithLiteralSubjects.trig");
 
-			// when
-			string firstName = Entity.FirstName;
+            // when
+            string firstName = Entity.FirstName;
 
-			// then
-			Assert.That(firstName, Is.EqualTo("Tomasz"));
-		}
+            // then
+            Assert.That(firstName, Is.EqualTo("Tomasz"));
+        }
 
-		[Test]
-		public void Mapping_property_to_specific_graph_should_be_possible()
-		{
-			// given
-		    Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
+        [Test]
+        public void Mapping_property_to_specific_graph_should_be_possible()
+        {
+            // given
+            Factory.WithNamedGraphSelector(new ProtocolReplaceGraphSelector());
             Mappings.Add(new NamedGraphsPersonMapping());
-			LoadTestFile("TriplesInNamedGraphs.trig");
+            LoadTestFile("TriplesInNamedGraphs.trig");
 
-			// when
-			string firstName = Entity.FirstName;
-			string lastName = Entity.LastName;
+            // when
+            string firstName = Entity.FirstName;
+            string lastName = Entity.LastName;
 
-			// then
-			Assert.That(firstName, Is.EqualTo("Tomasz"));
-			Assert.That(lastName, Is.EqualTo("Pluskiewicz"));
-		}
+            // then
+            Assert.That(firstName, Is.EqualTo("Tomasz"));
+            Assert.That(lastName, Is.EqualTo("Pluskiewicz"));
+        }
 
-		[Test]
-		public void Mapping_simple_collections_should_be_possible()
-		{
-			// given
+        [Test]
+        public void Mapping_simple_collections_should_be_possible()
+        {
+            // given
             Mappings.Add(new DefaultGraphPersonMapping());
-			LoadTestFile("LooseCollections.trig");
+            LoadTestFile("LooseCollections.trig");
 
-			// when
-			var interests = Entity.Interests;
+            // when
+            var interests = Entity.Interests;
 
-			// then
-			Assert.That(interests, Has.Count.EqualTo(5));
-			interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
+            // then
+            Assert.That(interests, Has.Count.EqualTo(5));
+            interests.Should().Contain(new object[] { "RDF", "Semantic Web", "C#", "Big data", "Web 3.0" });
         }
 
         [Test]
@@ -176,6 +176,20 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(friends, Has.Count.EqualTo(2));
             friends.Should().Contain("Tomek", "Tomasz");
+        }
+
+        [Test]
+        public void Mapping_URI_node_rdf_collection_of_literals_should_be_possible()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping(true));
+            LoadTestFile("RdfLists.trig");
+
+            // when
+            var friends=Entity.FriendsAsLiterals;
+
+            // then
+            Assert.That(friends,Has.Count.EqualTo(5));
         }
 
         [Test]

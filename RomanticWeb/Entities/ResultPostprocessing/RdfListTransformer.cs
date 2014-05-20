@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Collections;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
@@ -19,8 +20,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfListTransformer"/> class.
         /// </summary>
-        public RdfListTransformer()
-            :base(new SingleOrDefault())
+        public RdfListTransformer():base(new SingleOrDefault())
         {
         }
 
@@ -30,38 +30,29 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         public override object FromNodes(IEntityProxy parent,IPropertyMapping property,IEntityContext context,[AllowNull] IEnumerable<Node> nodes)
         {
             var listHead=(IEntity)base.FromNodes(parent,property,context,nodes);
+            Type[] genericArguments=new Type[] { property.DeclaringType,((ICollectionMapping)property).ElementConverter.GetType(),property.ReturnType.GetGenericArguments()[0].FindItemType() };
+            Type itemType=typeof(IRdfListNode<,,>).MakeGenericType(genericArguments);
+            var ctor=typeof(RdfListAdapter<,,>).MakeGenericType(genericArguments).GetConstructor(
+                new Type[] { typeof(IEntityContext),typeof(IEntity),itemType,typeof(OverridingGraphSelector) });
 
-            var genericArguments = property.ReturnType.GetGenericArguments();
-
-            if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
+            object head;
+            if (listHead==null)
             {
-                genericArguments = new[] { typeof(IEntity) };
-            }
-
-            var ctor =
-                typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                        .GetConstructor(
-                                            new[]
-                                                {
-                                                    typeof(IEntityContext),
-                                                    typeof(IEntity),
-                                                    typeof(IRdfListNode),
-                                                    typeof(OverridingGraphSelector)
-                                                });
-
-            IRdfListNode head;
-            if (listHead == null)
-            {
-                head=context.Create<IRdfListNode>(Vocabularies.Rdf.nil);
+                head=context.GetType().GetInterfaceMap(typeof(IEntityContext))
+                    .InterfaceMethods
+                    .Where(item => (item.Name=="Create")&&(item.IsGenericMethodDefinition)&&(item.GetParameters().Length==1)&&(item.GetParameters()[0].ParameterType==typeof(EntityId)))
+                    .Select(item => item.MakeGenericMethod(itemType))
+                    .First()
+                    .Invoke(context,new object[] { new EntityId(Vocabularies.Rdf.nil) });
             }
             else
             {
-                head=listHead.AsEntity<IRdfListNode>();
+                head=typeof(EntityExtensions).GetMethod("AsEntity").MakeGenericMethod(itemType).Invoke(null,new object[] { listHead });
             }
 
             var paremeters=parent.GraphSelectionOverride??new OverridingGraphSelector(parent.Id,parent.EntityMapping,property);
-            ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(paremeters);
-            return ctor.Invoke(new object[] { context, parent, head, paremeters });
+            ((IEntityProxy)((IEntity)head).UnwrapProxy()).OverrideGraphSelection(paremeters);
+            return ctor.Invoke(new object[] { context,parent,head,paremeters });
         }
 
         /// <summary>
@@ -76,25 +67,27 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                 throw new ArgumentException("Value must implement IEnumerable","value");
             }
 
-            if (value is IRdfListAdapter)
+            if (typeof(IRdfListAdapter<,,>).IsAssignableFromSpecificGeneric(value.GetType()))
             {
-                yield return Node.FromEntityId(((IRdfListAdapter)value).Head.Id);
+                yield return Node.FromEntityId(((IEntity)value.GetType().GetProperty("Head").GetValue(value)).Id);
             }
             else
             {
-                var genericArguments = property.ReturnType.GetGenericArguments();
-                var ctor =
-                    typeof(RdfListAdapter<>).MakeGenericType(genericArguments)
-                                            .GetConstructor(new[] { typeof(IEntityContext), typeof(IEntity), typeof(OverridingGraphSelector) });
-                var paremeters = proxy.GraphSelectionOverride ?? new OverridingGraphSelector(proxy.Id, proxy.EntityMapping, property);
-                var rdfList = (IRdfListAdapter)ctor.Invoke(new object[] { context, proxy, paremeters });
+                INodeConverter converter=((ICollectionMapping)property).ElementConverter??property.Converter;
+                Type[] genericArguments=new Type[] { property.DeclaringType,converter.GetType(),property.ReturnType.GetGenericArguments()[0].FindItemType() };
+                var ctor=typeof(RdfListAdapter<,,>).MakeGenericType(genericArguments).GetConstructor(
+                    new[] { typeof(IEntityContext),typeof(IEntity),typeof(OverridingGraphSelector) });
+                var paremeters=proxy.GraphSelectionOverride??new OverridingGraphSelector(proxy.Id,proxy.EntityMapping,property);
+                object rdfList=ctor.Invoke(new object[] { context,proxy,paremeters });
+                System.Reflection.InterfaceMapping interfaceMapping=rdfList.GetType().GetInterfaceMap(typeof(IRdfListAdapter<,,>).MakeGenericType(genericArguments));
+                var addMethodInfo=interfaceMapping.InterfaceMethods.First(item => item.Name=="Add");
 
                 foreach (var item in (IEnumerable)value)
                 {
-                    rdfList.Add(item);
+                    addMethodInfo.Invoke(rdfList,new object[] { item });
                 }
 
-                yield return Node.FromEntityId(rdfList.Head.Id);
+                yield return Node.FromEntityId(((IEntity)interfaceMapping.InterfaceMethods.First(item => item.Name=="get_Head").Invoke(rdfList,null)).Id);
             }
         }
     }

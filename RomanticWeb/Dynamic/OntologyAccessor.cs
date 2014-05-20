@@ -30,9 +30,7 @@ namespace RomanticWeb.Dynamic
         private readonly IResultTransformerCatalog _resultTransformers;
         private readonly INodeConverter _nodeConverter=new FallbackNodeConverter();
 
-        /// <summary>
-        /// Creates a new instance of <see cref="OntologyAccessor"/>
-        /// </summary>
+        /// <summary>Creates a new instance of <see cref="OntologyAccessor"/>.</summary>
         internal OntologyAccessor(Entity entity,Ontology ontology,IResultTransformerCatalog resultTransformers)
         {
             _tripleStore=entity.Context.Store;
@@ -42,26 +40,15 @@ namespace RomanticWeb.Dynamic
             _context=entity.Context;
         }
 
-        /// <summary>
-        /// Gets the underlying <see cref="Ontologies.Ontology"/>
-        /// </summary>
-        public Ontology Ontology
-        {
-            get
-            {
-                return _ontology;
-            }
-        }
+        /// <summary>Gets the underlying <see cref="Ontologies.Ontology"/>.</summary>
+        public Ontology Ontology { get { return _ontology; } }
 
-        /// <summary>
-        /// Tries to retrieve subjects from the backing RDF source for a dynamically resolved property
-        /// </summary>
+        /// <summary>Tries to retrieve subjects from the backing RDF source for a dynamically resolved property.</summary>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             _entity.EnsureIsInitialized();
 
             var propertySpec=new DynamicPropertyAggregate(binder.Name);
-
             if (!propertySpec.IsValid)
             {
                 result=null;
@@ -69,7 +56,6 @@ namespace RomanticWeb.Dynamic
             }
 
             var property=Ontology.Properties.SingleOrDefault(p => p.PropertyName==propertySpec.Name);
-
             if (property==null)
             {
                 property=new Property(propertySpec.Name).InOntology(Ontology);
@@ -80,9 +66,9 @@ namespace RomanticWeb.Dynamic
             if (propertySpec.IsList)
             {
                 var graphOverride=new UnionGraphSelector();
-                var head=((IEntity)result).AsEntity<IRdfListNode>();
+                var head=(IRdfListNode<IEntity,INodeConverter,dynamic>)typeof(EntityExtensions).GetMethod("AsEntity").MakeGenericMethod(typeof(IRdfListNode<IEntity,INodeConverter,dynamic>)).Invoke(null,new object[] { (IEntity)result });
                 ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(graphOverride);
-                var rdfListAdapter=new RdfListAdapter<dynamic>(_entity.Context,_entity,head,graphOverride);
+                var rdfListAdapter=new RdfListAdapter<IEntity,INodeConverter,dynamic>(_entity.Context,_entity,head,graphOverride);
                 result=new ReadOnlyCollection<dynamic>(rdfListAdapter);
             }
 

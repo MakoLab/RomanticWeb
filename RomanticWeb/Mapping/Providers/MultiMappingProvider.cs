@@ -16,29 +16,11 @@ namespace RomanticWeb.Mapping.Providers
             _entityMappingProviders=entityMappingProviders;
         }
 
-        public IEnumerable<IClassMappingProvider> Classes
-        {
-            get
-            {
-                return _entityMappingProviders.SelectMany(mp => mp.Classes);
-            }
-        }
+        public IEnumerable<IClassMappingProvider> Classes { get { return _entityMappingProviders.SelectMany(mp => mp.Classes); } }
 
-        public IEnumerable<IPropertyMappingProvider> Properties
-        {
-            get
-            {
-                return _entityMappingProviders.SelectMany(mp => mp.Properties);
-            }
-        }
+        public IEnumerable<IPropertyMappingProvider> Properties { get { return _entityMappingProviders.SelectMany(mp => mp.Properties); } }
 
-        public Type EntityType
-        {
-            get
-            {
-                return _entityType;
-            }
-        }
+        public Type EntityType { get { return _entityType; } }
 
         public void Accept(IMappingProviderVisitor mappingProviderVisitor)
         {

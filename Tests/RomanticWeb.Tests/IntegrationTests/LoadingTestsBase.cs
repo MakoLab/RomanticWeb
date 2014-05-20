@@ -110,6 +110,22 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        [Repeat(10)]
+        [TestCase("SCV",2)]
+        public void Should_return_limited_number_of_entities_from_large_dataset(string searchString,int expectedCount)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            // when
+            IList<IProduct> products=EntityContext.AsQueryable<IProduct>()
+                .Where(item => item.Name.ToLower().Contains(searchString.ToLower()))
+                .Take(2)
+                .ToList();
+            Assert.That(products.Count,Is.EqualTo(expectedCount));
+        }
+
+        [Test]
         public void Should_find_entities_with_subquery()
         {
             LoadTestFile("LargeDataset.nq");

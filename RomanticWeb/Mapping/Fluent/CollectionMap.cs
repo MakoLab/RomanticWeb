@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
@@ -9,34 +11,38 @@ namespace RomanticWeb.Mapping.Fluent
     /// <inheritdoc/>
     public sealed class CollectionMap:PropertyMapBase,ICollectionMap
     {
-        internal CollectionMap(PropertyInfo propertyInfo)
-			: base(propertyInfo)
-		{
-		}
+        private ITermPart<ICollectionMap> _term;
+        private StorageStrategyPart _storeAs;
+        private Type _elementConverterType=null;
+
+        internal CollectionMap(PropertyInfo propertyInfo):base(propertyInfo)
+        {
+            _term=new TermPart<CollectionMap>(this);
+            _storeAs=new StorageStrategyPart(this);
+        }
 
         /// <inheritdoc/>
-        public ITermPart<ICollectionMap> Term
+        public ITermPart<ICollectionMap> Term { get { return _term; } }
+
+        /// <summary>Gets options for setting how this collection will be persisted.</summary>
+        public StorageStrategyPart StoreAs { get { return _storeAs; } }
+
+        /// <inheritdoc/>
+        public override Type ConverterType
         {
-            get
-            {
-                return new TermPart<CollectionMap>(this);
-            }
+            [return: AllowNull]
+            get { return (StorageStrategy==Model.StoreAs.SimpleCollection?_elementConverterType??base.ConverterType:base.ConverterType); }
+            internal set { base.ConverterType=value; }
         }
 
-        /// <summary>
-        /// Gets options for setting how this collection will be persisted
-        /// </summary>
-        public StorageStrategyPart StoreAs
+        /// <summary>Gets or sets an element converter type.</summary>
+        public Type ElementConverterType
         {
-            get
-            {
-                return new StorageStrategyPart(this);
-            }
+            [return: AllowNull] get { return (StorageStrategy==Model.StoreAs.SimpleCollection?_elementConverterType??base.ConverterType:_elementConverterType); }
+            internal set { _elementConverterType=value; }
         }
 
-        /// <summary>
-        /// Gets or sets the value, which indicates how the collection's triples will be stored.
-        /// </summary>
+        /// <summary>Gets or sets the value, which indicates how the collection's triples will be stored.</summary>
         public StoreAs StorageStrategy { get; set; }
 
         /// <inheritdoc />
@@ -46,10 +52,9 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <inheritdoc />
-        public ICollectionMap ConvertElementsWith<TConverter>()
-            where TConverter:INodeConverter
+        public ICollectionMap ConvertElementsWith<TConverter>() where TConverter:INodeConverter
         {
-            ConverterType=typeof(TConverter);
+            _elementConverterType=typeof(TConverter);
             return this;
         }
     }

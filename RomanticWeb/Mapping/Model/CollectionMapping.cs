@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
@@ -15,6 +16,8 @@ namespace RomanticWeb.Mapping.Model
         }
 
         public StoreAs StoreAs { get; private set; }
+
+        public INodeConverter ElementConverter { get; internal set; }
 
         void IPropertyMapping.Accept(IMappingModelVisitor mappingModelVisitor)
         {

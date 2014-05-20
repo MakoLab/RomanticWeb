@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.NamedGraphs;
 
@@ -10,15 +11,16 @@ namespace RomanticWeb.Collections
 {
     [DebuggerDisplay("Count = {Count}")]
     [NullGuard(ValidationFlags.All)]
-    internal class RdfListAdapter<T>:IList<T>,IRdfListAdapter
+    internal class RdfListAdapter<TOwner,TConverter,T>:IList<T>,IRdfListAdapter<TOwner,TConverter,T>
+        where TConverter:INodeConverter
     {
         private readonly IEntityContext _context;
         private readonly ISourceGraphSelectionOverride _namedGraphOverride;
         private readonly IEntity _owner;
-        private IRdfListNode _head;
-        private IRdfListNode _tail;
+        private IRdfListNode<TOwner,TConverter,T> _head;
+        private IRdfListNode<TOwner,TConverter,T> _tail;
 
-        public RdfListAdapter(IEntityContext context,IEntity owner,IRdfListNode head,ISourceGraphSelectionOverride namedGraphOverride)
+        public RdfListAdapter(IEntityContext context,IEntity owner,IRdfListNode<TOwner,TConverter,T> head,ISourceGraphSelectionOverride namedGraphOverride)
         {
             Count=0;
             _context=context;
@@ -30,46 +32,20 @@ namespace RomanticWeb.Collections
         }
 
         public RdfListAdapter(IEntityContext context,IEntity owner,ISourceGraphSelectionOverride namedGraphOverride)
-            : this(context,owner,context.Load<IRdfListNode>(Vocabularies.Rdf.nil),namedGraphOverride)
+            :this(context,owner,context.Load<IRdfListNode<TOwner,TConverter,T>>(Vocabularies.Rdf.nil),namedGraphOverride)
         {
         }
 
-        IRdfListNode IRdfListAdapter.Head
-        {
-            get
-            {
-                return _head;
-            }
-        }
+        IRdfListNode<TOwner,TConverter,T> IRdfListAdapter<TOwner,TConverter,T>.Head { get { return _head; } }
 
         public int Count { get; private set; }
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool IsReadOnly { get { return false; } }
 
         public T this[int index]
         {
-            get
-            {
-                var rdfListNode=GetNodeAt(index);
-
-                if (rdfListNode.First==null)
-                {
-                    throw new ArgumentOutOfRangeException("index");
-                }
-
-                return (T)rdfListNode.First;
-            }
-
-            set
-            {
-                Insert(index,value);
-            }
+            get { return (T)GetNodeAt(index).First; }
+            set { Insert(index,value); }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -82,21 +58,24 @@ namespace RomanticWeb.Collections
             return GetEnumerator();
         }
 
-        void IRdfListAdapter.Add(object item)
+        void IRdfListAdapter<TOwner,TConverter,T>.Add(T item)
         {
             Add((T)item);
         }
 
         public void Add(T item)
         {
-            if (_head.Id==Vocabularies.Rdf.nil)
+            if (item!=null)
             {
-                InsertToEmptyList(item);
-            }
-            else
-            {
-                var newTail=InsertNodeAfter(_tail,item);
-                _tail=newTail;
+                if (_head.Id==Vocabularies.Rdf.nil)
+                {
+                    InsertToEmptyList(item);
+                }
+                else
+                {
+                    var newTail=InsertNodeAfter(_tail,item);
+                    _tail=newTail;
+                }
             }
         }
 
@@ -109,7 +88,7 @@ namespace RomanticWeb.Collections
                 currentNode=currentNode.Rest;
             }
 
-            _head=_tail=_context.Load<IRdfListNode>(Vocabularies.Rdf.nil);
+            _head=_tail=_context.Load<IRdfListNode<TOwner,TConverter,T>>(Vocabularies.Rdf.nil);
         }
 
         public bool Contains(T item)
@@ -119,7 +98,30 @@ namespace RomanticWeb.Collections
 
         public void CopyTo(T[] array,int arrayIndex)
         {
-            throw new System.NotImplementedException();
+            if (array==null)
+            {
+                throw new ArgumentNullException("array");
+            }
+
+            if (arrayIndex<0)
+            {
+                throw new ArgumentOutOfRangeException("arrayIndex");
+            }
+
+            if (Count>array.Length-arrayIndex)
+            {
+                throw new ArgumentException("The number of elements in the source collection is greater than the available space from 'arrayIndex' to the end of the destination array.");
+            }
+
+            IRdfListNode<TOwner,TConverter,T> currentNode=_head;
+            int currentIndex=0;
+
+            while (currentNode.Id!=Vocabularies.Rdf.nil)
+            {
+                array[arrayIndex+currentIndex]=currentNode.First;
+                currentNode=currentNode.Rest;
+                currentIndex++;
+            }
         }
 
         public bool Remove(T item)
@@ -171,12 +173,12 @@ namespace RomanticWeb.Collections
             }
             else
             {
-                IRdfListNode previousNode=GetNodeAt(index-1);
+                IRdfListNode<TOwner,TConverter,T> previousNode=GetNodeAt(index-1);
                 DeleteNode(previousNode.Rest,previousNode);
             }
         }
 
-        private void DeleteNode(IRdfListNode nodeToDelete,[AllowNull]IRdfListNode previousNode)
+        private void DeleteNode(IRdfListNode<TOwner,TConverter,T> nodeToDelete,[AllowNull] IRdfListNode<TOwner,TConverter,T> previousNode)
         {
             if (previousNode!=null)
             {
@@ -194,9 +196,9 @@ namespace RomanticWeb.Collections
             _context.Delete(nodeToDelete.Id);
         }
 
-        private Tuple<IRdfListNode,IRdfListNode> GetNodeForItemWithPredecessor(T item)
+        private Tuple<IRdfListNode<TOwner,TConverter,T>,IRdfListNode<TOwner,TConverter,T>> GetNodeForItemWithPredecessor(T item)
         {
-            IRdfListNode previousNode=null;
+            IRdfListNode<TOwner,TConverter,T> previousNode=null;
             var currentNode=_head;
             while (currentNode.Id!=Vocabularies.Rdf.nil)
             {
@@ -212,14 +214,14 @@ namespace RomanticWeb.Collections
             return Tuple.Create(currentNode,previousNode);
         }
 
-        private IRdfListNode GetNodeAt(int index)
+        private IRdfListNode<TOwner,TConverter,T> GetNodeAt(int index)
         {
-            if (index<0)
+            if ((index<0)||(index>=Count))
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
-            IRdfListNode currentNode=_head;
+            IRdfListNode<TOwner,TConverter,T> currentNode=_head;
             int currentIndex=0;
 
             while ((currentIndex<index)&&(currentNode.Id!=Vocabularies.Rdf.nil))
@@ -231,7 +233,7 @@ namespace RomanticWeb.Collections
             return currentNode;
         }
 
-        private IRdfListNode InsertNodeAfter(IRdfListNode existingNode,T item)
+        private IRdfListNode<TOwner,TConverter,T> InsertNodeAfter(IRdfListNode<TOwner,TConverter,T> existingNode,T item)
         {
             var newNode=CreateNode();
             newNode.First=item;
@@ -248,7 +250,7 @@ namespace RomanticWeb.Collections
             _tail=newNode;
         }
 
-        private IRdfListNode InsertFirstNode(T item)
+        private IRdfListNode<TOwner,TConverter,T> InsertFirstNode(T item)
         {
             var newNode=CreateNode();
             newNode.First=item;
@@ -259,10 +261,10 @@ namespace RomanticWeb.Collections
             return newNode;
         }
 
-        private IRdfListNode CreateNode()
+        private IRdfListNode<TOwner,TConverter,T> CreateNode()
         {
             var nodeId=_owner.CreateBlankId();
-            var newNode=_context.Create<IRdfListNode>(nodeId);
+            var newNode=_context.Create<IRdfListNode<TOwner,TConverter,T>>(nodeId);
             var proxy=newNode.UnwrapProxy() as IEntityProxy;
 
             if (proxy!=null)
@@ -283,10 +285,10 @@ namespace RomanticWeb.Collections
 
         private class Enumerator:IEnumerator<T>
         {
-            private readonly IRdfListNode _firstNode;
-            private IRdfListNode _currentNode;
+            private readonly IRdfListNode<TOwner,TConverter,T> _firstNode;
+            private IRdfListNode<TOwner,TConverter,T> _currentNode;
 
-            public Enumerator(IRdfListNode actualEntity)
+            public Enumerator(IRdfListNode<TOwner,TConverter,T> actualEntity)
             {
                 _firstNode=actualEntity;
             }

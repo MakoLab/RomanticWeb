@@ -146,10 +146,10 @@ namespace RomanticWeb.Tests.Mapping
             var mapping = MappingsRepository.MappingFor<IEntityWithExplicitConverters>();
 
             // when
-            var property = mapping.PropertyFor("Collection");
+            var property = (ICollectionMapping)mapping.PropertyFor("Collection");
 
             // then
-            property.Converter.Should().BeOfType<BooleanConverter>();
+            property.ElementConverter.Should().BeOfType<BooleanConverter>();
         }
 
         [Test]

@@ -39,8 +39,13 @@ namespace RomanticWeb.Mapping.Fluent
 
         public IPropertyMappingProvider Visit(CollectionMap collectionMap)
         {
-            var propertyMapping=CreatePropertyMapping(collectionMap);
-            return new CollectionMappingProvider(propertyMapping,collectionMap.StorageStrategy);
+            var result=new CollectionMappingProvider(CreatePropertyMapping(collectionMap),collectionMap.StorageStrategy);
+            if (collectionMap.ElementConverterType!=null)
+            {
+                result.ElementConverterType=collectionMap.ElementConverterType;
+            }
+
+            return result;
         }
 
         public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)

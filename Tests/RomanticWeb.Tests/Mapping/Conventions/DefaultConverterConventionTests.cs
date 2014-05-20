@@ -6,6 +6,7 @@ using ImpromptuInterface.Dynamic;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Tests.Stubs;
 
@@ -15,12 +16,13 @@ namespace RomanticWeb.Tests.Mapping.Conventions
     public class DefaultConverterConventionTests
     {
         private static readonly dynamic New=Builder.New();
-        private DefaultConvertersConvention _convention;
+        private IConvention<IPropertyMappingProvider> _convention;
+        private DefaultConvertersConvention _defaultConvertersConvention;
 
         [SetUp]
         public void Setup()
         {
-            _convention=new DefaultConvertersConvention();
+            _convention=(IConvention<IPropertyMappingProvider>)(_defaultConvertersConvention=new DefaultConvertersConvention());
         }
 
         [TearDown]
@@ -34,7 +36,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Should_be_applied_to_property_without_converter_with_known_property_type(Type type)
         {
             // given
-            _convention.SetDefault<int,IntegerConverter>();
+            _defaultConvertersConvention.SetDefault<int,IntegerConverter>();
             var convention=new
                                {
                                    ConverterType=default(Type),
@@ -70,7 +72,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Applying_should_set_default_converter_type_for_known_property_type(Type type)
         {
             // given
-            _convention.SetDefault<int,IntegerConverter>();
+            _defaultConvertersConvention.SetDefault<int,IntegerConverter>();
             IPropertyMappingProvider mapping = New.ExpandoObject(
                 PropertyInfo: new TestPropertyInfo(type),
                 ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();
@@ -86,8 +88,8 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Should_apply_set_converter_for_explicitly_defined_array_type()
         {
             // given
-            _convention.SetDefault<int[], Base64BinaryConverter>();
-            _convention.SetDefault<int, IntegerConverter>();
+            _defaultConvertersConvention.SetDefault<int[],Base64BinaryConverter>();
+            _defaultConvertersConvention.SetDefault<int,IntegerConverter>();
             IPropertyMappingProvider mapping = New.ExpandoObject(
                 PropertyInfo: new TestPropertyInfo(typeof(int[])),
                 ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();

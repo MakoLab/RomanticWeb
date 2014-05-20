@@ -8,28 +8,19 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>A mapping definition for properties.</summary>
     public sealed class PropertyMap:PropertyMapBase,IPropertyMap
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyMap"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="PropertyMap"/> class.</summary>
         /// <param name="propertyInfo">The property.</param>
-        public PropertyMap(PropertyInfo propertyInfo)
-            :base(propertyInfo)
+        public PropertyMap(PropertyInfo propertyInfo):base(propertyInfo)
         {
         }
 
         /// <inheritdoc/>
-        public ITermPart<IPropertyMap> Term
-        {
-            get
-            {
-                return new TermPart<PropertyMap>(this);
-            }
-        }
+        public ITermPart<IPropertyMap> Term { get { return new TermPart<PropertyMap>(this); } }
 
         /// <inheritdoc/>
-        public IPropertyMap ConvertWith<TConverter>() where TConverter : INodeConverter
+        public IPropertyMap ConvertWith<TConverter>() where TConverter:INodeConverter
         {
-            ConverterType = typeof(TConverter);
+            ConverterType=typeof(TConverter);
             return this;
         }
 

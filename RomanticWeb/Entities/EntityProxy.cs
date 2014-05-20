@@ -86,7 +86,7 @@ namespace RomanticWeb.Entities
         /// </value>
         public ISourceGraphSelectionOverride GraphSelectionOverride
         {
-            [return:AllowNull]
+            [return: AllowNull]
             get
             {
                 return _overrideSourceGraph;
@@ -124,7 +124,7 @@ namespace RomanticWeb.Entities
                 {
                     var entityProxy=((IEntity)result).UnwrapProxy() as IEntityProxy;
 
-                    if (entityProxy != null)
+                    if (entityProxy!=null)
                     {
                         SetNamedGraphOverride(entityProxy,property);
                     }
@@ -179,7 +179,7 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var proxy = obj as EntityProxy;
+            var proxy=obj as EntityProxy;
             IEntity entity=proxy!=null?proxy._entity:obj as IEntity;
             if (entity==null) { return false; }
 
@@ -220,25 +220,24 @@ namespace RomanticWeb.Entities
         /// <param name="parametersOverride">The parameters override.</param>
         public void OverrideGraphSelection(ISourceGraphSelectionOverride parametersOverride)
         {
-            _overrideSourceGraph = parametersOverride;
+            _overrideSourceGraph=parametersOverride;
         }
         #endregion
 
         #region Private methods
-
-        private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
+        private void SetNamedGraphOverride(IEntityProxy proxy,IPropertyMapping property)
         {
-            var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
-            if (proxy != null)
+            var paremeters=GraphSelectionOverride??new OverridingGraphSelector(Id,_entityMapping,property);
+            if (proxy!=null)
             {
-                if (proxy.Id is BlankId || proxy.EntityMapping.EntityType == typeof(IRdfListNode))
+                if ((proxy.Id is BlankId)||(typeof(IRdfListNode<,,>).IsAssignableFromSpecificGeneric(proxy.EntityMapping.EntityType)))
                 {
                     proxy.OverrideGraphSelection(paremeters);
                 }
             }
         }
 
-        [return:AllowNull]
+        [return: AllowNull]
         private Uri SelectNamedGraph(IPropertyMapping property)
         {
             if (_overrideSourceGraph!=null)
@@ -248,7 +247,6 @@ namespace RomanticWeb.Entities
 
             return Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
         }
-
         #endregion
 
         private class DebuggerDisplayProxy
@@ -257,7 +255,7 @@ namespace RomanticWeb.Entities
 
             public DebuggerDisplayProxy(EntityProxy proxy)
             {
-                _proxy = proxy;
+                _proxy=proxy;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]

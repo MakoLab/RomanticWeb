@@ -28,8 +28,14 @@ namespace RomanticWeb.Mapping.Attributes
 
         public ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute,PropertyInfo property)
         {
-            var prop=CreatePropertyMapping(collectionAttribute,property);
-            return new CollectionMappingProvider(prop,collectionAttribute.StoreAs);
+            var propertyMapping=CreatePropertyMapping(collectionAttribute,property);
+            var result=new CollectionMappingProvider(propertyMapping,collectionAttribute.StoreAs);
+            if (collectionAttribute.ElementConverterType!=null)
+            {
+                result.ElementConverterType=collectionAttribute.ElementConverterType;
+            }
+
+            return result;
         }
 
         public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute,PropertyInfo property,ITermMappingProvider key,ITermMappingProvider value)
@@ -45,12 +51,12 @@ namespace RomanticWeb.Mapping.Attributes
                 return new KeyMappingProvider();
             }
 
-            if (keyAttribute.Uri != null)
+            if (keyAttribute.Uri!=null)
             {
                 return new KeyMappingProvider(keyAttribute.Uri);
             }
 
-            return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
+            return new KeyMappingProvider(keyAttribute.Prefix,keyAttribute.Term);
         }
 
         public ITermMappingProvider Visit(ValueAttribute valueAttribute)
@@ -64,7 +70,7 @@ namespace RomanticWeb.Mapping.Attributes
             {
                 return new ValueMappingProvider(valueAttribute.Uri);
             }
-            
+
             return new ValueMappingProvider(valueAttribute.Prefix,valueAttribute.Term);
         }
 
@@ -77,7 +83,7 @@ namespace RomanticWeb.Mapping.Attributes
         private static PropertyMappingProvider CreatePropertyMapping(PropertyAttribute propertyAttribute,PropertyInfo property)
         {
             PropertyMappingProvider propertyMappingProvider;
-            if (propertyAttribute.Uri != null)
+            if (propertyAttribute.Uri!=null)
             {
                 propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Uri,property);
             }
@@ -86,7 +92,7 @@ namespace RomanticWeb.Mapping.Attributes
                 propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Prefix,propertyAttribute.Term,property);
             }
 
-            if (propertyAttribute.ConverterType != null)
+            if (propertyAttribute.ConverterType!=null)
             {
                 propertyMappingProvider.ConverterType=propertyAttribute.ConverterType;
             }
@@ -98,7 +104,7 @@ namespace RomanticWeb.Mapping.Attributes
         {
             return (from property in entityType.GetProperties()
                     from attribute in property.GetCustomAttributes<PropertyAttribute>()
-                    select attribute.Accept(this, property)).ToList();
+                    select attribute.Accept(this,property)).ToList();
         }
 
         private IList<IClassMappingProvider> GetClasses(Type entityType)

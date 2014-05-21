@@ -110,6 +110,23 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        [TestCase("mailto:RBall_Consult@msn.com")]
+        public void Should_select_entities_by_sub_query(string userId)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            IUser user=EntityContext.Load<IEntity>(new EntityId(new Uri(userId))).AsEntity<IUser>();
+
+            // when
+            IList<IProduct> products=(from product in EntityContext.AsQueryable<IProduct>()
+                                      where user.FavoriteProduct.Contains(product)
+                                      select product).ToList();
+
+            Assert.That(products.Count,Is.Not.EqualTo(0));
+        }
+
+        [Test]
         [Repeat(10)]
         [TestCase("SCV",2)]
         public void Should_return_limited_number_of_entities_from_large_dataset(string searchString,int expectedCount)

@@ -293,7 +293,13 @@ namespace RomanticWeb.Linq
         private void VisitCountResultOperator(CountResultOperator countResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
             Call distinct=new Call(MethodNames.Distinct);
-            distinct.Arguments.Add((_query.IsSubQuery?_mainFromComponent.About:_query.Select.Where(item => item is UnboundConstrain).Select(item => ((UnboundConstrain)item).Subject).First()));
+            distinct.Arguments.Add(_mainFromComponent.About);
+            UnboundConstrain constrain=(UnboundConstrain)_mainFromComponent.Elements.FirstOrDefault(item => item.GetType()==typeof(UnboundConstrain));
+            if (constrain!=null)
+            {
+                _mainFromComponent.Elements.Remove(constrain);
+            }
+
             Call count=new Call(MethodNames.Count);
             count.Arguments.Add(distinct);
             _query.Select.Clear();

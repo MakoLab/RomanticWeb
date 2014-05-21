@@ -443,7 +443,18 @@ namespace RomanticWeb.Linq
                 IEnumerable value=(IEnumerable)expression.Value;
                 foreach (object item in value)
                 {
-                    list.Values.Add(new Literal(ResolveRelativeUriIfNecessery(item)));
+                    if (item is IEntity)
+                    {
+                        list.Values.Add(new Literal(((IEntity)item).Id.Uri));
+                    }
+                    else if (item is EntityId)
+                    {
+                        list.Values.Add(new Literal(((EntityId)item).Uri));
+                    }
+                    else
+                    {
+                        list.Values.Add(new Literal(ResolveRelativeUriIfNecessery(item)));
+                    }
                 }
 
                 _lastComponent=list;
@@ -471,7 +482,7 @@ namespace RomanticWeb.Linq
         protected override System.Linq.Expressions.Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
             Remotion.Linq.Clauses.FromClauseBase sourceExpression=(Remotion.Linq.Clauses.FromClauseBase)((QuerySourceReferenceExpression)expression.QueryModel.SelectClause.Selector).ReferencedQuerySource;
-            StrongEntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
+            StrongEntityAccessor entityAccessor=(sourceExpression.FromExpression is System.Linq.Expressions.ConstantExpression?null:this.GetEntityAccessor(sourceExpression));
             if (entityAccessor!=null)
             {
                 Query query=_query.CreateSubQuery(entityAccessor.About);
@@ -538,10 +549,10 @@ namespace RomanticWeb.Linq
         {
             if ((_currentComponent.Count>0)&&(_currentComponent.Peek() is BinaryOperatorNavigator))
             {
+                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
                 HandleComponent(_query.Subject);
                 BinaryOperator binaryOperator=((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
                 Filter filter=new Filter(binaryOperator);
-                StrongEntityAccessor entityAccessor=this.GetEntityAccessor(expression.Target);
                 if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
                 {
                     _query.Elements.Add(entityAccessor);

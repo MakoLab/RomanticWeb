@@ -135,7 +135,7 @@ namespace RomanticWeb.Linq
         public override void VisitAdditionalFromClause(AdditionalFromClause fromClause,QueryModel queryModel,int index)
         {
             VisitQuerableFromClause(fromClause,queryModel,index);
-            StrongEntityAccessor entityAccessor=_visitor.GetEntityAccessor(fromClause);
+            StrongEntityAccessor entityAccessor=(fromClause.FromExpression is System.Linq.Expressions.ConstantExpression?null:_visitor.GetEntityAccessor(fromClause));
             if (entityAccessor!=null)
             {
                 if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))

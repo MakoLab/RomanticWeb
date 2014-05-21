@@ -143,6 +143,18 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        [TestCase("SCV",10)]
+        public void Should_return_count_of_entities(string searchString,int expectedCount)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            // when
+            int count=EntityContext.AsQueryable<IProduct>().Count(item => item.Name.ToLower().Contains(searchString.ToLower()));
+            Assert.That(count,Is.EqualTo(expectedCount));
+        }
+
+        [Test]
         public void Should_find_entities_with_subquery()
         {
             LoadTestFile("LargeDataset.nq");

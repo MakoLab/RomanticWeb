@@ -328,10 +328,9 @@ namespace RomanticWeb.Tests.Linq
                 new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
                     from person in _persons select person,
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT COUNT(DISTINCT(?s)) AS ?personCount0 "+
+                    "SELECT COUNT(DISTINCT(?person0)) AS ?personCount0 "+
                     "WHERE { "+
                         "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
                             "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
                         "} "+
                         "GRAPH <http://app.magi/graphs> { "+

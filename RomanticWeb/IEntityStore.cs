@@ -14,11 +14,6 @@ namespace RomanticWeb
         /// <summary>Gets all changes made to the triple store.</summary>
         DatasetChanges Changes { get; }
 
-        //// <summary>Gets triples for given entity identifier.</summary>
-        //// <param name="entityId">Target entity identifier.</param>
-        //// <returns>Enumeration of triples for given entity.</returns>
-        ////IEnumerable<Triple> Triples(EntityId entityId);
-
         /// <summary>Gets all objects for predicate for a given entity.</summary>
         IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,Uri graph);
 

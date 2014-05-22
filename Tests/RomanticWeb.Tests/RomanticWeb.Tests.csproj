@@ -126,6 +126,8 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="Indexing\EntityQuadCollectionTests.cs" />
+    <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
     <Compile Include="IntegrationTests\WritingTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\WritingTests.cs" />

@@ -9665,7 +9665,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7a22 <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED10-6640> <http://schema.org/name> "MED10-6640"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6640> .
 <http://chem.com/product/MED10-6640> <http://chem.com/vocab/function> <http://chem.com/vocab/DipMold> <http://chem.com/product/MED10-6640> .
 <http://chem.com/product/MED10-6640> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/goodrelations/v1#ProductOrService> <http://chem.com/product/MED10-6640> .
-<http://chem.com/product/MED10-6640> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6640> .
 <http://chem.com/product/MED10-6640> <http://chem.com/vocab/durometer> _:BX2D77b18483X3A145e0a5a108X3AX2D7a1e <http://chem.com/product/MED10-6640> .
 _:BX2D77b18483X3A145e0a5a108X3AX2D7a1e <http://purl.org/goodrelations/v1#hasUnitOfMeasurement> "Type A"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6640> .
 _:BX2D77b18483X3A145e0a5a108X3AX2D7a1e <http://purl.org/goodrelations/v1#hasValueFloat> "40.0"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/MED10-6640> .
@@ -13698,7 +13697,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7e04 <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/durometer> _:BX2D77b18483X3A145e0a5a108X3AX2D7dfe <http://chem.com/product/MED-6400> .
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/non-VolatileContent> _:BX2D77b18483X3A145e0a5a108X3AX2D7e00 <http://chem.com/product/MED-6400> .
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/viscosity> _:BX2D77b18483X3A145e0a5a108X3AX2D7e03 <http://chem.com/product/MED-6400> .
-<http://chem.com/product/MED-6400> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6400> .
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/productCategory> <http://chem.com/vocab/Dispersions> <http://chem.com/product/MED-6400> .
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/refractiveIndex> "1.43"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/MED-6400> .
 <http://chem.com/product/MED-6400> <http://chem.com/vocab/workTime> _:BX2D77b18483X3A145e0a5a108X3AX2D7e02 <http://chem.com/product/MED-6400> .
@@ -14237,7 +14235,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7a36 <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED-2014> <http://chem.com/vocab/non-VolatileContent> _:BX2D77b18483X3A145e0a5a108X3AX2D7a36 <http://chem.com/product/MED-2014> .
 <http://chem.com/product/MED-2014> <http://chem.com/vocab/strain> _:BX2D77b18483X3A145e0a5a108X3AX2D7a39 <http://chem.com/product/MED-2014> .
 <http://chem.com/product/MED-2014> <http://schema.org/name> "MED-2014"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-2014> .
-<http://chem.com/product/MED-2014> <http://chem.com/vocab/cureTime> "*1"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-2014> .
 <http://chem.com/product/MED-2014> <http://chem.com/vocab/cureSystem> <http://chem.com/vocab/Platinum> <http://chem.com/product/MED-2014> .
 <http://chem.com/product/MED-2014> <http://chem.com/vocab/function> <http://chem.com/vocab/Coat> <http://chem.com/product/MED-2014> .
 <http://chem.com/product/MED-2014> <http://chem.com/vocab/function> <http://chem.com/vocab/DipMold> <http://chem.com/product/MED-2014> .
@@ -16234,7 +16231,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7dfa <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED-6600> <http://chem.com/vocab/tensile> _:BX2D77b18483X3A145e0a5a108X3AX2D7dfc <http://chem.com/product/MED-6600> .
 <http://chem.com/product/MED-6600> <http://chem.com/vocab/stress> _:BX2D77b18483X3A145e0a5a108X3AX2D7df6 <http://chem.com/product/MED-6600> .
 <http://chem.com/product/MED-6600> <http://chem.com/vocab/productLine> "Implant"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6600> .
-<http://chem.com/product/MED-6600> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6600> .
 <http://chem.com/product/MED-6600> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://chem.com/vocab/Product> <http://chem.com/product/MED-6600> .
 <http://chem.com/product/MED-6600> <http://chem.com/vocab/specificGravity> "1.1"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/MED-6600> .
 <http://chem.com/product/MED-6600> <http://www.w3.org/2000/01/rdf-schema#comment> "1.46 R.I. in Xylene"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6600> .
@@ -16938,7 +16934,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7ddb <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED-6640> <http://chem.com/vocab/productLine> "Implant"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6640> .
 <http://chem.com/product/MED-6640> <http://chem.com/vocab/cureSystem> <http://chem.com/vocab/Platinum> <http://chem.com/product/MED-6640> .
 <http://chem.com/product/MED-6640> <http://chem.com/vocab/industrySegment> <http://chem.com/vocab/LifeSciences> <http://chem.com/product/MED-6640> .
-<http://chem.com/product/MED-6640> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6640> .
 <http://chem.com/product/MED-6640> <http://www.w3.org/2000/01/rdf-schema#comment> "Ultra High Tear, in Xylene"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED-6640> .
 <http://chem.com/product/MED-6640> <http://chem.com/vocab/non-VolatileContent> _:BX2D77b18483X3A145e0a5a108X3AX2D7ddc <http://chem.com/product/MED-6640> .
 <http://chem.com/product/MED-6640> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://chem.com/vocab/Product> <http://chem.com/product/MED-6640> .
@@ -18183,7 +18178,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7a32 <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED10-6400> <http://chem.com/vocab/viscosity> _:BX2D77b18483X3A145e0a5a108X3AX2D7a31 <http://chem.com/product/MED10-6400> .
 <http://chem.com/product/MED10-6400> <http://chem.com/vocab/industrySegment> <http://chem.com/vocab/LifeSciences> <http://chem.com/product/MED10-6400> .
 <http://chem.com/product/MED10-6400> <http://chem.com/vocab/elongation> _:BX2D77b18483X3A145e0a5a108X3AX2D7a2c <http://chem.com/product/MED10-6400> .
-<http://chem.com/product/MED10-6400> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6400> .
 _:BX2D77b18483X3A145e0a5a108X3AX2D7a2e <http://purl.org/goodrelations/v1#hasUnitOfMeasurement> "Type A"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6400> .
 _:BX2D77b18483X3A145e0a5a108X3AX2D7a2e <http://purl.org/goodrelations/v1#hasValueFloat> "30.0"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/MED10-6400> .
 _:BX2D77b18483X3A145e0a5a108X3AX2D7a2e <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/goodrelations/v1#QuantitativeValueFloat> <http://chem.com/product/MED10-6400> .
@@ -18990,7 +18984,6 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7a24 <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/MED10-6600> <http://chem.com/vocab/elongation> _:BX2D77b18483X3A145e0a5a108X3AX2D7a24 <http://chem.com/product/MED10-6600> .
 <http://chem.com/product/MED10-6600> <http://chem.com/vocab/productLine> "Healthcare"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6600> .
 <http://chem.com/product/MED10-6600> <http://chem.com/vocab/cureSystem> <http://chem.com/vocab/Platinum> <http://chem.com/product/MED10-6600> .
-<http://chem.com/product/MED10-6600> <http://chem.com/vocab/cureTime> "*2"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/MED10-6600> .
 <http://chem.com/product/MED10-6600> <http://chem.com/vocab/strain> _:BX2D77b18483X3A145e0a5a108X3AX2D7a2a <http://chem.com/product/MED10-6600> .
 <http://chem.com/product/MED10-6600> <http://chem.com/vocab/viscosity> _:BX2D77b18483X3A145e0a5a108X3AX2D7a29 <http://chem.com/product/MED10-6600> .
 <http://chem.com/product/MED10-6600> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/goodrelations/v1#ProductOrService> <http://chem.com/product/MED10-6600> .

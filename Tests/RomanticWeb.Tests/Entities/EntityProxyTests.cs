@@ -6,6 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Entities
 {
@@ -46,33 +47,34 @@ namespace RomanticWeb.Tests.Entities
             // given
             var idToUse=new EntityId("urn:actual:id");
             var entityMappingToUse=ImpromptuInterface.Dynamic.Builder.New().ActLike<IEntityMapping>();
-            IPropertyMapping mappingToUse=new Mock<IPropertyMapping>().Object;
-            var propertyMapping=new Mock<IPropertyMapping>().Object;
-            _mapping.Setup(m => m.PropertyFor("property"))
-                    .Returns(propertyMapping);
+            Mock<IPropertyMapping> mappingToUse=new Mock<IPropertyMapping>();
+            mappingToUse.SetupGet(instance => instance.Uri).Returns(Rdf.subject);
+            var propertyMapping=new Mock<IPropertyMapping>();
+            propertyMapping.SetupGet(instance => instance.Uri).Returns(Rdf.predicate);
+            _mapping.Setup(m => m.PropertyFor("property")).Returns(propertyMapping.Object);
 
             // when
-            _entityProxy.OverrideGraphSelection(new OverridingGraphSelector(idToUse,entityMappingToUse,mappingToUse));
+            _entityProxy.OverrideGraphSelection(new OverridingGraphSelector(idToUse,entityMappingToUse,mappingToUse.Object));
             Impromptu.InvokeGet(_entityProxy,"property");
 
             // then
-            _graphSelector.Verify(c => c.SelectGraph(idToUse,entityMappingToUse,mappingToUse),Times.Once);
-            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping),Times.Never);
+            _graphSelector.Verify(c => c.SelectGraph(idToUse,entityMappingToUse,mappingToUse.Object),Times.Once);
+            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping.Object),Times.Never);
         }
 
         [Test]
         public void Should_retrieve_named_graph_when_getting_property()
         {
             // given
-            var propertyMapping=new Mock<IPropertyMapping>().Object;
-            _mapping.Setup(m => m.PropertyFor("property"))
-                    .Returns(propertyMapping);
+            var propertyMapping=new Mock<IPropertyMapping>();
+            propertyMapping.SetupGet(instance => instance.Uri).Returns(Rdf.predicate);
+            _mapping.Setup(m => m.PropertyFor("property")).Returns(propertyMapping.Object);
 
             // when
             Impromptu.InvokeGet(_entityProxy, "property");
 
             // then
-            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping),Times.Once);
+            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping.Object),Times.Once);
         }
     }
 }

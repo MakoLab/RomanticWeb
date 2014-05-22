@@ -280,6 +280,9 @@
     <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingModelVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
+    <Compile Include="Model\EntityQuadCollection.cs" />
+    <Compile Include="Model\Index.cs" />
+    <Compile Include="Model\IndexCollection.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />

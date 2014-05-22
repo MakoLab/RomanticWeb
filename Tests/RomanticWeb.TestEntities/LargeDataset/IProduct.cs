@@ -13,17 +13,17 @@ namespace RomanticWeb.TestEntities.LargeDataset
         [Property("rdfs","comment")]
         string Comments { get; set; }
 
-        [Property("chem","viscosity")]
-        IQuantitativeFloatProperty Viscosity { get; set; }
+        [Collection("chem","viscosity")]
+        ICollection<IQuantitativeFloatProperty> Viscosity { get; }
 
         [Property("chem","cureSystem")]
         IEntity CureSystem { get; set; }
 
-        [Property("chem","cureTemperature")]
-        IQuantitativeFloatProperty CureTemperature { get; set; }
+        [Collection("chem","cureTemperature")]
+        ICollection<IQuantitativeFloatProperty> CureTemperature { get; }
 
-        [Property("chem","cureTime")]
-        IQuantitativeFloatProperty CureTime { get; set; }
+        [Collection("chem","cureTime")]
+        ICollection<IQuantitativeFloatProperty> CureTime { get; }
 
         [Property("chem","durometer")]
         IQuantitativeFloatProperty Durometer { get; set; }
@@ -53,9 +53,9 @@ namespace RomanticWeb.TestEntities.LargeDataset
         IEntity ProductCategory { get; set; }
 
         [Collection("chem","msdsFile")]
-        IEnumerable<IEntity> MsdsFile { get; set; }
+        ICollection<IEntity> MsdsFile { get; }
 
         [Collection("chem","function")]
-        IEnumerable<EntityId> Function { get; set; }
+        ICollection<EntityId> Function { get; }
     }
 }

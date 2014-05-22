@@ -99,14 +99,55 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [Timeout(2*1000)]
-        public void Should_load_entities_from_large_dataset_in_a_timely_fashion_way()
+        [TestCase(2)]
+        public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             // given
             LoadTestFile("LargeDataset.nq");
+            DateTime startedAt=DateTime.Now;
 
             // when
-            EntityContext.AsQueryable<IProduct>().ToList();
+            IEnumerable<IProduct> entities=EntityContext.AsQueryable<IProduct>().ToList();
+
+            // then
+            TimeSpan testLength=DateTime.Now-startedAt;
+            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
+        }
+
+        [Test]
+        [TestCase(2)]
+        public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+            IEnumerable<IProduct> entities=EntityContext.AsQueryable<IProduct>().ToList();
+            DateTime startedAt=DateTime.Now;
+
+            // when
+            foreach (IProduct product in entities)
+            {
+                string name=product.Name;
+                string comments=product.Comments;
+                string viscosity=System.String.Join(", ",product.Viscosity.Select(item => System.String.Format("{0}{1}",item.Unit,item.Value)));
+                string cureSystem=(product.CureSystem!=null?product.CureSystem.Id.ToString():System.String.Empty);
+                string cureTemperature=System.String.Join(", ",product.CureTemperature.Select(item => System.String.Format("{0}{1}",item.Unit,item.Value)));
+                string cureTime=System.String.Join(", ",product.CureTime.Select(item => System.String.Format("{0}{1}",item.Unit,item.Value)));
+                string durometer=(product.Durometer!=null?System.String.Format("{0}{1}",product.Durometer.Unit,product.Durometer.Value):System.String.Empty);
+                string tensile=(product.Tensile!=null?System.String.Format("{0}{1}",product.Tensile.Unit,product.Tensile.Value):System.String.Empty);
+                string elongation=(product.Elongation!=null?System.String.Format("{0}{1}",product.Elongation.Unit,product.Elongation.Value):System.String.Empty);
+                string tear=(product.Tear!=null?System.String.Format("{0}{1}",product.Tear.Unit,product.Tear.Value):System.String.Empty);
+                string rheology=(product.Rheology!=null?System.String.Format("{0}{1}",product.Rheology.Unit,product.Rheology.Value):System.String.Empty);
+                string specificGravity=(product.SpecificGravity!=null?product.SpecificGravity.ToString():System.String.Empty);
+                string industry=(product.Industry??System.String.Empty).ToString();
+                string grade=(product.Grade??System.String.Empty).ToString();
+                string productCategory=(product.ProductCategory!=null?product.ProductCategory.Id.ToString():System.String.Empty);
+                string msdsFile=System.String.Join(", ",product.MsdsFile.Select(item => item.Id.ToString()));
+                string function=System.String.Join(", ",product.Function.Select(item => item.ToString()));
+            }
+
+            // then
+            TimeSpan testLength=DateTime.Now-startedAt;
+            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
         }
 
         [Test]

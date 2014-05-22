@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 
 namespace RomanticWeb.Model
 {
-    internal class Index<T>
+    internal sealed class Index<T>
     {
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        public T Key=default(T);
+        internal T Key=default(T);
 
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        public int StartAt=0;
+        internal int StartAt=0;
 
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        public int Length=0;
+        internal int Length=0;
 
         internal Index(T key,int startAt,int length)
         {
             Key=key;
             StartAt=startAt;
             Length=length;
-        }
-
-        public bool Contains(int itemIndex)
-        {
-            return ((itemIndex!=IndexCollection<T>.FirstPossible)&&(itemIndex>=StartAt)&&(itemIndex<StartAt+Length))||(itemIndex==IndexCollection<T>.FirstPossible);
         }
 
         public override bool Equals(object obj)
@@ -47,6 +42,11 @@ namespace RomanticWeb.Model
         public override string ToString()
         {
             return System.String.Format("{0}@{1} -> {2}",Key,StartAt,Length);
+        }
+
+        internal bool Contains(int itemIndex)
+        {
+            return ((itemIndex!=IndexCollection<T>.FirstPossible)&&(itemIndex>=StartAt)&&(itemIndex<StartAt+Length))||(itemIndex==IndexCollection<T>.FirstPossible);
         }
     }
 }

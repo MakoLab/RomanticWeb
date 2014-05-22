@@ -12,6 +12,11 @@ namespace RomanticWeb.Model
         private readonly Node _graph;
         private readonly EntityId _entityId;
 
+        /// <summary>Creates a new instance of <see cref="EntityQuad"/> from given <see cref="Triple"/ >.</summary>
+        public EntityQuad(EntityId entityId,Triple triple):this(entityId,triple.Subject,triple.Predicate,triple.Object)
+        {
+        }
+
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> in named graph.</summary>
         public EntityQuad(EntityId entityId,Node s,Node p,Node o,[AllowNull]Node graph):this(entityId,s,p,o)
         {

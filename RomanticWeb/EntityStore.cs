@@ -5,48 +5,44 @@ using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb
 {
     internal class EntityStore:IEntityStore
     {
-        private readonly ISet<EntityId> _deletedEntites; 
-        private readonly ISet<EntityQuad> _entityQuads;
+        private readonly EntityQuadCollection _entityQuads;
+        private readonly ISet<EntityId> _deletedEntites;
         private readonly ISet<EntityQuad> _removedTriples;
         private readonly ISet<EntityQuad> _addedTriples;
         private readonly ISet<Tuple<Uri,EntityId>> _metaGraphChanges; 
 
         public EntityStore()
         {
-            _entityQuads=new SortedSet<EntityQuad>();
+            _entityQuads=new EntityQuadCollection();
             _removedTriples=new HashSet<EntityQuad>();
             _addedTriples=new HashSet<EntityQuad>();
             _metaGraphChanges=new HashSet<Tuple<Uri,EntityId>>();
             _deletedEntites=new HashSet<EntityId>();
         }
 
-        public IEnumerable<EntityQuad> Quads
-        {
-            get
-            {
-                return _entityQuads;
-            }
-        }
+        public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }
 
-        public DatasetChanges Changes
-        {
-            get
-            {
-                return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges, _deletedEntites);
-            }
-        }
+        public DatasetChanges Changes { get { return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges, _deletedEntites); } }
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,[AllowNull] Uri graph)
         {
-            var quads=from triple in _entityQuads
-                      where triple.Predicate==Node.ForUri(predicate)
-                         &&triple.Subject==(entityId is BlankId?Node.ForBlank(((BlankId)entityId).Identifier,((BlankId)entityId).RootEntityId,((BlankId)entityId).Graph):Node.ForUri(entityId.Uri))
+            IEnumerable<EntityQuad> quads;
+            if (predicate.AbsoluteUri==Rdf.type.AbsoluteUri)
+            {
+                quads=_entityQuads.GetEntityTypeQuads(entityId);
+            }
+            else
+            {
+                quads=from triple in _entityQuads[entityId]
+                      where triple.Predicate.Uri.AbsoluteUri==predicate.AbsoluteUri
                       select triple;
+            }
 
             if (graph!=null)
             {
@@ -58,21 +54,13 @@ namespace RomanticWeb
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
         {
-            if (_entityQuads.Any(quad => quad.EntityId==entityId))
+            if (_entityQuads.Entities.Contains(entityId))
             {
                 LogTo.Info("Skipping entity {0}. Entity already added to store", entityId);
                 return;
             }
 
-            foreach (var triple in entityTriples)
-            {
-                if (triple.EntityId!=entityId)
-                {
-                    throw new ArgumentException(string.Format("All EntityTriples must reference EntityId {0} but {1} found",entityId,triple.EntityId), "entityTriples");
-                }
-
-                _entityQuads.Add(triple);
-            }
+            _entityQuads.Add(entityId,entityTriples);
         }
 
         public void ReplacePredicateValues(EntityId entityId,Node propertyUri,Func<IEnumerable<Node>> getNewValues,Uri graphUri)

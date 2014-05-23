@@ -151,7 +151,7 @@ namespace RomanticWeb.Model
             {
                 if (index==null)
                 {
-                    _subjects.Add(index=new Index<string>(key,_quads.Count,1));
+                    index=_subjects.Add(key,_quads.Count,1);
                     _quads.Add(quad);
                 }
                 else
@@ -159,7 +159,7 @@ namespace RomanticWeb.Model
                     if (!QuadExists(quad,index))
                     {
                         _quads.Insert(index.StartAt+index.Length,quad);
-                        _subjects.Set(index.Key,index.StartAt,index.Length+1);
+                        _subjects.Set(index.ItemIndex,index.Key,index.StartAt,index.Length+1);
                     }
                     else
                     {

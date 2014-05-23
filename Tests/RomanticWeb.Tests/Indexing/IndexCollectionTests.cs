@@ -59,7 +59,7 @@ namespace RomanticWeb.Tests.Indexing
         public void Should_update_existing_entries(string subject,int startAt,int length,int expectedStartAt1,int expectedStartAt2,int expectedStartAt3)
         {
             // When
-            _subjects[subject,IndexCollection<string>.FirstPossible]=new Index<string>(subject,startAt,length);
+            _subjects.Set(subject,startAt,length);
 
             // Then
             _subjects[Subject1,IndexCollection<string>.FirstPossible].StartAt.Should().Be(expectedStartAt1);
@@ -69,12 +69,12 @@ namespace RomanticWeb.Tests.Indexing
 
         [Test]
         [TestCase(Subject1,0,0,-1,0,2)]
-        [TestCase(Subject2,0,0,0,-1,2)]
-        [TestCase(Subject3,0,0,0,2,-1)]
+        [TestCase(Subject2,2,0,0,-1,2)]
+        [TestCase(Subject3,4,0,0,2,-1)]
         public void Should_remove_empty_index(string subject,int startAt,int length,int expectedStartAt1,int expectedStartAt2,int expectedStartAt3)
         {
             // When
-            _subjects[subject,IndexCollection<string>.FirstPossible]=new Index<string>(subject,startAt,length);
+            _subjects.Set(subject,startAt,length);
 
             // Then
             if (expectedStartAt1==-1)

@@ -27,7 +27,7 @@ namespace RomanticWeb.Linq.Sparql
 
         internal void Add(IQueryComponent key,int startAt,int length)
         {
-            _list.Add(new Index<IQueryComponent>(key,startAt,length));
+            _list.Add(new Index<IQueryComponent>(_list.Count-1,key,startAt,length));
         }
 
         internal void Remove(IQueryComponent key)

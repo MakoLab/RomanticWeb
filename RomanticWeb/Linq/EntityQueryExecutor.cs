@@ -9,6 +9,8 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Linq
 {
+    // TODO: Make the QueryOptimizer passed from the IOC container.
+
     /// <summary>Executes queries against underlying triple store.</summary>
     public class EntityQueryExecutor:IQueryExecutor
     {
@@ -17,6 +19,7 @@ namespace RomanticWeb.Linq
         private static readonly MethodInfo EntityLoadMethod=Info.OfMethod("RomanticWeb","RomanticWeb.IEntityContext","Load","EntityId");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
+        private readonly IQueryOptimizer _queryOptimizer;
         private EntityQueryModelVisitor _modelVisitor;
         #endregion
 
@@ -28,6 +31,7 @@ namespace RomanticWeb.Linq
         {
             _entityContext=entityContext;
             _entitySource=entitySource;
+            _queryOptimizer=new GenericQueryOptimizer();
         }
         #endregion
 
@@ -88,7 +92,7 @@ namespace RomanticWeb.Linq
         {
             _modelVisitor=new EntityQueryModelVisitor(_entityContext);
             _modelVisitor.VisitQueryModel(queryModel);
-            return _modelVisitor.Query;
+            return _queryOptimizer.Optimize(_modelVisitor.Query);
         }
 
         private IEnumerable<T> CreateLiteralResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads)

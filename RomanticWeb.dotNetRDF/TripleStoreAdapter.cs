@@ -156,7 +156,7 @@ namespace RomanticWeb.DotNetRDF
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery,out SparqlQueryVariables variables)
         {
-            GenericSparqlQueryVisitor queryVisitor=new GenericSparqlQueryVisitor();
+            GenericSparqlQueryVisitor queryVisitor=new SparqlQueryVisitor();
             queryVisitor.MetaGraphUri=MetaGraphUri;
             queryVisitor.VisitQuery(sparqlQuery);
             variables=queryVisitor.Variables;

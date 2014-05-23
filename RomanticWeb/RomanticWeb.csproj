@@ -148,6 +148,8 @@
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
+    <Compile Include="Linq\GenericQueryOptimizer.cs" />
+    <Compile Include="Linq\IQueryOptimizer.cs" />
     <Compile Include="Linq\IQueryVisitor.cs" />
     <Compile Include="Linq\IVariableNamingConvention.cs" />
     <Compile Include="Linq\Model\IdentifierEntityAccessor.cs" />

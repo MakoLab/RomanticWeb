@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RomanticWeb.Linq.Model;
+using RomanticWeb.Model;
 
 namespace RomanticWeb.Linq.Sparql
 {
-    internal class VisitedComponentCollection:IDictionary<IQueryComponent,KeyValuePair<int,int>>
+    internal sealed class VisitedComponentCollection
     {
-        private Dictionary<IQueryComponent,KeyValuePair<int,int>> _dictionary=new Dictionary<IQueryComponent,KeyValuePair<int,int>>();
+        private IList<Index<IQueryComponent>> _list=new List<Index<IQueryComponent>>();
         private StringBuilder _stringBuilder;
 
         internal VisitedComponentCollection(StringBuilder stringBuilder)
@@ -17,82 +18,49 @@ namespace RomanticWeb.Linq.Sparql
             _stringBuilder=stringBuilder;
         }
 
-        public ICollection<IQueryComponent> Keys { get { return _dictionary.Keys; } }
+        internal int Count { get { return _list.Count; } }
 
-        public ICollection<KeyValuePair<int,int>> Values { get { return _dictionary.Values; } }
-
-        public int Count { get { return _dictionary.Count; } }
-
-        bool ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>.IsReadOnly { get { return ((ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>)_dictionary).IsReadOnly; } }
-
-        public KeyValuePair<int,int> this[IQueryComponent key] { get { return _dictionary[key]; } set { _dictionary[key]=value; } }
-
-        public void Add(IQueryComponent key,KeyValuePair<int,int> value)
+        internal bool Contains(IQueryComponent key)
         {
-            _dictionary.Add(key,value);
+            return _list.Any(item => Object.Equals(key,item.Key));
         }
 
-        public bool ContainsKey(IQueryComponent key)
+        internal void Add(IQueryComponent key,int startAt,int length)
         {
-            return _dictionary.ContainsKey(key);
+            _list.Add(new Index<IQueryComponent>(key,startAt,length));
         }
 
-        public bool Remove(IQueryComponent key)
+        internal void Remove(IQueryComponent key)
         {
-            if (_dictionary.ContainsKey(key))
+            int totalChange=0;
+            foreach (Index<IQueryComponent> index in _list)
             {
-                KeyValuePair<int,int> visitedEntityConstrain=_dictionary[key];
-                _stringBuilder=_stringBuilder.Remove(visitedEntityConstrain.Key,visitedEntityConstrain.Value);
-                foreach (EntityConstrain itemKey in _dictionary.Keys.ToList())
+                if (!Object.Equals(index.Key,key))
                 {
-                    if (_dictionary[itemKey].Key>visitedEntityConstrain.Key)
-                    {
-                        _dictionary[itemKey]=new KeyValuePair<int,int>(_dictionary[itemKey].Key-visitedEntityConstrain.Key,_dictionary[itemKey].Value);
-                    }
+                    index.StartAt-=totalChange;
+                }
+                else
+                {
+                    _stringBuilder=_stringBuilder.Remove(index.StartAt,index.Length);
+                    totalChange+=index.Length;
                 }
             }
-
-            return _dictionary.Remove(key);
         }
 
-        public bool TryGetValue(IQueryComponent key,out KeyValuePair<int,int> value)
+        internal void Clear()
         {
-            return _dictionary.TryGetValue(key,out value);
+            _list.Clear();
         }
 
-        void ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>.Add(KeyValuePair<IQueryComponent,KeyValuePair<int,int>> item)
+        internal void Update(int startAt,int length)
         {
-            _dictionary.Add(item.Key,item.Value);
-        }
-
-        public void Clear()
-        {
-            _dictionary.Clear();
-        }
-
-        public bool Contains(KeyValuePair<IQueryComponent,KeyValuePair<int,int>> item)
-        {
-            return _dictionary.ContainsKey(item.Key);
-        }
-
-        void ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>.CopyTo(KeyValuePair<IQueryComponent,KeyValuePair<int,int>>[] array,int arrayIndex)
-        {
-            ((ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>)_dictionary).CopyTo(array,arrayIndex);
-        }
-
-        bool ICollection<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>>.Remove(KeyValuePair<IQueryComponent,KeyValuePair<int,int>> item)
-        {
-            return Remove(item.Key);
-        }
-
-        public IEnumerator<KeyValuePair<IQueryComponent,KeyValuePair<int,int>>> GetEnumerator()
-        {
-            return _dictionary.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return _dictionary.GetEnumerator();
+            foreach (Index<IQueryComponent> index in _list)
+            {
+                if (index.StartAt>=startAt)
+                {
+                    index.Length+=length;
+                }
+            }
         }
     }
 }

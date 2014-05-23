@@ -71,6 +71,12 @@ namespace RomanticWeb.Linq.Sparql
                     _scalarVariableName);
             }
         }
+
+        /// <summary>Gets the <see cref="StringBuilder" /> used to create the query command text.</summary>
+        protected StringBuilder CommandTextBuilder { get { return _commandText; } }
+
+        /// <summary>Gets the current <see cref="StrongEntityAccessor" />.</summary>
+        protected StrongEntityAccessor CurrentEntityAccessor { get { return (_currentEntityAccessor.Count>0?_currentEntityAccessor.Peek():null); } }
         #endregion
 
         #region Public methods
@@ -264,9 +270,9 @@ namespace RomanticWeb.Linq.Sparql
             VisitComponent(entityConstrain.Value);
             _commandText.Append(" . ");
             int length=_commandText.Length-startIndex;
-            if (!_visitedComponents.ContainsKey(entityConstrain))
+            if (!_visitedComponents.Contains(entityConstrain))
             {
-                _visitedComponents[entityConstrain]=new KeyValuePair<int,int>(startIndex,length);
+                _visitedComponents.Add(entityConstrain,startIndex,length);
             }
         }
 
@@ -448,10 +454,10 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="entityAccessor">Unspecified entity accessor to be visited.</param>
         protected override void VisitUnspecifiedEntityAccessor(UnspecifiedEntityAccessor entityAccessor)
         {
+            _currentEntityAccessor.Push(entityAccessor);
             _commandText.Append("{ ");
             VisitStrongEntityAccessor(entityAccessor.EntityAccessor);
             _commandText.Append("} UNION { ");
-            _currentEntityAccessor.Push(entityAccessor);
             foreach (IQueryComponent component in entityAccessor.Elements)
             {
                 _supressedComponents.Add(component);
@@ -476,6 +482,7 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="entityAccessor">Strong entity accessor to be visited.</param>
         protected override void VisitStrongEntityAccessor(StrongEntityAccessor entityAccessor)
         {
+            int startIndex=_commandText.Length;
             _currentEntityAccessor.Push(entityAccessor);
             _commandText.AppendFormat("GRAPH ?G{0} {{ ",entityAccessor.About.Name);
             foreach (QueryElement element in entityAccessor.Elements)
@@ -494,6 +501,7 @@ namespace RomanticWeb.Linq.Sparql
 
             if ((_entityAccessorToExpand!=null)&&(_entityAccessorToExpand.Equals(entityAccessor)))
             {
+                int currentStartIndex=_commandText.Length;
                 _entityAccessorToExpand.FindAllComponents<Identifier>().Select(item => _variableNameOverride[item]=item.Name+"_sub").ToList();
                 _commandText.Append("{ SELECT DISTINCT ");
                 VisitComponent(_entityAccessorToExpand.About);
@@ -511,6 +519,11 @@ namespace RomanticWeb.Linq.Sparql
                 _commandText.Append("=");
                 VisitComponent(_entityAccessorToExpand.About);
                 _commandText.Append(") ");
+
+                int currentLength=_commandText.Length-currentStartIndex;
+                string expansionText=_commandText.ToString().Substring(currentStartIndex,currentLength);
+                _commandText=_commandText.Remove(currentStartIndex,currentLength).Insert(startIndex,expansionText);
+                _visitedComponents.Update(startIndex,currentLength);
             }
 
             _commandText.AppendFormat("}} GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ",MetaGraphUri,entityAccessor.About.Name,Foaf.primaryTopic);
@@ -528,6 +541,28 @@ namespace RomanticWeb.Linq.Sparql
             }
 
             _commandText.Append(" } ");
+        }
+
+        /// <summary>Visits a dicionary of query result modifiers with optional offset and limit.</summary>
+        /// <param name="orderByExpressions">Dictionary of result modiefiers.</param>
+        /// <param name="offset">Offset in the resultset.</param>
+        /// <param name="limit">Limit of the resultset.</param>
+        protected virtual void VisitQueryResultModifiers(IDictionary<IExpression,bool> orderByExpressions,int offset,int limit)
+        {
+            if (orderByExpressions.Count>0)
+            {
+                VisitOrderBy(orderByExpressions);
+            }
+
+            if (_entityAccessorToExpand.OwnerQuery.Offset>=0)
+            {
+                _commandText.AppendFormat("OFFSET {0} ",_entityAccessorToExpand.OwnerQuery.Offset);
+            }
+
+            if (_entityAccessorToExpand.OwnerQuery.Limit>=0)
+            {
+                _commandText.AppendFormat("LIMIT {0} ",_entityAccessorToExpand.OwnerQuery.Limit);
+            }
         }
         #endregion
 
@@ -701,7 +736,7 @@ namespace RomanticWeb.Linq.Sparql
         {
             if (_commandText==null)
             {
-                _visitedComponents=new VisitedComponentCollection(_commandText=new StringBuilder());
+                _visitedComponents=new VisitedComponentCollection(_commandText=new StringBuilder(1024));
             }
 
             if (prefixes==null)
@@ -743,24 +778,6 @@ namespace RomanticWeb.Linq.Sparql
             }
 
             _commandText.Append("{ ");
-        }
-
-        private void VisitQueryResultModifiers(IDictionary<IExpression,bool> orderByExpressions,int offset,int limit)
-        {
-            if (_entityAccessorToExpand.OwnerQuery.OrderBy.Count>0)
-            {
-                VisitOrderBy(_entityAccessorToExpand.OwnerQuery.OrderBy);
-            }
-
-            if (_entityAccessorToExpand.OwnerQuery.Offset>=0)
-            {
-                _commandText.AppendFormat("OFFSET {0} ",_entityAccessorToExpand.OwnerQuery.Offset);
-            }
-
-            if (_entityAccessorToExpand.OwnerQuery.Limit>=0)
-            {
-                _commandText.AppendFormat("LIMIT {0} ",_entityAccessorToExpand.OwnerQuery.Limit);
-            }
         }
 
         private void VisitOrderBy(IDictionary<IExpression,bool> orderByExpressions)

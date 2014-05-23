@@ -13,9 +13,9 @@ namespace RomanticWeb.Model
         private IList<Index<T>> _indices=new List<Index<T>>();
         private int _lastSearchedIndex=0;
 
-        public IEnumerable<T> Keys { get { return _indices.Select(item => item.Key); } }
+        internal IEnumerable<T> Keys { get { return _indices.Select(item => item.Key); } }
 
-        public Index<T> this[T key,int itemIndex]
+        internal Index<T> this[T key,int itemIndex]
         {
             get
             {
@@ -56,22 +56,57 @@ namespace RomanticWeb.Model
             }
         }
 
-        public void Add(T key,int startAt,int length)
+        internal Index<T> Add(T key,int startAt,int length)
         {
-            Add(new Index<T>(key,startAt,length));
+            Index<T> result=null;
+            int count=_indices.Count;
+            if (count>0)
+            {
+                for (var index=0; index<count; index++)
+                {
+                    Index<T> itemIndex=_indices[index];
+                    if (itemIndex.StartAt>startAt)
+                    {
+                        itemIndex.ItemIndex++;
+                        for (int next=index+1; next<count; next++)
+                        {
+                            _indices[next].ItemIndex++;
+                        }
+
+                        Add(result=new Index<T>(index,key,startAt,length));
+                        break;
+                    }
+                }
+
+                if (result==null)
+                {
+                    Add(result=new Index<T>(count,key,startAt,length));
+                }
+            }
+            else
+            {
+                Add(result=new Index<T>(0,key,startAt,length));
+            }
+
+            return result;
         }
 
-        public void Add(Index<T> newIndex)
+        internal void Add(Index<T> newIndex)
         {
-            _indices.Add(newIndex);
+            _indices.Insert(newIndex.ItemIndex,newIndex);
             _lastSearchedIndex=0;
         }
 
-        public void Set(T key,int itemIndex,int length)
+        internal void Set(T key,int itemIndex,int length)
+        {
+            Set(0,key,itemIndex,length);
+        }
+
+        internal void Set(int startIndex,T key,int itemIndex,int length)
         {
             int totalChange=0;
             int count=_indices.Count;
-            for (int index=0; index<count; index++)
+            for (int index=startIndex; index<count; index++)
             {
                 Index<T> item=_indices[index];
                 if ((Object.Equals(item.Key,key))&&(item.Contains(itemIndex)))
@@ -92,7 +127,7 @@ namespace RomanticWeb.Model
             }
         }
 
-        public IEnumerable<Index<T>> Shift(T key)
+        internal IEnumerable<Index<T>> Shift(T key)
         {
             int totalChange=0;
             int count=_indices.Count;
@@ -121,7 +156,7 @@ namespace RomanticWeb.Model
             return result;
         }
 
-        public Index<T> Remove(T key,int itemIndex)
+        internal Index<T> Remove(T key,int itemIndex)
         {
             Index<T> removed=null;
             int totalChange=0;
@@ -151,12 +186,12 @@ namespace RomanticWeb.Model
             return removed;
         }
 
-        public bool ContainsKey(T key)
+        internal bool ContainsKey(T key)
         {
             return _indices.Any(item => Object.Equals(item.Key,key));
         }
 
-        public void Clear()
+        internal void Clear()
         {
             _indices.Clear();
             _lastSearchedIndex=0;

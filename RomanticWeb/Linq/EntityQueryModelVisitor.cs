@@ -27,6 +27,7 @@ namespace RomanticWeb.Linq
         private EntityQueryVisitor _visitor;
         private Query _query;
         private StrongEntityAccessor _mainFromComponent;
+        private IExpression _auxFromComponent;
         private QueryComponent _result;
         private Identifier _subject;
         private IPropertyMapping _propertyMapping;
@@ -101,6 +102,7 @@ namespace RomanticWeb.Linq
         /// <param name="index">Index of the where clause in the query model.</param>
         public override void VisitWhereClause(WhereClause whereClause,Remotion.Linq.QueryModel queryModel,int index)
         {
+            _visitor.ConstantFromClause=_auxFromComponent;
             _visitor.VisitExpression(whereClause.Predicate);
             QueryComponent queryComponent=_visitor.RetrieveComponent();
             IQueryComponentNavigator queryComponentNavigator=queryComponent.GetQueryComponentNavigator();
@@ -150,6 +152,10 @@ namespace RomanticWeb.Linq
                 if (modelVisitor.From is Identifier)
                 {
                     _subject=(Identifier)modelVisitor.From;
+                }
+                else if (modelVisitor.From is IExpression)
+                {
+                    _auxFromComponent=(IExpression)modelVisitor.From;
                 }
             }
 

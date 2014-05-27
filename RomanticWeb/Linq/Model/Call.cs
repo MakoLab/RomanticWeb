@@ -153,6 +153,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Binds a constant to a variable.</summary>
         Bind=0x00000010,
+
+        /// <summary>Checks if the given variable is bound.</summary>
+        Bound=0x00000011,
         #endregion
         #region Result modifiers
         /// <summary>Offset operator.</summary>

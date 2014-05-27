@@ -190,7 +190,7 @@ namespace RomanticWeb.Linq
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
             Call call=new Call(MethodNames.Bound);
-            _result=call; ////_visitor.Query.Elements.Where(item => item is StrongEntityAccessor).First();
+            _result=call;
         }
 
         private void VisitContainsResultOperator(ContainsResultOperator containsResultOperator,Remotion.Linq.QueryModel queryModel,int index)

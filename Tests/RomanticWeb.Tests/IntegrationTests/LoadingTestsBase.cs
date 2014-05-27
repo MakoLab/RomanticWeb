@@ -164,6 +164,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                       where user.FavoriteProduct.Contains(product)
                                       select product).ToList();
 
+            // then
             Assert.That(products.Count,Is.Not.EqualTo(0));
         }
 
@@ -180,6 +181,8 @@ namespace RomanticWeb.Tests.IntegrationTests
                 .Where(item => item.Name.ToLower().Contains(searchString.ToLower()))
                 .Take(2)
                 .ToList();
+
+            // then
             Assert.That(products.Count,Is.EqualTo(expectedCount));
         }
 
@@ -192,7 +195,26 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // when
             int count=EntityContext.AsQueryable<IProduct>().Count(item => item.Name.ToLower().Contains(searchString.ToLower()));
+
+            // then
             Assert.That(count,Is.EqualTo(expectedCount));
+        }
+
+        [Test]
+        [TestCase("Northrop Grumman")]
+        public void Should_return_filtered_entities(params string[] groups)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            // when
+            IList<IProduct> products=(from product in EntityContext.AsQueryable<IProduct>()
+                                      from userGroup in groups
+                                      where (product.Group.Contains(userGroup))||(!product.Group.Any())
+                                      select product).ToList();
+
+            // then
+            Assert.That(products.Count,Is.Not.EqualTo(0));
         }
 
         [Test]

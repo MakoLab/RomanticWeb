@@ -20,14 +20,16 @@ namespace RomanticWeb.Linq
         private EntityQueryVisitor _visitor;
         private QueryComponent _result;
         private QueryComponent _from;
+        private IExpression _mainFromComponent;
         private IList<QueryComponent> _bodies;
         #endregion
 
         #region Constructors
-        internal NonEntityQueryModelVisitor(EntityQueryVisitor queryVisitor)
+        internal NonEntityQueryModelVisitor(EntityQueryVisitor queryVisitor,IExpression mainFromComponent=null)
         {
             _visitor=queryVisitor;
             _from=null;
+            _mainFromComponent=mainFromComponent;
             _bodies=new List<QueryComponent>();
         }
         #endregion
@@ -68,11 +70,23 @@ namespace RomanticWeb.Linq
             VisitResultOperators(queryModel.ResultOperators,queryModel);
 
             IQueryComponentNavigator resultNavigator=_result.GetQueryComponentNavigator();
-            if (_from is IExpression)
+            if ((_from!=null)&&(_from is IExpression))
+            {
+                if (_mainFromComponent==null)
+                {
+                    _mainFromComponent=(IExpression)_from;
+                }
+                else
+                {
+                    resultNavigator.ReplaceComponent(Identifier.Current,_from);
+                }
+            }
+
+            if (_mainFromComponent!=null)
             {
                 if (_bodies.Count==0)
                 {
-                    resultNavigator.AddComponent((IExpression)_from);
+                    resultNavigator.AddComponent(_mainFromComponent);
                 }
                 else
                 {
@@ -85,7 +99,7 @@ namespace RomanticWeb.Linq
                             IQueryComponentNavigator queryComponentNavigator=expression.GetQueryComponentNavigator();
                             if (queryComponentNavigator!=null)
                             {
-                                currentIdentifier=(_from is Identifier?(Identifier)_from:
+                                currentIdentifier=(_mainFromComponent is Identifier?(Identifier)_mainFromComponent:
                                     _visitor.Query.FindAllComponents<Identifier>().Where(item => _visitor.Query.RetrieveIdentifier(item.Name)==_visitor.ItemNameOverride).FirstOrDefault())??_visitor.Query.Subject;
                                 queryComponentNavigator.ReplaceComponent(Identifier.Current,currentIdentifier);
                             }
@@ -101,6 +115,7 @@ namespace RomanticWeb.Linq
             }
 
             _visitor.ItemNameOverride=currentItemNameOverride;
+            _visitor.ConstantFromClause=null;
         }
 
         /// <summary>Visits a where clause.</summary>
@@ -174,7 +189,8 @@ namespace RomanticWeb.Linq
 
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            _result=_visitor.Query.Elements.Where(item => item is StrongEntityAccessor).First();
+            Call call=new Call(MethodNames.Bound);
+            _result=call; ////_visitor.Query.Elements.Where(item => item is StrongEntityAccessor).First();
         }
 
         private void VisitContainsResultOperator(ContainsResultOperator containsResultOperator,Remotion.Linq.QueryModel queryModel,int index)

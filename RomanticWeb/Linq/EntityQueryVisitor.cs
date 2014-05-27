@@ -56,6 +56,9 @@ namespace RomanticWeb.Linq
 
         /// <summary>Gets the mappings repository.</summary>
         internal IMappingsRepository MappingsRepository { get { return _entityContext.Mappings; } }
+
+        /// <summary>Gets or sets an auxiliar constant from clause.</summary>
+        internal IExpression ConstantFromClause { get; set; }
         #endregion
 
         #region Public methods
@@ -65,7 +68,23 @@ namespace RomanticWeb.Linq
         {
             CleanupComponent(_lastComponent);
             QueryComponent result=_lastComponent;
-            _lastComponent=(_currentComponent.Count>0?(QueryComponent)_currentComponent.Pop():_query);
+            if ((_currentComponent.Count>0)&&(_currentComponent.Peek().NavigatedComponent is BinaryOperator))
+            {
+                BinaryOperator binaryOperator=(BinaryOperator)_currentComponent.Peek().NavigatedComponent;
+                if ((binaryOperator.LeftOperand!=null)&&(binaryOperator.RightOperand!=null))
+                {
+                    _lastComponent=(QueryComponent)_currentComponent.Pop().NavigatedComponent;
+                }
+                else
+                {
+                    _lastComponent=(QueryComponent)_currentComponent.Peek().NavigatedComponent;
+                }
+            }
+            else
+            {
+                _lastComponent=(_currentComponent.Count>0?(QueryComponent)_currentComponent.Pop().NavigatedComponent:_query);
+            }
+
             return result;
         }
         #endregion
@@ -499,8 +518,12 @@ namespace RomanticWeb.Linq
             }
             else
             {
-                NonEntityQueryModelVisitor queryModelVisitor=new NonEntityQueryModelVisitor(this);
+                NonEntityQueryModelVisitor queryModelVisitor=new NonEntityQueryModelVisitor(this,ConstantFromClause);
+                Stack<IQueryComponentNavigator> currentComponent=_currentComponent;
+                _currentComponent=new Stack<IQueryComponentNavigator>();
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
+                _currentComponent=currentComponent;
+                HandleComponent(queryModelVisitor.Result);
                 _lastComponent=queryModelVisitor.Result;
             }
 

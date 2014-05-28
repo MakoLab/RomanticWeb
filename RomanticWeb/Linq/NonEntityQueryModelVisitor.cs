@@ -189,6 +189,19 @@ namespace RomanticWeb.Linq
 
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
+            string identifier=_visitor.Query.CreateIdentifier(_visitor.ItemNameOverride);
+            EntityConstrain constrain=null;
+            StrongEntityAccessor entityAccessor=_visitor.Query.GetQueryComponentNavigator().FindAllComponents<StrongEntityAccessor>()
+                .FirstOrDefault(item => (constrain=item.Elements.OfType<EntityConstrain>().FirstOrDefault(element =>
+                    (element.Value is Identifier)&&(_visitor.Query.RetrieveIdentifier(((Identifier)element.Value).Name)==identifier)))!=null);
+            if ((entityAccessor!=null)&&(constrain!=null))
+            {
+                entityAccessor.Elements.Remove(constrain);
+                OptionalPattern optional=new OptionalPattern();
+                optional.Patterns.Add(constrain);
+                entityAccessor.Elements.Add(optional);
+            }
+
             Call call=new Call(MethodNames.Bound);
             _result=call;
         }

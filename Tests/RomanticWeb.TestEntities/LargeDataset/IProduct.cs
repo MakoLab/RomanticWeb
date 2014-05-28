@@ -57,5 +57,8 @@ namespace RomanticWeb.TestEntities.LargeDataset
 
         [Collection("chem","function")]
         ICollection<EntityId> Function { get; }
+
+        [Collection("chem","group")]
+        IEnumerable<string> Group { get; set; }
     }
 }

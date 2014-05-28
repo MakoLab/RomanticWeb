@@ -77,7 +77,13 @@ namespace RomanticWeb.Linq
                 throw new InvalidOperationException("Cannot resolve an identifier for empty variable name.");
             }
 
-            return name.TrimEnd('0','1','2','3','4','5','6','7','8','9');
+            string result=name.TrimEnd('0','1','2','3','4','5','6','7','8','9');
+            if ((result.Length>1)&&(result[result.Length-1]=='_')&&(Char.IsNumber(result[result.Length-2])))
+            {
+                return result.TrimEnd('_');
+            }
+
+            return result;
         }
         #endregion
     }

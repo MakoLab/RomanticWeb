@@ -525,6 +525,9 @@ namespace RomanticWeb.Linq
                 _currentComponent=currentComponent;
                 HandleComponent(queryModelVisitor.Result);
                 _lastComponent=queryModelVisitor.Result;
+                foreach (var anyResultOperator in expression.QueryModel.ResultOperators.OfType<Remotion.Linq.Clauses.ResultOperators.AnyResultOperator>())
+                {
+                }
             }
 
             return expression;

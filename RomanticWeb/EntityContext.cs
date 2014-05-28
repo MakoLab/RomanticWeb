@@ -16,6 +16,7 @@ namespace RomanticWeb
     /// <summary>
     /// Creates a new instance of <see cref="EntityContext"/>
     /// </summary>
+    [NullGuard(ValidationFlags.All)]
     public class EntityContext:IEntityContext
     {
         #region Fields
@@ -39,7 +40,7 @@ namespace RomanticWeb
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            IBaseUriSelectionPolicy baseUriSelector,
+            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache)
         {

@@ -24,14 +24,6 @@
                                      MetadataAssembly="$(OutputPath)$(AssemblyName).dll" />
     <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
   </Target>
-
-  <!--
-  <Target Name="CleanNuGet" AfterTargets="Clean" Condition="'$(BuildNuGetPackage)' != 'false'">
-    
-    <Delete Files="@(BinariesToClean)" />
-    <Delete Files="@(NugetsToMove)"/>
-  </Target>
-  -->
   
   <!--
   <PropertyGroup>

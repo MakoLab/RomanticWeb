@@ -276,7 +276,6 @@ namespace RomanticWeb
 
             EnsureOntologyProvider();
             EnsureMappingsRebuilt();
-            EnsureNamedGraphSelector();
             _isInitialized = true;
         }
 
@@ -292,14 +291,6 @@ namespace RomanticWeb
         {
             var mappingContext = new MappingContext(_actualOntologyProvider, _conventions);
             _mappingsRepository.RebuildMappings(mappingContext);
-        }
-
-        private void EnsureNamedGraphSelector()
-        {
-            if (_namedGraphSelector == null)
-            {
-                _namedGraphSelector = new NamedGraphSelector();
-            }
         }
 
         private void EnsureComplete()

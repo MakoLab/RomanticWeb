@@ -189,17 +189,31 @@ namespace RomanticWeb.Linq
 
         private void VisitAnyResultOperator(AnyResultOperator anyResultOperator,Remotion.Linq.QueryModel queryModel,int index)
         {
-            string identifier=_visitor.Query.CreateIdentifier(_visitor.ItemNameOverride);
-            EntityConstrain constrain=null;
-            StrongEntityAccessor entityAccessor=_visitor.Query.GetQueryComponentNavigator().FindAllComponents<StrongEntityAccessor>()
-                .FirstOrDefault(item => (constrain=item.Elements.OfType<EntityConstrain>().FirstOrDefault(element =>
-                    (element.Value is Identifier)&&(_visitor.Query.RetrieveIdentifier(((Identifier)element.Value).Name)==identifier)))!=null);
-            if ((entityAccessor!=null)&&(constrain!=null))
+            string targetIdentifierString=_visitor.Query.CreateIdentifier(_visitor.ItemNameOverride);
+            IList<EntityConstrain> entityConstrains=null;
+            StrongEntityAccessor entityAccessor=(from accessor in _visitor.Query.GetQueryComponentNavigator().FindAllComponents<StrongEntityAccessor>()
+                                                 let constrains=accessor.Elements.OfType<EntityConstrain>()
+                                                 from constrain in constrains
+                                                 let predicate=constrain.Predicate as Literal
+                                                 where predicate!=null
+                                                 let predicateUri=(Uri)predicate.Value
+                                                 let identifier=constrain.Value as Identifier
+                                                 where identifier!=null
+                                                 let identifierString=_visitor.Query.RetrieveIdentifier(identifier.Name)
+                                                 where identifierString==targetIdentifierString
+                                                 where (entityConstrains=constrains.Where(item =>
+                                                     (item.Predicate is Literal)&&(((Uri)((Literal)item.Predicate).Value).AbsoluteUri==predicateUri.AbsoluteUri)).ToList()).Count>0
+                                                 select accessor).FirstOrDefault();
+            if (entityAccessor!=null)
             {
-                entityAccessor.Elements.Remove(constrain);
-                OptionalPattern optional=new OptionalPattern();
-                optional.Patterns.Add(constrain);
-                entityAccessor.Elements.Add(optional);
+                foreach (EntityConstrain entityConstrain in entityConstrains)
+                {
+                    int indexOf=entityAccessor.Elements.IndexOf(entityConstrain);
+                    entityAccessor.Elements.RemoveAt(indexOf);
+                    OptionalPattern optional=new OptionalPattern();
+                    optional.Patterns.Add(entityConstrain);
+                    entityAccessor.Elements.Insert(indexOf,optional);
+                }
             }
 
             Call call=new Call(MethodNames.Bound);

@@ -129,6 +129,7 @@
     <Compile Include="Indexing\EntityQuadCollectionTests.cs" />
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
+    <None Include="IntegrationTests\Virtuoso\LoadingTests.cs" />
     <Compile Include="IntegrationTests\WritingTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\WritingTests.cs" />
     <Compile Include="EntityStoreTests.cs" />

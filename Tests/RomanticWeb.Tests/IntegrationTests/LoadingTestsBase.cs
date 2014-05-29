@@ -218,6 +218,21 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        [TestCase("http://chem.com/product/R32-2186","http://chem.com/vocab/cureSystem")]
+        public void Should_read_entity_predicates(string productId,string predicateUri)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            // when
+            IProduct product=EntityContext.Load<IProduct>(new EntityId(productId));
+
+            // then
+            Assert.That(product.Predicates().Count(),Is.Not.EqualTo(0));
+            Assert.That(product.Predicate(new Uri(predicateUri)),Is.Not.Null);
+        }
+
+        [Test]
         public void Should_find_entities_with_subquery()
         {
             LoadTestFile("LargeDataset.nq");

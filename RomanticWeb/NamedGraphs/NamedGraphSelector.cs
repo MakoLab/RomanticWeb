@@ -8,6 +8,15 @@ namespace RomanticWeb.NamedGraphs
     {
         public Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
         {
+            if (entityId is BlankId)
+            {
+                EntityId nonBlankId=((BlankId)entityId).RootEntityId;
+                if (nonBlankId!=null)
+                {
+                    entityId=nonBlankId;
+                }
+            }
+
             return entityId.Uri;
         }
     }

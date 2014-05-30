@@ -45,15 +45,8 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Properties
-
         /// <inheritdoc/>
-        public EntityId Id
-        {
-            get
-            {
-                return _entity.Id;
-            }
-        }
+        public EntityId Id { get { return _entity.Id; } }
 
         /// <summary>
         /// Gets the entity mapping.
@@ -61,22 +54,10 @@ namespace RomanticWeb.Entities
         /// <value>
         /// The entity mapping.
         /// </value>
-        public IEntityMapping EntityMapping
-        {
-            get
-            {
-                return _entityMapping;
-            }
-        }
+        public IEntityMapping EntityMapping { get { return _entityMapping; } }
 
         /// <inheritdoc/>
-        public IEntityContext Context
-        {
-            get
-            {
-                return _entity.Context;
-            }
-        }
+        public IEntityContext Context { get { return _entity.Context; } }
 
         /// <summary>
         /// Gets the graph selection override.
@@ -84,23 +65,10 @@ namespace RomanticWeb.Entities
         /// <value>
         /// The graph selection override.
         /// </value>
-        public ISourceGraphSelectionOverride GraphSelectionOverride
-        {
-            [return: AllowNull]
-            get
-            {
-                return _overrideSourceGraph;
-            }
-        }
+        public ISourceGraphSelectionOverride GraphSelectionOverride { [return: AllowNull] get { return _overrideSourceGraph; } }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return _entity.ToString();
-            }
-        }
+        private string DebuggerDisplay { get { return _entity.ToString(); } }
         #endregion
 
         #region Public methods

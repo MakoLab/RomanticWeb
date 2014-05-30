@@ -233,6 +233,21 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        [TestCase("http://chem.com/product/R32-2186","http://chem.com/vocab/viscosity")]
+        public void Should_read_blank_node(string productId,string predicateUri)
+        {
+            // given
+            LoadTestFile("LargeDataset.nq");
+
+            // when
+            IProduct product=EntityContext.Load<IProduct>(new EntityId(productId));
+
+            // then
+            Assert.That(product.Predicate(new Uri(predicateUri)),Is.InstanceOf<IQuantitativeFloatProperty>());
+            Assert.That(product.Viscosity.FirstOrDefault(),Is.InstanceOf<IQuantitativeFloatProperty>());
+        }
+
+        [Test]
         public void Should_find_entities_with_subquery()
         {
             LoadTestFile("LargeDataset.nq");

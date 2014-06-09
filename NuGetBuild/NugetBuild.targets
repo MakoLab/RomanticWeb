@@ -21,7 +21,7 @@
   <Import Project="..\packages\PepitaPackage.1.20.1.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.1.0\build\PepitaPackage.targets')" />
   <Target Name="PepitaPackage" AfterTargets="CopyNugetBinaries" Condition="'$(BuildNuGetPackage)' != 'false'">
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)" 
-                                     MetadataAssembly="$(OutputPath)$(AssemblyName).dll" />
+                                     MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
     <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
   </Target>
   

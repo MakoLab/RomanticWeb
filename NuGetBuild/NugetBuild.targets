@@ -18,7 +18,7 @@
           DestinationFolder="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\Lib\net40" />
   </Target>
 
-  <Import Project="..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.0.0\build\PepitaPackage.targets')" />
+  <Import Project="..\packages\PepitaPackage.1.20.1.0\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.20.1.0\build\PepitaPackage.targets')" />
   <Target Name="PepitaPackage" AfterTargets="CopyNugetBinaries" Condition="'$(BuildNuGetPackage)' != 'false'">
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)" 
                                      MetadataAssembly="$(OutputPath)$(AssemblyName).dll" />

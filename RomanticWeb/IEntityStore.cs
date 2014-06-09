@@ -17,6 +17,8 @@ namespace RomanticWeb
         /// <summary>Gets all objects for predicate for a given entity.</summary>
         IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,Uri graph);
 
+        IEnumerable<EntityQuad> GetQuadsForEntity(EntityId entityId);
+
         /// <summary>Adds a triple to the store.</summary>
         void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples);
 

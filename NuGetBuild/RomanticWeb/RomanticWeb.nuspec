@@ -3,7 +3,7 @@
   <metadata>
     <id>RomanticWeb</id>
     <version>$version$</version>
-    <authors>$authors$</authors>
+    <authors>$author$</authors>
     <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>

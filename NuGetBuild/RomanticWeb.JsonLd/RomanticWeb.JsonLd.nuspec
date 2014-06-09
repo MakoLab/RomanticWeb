@@ -3,7 +3,7 @@
   <metadata>
     <id>RomanticWeb.JsonLd</id>
     <version>$version$</version>
-    <authors>$authors$</authors>
+    <authors>$author$</authors>
     <description>$description$</description>
     <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

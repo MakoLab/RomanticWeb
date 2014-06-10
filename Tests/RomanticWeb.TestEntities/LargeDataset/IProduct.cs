@@ -50,7 +50,7 @@ namespace RomanticWeb.TestEntities.LargeDataset
         EntityId Grade { get; set; }
 
         [Property("chem","productCategory")]
-        IEntity ProductCategory { get; set; }
+        IEnumerable<EntityId> ProductCategory { get; }
 
         [Collection("chem","msdsFile")]
         ICollection<IEntity> MsdsFile { get; }

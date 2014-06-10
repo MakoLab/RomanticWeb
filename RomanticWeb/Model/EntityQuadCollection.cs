@@ -9,7 +9,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Model
 {
-    internal sealed class EntityQuadCollection
+    internal sealed class EntityQuadCollection:IEnumerable<EntityId>
     {
         private IList<EntityQuad> _quads=new List<EntityQuad>();
         private IDictionary<EntityId,int> _entities=new Dictionary<EntityId,int>();
@@ -65,6 +65,18 @@ namespace RomanticWeb.Model
 
         internal IEnumerable<EntityQuad> this[EntityId entityId] { get { return GetEntities(MakeSubject(entityId)); } }
 
+        /// <inheritdoc />
+        IEnumerator<EntityId> IEnumerable<EntityId>.GetEnumerator()
+        {
+            return Entities.GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<EntityId>)this).GetEnumerator();
+        }
+
         internal void Add(EntityQuad quad)
         {
             string key=MakeSubject(quad);
@@ -117,6 +129,73 @@ namespace RomanticWeb.Model
                     }
                 }
             }
+        }
+
+        internal IEnumerable<EntityQuad> Remove(EntityId entityId)
+        {
+            IList<EntityQuad> result=new List<EntityQuad>();
+            Index<string> index=_subjects[MakeSubject(entityId),IndexCollection<string>.FirstPossible];
+            if (index!=null)
+            {
+                int removedCount=0;
+                while (removedCount<index.Length)
+                {
+                    result.Add(_quads[index.StartAt]);
+                    _quads.RemoveAt(index.StartAt);
+                    _entities[entityId]--;
+                    removedCount++;
+                }
+
+                _subjects.Remove(index.Key);
+                if (_entities[entityId]==0)
+                {
+                    _entities.Remove(entityId);
+                }
+            }
+
+            return result;
+        }
+
+        internal IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
+        {
+            IList<EntityQuad> result=new List<EntityQuad>();
+            string key=null;
+            bool lastIndexChanged=false;
+            Index<string> lastIndex=null;
+            for (int index=0; index<_quads.Count; index++)
+            {
+                if ((lastIndex==null)||(lastIndex.StartAt+lastIndex.Length<=index))
+                {
+                    if ((lastIndex!=null)&&(lastIndexChanged))
+                    {
+                        _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+                    }
+
+                    key=MakeSubject(_quads[index].EntityId);
+                    lastIndex=_subjects[key,index];
+                    lastIndexChanged=false;
+                }
+
+                if (lastIndex!=null)
+                {
+                    EntityQuad quad=_quads[index];
+                    if ((!quad.Object.IsLiteral)&&(quad.Object.ToEntityId()==entityId))
+                    {
+                        result.Add(quad);
+                        _quads.RemoveAt(index);
+                        lastIndex.Length--;
+                        index--;
+                        lastIndexChanged=true;
+                    }
+                }
+            }
+
+            if ((lastIndex!=null)&&(lastIndexChanged))
+            {
+                _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+            }
+
+            return result;
         }
 
         internal void Clear()

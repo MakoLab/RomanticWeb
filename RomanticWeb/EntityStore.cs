@@ -12,23 +12,29 @@ namespace RomanticWeb
     internal class EntityStore:IEntityStore
     {
         private readonly EntityQuadCollection _entityQuads;
-        private readonly ISet<EntityId> _deletedEntites;
-        private readonly ISet<EntityQuad> _removedTriples;
-        private readonly ISet<EntityQuad> _addedTriples;
-        private readonly ISet<Tuple<Uri,EntityId>> _metaGraphChanges; 
+        private readonly EntityQuadCollection _initialQuads;
+        private readonly IDictionary<EntityId,DeleteBehaviours> _deletedEntities;
+        private IDictionary<EntityId,DeleteBehaviours> _markedForDeletion=null;
 
         public EntityStore()
         {
             _entityQuads=new EntityQuadCollection();
-            _removedTriples=new HashSet<EntityQuad>();
-            _addedTriples=new HashSet<EntityQuad>();
-            _metaGraphChanges=new HashSet<Tuple<Uri,EntityId>>();
-            _deletedEntites=new HashSet<EntityId>();
+            _initialQuads=new EntityQuadCollection();
+            _deletedEntities=new Dictionary<EntityId,DeleteBehaviours>();
         }
 
         public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }
 
-        public DatasetChanges Changes { get { return new DatasetChanges(_addedTriples, _removedTriples, _metaGraphChanges, _deletedEntites); } }
+        public DatasetChanges Changes
+        {
+            get
+            {
+                DatasetChangesGenerator datasetChangesGenerator=new DatasetChangesGenerator(_initialQuads,_entityQuads,_deletedEntities);
+                DatasetChanges result=datasetChangesGenerator.GenerateDatasetChanges();
+                _markedForDeletion=datasetChangesGenerator.MarkedForDeletion;
+                return result;
+            }
+        }
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId,Uri predicate,[AllowNull] Uri graph)
         {
@@ -52,24 +58,37 @@ namespace RomanticWeb
             return quads.Select(triple => triple.Object).ToList();
         }
 
-        public IEnumerable<EntityQuad> GetQuadsForEntity(EntityId entityId)
+        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool wholeGraph=true)
         {
-            return _entityQuads[entityId];
+            if (wholeGraph)
+            {
+                IList<EntityQuad> result=new List<EntityQuad>();
+                IList<BlankId> addedBlankNodes=new List<BlankId>();
+                GetEntityQuads(result,addedBlankNodes,entityId);
+                return result;
+            }
+            else
+            {
+                return _entityQuads[entityId];
+            }
         }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
         {
+            _markedForDeletion=null;
             if (_entityQuads.Entities.Contains(entityId))
             {
-                LogTo.Info("Skipping entity {0}. Entity already added to store", entityId);
+                LogTo.Info("Skipping entity {0}. Entity already added to store",entityId);
                 return;
             }
 
             _entityQuads.Add(entityId,entityTriples);
+            _initialQuads.Add(entityId,entityTriples);
         }
 
         public void ReplacePredicateValues(EntityId entityId,Node propertyUri,Func<IEnumerable<Node>> getNewValues,Uri graphUri)
         {
+            _markedForDeletion=null;
             var subjectNode=Node.FromEntityId(entityId);
             RemoveTriples(entityId,subjectNode,propertyUri,graphUri);
 
@@ -77,20 +96,63 @@ namespace RomanticWeb
             {
                 var triple=new EntityQuad(entityId,subjectNode,propertyUri,valueNode).InGraph(graphUri);
                 _entityQuads.Add(triple);
-                _addedTriples.Add(triple);
-                _metaGraphChanges.Add(Tuple.Create(graphUri,entityId));
             }
         }
 
-        public void Delete(EntityId entityId)
+        public void Delete(EntityId entityId,DeleteBehaviours deleteBehaviour=DeleteBehaviours.DeleteVolatileChildren|DeleteBehaviours.NullifyVolatileChildren)
         {
-            _deletedEntites.Add(entityId);
+            _markedForDeletion=null;
+            _deletedEntities[entityId]=deleteBehaviour;
         }
 
-        private void RemoveTriples(EntityId entityId, Node subjectNode, Node propertyUri=null, Uri graphUri=null)
+        public void ResetState()
         {
-            var quadsRemoved = from quad in Quads
-                               where quad.EntityId == entityId && quad.Subject == subjectNode
+            foreach (var deleted in _markedForDeletion??new DatasetChangesGenerator(_initialQuads,_entityQuads,_deletedEntities).MarkedForDeletion)
+            {
+                _entityQuads.Remove(deleted.Key);
+                if ((((deleted.Value&DeleteBehaviours.NullifyVolatileChildren)==DeleteBehaviours.NullifyVolatileChildren)&&(deleted.Key is BlankId))||
+                    ((deleted.Value&DeleteBehaviours.NullifyChildren)==DeleteBehaviours.NullifyChildren))
+                {
+                    _entityQuads.RemoveWhereObject(deleted.Key);
+                }
+            }
+
+            _initialQuads.Clear();
+            foreach (EntityId entityId in _entityQuads)
+            {
+                _initialQuads.Add(entityId,_entityQuads[entityId]);
+            }
+
+            _markedForDeletion=null;
+        }
+
+        private void GetEntityQuads(IList<EntityQuad> result,IList<BlankId> addedBlankNodes,EntityId entityId)
+        {
+            IList<BlankId> blanksToAdd=new List<BlankId>();
+            foreach (EntityQuad quad in _entityQuads[entityId])
+            {
+                result.Add(quad);
+                if (quad.Object.IsBlank)
+                {
+                    BlankId blankId=(BlankId)quad.Object.ToEntityId();
+                    if (!addedBlankNodes.Contains(blankId))
+                    {
+                        addedBlankNodes.Add(blankId);
+                        blanksToAdd.Add(blankId);
+                    }
+            }
+        }
+
+            foreach (BlankId blankId in blanksToAdd)
+        {
+                GetEntityQuads(result,addedBlankNodes,blankId);
+            }
+        }
+
+        private void RemoveTriples(EntityId entityId,Node subjectNode,Node propertyUri=null,Uri graphUri=null)
+        {
+            var quadsRemoved=from quad in Quads
+                             where quad.EntityId==entityId&&quad.Subject==subjectNode
                                select quad;
 
             if (propertyUri!=null)
@@ -98,9 +160,9 @@ namespace RomanticWeb
                 quadsRemoved=quadsRemoved.Where(quad => quad.Predicate==propertyUri);
             }
 
-            if (graphUri != null)
+            if (graphUri!=null)
             {
-                quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad, graphUri));
+                quadsRemoved=quadsRemoved.Where(quad => GraphEquals(quad,graphUri));
             }
 
             foreach (var entityTriple in quadsRemoved.ToList())
@@ -112,14 +174,14 @@ namespace RomanticWeb
         private void RemoveTriple(EntityQuad entityTriple)
         {
             _entityQuads.Remove(entityTriple);
-            _removedTriples.Add(entityTriple);
 
             if (entityTriple.Object.IsBlank)
             {
-                RemoveTriples(entityTriple.EntityId, entityTriple.Object);
+                RemoveTriples(entityTriple.EntityId,entityTriple.Object);
             }
         }
 
+        // TODO: Make the GraphEquals method a bit less rigid.
         private bool GraphEquals(EntityQuad triple,Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri==graph.AbsoluteUri)||((triple.Subject.IsBlank)&&(graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));

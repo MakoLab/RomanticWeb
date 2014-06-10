@@ -17,22 +17,22 @@ namespace RomanticWeb.Tests.dotNetRDF
         public void Should_execute_delete_command_for_each_deleted_entity()
         {
             // given
-            var tripleStore = new Mock<IUpdateableTripleStore>();
+            var tripleStore=new Mock<IUpdateableTripleStore>();
             var tripleStoreAdapter=Create(tripleStore);
             IEnumerable<EntityId> deletedEntities=new[]
-                                                      {
-                                                          new EntityId("urn:some:entity1"),
-                                                          new EntityId("urn:some:entity2"),
-                                                          new EntityId("urn:some:entity3"),
-                                                          new EntityId("urn:some:entity4")
-                                                      };
-            var changes = new DatasetChanges(new EntityQuad[0], new EntityQuad[0], new Tuple<Uri, EntityId>[0], deletedEntities);
+                {
+                    new EntityId("urn:some:entity1"),
+                    new EntityId("urn:some:entity2"),
+                    new EntityId("urn:some:entity3"),
+                    new EntityId("urn:some:entity4")
+                };
+            var changes=new DatasetChanges(new EntityQuad[0],new EntityQuad[0],new EntityQuad[0],deletedEntities);
 
             // when
             tripleStoreAdapter.ApplyChanges(changes);
 
             // then
-            tripleStore.Verify(store=>store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set=>set.CommandCount == 8)));
+            tripleStore.Verify(store => store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount==8)));
         }
 
         private TripleStoreAdapter Create<TStore>(Mock<TStore> store) where TStore:class,ITripleStore

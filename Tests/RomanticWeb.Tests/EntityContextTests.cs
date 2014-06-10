@@ -245,6 +245,7 @@ namespace RomanticWeb.Tests
             // given
             var aChangeset=new DatasetChanges();
             _entityStore.Setup(store => store.Changes).Returns(aChangeset);
+            _entityStore.Setup(store => store.ResetState());
 
             // when
             _entityContext.Commit();
@@ -258,13 +259,13 @@ namespace RomanticWeb.Tests
         {
             // given
             var entityId=new EntityId("urn:some:entityid");
-            _entityStore.Setup(store => store.Delete(entityId));
+            _entityStore.Setup(store => store.Delete(entityId,DeleteBehaviours.DoNothing));
 
             // when
-            _entityContext.Delete(entityId);
+            _entityContext.Delete(entityId,DeleteBehaviours.DoNothing);
 
             // then
-            _entityStore.Verify(store => store.Delete(entityId),Times.Once);
+            _entityStore.Verify(store => store.Delete(entityId,DeleteBehaviours.DoNothing),Times.Once);
         }
 
         [Test]
@@ -306,10 +307,10 @@ namespace RomanticWeb.Tests
             var entityId=new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
-            _entityStore.Setup(store => store.Delete(It.IsAny<EntityId>()));
+            _entityStore.Setup(store => store.Delete(It.IsAny<EntityId>(),DeleteBehaviours.DoNothing));
 
             // when
-            _entityContext.Delete(entityId);
+            _entityContext.Delete(entityId,DeleteBehaviours.DoNothing);
 
             // then
             _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId),Times.Once);

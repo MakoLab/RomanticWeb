@@ -132,12 +132,12 @@ namespace RomanticWeb.Model
         }
 
 #pragma warning disable 1591
-        public static bool operator==(EntityQuad left,[AllowNull] EntityQuad right)
+        public static bool operator==([AllowNull] EntityQuad left,[AllowNull] EntityQuad right)
         {
             return Equals(left,right);
         }
 
-        public static bool operator!=(EntityQuad left,[AllowNull] EntityQuad right)
+        public static bool operator!=([AllowNull] EntityQuad left,[AllowNull] EntityQuad right)
         {
             return !Equals(left,right);
         }

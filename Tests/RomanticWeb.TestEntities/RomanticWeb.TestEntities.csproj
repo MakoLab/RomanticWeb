@@ -55,6 +55,7 @@
     <Compile Include="Animals\IUntypedAnimal.cs" />
     <Compile Include="BlankNodes\INested.cs" />
     <Compile Include="BlankNodes\IRoot.cs" />
+    <Compile Include="Foaf\IAlsoAgent.cs" />
     <Compile Include="Foaf\IAlsoPerson.cs" />
     <Compile Include="Foaf\IAgent.cs" />
     <Compile Include="Foaf\IGroup.cs" />

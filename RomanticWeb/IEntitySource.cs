@@ -9,9 +9,7 @@ namespace RomanticWeb
     /// <summary>A source for triples, loaded from physical triple stores.</summary>
     public interface IEntitySource
     {
-        /// <summary>
-        /// Gets or sets the meta graph URI.
-        /// </summary>
+        /// <summary>Gets or sets the meta graph URI.</summary>
         Uri MetaGraphUri { get; set; }
 
         /// <summary>Loads an entity into the given <see cref="IEntityStore"/></summary>

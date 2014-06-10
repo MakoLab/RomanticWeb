@@ -7,6 +7,29 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
+    /// <summary>Behavior that should be applied when deleting entities.</summary>
+    [Flags]
+    public enum DeleteBehaviours:int
+    {
+        /// <summary>Default delete behavior set to <see cref="DeleteBehaviours.DeleteVolatileChildren" /> and <see cref="DeleteBehaviours.NullifyVolatileChildren" />.</summary>
+        Default=0x0000011,
+
+        /// <summary>Nothing special should happen.</summary>
+        DoNothing=0x00000000,
+
+        /// <summary>Delete other blank node entities referenced by the deleted entity.</summary>
+        DeleteVolatileChildren=0x00000001,
+
+        /// <summary>Delete other entities referenced by the deleted entity.</summary>
+        DeleteChildren=0x00000003,
+
+        /// <summary>Remove statements that referenced removed blank node entities.</summary>
+        NullifyVolatileChildren=0x00000010,
+
+        /// <summary>Remove statements that referenced removed entities.</summary>
+        NullifyChildren=0x00000030
+    }
+
     /// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
     public interface IEntityContext:IDisposable
     {
@@ -26,9 +49,7 @@ namespace RomanticWeb
         /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
         INamedGraphSelector GraphSelector { get; }
 
-        /// <summary>
-        /// Gets the transformer catalog.
-        /// </summary>
+        /// <summary>Gets the transformer catalog.</summary>
         IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>
@@ -60,28 +81,26 @@ namespace RomanticWeb
         /// <summary>Saves all changes to the underlying store.</summary>
         void Commit();
 
-        /// <summary>
-        /// Marks an entity for deletion
-        /// </summary>
+        /// <summary>Marks an entity for deletion.</summary>
+        /// <param name="entityId">Target entity to be deleted.</param>
         void Delete(EntityId entityId);
 
-        /// <summary>
-        /// Initializes the enitity.
-        /// </summary>
+        /// <summary>Marks an entity for deletion.</summary>
+        /// <param name="entityId">Target entity to be deleted.</param>
+        /// <param name="deleteBehaviour">Entity deletion behaviour.</param>
+        void Delete(EntityId entityId,DeleteBehaviours deleteBehaviour);
+
+        /// <summary>Initializes the enitity.</summary>
         /// <param name="entity">The entity.</param>
         void InitializeEnitity(IEntity entity);
 
-        /// <summary>
-        /// Wraps an entity as another entity type.
-        /// </summary>
+        /// <summary>Wraps an entity as another entity type.</summary>
         /// <typeparam name="T">the <see cref="IEntity"/> type</typeparam>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
         T EntityAs<T>(IEntity entity)where T:class,IEntity;
 
-        /// <summary>
-        /// Checks if the entity exists.
-        /// </summary>
+        /// <summary>Checks if the entity exists.</summary>
         bool Exists(EntityId entityId);
     }
 }

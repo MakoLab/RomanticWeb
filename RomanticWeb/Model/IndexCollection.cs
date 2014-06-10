@@ -15,6 +15,8 @@ namespace RomanticWeb.Model
 
         internal IEnumerable<T> Keys { get { return _indices.Select(item => item.Key); } }
 
+        internal Index<T> this[int index] { get { return _indices[index]; } }
+
         internal Index<T> this[T key,int itemIndex]
         {
             get
@@ -184,6 +186,11 @@ namespace RomanticWeb.Model
             }
 
             return removed;
+        }
+
+        internal void Remove(T key)
+        {
+            Set(key,FirstPossible,0);
         }
 
         internal bool ContainsKey(T key)

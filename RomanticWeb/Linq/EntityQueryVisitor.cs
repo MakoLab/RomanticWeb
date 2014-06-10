@@ -99,10 +99,10 @@ namespace RomanticWeb.Linq
             StrongEntityAccessor entityAccessor=this.GetEntityAccessor(sourceExpression);
             if (entityAccessor!=null)
             {
-            if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
-            {
-                _query.Elements.Add(entityAccessor);
-            }
+                if ((entityAccessor.OwnerQuery==null)&&(!_query.Elements.Contains(entityAccessor)))
+                {
+                    _query.Elements.Add(entityAccessor);
+                }
 
             _lastComponent=_query;
             }

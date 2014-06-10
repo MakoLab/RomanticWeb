@@ -16,13 +16,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         private IEntityContext _entityContext;
         private IEntityContextFactory _factory;
 
-        public virtual bool IncludeFoaf
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public virtual bool IncludeFoaf { get { return false; } }
 
         public IMappingProviderSource Mappings { get; private set; }
 
@@ -39,21 +33,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected IEntityStore EntityStore
-        {
-            get
-            {
-                return _entityStore;
-            }
-        }
+        protected IEntityStore EntityStore { get { return _entityStore; } }
 
-        protected EntityContextFactory Factory
-        {
-            get
-            {
-                return (EntityContextFactory)_factory;
-            }
-        }
+        protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
         [SetUp]
         public void Setup()
@@ -73,7 +55,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [TearDown]
-        public void Teardown() 
+        public void Teardown()
         {
             ChildTeardown();
             _entityContext=null;
@@ -85,7 +67,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             m.AddMapping(GetType().Assembly,Mappings);
         }
 
-        protected virtual void ChildTeardown() 
+        protected virtual void ChildTeardown()
         {
         }
 
@@ -94,15 +76,15 @@ namespace RomanticWeb.Tests.IntegrationTests
             return new Mock<IMappingProviderSource>().Object;
         }
 
-        protected virtual void ChildSetup() 
+        protected virtual void ChildSetup()
         {
         }
 
-        protected abstract void LoadTestFile(string fileName); 
-         
+        protected abstract void LoadTestFile(string fileName);
+
         protected abstract IEntitySource CreateEntitySource();
 
-        public class LifeOntology : IOntologyProvider
+        public class LifeOntology:IOntologyProvider
         {
             public IEnumerable<Ontology> Ontologies
             {
@@ -118,7 +100,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                 {
                     return new Uri("http://example/livingThings#"+rdfTermName);
                 }
-             
+
                 return null;
             }
         }

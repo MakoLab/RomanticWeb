@@ -94,6 +94,7 @@
     <Compile Include="Converters\FallbackNodeConverter.cs" />
     <Compile Include="Converters\StringConverter.cs" />
     <Compile Include="DatasetChanges.cs" />
+    <Compile Include="DatasetChangesGenerator.cs" />
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />

@@ -132,16 +132,21 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            var changes=_entityStore.Changes;
-            _entitySource.ApplyChanges(changes);
+            _entitySource.ApplyChanges(_entityStore.Changes);
+            _entityStore.ResetState();
         }
 
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
+            Delete(entityId,DeleteBehaviours.Default);
+        }
+
+        public void Delete(EntityId entityId,DeleteBehaviours deleteBehaviour)
+        {
             entityId=EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Deleting entity {0}",entityId);
-            _entityStore.Delete(entityId);
+            _entityStore.Delete(entityId,deleteBehaviour);
         }
 
         void IDisposable.Dispose()

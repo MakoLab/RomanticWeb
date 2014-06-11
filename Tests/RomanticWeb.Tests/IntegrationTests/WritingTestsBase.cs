@@ -8,10 +8,12 @@ namespace RomanticWeb.Tests.IntegrationTests
 {
     public abstract class WritingTestsBase:IntegrationTestsBase
     {
-        private static readonly EntityId EntityId=new EntityId("http://magi/people/Tomasz");
+        protected abstract int MetagraphTripleCount { get; }
+
+        protected abstract int AllTriplesCount { get; }
 
         [Test]
-        public virtual void Should_commit_uri_node()
+        public void Should_commit_uri_node()
         {
             // given
 
@@ -20,11 +22,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(1);
+            AssertStoreCounts(1, 1);
         }
 
         [Test]
-        public virtual void Should_commit_literal_node()
+        public void Should_commit_literal_node()
         {
             // given
 
@@ -34,11 +36,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(2);
+            AssertStoreCounts(2, 1);
         }
 
         [Test]
-        public virtual void Should_commit_blank_node()
+        public void Should_commit_blank_node()
         {
             // given
 
@@ -48,11 +50,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(3);
+            AssertStoreCounts(3, 1);
         }
 
         [Test]
-        public virtual void Should_remove_uri_node()
+        public void Should_remove_uri_node()
         {
             // given
             IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
@@ -63,11 +65,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(0);
+            AssertStoreCounts(0,0);
         }
 
         [Test]
-        public virtual void Should_remove_literal_node()
+        public void Should_remove_literal_node()
         {
             // given
             IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
@@ -79,11 +81,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(1);
+            AssertStoreCounts(1,1);
         }
 
         [Test]
-        public virtual void Should_remove_blank_node()
+        public void Should_remove_blank_node()
         {
             // given
             IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
@@ -95,11 +97,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(1);
+            AssertStoreCounts(1,1);
         }
 
         [Test]
-        public virtual void Should_remove_whole_entity_graph()
+        public void Should_remove_whole_entity_graph()
         {
             // given
             IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
@@ -114,11 +116,11 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(1);
+            AssertStoreCounts(1, 1);
         }
 
         [Test]
-        public virtual void Should_reconstruct_entity()
+        public void Should_reconstruct_entity()
         {
             // given
             IAlsoAgent entity=EntityContext.Create<IAlsoAgent>("http://magi/people/Tomasz");
@@ -133,12 +135,19 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            EntityContext.Store.Quads.Should().HaveCount(6);
+            AssertStoreCounts(6,1);
         }
 
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());
+        }
+
+        private void AssertStoreCounts(int dataQuadsCount, int metagraphQuads)
+        {
+            EntityContext.Store.Quads.Should().HaveCount(dataQuadsCount);
+            MetagraphTripleCount.Should().Be(metagraphQuads);
+            AllTriplesCount.Should().Be(metagraphQuads + dataQuadsCount);
         }
     }
 }

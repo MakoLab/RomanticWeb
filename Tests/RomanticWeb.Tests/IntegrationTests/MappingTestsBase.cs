@@ -7,7 +7,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Model;
-using RomanticWeb.TestEntities.Foaf;
+using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
@@ -454,6 +454,32 @@ namespace RomanticWeb.Tests.IntegrationTests
             var entity=EntityContext.Load<TestEntities.Inheritance.Specialized.IInterface>(new EntityId(new Uri("http://test.org/test")));
             entity.Description="test";
             Assert.That(entity.Description,Is.EqualTo("test"));
+        }
+
+        [Test]
+        public void Should_allow_adding_element_to_empty_list()
+        {
+            // given
+            var entityId = new EntityId("urn:test:entity");
+            var entity = EntityContext.Create<IEntityWithCollections>(entityId);
+
+            // when
+            entity.DefaultListMapping.Add("test string");
+
+            // then
+            entity.DefaultListMapping.Should().HaveCount(1);
+            entity.DefaultListMapping.Should().Contain("test string");
+            EntityStore.Quads.Should().HaveCount(3, "Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().Contain(quad => quad.Subject.IsBlank
+                                                    && quad.Predicate == Node.ForUri(Rdf.first)
+                                                    && quad.Object.IsLiteral
+                                                    && quad.Object.Literal == "test string");
+            EntityStore.Quads.Should().Contain(quad => quad.Subject == Node.FromEntityId(entityId)
+                                                    && AbsoluteUriComparer.Default.Compare(quad.Predicate.Uri, new Uri("http://magi/ontology#collection")) == 0
+                                                    && quad.Object.IsBlank);
+            EntityStore.Quads.Should().Contain(quad => quad.Subject.IsBlank
+                                                    && quad.Predicate == Node.ForUri(Rdf.rest)
+                                                    && quad.Object == Node.ForUri(Rdf.nil));
         }
 
         protected override IMappingProviderSource SetupMappings()

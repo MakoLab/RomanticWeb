@@ -203,7 +203,7 @@ namespace RomanticWeb.Entities
             var paremeters=GraphSelectionOverride??new OverridingGraphSelector(Id,_entityMapping,property);
             if (proxy!=null)
             {
-                if ((proxy.Id is BlankId)||(typeof(IRdfListNode<,,>).IsAssignableFromSpecificGeneric(proxy.EntityMapping.EntityType)))
+                if ((proxy.Id is BlankId)||(typeof(IRdfListNode<>).IsAssignableFromSpecificGeneric(proxy.EntityMapping.EntityType)))
                 {
                     proxy.OverrideGraphSelection(paremeters);
                 }

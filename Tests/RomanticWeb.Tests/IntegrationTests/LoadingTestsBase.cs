@@ -100,6 +100,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         [Test]
         [TestCase(2)]
+        [Category("Slow tests")]
         public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
@@ -117,6 +118,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         [Test]
         [TestCase(2)]
+        [Category("Slow tests")]
         public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");

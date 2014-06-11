@@ -64,10 +64,12 @@
     <Compile Include="Collections\IRdfDictionary.cs" />
     <Compile Include="Collections\IRdfListAdapter.cs" />
     <Compile Include="Collections\IRdfListNode.cs" />
+    <Compile Include="Collections\IRdfListOwner.cs" />
     <Compile Include="Collections\Mapping\ListEntryMap.cs" />
     <Compile Include="Collections\Mapping\DictionaryOwnerMap.cs" />
     <Compile Include="Collections\Mapping\DictionaryEntryMap.cs" />
     <Compile Include="BaseUriSelectorBuilder.cs" />
+    <Compile Include="Collections\Mapping\ListOwnerMap.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Dynamic\EmitHelper.cs" />
     <Compile Include="Dynamic\DefaultDictionaryTypeProvider.cs" />
     <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />
     <Compile Include="Dynamic\IDictionaryTypeProvider.cs" />
@@ -273,7 +276,7 @@
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Sources\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\Sources\ClosedGenericEntityMappingProvider.cs" />
-    <Compile Include="Mapping\Sources\AutomaticListMappingSource.cs" />
+    <Compile Include="Mapping\Sources\GeneratedListMappingSource.cs" />
     <Compile Include="Mapping\Sources\GeneratedDictionaryMappingSource.cs" />
     <Compile Include="Mapping\Sources\FluentMappingsSource.cs" />
     <Compile Include="Mapping\Sources\IMappingProviderSource.cs" />

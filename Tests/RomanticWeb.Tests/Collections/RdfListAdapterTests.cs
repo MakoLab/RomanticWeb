@@ -3,7 +3,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Collections;
-using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.NamedGraphs;
@@ -15,7 +14,7 @@ namespace RomanticWeb.Tests.Collections
     {
         private Mock<IEntityContext> _contextMock;
         private IEntityContext _context;
-        private Mock<IEntity> _entity;
+        private Mock<IRdfListOwner> _entity;
         private OverridingGraphSelector _override;
 
         [SetUp]
@@ -26,15 +25,15 @@ namespace RomanticWeb.Tests.Collections
                 new Mock<IEntityMapping>().Object,
                 new Mock<IPropertyMapping>().Object);
 
-            var rdfNilMock=new Mock<IRdfListNode<IEntity,IntegerConverter,int>>();
+            var rdfNilMock=new Mock<IRdfListNode<int>>();
             rdfNilMock.SetupAllProperties();
             rdfNilMock.Setup(m => m.Id).Returns(Vocabularies.Rdf.nil);
             _contextMock=new Mock<IEntityContext>();
             _contextMock.Setup(c => c.BlankIdGenerator).Returns(new DefaultBlankNodeIdGenerator());
-            _contextMock.Setup(c => c.Load<IRdfListNode<IEntity,IntegerConverter,int>>(Vocabularies.Rdf.nil)).Returns((EntityId entityId) => CreateListNode<int>(entityId));
-            _contextMock.Setup(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>())).Returns((EntityId entityId) => CreateListNode<int>(entityId));
+            _contextMock.Setup(c => c.Load<IRdfListNode<int>>(Vocabularies.Rdf.nil)).Returns((EntityId entityId) => CreateListNode<int>(entityId));
+            _contextMock.Setup(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>())).Returns((EntityId entityId) => CreateListNode<int>(entityId));
             _context=_contextMock.Object;
-            _entity=new Mock<IEntity>();
+            _entity=new Mock<IRdfListOwner>();
             _entity.SetupGet(entity => entity.Context).Returns(_contextMock.Object);
         }
 
@@ -42,7 +41,7 @@ namespace RomanticWeb.Tests.Collections
         public void Empty_list_should_have_count_zero()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override);
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override);
 
             // then
             list.Count.Should().Be(0);
@@ -52,7 +51,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_adding_elements()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override);
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override);
 
             // when
             list.Add(4);
@@ -60,7 +59,7 @@ namespace RomanticWeb.Tests.Collections
 
             // then
             list.Count.Should().Be(2);
-            _contextMock.Verify(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>()),Times.Exactly(2));
+            _contextMock.Verify(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>()),Times.Exactly(2));
         }
 
         [TestCase(0,new[] { 5,4,8,41,666 })]
@@ -69,7 +68,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_inserting_elements_at_index(int index,int[] expectedCollection)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,41,666 };
 
             // when
             list.Insert(index,5);
@@ -77,7 +76,7 @@ namespace RomanticWeb.Tests.Collections
             // then
             list.Count.Should().Be(5);
             list.Should().ContainInOrder(expectedCollection);
-            _contextMock.Verify(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>()),Times.Exactly(5));
+            _contextMock.Verify(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>()),Times.Exactly(5));
         }
 
         [TestCase(0,new[] { 5,4,8,41,666 })]
@@ -86,7 +85,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_inserting_elements_at_index_with_indexer(int index,int[] expectedCollection)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,41,666 };
 
             // when
             list[index]=5;
@@ -94,14 +93,14 @@ namespace RomanticWeb.Tests.Collections
             // then
             list.Count.Should().Be(5);
             list.Should().ContainInOrder(expectedCollection);
-            _contextMock.Verify(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>()),Times.Exactly(5));
+            _contextMock.Verify(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>()),Times.Exactly(5));
         }
 
         [Test]
         public void Should_throw_when_inserting_to_invalid_index([Values(-1,5,100)]int index)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,41,666 };
 
             // then
             list.Invoking(l => l.Insert(index,10))
@@ -112,30 +111,30 @@ namespace RomanticWeb.Tests.Collections
         public void Should_initialize_with_type_initializer_in_correct_order()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,41,666 };
 
             // then
             list.Should().ContainInOrder(4,8,41,666);
-            _contextMock.Verify(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>()),Times.Exactly(4));
+            _contextMock.Verify(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>()),Times.Exactly(4));
         }
 
         [Test]
         public void Should_allow_getting_elements_by_index()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8 };
 
             // then
             list[0].Should().Be(4);
             list[1].Should().Be(8);
-            _contextMock.Verify(c => c.Create<IRdfListNode<IEntity,IntegerConverter,int>>(It.IsAny<BlankId>()),Times.Exactly(2));
+            _contextMock.Verify(c => c.Create<IRdfListNode<int>>(It.IsAny<BlankId>()),Times.Exactly(2));
         }
 
         [Test]
         public void Should_throw_when_getting_elements_by_invalid_index([Values(-1,4,666)]int index)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,41,666 };
 
             // then
             list.Invoking(l => { var i=l[index]; })
@@ -146,7 +145,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_calculate_count()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,5,6,7,8 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,5,6,7,8 };
 
             // then
             list.Count.Should().Be(5);
@@ -159,7 +158,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_elements(int elementToRemove,int[] expectedResultCollection,bool expectedReturnValue)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
 
             // when
             var removeResult=list.Remove(elementToRemove);
@@ -181,7 +180,7 @@ namespace RomanticWeb.Tests.Collections
         public void Removing_last_element_and_adding_new_to_end_should_keep_list_linked()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
 
             // when
             list.Remove(666);
@@ -195,7 +194,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_last_element()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 666 };
 
             // when
             list.Remove(666);
@@ -208,7 +207,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_last_elements_and_add_new_afterwards()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 666 };
 
             // when
             list.Remove(666);
@@ -225,7 +224,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_removing_elements_by_index(int index,int[] expectedResultCollection)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
 
             // when
             list.RemoveAt(index);
@@ -241,7 +240,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_checking_item_existence(int item,bool expectedResult)
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
 
             // when
             var contains=list.Contains(item);
@@ -254,7 +253,7 @@ namespace RomanticWeb.Tests.Collections
         public void Should_allow_clearing_entire_list()
         {
             // given
-            var list=new RdfListAdapter<IEntity,IntegerConverter,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
+            var list=new RdfListAdapter<IRdfListOwner,IRdfListNode<int>,int>(_context,_entity.Object,_override) { 4,8,8,41,666 };
 
             // when
             list.Clear();
@@ -264,9 +263,9 @@ namespace RomanticWeb.Tests.Collections
             _contextMock.Verify(c => c.Delete(It.IsAny<BlankId>()),Times.Exactly(5));
         }
 
-        private IRdfListNode<IEntity,IntegerConverter,T> CreateListNode<T>(EntityId entityId)
+        private IRdfListNode<T> CreateListNode<T>(EntityId entityId)
         {
-            var listNodeMock=new Mock<IRdfListNode<IEntity,IntegerConverter,T>>();
+            var listNodeMock=new Mock<IRdfListNode<T>>();
             listNodeMock.SetupAllProperties();
             listNodeMock.Setup(m => m.Id).Returns(entityId);
             return listNodeMock.Object;

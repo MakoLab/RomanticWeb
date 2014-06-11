@@ -1,4 +1,3 @@
-using FluentAssertions;
 using System;
 using System.Linq;
 using NUnit.Framework;
@@ -26,60 +25,20 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
             }
         }
 
-        [Test]
-        public override void Should_commit_uri_node()
+        protected override int MetagraphTripleCount
         {
-            base.Should_commit_uri_node();
-            _store.Triples.Count().Should().Be(2);
+            get
+            {
+                return _store[MetaGraphUri].Triples.Count;
+            }
         }
 
-        [Test]
-        public override void Should_commit_literal_node()
+        protected override int AllTriplesCount
         {
-            base.Should_commit_literal_node();
-            _store.Triples.Count().Should().Be(3);
-        }
-
-        [Test]
-        public override void Should_commit_blank_node()
-        {
-            base.Should_commit_blank_node();
-            _store.Triples.Count().Should().Be(4);
-        }
-
-        [Test]
-        public override void Should_remove_uri_node()
-        {
-            base.Should_remove_uri_node();
-            _store.Triples.Count().Should().Be(0);
-        }
-
-        [Test]
-        public override void Should_remove_literal_node()
-        {
-            base.Should_remove_literal_node();
-            _store.Triples.Count().Should().Be(2);
-        }
-
-        [Test]
-        public override void Should_remove_blank_node()
-        {
-            base.Should_remove_blank_node();
-            _store.Triples.Count().Should().Be(2);
-        }
-
-        [Test]
-        public override void Should_remove_whole_entity_graph()
-        {
-            base.Should_remove_whole_entity_graph();
-            _store.Triples.Count().Should().Be(2);
-        }
-
-        [Test]
-        public override void Should_reconstruct_entity()
-        {
-            base.Should_reconstruct_entity();
-            _store.Triples.Count().Should().Be(7);
+            get
+            {
+                return _store.Triples.Count();
+            }
         }
 
         protected override void LoadTestFile(string fileName)

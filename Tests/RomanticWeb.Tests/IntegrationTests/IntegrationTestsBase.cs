@@ -20,6 +20,14 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         public IMappingProviderSource Mappings { get; private set; }
 
+        protected static Uri MetaGraphUri
+        {
+            get
+            {
+                return new Uri("http://app.magi/graphs");
+            }
+        }
+
         protected IEntityContext EntityContext
         {
             get
@@ -49,7 +57,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
                                                .WithOntology(new ChemOntology())
                                                .WithMappings(BuildMappings)
-                                               .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
+                                               .WithMetaGraphUri(MetaGraphUri)
                                                .WithEntityStore(() => _entityStore);
             ChildSetup();
         }

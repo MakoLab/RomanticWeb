@@ -1,13 +1,10 @@
-using RomanticWeb.Converters;
 using RomanticWeb.Entities;
-using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.Collections
 {
-    public interface IRdfListNode<TOwner,TConverter,T>:IEntity 
-        where TConverter:INodeConverter
+    public interface IRdfListNode<T>:IEntity
     {
-        IRdfListNode<TOwner,TConverter,T> Rest { get; set; }
+        IRdfListNode<T> Rest { get; set; }
 
         T First { get; set; }
     }

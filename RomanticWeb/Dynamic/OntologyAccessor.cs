@@ -6,6 +6,7 @@ using Anotar.NLog;
 using ImpromptuInterface.Dynamic;
 using NullGuard;
 using RomanticWeb.Collections;
+using RomanticWeb.Collections.Mapping;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
@@ -66,9 +67,12 @@ namespace RomanticWeb.Dynamic
             if (propertySpec.IsList)
             {
                 var graphOverride=new UnionGraphSelector();
-                var head=(IRdfListNode<IEntity,INodeConverter,dynamic>)typeof(EntityExtensions).GetMethod("AsEntity").MakeGenericMethod(typeof(IRdfListNode<IEntity,INodeConverter,dynamic>)).Invoke(null,new object[] { (IEntity)result });
+                var head=(IRdfListNode<object>)typeof(EntityExtensions)
+                    .GetMethod("AsEntity")
+                    .MakeGenericMethod(typeof(IRdfListNode<object>))
+                    .Invoke(null,new[] { result });
                 ((IEntityProxy)head.UnwrapProxy()).OverrideGraphSelection(graphOverride);
-                var rdfListAdapter=new RdfListAdapter<IEntity,INodeConverter,dynamic>(_entity.Context,_entity,head,graphOverride);
+                var rdfListAdapter = new RdfListAdapter<IRdfListOwner,IRdfListNode<object>,object>(_entity.Context, _entity, head, graphOverride);
                 result=new ReadOnlyCollection<dynamic>(rdfListAdapter);
             }
 
@@ -104,6 +108,8 @@ namespace RomanticWeb.Dynamic
 
             return convertObject;
         }
+
+        public class DynamicListNode:ListEntryMap<IRdfListNode<object>,object,FallbackNodeConverter> { }
 
         private class DebuggerViewProxy
         {

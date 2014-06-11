@@ -109,7 +109,7 @@ namespace RomanticWeb.Mapping
         {
             yield return new ConventionsVisitor(context);
             yield return new MappingProvidersValidator();
-            yield return new AutomaticListMappingSource(context.OntologyProvider);
+            yield return new GeneratedListMappingSource(context.OntologyProvider);
             yield return new GeneratedDictionaryMappingSource(context.OntologyProvider);
         }
 

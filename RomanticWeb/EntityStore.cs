@@ -60,17 +60,7 @@ namespace RomanticWeb
 
         public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool wholeGraph=true)
         {
-            if (wholeGraph)
-            {
-                IList<EntityQuad> result=new List<EntityQuad>();
-                IList<BlankId> addedBlankNodes=new List<BlankId>();
-                GetEntityQuads(result,addedBlankNodes,entityId);
-                return result;
-            }
-            else
-            {
-                return _entityQuads[entityId];
-            }
+            return (wholeGraph?_entityQuads.GetEntityQuads(entityId):_entityQuads[entityId]);
         }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
@@ -126,34 +116,11 @@ namespace RomanticWeb
             _markedForDeletion=null;
         }
 
-        private void GetEntityQuads(IList<EntityQuad> result,IList<BlankId> addedBlankNodes,EntityId entityId)
-        {
-            IList<BlankId> blanksToAdd=new List<BlankId>();
-            foreach (EntityQuad quad in _entityQuads[entityId])
-            {
-                result.Add(quad);
-                if (quad.Object.IsBlank)
-                {
-                    BlankId blankId=(BlankId)quad.Object.ToEntityId();
-                    if (!addedBlankNodes.Contains(blankId))
-                    {
-                        addedBlankNodes.Add(blankId);
-                        blanksToAdd.Add(blankId);
-                    }
-            }
-        }
-
-            foreach (BlankId blankId in blanksToAdd)
-        {
-                GetEntityQuads(result,addedBlankNodes,blankId);
-            }
-        }
-
         private void RemoveTriples(EntityId entityId,Node subjectNode,Node propertyUri=null,Uri graphUri=null)
         {
             var quadsRemoved=from quad in Quads
                              where quad.EntityId==entityId&&quad.Subject==subjectNode
-                               select quad;
+                             select quad;
 
             if (propertyUri!=null)
             {

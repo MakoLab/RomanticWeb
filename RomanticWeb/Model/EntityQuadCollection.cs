@@ -223,6 +223,37 @@ namespace RomanticWeb.Model
             return result;
         }
 
+        internal IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
+        {
+            IList<EntityQuad> result=new List<EntityQuad>();
+            IList<BlankId> addedBlankNodes=new List<BlankId>();
+            GetEntityQuads(result,addedBlankNodes,entityId);
+            return result;
+        }
+
+        private void GetEntityQuads(IList<EntityQuad> result,IList<BlankId> addedBlankNodes,EntityId entityId)
+        {
+            IList<BlankId> blanksToAdd=new List<BlankId>();
+            foreach (EntityQuad quad in this[entityId])
+            {
+                result.Add(quad);
+                if (quad.Object.IsBlank)
+                {
+                    BlankId blankId=(BlankId)quad.Object.ToEntityId();
+                    if (!addedBlankNodes.Contains(blankId))
+                    {
+                        addedBlankNodes.Add(blankId);
+                        blanksToAdd.Add(blankId);
+                    }
+                }
+            }
+
+            foreach (BlankId blankId in blanksToAdd)
+            {
+                GetEntityQuads(result,addedBlankNodes,blankId);
+            }
+        }
+
         private Index<string> AddInternal(EntityQuad quad,string key,Index<string> index)
         {
             bool added=true;

@@ -89,7 +89,7 @@ namespace RomanticWeb.DotNetRDF
                 {
                     if ((lastGraphUri!=null)&&(lastEntityId!=null))
                     {
-                        foreach (var command in GetInsertCommands(lastGraphUri,lastEntityId,entityPatterns.ToString(),variables,withDelete))
+                        foreach (var command in GetInsertCommands(lastGraphUri,lastEntityId,entityPatterns.ToString(),variables,(lastEntityId is BlankId?false:withDelete)))
                         {
                             yield return command;
                         }
@@ -110,7 +110,7 @@ namespace RomanticWeb.DotNetRDF
 
             if ((lastGraphUri!=null)&&(lastEntityId!=null))
             {
-                foreach (var command in GetInsertCommands(lastGraphUri,lastEntityId,entityPatterns.ToString(),variables,withDelete))
+                foreach (var command in GetInsertCommands(lastGraphUri,lastEntityId,entityPatterns.ToString(),variables,(lastEntityId is BlankId?false:withDelete)))
                 {
                     yield return command;
                 }

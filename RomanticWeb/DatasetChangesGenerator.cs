@@ -197,9 +197,11 @@ namespace RomanticWeb
                 }
             }
 
-            foreach (EntityQuad quad in _currentQuads[parentEntityId])
+            foreach (EntityQuad quad in _currentQuads.GetEntityQuads(parentEntityId))
             {
-                if ((quad.Object.IsLiteral)||(!_markedForDeletion.ContainsKey(quad.Object.ToEntityId())))
+                if ((quad.Object.IsLiteral)||((!_markedForDeletion.ContainsKey(quad.Object.ToEntityId()))&&
+                    ((!_markedForDeletion.ContainsKey(quad.Subject.ToEntityId()))||
+                    (((_markedForDeletion[quad.Subject.ToEntityId()]&DeleteBehaviours.NullifyVolatileChildren)==DeleteBehaviours.NullifyVolatileChildren)&&(!(quad.Subject.ToEntityId() is BlankId))))))
                 {
                     AddUnique(reconstructedEntity,quad);
                 }

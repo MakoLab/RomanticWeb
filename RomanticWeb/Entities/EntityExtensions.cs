@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
 using NullGuard;
-using RomanticWeb.Mapping;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 
@@ -12,6 +12,8 @@ namespace RomanticWeb.Entities
     /// <summary>Provides useful extensions methods for entities.</summary>
     public static class EntityExtensions
     {
+        private static readonly FallbackNodeConverter FallbackNodeConverter=new FallbackNodeConverter();
+
         /// <summary>Gets the entity as a dynamic object.</summary>
         /// <param name="entity">Target entity to be converted to dynamic.</param>
         public static dynamic AsDynamic(this IEntity entity)
@@ -132,30 +134,27 @@ namespace RomanticWeb.Entities
         public static object Predicate(this IEntity entity,Uri predicate)
         {
             object result=null;
-            if ((entity!=null)&&(predicate!=null))
+            Node @object=
+                entity.Context.Store.Quads.WhereQuadDescribesEntity(entity)
+                      .Where(item => item.Predicate.Uri.AbsoluteUri==predicate.AbsoluteUri)
+                      .Select(item => item.Object)
+                      .FirstOrDefault();
+            if (@object!=null)
             {
-                Node @object=entity.Context.Store.Quads
-                    .WhereQuadDescribesEntity(entity)
-                    .Where(item => item.Predicate.Uri.AbsoluteUri==predicate.AbsoluteUri)
-                    .Select(item => item.Object)
-                    .FirstOrDefault();
-                if (@object!=null)
+                if ((@object.IsUri)||(@object.IsBlank))
                 {
-                    if ((@object.IsUri)||(@object.IsBlank))
+                    result=entity.Context.Load<IEntity>(@object.ToEntityId());
+                }
+                else
+                {
+                    IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
+                    if (propertyMapping!=null)
                     {
-                        result=entity.Context.Load<IEntity>(@object.ToEntityId());
+                        result=Impromptu.InvokeGet(entity,propertyMapping.Name);
                     }
                     else
                     {
-                        IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
-                        if (propertyMapping!=null)
-                        {
-                            result=Impromptu.InvokeGet(entity,propertyMapping.Name);
-                        }
-                        else
-                        {
-                            result=@object.ToString();
-                        }
+                        result=FallbackNodeConverter.Convert(@object,entity.Context);
                     }
                 }
             }

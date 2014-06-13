@@ -124,6 +124,7 @@
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
     <Compile Include="Indexing\EntityQuadCollectionTests.cs" />

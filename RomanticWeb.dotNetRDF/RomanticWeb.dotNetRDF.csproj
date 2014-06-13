@@ -74,6 +74,7 @@
     <Compile Include="Configuration\StorageProviders\VirtuosoManagerElement.cs" />
     <Compile Include="DatasetChangesCommandSetConverter.cs" />
     <Compile Include="EntityIdExtensions.cs" />
+    <Compile Include="FileTripleStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NodeExtensions.cs" />
     <Compile Include="SparqlQueryVisitor.cs" />

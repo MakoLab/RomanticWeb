@@ -61,7 +61,7 @@ namespace RomanticWeb
         public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool includeBlankNodes=true)
         {
             return (includeBlankNodes?_entityQuads.GetEntityQuads(entityId):_entityQuads[entityId]);
-            }
+        }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
         {

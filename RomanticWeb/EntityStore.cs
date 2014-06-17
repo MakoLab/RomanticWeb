@@ -14,7 +14,7 @@ namespace RomanticWeb
         private readonly EntityQuadCollection _entityQuads;
         private readonly EntityQuadCollection _initialQuads;
         private readonly IDictionary<EntityId,DeleteBehaviours> _deletedEntities;
-        private IDictionary<EntityId,DeleteBehaviours> _markedForDeletion=null;
+        private IDictionary<EntityId,DeleteBehaviours> _markedForDeletion;
 
         public EntityStore()
         {
@@ -58,10 +58,10 @@ namespace RomanticWeb
             return quads.Select(triple => triple.Object).ToList();
         }
 
-        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool wholeGraph=true)
+        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool includeBlankNodes=true)
         {
-            return (wholeGraph?_entityQuads.GetEntityQuads(entityId):_entityQuads[entityId]);
-        }
+            return (includeBlankNodes?_entityQuads.GetEntityQuads(entityId):_entityQuads[entityId]);
+            }
 
         public void AssertEntity(EntityId entityId,IEnumerable<EntityQuad> entityTriples)
         {
@@ -120,7 +120,7 @@ namespace RomanticWeb
         {
             var quadsRemoved=from quad in Quads
                              where quad.EntityId==entityId&&quad.Subject==subjectNode
-                             select quad;
+                               select quad;
 
             if (propertyUri!=null)
             {

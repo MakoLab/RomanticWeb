@@ -19,9 +19,9 @@ namespace RomanticWeb
 
         /// <summary>Gets all quads describing given entity.</summary>
         /// <param name="entityId">Entity identifier for which to retrieve quads.</param>
-        /// <param name="wholeGraph">Includes all quads for blank-node entities.</param>
+        /// <param name="includeBlankNodes">Includes all quads for blank-node entities.</param>
         /// <returns>Enumeration of quads describing given entity.</returns>
-        IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool wholeGraph=true);
+        IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId,bool includeBlankNodes=true);
 
         /// <summary>Adds a triple to the store.</summary>
         void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples);

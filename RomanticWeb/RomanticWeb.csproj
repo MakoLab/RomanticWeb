@@ -390,6 +390,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SKOS.tt</DependentUpon>
     </Compile>
+    <Compile Include="Ontologies\SP.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SP.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ontologies\SPIN.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SPIN.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ontologies\Term.cs" />
     <Compile Include="Ontologies\OntologyExtensions.cs" />
     <Compile Include="Ontologies\XmlOntologyFactory.cs" />
@@ -471,6 +481,18 @@
       <DependentUpon>LDP.owl</DependentUpon>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>LDP.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="Ontologies\SPIN.owl" />
+    <EmbeddedResource Include="Ontologies\SP.owl" />
+    <None Include="Ontologies\SP.tt">
+      <DependentUpon>SP.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SP.cs</LastGenOutput>
+    </None>
+    <None Include="Ontologies\SPIN.tt">
+      <DependentUpon>SPIN.owl</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SPIN.cs</LastGenOutput>
     </None>
     <None Include="Vocabularies\Vocabulary.t4">
       <LastGenOutput>OntologyVocabulary1.cs</LastGenOutput>

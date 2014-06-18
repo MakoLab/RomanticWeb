@@ -53,7 +53,13 @@ namespace RomanticWeb.Ontologies
         LDP=1<<13,
 
         /// <summary>Points to the W3C content description vocabulary.</summary>
-        CNT=1<<14
+        CNT=1<<14,
+
+        /// <summary>Points to the SPIN Modeling Vocabulary.</summary>
+        SPIN=1<<15,
+
+        /// <summary>Points to the SPIN SPARQL Syntax.</summary>
+        SP=1<<16
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
@@ -89,13 +95,15 @@ namespace RomanticWeb.Ontologies
                 BuiltInOntologies.SIOC|
                 BuiltInOntologies.GEO|
                 BuiltInOntologies.LDP|
-                BuiltInOntologies.CNT);
+                BuiltInOntologies.CNT|
+                BuiltInOntologies.SPIN|
+                BuiltInOntologies.SP);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO|BuiltInOntologies.LDP|BuiltInOntologies.CNT)
+            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO|BuiltInOntologies.LDP|BuiltInOntologies.CNT|BuiltInOntologies.SPIN|BuiltInOntologies.SP)
             {
             }
 
@@ -254,6 +262,20 @@ namespace RomanticWeb.Ontologies
         public DefaultOntologiesProvider WithCNT()
         {
             return Include(BuiltInOntologies.CNT);
+        }
+
+        /// <summary>Includes the SPIN Modeling Vocabulary.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithSPIN()
+        {
+            return Include(BuiltInOntologies.SPIN);
+        }
+
+        /// <summary>Includes the SPIN SPARQL Syntax.</summary>
+        /// <returns>This instance of the default ontologies provider.</returns>
+        public DefaultOntologiesProvider WithSP()
+        {
+            return Include(BuiltInOntologies.SP);
         }
 
         private class DebuggerViewProxy

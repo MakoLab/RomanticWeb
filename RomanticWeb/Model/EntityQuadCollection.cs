@@ -121,12 +121,10 @@ namespace RomanticWeb.Model
                 int indexOf=indexOf=_quads.IndexOf(quad);
                 if (indexOf!=-1)
                 {
+                    string key=MakeSubject(quad);
                     _quads.RemoveAt(indexOf);
-                    _subjects.Remove(MakeSubject(quad),indexOf);
-                    if ((--_entities[quad.EntityId])==0)
-                    {
-                        _entities.Remove(quad.EntityId);
-                    }
+                    _subjects.Remove(key,indexOf);
+                    UpdateStateAfterRemove(quad,key);
                 }
             }
         }
@@ -134,22 +132,24 @@ namespace RomanticWeb.Model
         internal IEnumerable<EntityQuad> Remove(EntityId entityId)
         {
             IList<EntityQuad> result=new List<EntityQuad>();
-            Index<string> index=_subjects[MakeSubject(entityId),IndexCollection<string>.FirstPossible];
-            if (index!=null)
+            lock (_locker)
             {
-                int removedCount=0;
-                while (removedCount<index.Length)
+                string key=MakeSubject(entityId);
+                Index<string> index=_subjects[key,IndexCollection<string>.FirstPossible];
+                if (index!=null)
                 {
-                    result.Add(_quads[index.StartAt]);
-                    _quads.RemoveAt(index.StartAt);
-                    _entities[entityId]--;
-                    removedCount++;
-                }
+                    int removedCount=0;
+                    while (removedCount<index.Length)
+                    {
+                        result.Add(_quads[index.StartAt]);
+                        _quads.RemoveAt(index.StartAt);
+                        _entities[entityId]--;
+                        removedCount++;
+                    }
 
-                _subjects.Remove(index.Key);
-                if (_entities[entityId]==0)
-                {
+                    _subjects.Remove(index.Key);
                     _entities.Remove(entityId);
+                    _entityTypeQuads.Remove(key);
                 }
             }
 
@@ -159,40 +159,44 @@ namespace RomanticWeb.Model
         internal IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
         {
             IList<EntityQuad> result=new List<EntityQuad>();
-            string key=null;
-            bool lastIndexChanged=false;
-            Index<string> lastIndex=null;
-            for (int index=0; index<_quads.Count; index++)
+            lock (_locker)
             {
-                if ((lastIndex==null)||(lastIndex.StartAt+lastIndex.Length<=index))
+                string key=null;
+                bool lastIndexChanged=false;
+                Index<string> lastIndex=null;
+                for (int index=0; index<_quads.Count; index++)
                 {
-                    if ((lastIndex!=null)&&(lastIndexChanged))
+                    if ((lastIndex==null)||(lastIndex.StartAt+lastIndex.Length<=index))
                     {
-                        _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+                        if ((lastIndex!=null)&&(lastIndexChanged))
+                        {
+                            _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+                        }
+
+                        key=MakeSubject(_quads[index].EntityId);
+                        lastIndex=_subjects[key,index];
+                        lastIndexChanged=false;
                     }
 
-                    key=MakeSubject(_quads[index].EntityId);
-                    lastIndex=_subjects[key,index];
-                    lastIndexChanged=false;
-                }
-
-                if (lastIndex!=null)
-                {
-                    EntityQuad quad=_quads[index];
-                    if ((!quad.Object.IsLiteral)&&(quad.Object.ToEntityId()==entityId))
+                    if (lastIndex!=null)
                     {
-                        result.Add(quad);
-                        _quads.RemoveAt(index);
-                        lastIndex.Length--;
-                        index--;
-                        lastIndexChanged=true;
+                        EntityQuad quad=_quads[index];
+                        if ((!quad.Object.IsLiteral)&&(quad.Object.ToEntityId()==entityId))
+                        {
+                            result.Add(quad);
+                            _quads.RemoveAt(index);
+                            UpdateStateAfterRemove(quad,key);
+                            lastIndex.Length--;
+                            index--;
+                            lastIndexChanged=true;
+                        }
                     }
                 }
-            }
 
-            if ((lastIndex!=null)&&(lastIndexChanged))
-            {
-                _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+                if ((lastIndex!=null)&&(lastIndexChanged))
+                {
+                    _subjects.Set(lastIndex.Key,lastIndex.ItemIndex,lastIndex.Length);
+                }
             }
 
             return result;
@@ -280,7 +284,7 @@ namespace RomanticWeb.Model
 
             if (added)
             {
-                UpdateState(quad,index);
+                UpdateStateAfterAdd(quad,index);
             }
 
             return index;
@@ -333,7 +337,7 @@ namespace RomanticWeb.Model
             return false;
         }
 
-        private void UpdateState(EntityQuad quad,Index<string> index)
+        private void UpdateStateAfterAdd(EntityQuad quad,Index<string> index)
         {
             lock (_locker)
             {
@@ -355,6 +359,30 @@ namespace RomanticWeb.Model
                     }
 
                     _entityTypeQuads[index.Key].Add(quad);
+                }
+            }
+        }
+
+        private void UpdateStateAfterRemove(EntityQuad quad,string key)
+        {
+            lock (_locker)
+            {
+                if (_entities.ContainsKey(quad.EntityId))
+                {
+                    _entities[quad.EntityId]--;
+                    if (_entities[quad.EntityId]==0)
+                    {
+                        _entities.Remove(quad.EntityId);
+                    }
+                }
+
+                if (quad.Predicate.Uri.AbsoluteUri==Rdf.type.AbsoluteUri)
+                {
+                    IList<EntityQuad> entityTypeQuads;
+                    if (_entityTypeQuads.TryGetValue(key,out entityTypeQuads))
+                    {
+                        _entityTypeQuads[key].Remove(quad);
+                    }
                 }
             }
         }

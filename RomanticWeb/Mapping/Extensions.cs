@@ -23,14 +23,15 @@ namespace RomanticWeb.Mapping
             IEnumerable<Uri> result=new Uri[0];
             if ((mappingsRepository!=null)&&(type!=null))
             {
-                type=type.FindEntityType();
-                if (EntityType.IsAssignableFrom(type))
+                IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(type);
+                if (entityMapping==null)
                 {
-                    IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(type);
-                    if (entityMapping!=null)
-                    {
-                        result=entityMapping.Classes.OfType<IQueryableClassMapping>().SelectMany(cm=>cm.Uris).Distinct(AbsoluteUriComparer.Default);
-                    }
+                    entityMapping=mappingsRepository.FindEntityMapping(type.FindEntityType());
+                }
+
+                if (entityMapping!=null)
+                {
+                    result=entityMapping.Classes.OfType<IQueryableClassMapping>().SelectMany(cm=>cm.Uris).Distinct(AbsoluteUriComparer.Default);
                 }
             }
 
@@ -92,11 +93,6 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public static IEntityMapping FindEntityMapping(this IMappingsRepository mappingsRepository,Type type)
         {
-            if (!EntityType.IsAssignableFrom(type))
-            {
-                throw new ArgumentOutOfRangeException("type");
-            }
-
             return mappingsRepository.MappingFor(type);
         }
 

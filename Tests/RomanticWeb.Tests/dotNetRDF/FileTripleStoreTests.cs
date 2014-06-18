@@ -13,6 +13,8 @@ using VDS.RDF.Writing;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
 using System.Threading;
+using RomanticWeb.TestEntities.LargeDataset;
+using RomanticWeb.Entities;
 
 namespace RomanticWeb.Tests.dotNetRDF
 {

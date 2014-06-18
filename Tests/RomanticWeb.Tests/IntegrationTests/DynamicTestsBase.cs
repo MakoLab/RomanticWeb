@@ -183,9 +183,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [Ignore("Nested lists are not supported right now in dynamics")]
         public void Should_allow_reading_nested_rdf_lists_as_collection_of_lists()
         {
+            Assert.Inconclusive();
             // given
             LoadTestFile("RdfLists.trig");
 

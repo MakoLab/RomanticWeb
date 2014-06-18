@@ -47,7 +47,7 @@ namespace <#=ns #>.Vocabularies
         public static readonly Uri <#=GetTermName(propertyNode,namespaceManager) #>=new Uri(BaseUri+"<#=GetTermName(propertyNode,namespaceManager).Replace("@",System.String.Empty) #>");
 <#+		}
 
-		string rdf=namespaceManager.LookupNamespace("rdf");
+        string rdf=namespaceManager.LookupNamespace("rdf");
         foreach (XmlNode classNode in classes)
         {
             string typeName=StandardizeTerm((classNode.Attributes["about",rdf]!=null?classNode.Attributes["about",rdf]:classNode.Attributes["ID",rdf]).Value,namespaceManager);
@@ -106,7 +106,7 @@ namespace <#=ns #>.Vocabularies
     private string GetTermName(XmlNode node,XmlNamespaceManager namespaceManager)
     {
         string result=null;
-		string rdf=namespaceManager.LookupNamespace("rdf");
+        string rdf=namespaceManager.LookupNamespace("rdf");
         XmlAttribute attribute=node.Attributes["about",rdf];
         if (attribute==null)
         {
@@ -126,7 +126,7 @@ namespace <#=ns #>.Vocabularies
             result=new Uri(result).Segments.Last();
         }
 
-        string[] keywords=new string[] { "object","class","readonly","abstract" };
+        string[] keywords=new string[] { "object","class","readonly","abstract","private","default","as","using" };
         if (keywords.Contains(result))
         {
             result="@"+result;
@@ -169,9 +169,9 @@ namespace <#=ns #>.Vocabularies
             result=node.SelectNodes(name,namespaceManager);
         }
 
-		string rdf=namespaceManager.LookupNamespace("rdf");
+        string rdf=namespaceManager.LookupNamespace("rdf");
         return result.Cast<XmlNode>().Where(item => ((item.Attributes["about",rdf]!=null)&&(item.Attributes["about",rdf].Value.StartsWith(namespaceManager.LookupNamespace("base"))))||
-			(item.Attributes["ID",rdf]!=null));
+            (item.Attributes["ID",rdf]!=null));
     }
 
     private string StandardizeTerm(string term,XmlNamespaceManager namespaceManager)

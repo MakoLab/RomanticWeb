@@ -125,6 +125,7 @@ namespace RomanticWeb.Model
                 else if (item.StartAt>=itemIndex)
                 {
                     item.StartAt+=totalChange;
+                    item.ItemIndex=index;
                 }
             }
         }
@@ -140,6 +141,7 @@ namespace RomanticWeb.Model
                 if (!Object.Equals(item.Key,key))
                 {
                     item.StartAt-=totalChange;
+                    item.ItemIndex=index;
                 }
                 else
                 {
@@ -182,6 +184,7 @@ namespace RomanticWeb.Model
                 else if (item.StartAt>=itemIndex)
                 {
                     item.StartAt-=totalChange;
+                    item.ItemIndex=index;
                 }
             }
 

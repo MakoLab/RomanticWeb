@@ -12,6 +12,7 @@ using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests
 {
@@ -57,7 +58,9 @@ namespace RomanticWeb.Tests
             _factory = new Mock<IEntityContextFactory>();
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
-            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
+            _entityStore = new Mock<IEntityStore>();
+            _entityStore.Setup(es => es.GetObjectsForPredicate(It.IsAny<EntityId>(),Rdf.type,It.IsAny<Uri>()))
+                        .Returns(new Node[0]);
             _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _mappings.Setup(m => m.MappingFor(typeof(ITypedEntity))).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
@@ -77,7 +80,6 @@ namespace RomanticWeb.Tests
         [TearDown]
         public void Teardown()
         {
-            _entityStore.VerifyAll();
             _store.VerifyAll();
             _baseUriSelector.VerifyAll();
         }

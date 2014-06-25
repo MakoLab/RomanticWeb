@@ -101,7 +101,6 @@ namespace RomanticWeb.Tests.Linq
         {
             public TestTypedEntityMap()
             {
-                Class(Vocabularies.Rdfs.Class);
                 Collection("Types",Vocabularies.Rdf.type,typeof(ICollection<EntityId>),new EntityIdConverter());
             }
         }

@@ -60,7 +60,7 @@ namespace RomanticWeb.Tests.Stubs
 
         protected void Class(Uri clazz)
         {
-            _classes.Add(new { Uris=new[] { Vocabularies.Foaf.Person } }.ActLike<IQueryableClassMapping>());
+            _classes.Add(new { Uris = new[] { clazz }, Uri = clazz }.ActLike<IQueryableClassMapping>());
         }
 
         protected void Property(string name,Uri predicate,Type returnType,INodeConverter converter)
@@ -84,7 +84,8 @@ namespace RomanticWeb.Tests.Stubs
                 ReturnType = returnType,
                 Converter = converter,
                 EntityMapping = this,
-                StoreAs = StoreAs.SimpleCollection
+                StoreAs = StoreAs.SimpleCollection,
+                ElementConverter = converter
             }.ActLike<ICollectionMapping>());
         }
 
@@ -97,7 +98,8 @@ namespace RomanticWeb.Tests.Stubs
                 ReturnType = returnType,
                 Converter = new AsEntityConverter<IEntity>(),
                 EntityMapping = this,
-                StoreAs = StoreAs.RdfList
+                StoreAs = StoreAs.RdfList,
+                ElementConverter = new AsEntityConverter<IEntity>()
             }.ActLike<ICollectionMapping>());
         }
     }

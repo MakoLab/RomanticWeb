@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -9,8 +8,10 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb
 {
@@ -220,16 +221,17 @@ namespace RomanticWeb
                 throw new UnMappedTypeException(typeof(T));
             }
 
-            AssertEntityTypes(entity, entityMapping.Classes.ToList());
+            AssertEntityTypes(entity, entityMapping);
         }
 
-        private void AssertEntityTypes(Entity entity, IEnumerable<IClassMapping> classes)
+        private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
         {
-            var types=entity.AsEntity<ITypedEntity>().Types;
-            foreach (var classMapping in classes)
-            {
-                types.Add(classMapping.Uri);
-            }
+            var graph=GraphSelector.SelectGraph(entity.Id,entityMapping,null);
+            var currentTypes=Store.GetObjectsForPredicate(entity.Id,Rdf.type,graph);
+
+            var rdfTypes=currentTypes.Union(entityMapping.Classes.Select(c => Node.ForUri(c.Uri)));
+
+            Store.ReplacePredicateValues(entity.Id,Node.ForUri(Rdf.type),rdfTypes.ToList,graph);
         }
 
         private EntityId EnsureAbsoluteEntityId(EntityId entityId)
@@ -259,15 +261,12 @@ namespace RomanticWeb
                 mapping=new MultiMapping(types.Select(GetMapping).ToArray());                
             }
 
-            return EntityAs(entity,mapping,types, requested != typeof(ITypedEntity));
+            return EntityAs(entity,mapping,types);
         }
 
-        private dynamic EntityAs(Entity entity,IEntityMapping mapping,Type[] types,bool assertRdfClasses)
+        private dynamic EntityAs(Entity entity,IEntityMapping mapping,Type[] types)
         {
-            if (assertRdfClasses)
-            {
-                AssertEntityTypes(entity, mapping.Classes.ToList());
-            }
+            AssertEntityTypes(entity,mapping);
 
             var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
             return Impromptu.DynamicActLike(proxy,types);

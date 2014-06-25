@@ -504,19 +504,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             {
                 string replacementProtocol="http";
 
-                switch (predicate.Uri.ToString())
+                if (predicate != null && predicate.Uri != null)
                 {
-                    case "http://xmlns.com/foaf/0.1/familyName":
-                    case "http://xmlns.com/foaf/0.1/givenName":
-                        replacementProtocol="personal";
-                        break;
-                    case "http://xmlns.com/foaf/0.1/knows":
-                        replacementProtocol = "friendsOf";
-                        break;
-                    case "http://xmlns.com/foaf/0.1/homePage":
-                    case "http://xmlns.com/foaf/0.1/interest":
-                        replacementProtocol = "interestsOf";
-                        break;
+                    switch (predicate.Uri.ToString())
+                    {
+                        case "http://xmlns.com/foaf/0.1/familyName":
+                        case "http://xmlns.com/foaf/0.1/givenName":
+                            replacementProtocol="personal";
+                            break;
+                        case "http://xmlns.com/foaf/0.1/knows":
+                            replacementProtocol = "friendsOf";
+                            break;
+                        case "http://xmlns.com/foaf/0.1/homePage":
+                        case "http://xmlns.com/foaf/0.1/interest":
+                            replacementProtocol = "interestsOf";
+                            break;
+                    }
                 }
 
                 return new Uri(id.ToString().Replace("http",replacementProtocol));

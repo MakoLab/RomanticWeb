@@ -267,7 +267,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.FirstName, Is.EqualTo("Dominik"));
             Assert.That(Entity.LastName, Is.EqualTo("Kuziński"));
-            Assert.That(EntityStore.Quads, Has.Count.EqualTo(4), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads, Has.Count.EqualTo(5), "Actual triples were: {0}", SerializeStore());
             var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("personal://magi/people/Tomasz")));
             Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
         }
@@ -343,7 +343,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.Friends, Contains.Item(someEntity));
             Assert.That(Entity.Friends, Contains.Item(otherEntity));
-            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 2), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 4), "Actual triples were: {0}", SerializeStore());
         }
 
         [Test]

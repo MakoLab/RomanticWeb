@@ -365,6 +365,7 @@
     <Compile Include="Ontologies\Ontology.cs" />
     <Compile Include="Ontologies\OntologyFactory.cs" />
     <Compile Include="Ontologies\OntologyProviderBase.cs" />
+    <Compile Include="Ontologies\OntologyProviderExtensions.cs" />
     <Compile Include="Ontologies\OWL.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

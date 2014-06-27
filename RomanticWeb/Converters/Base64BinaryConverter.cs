@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Model;
+﻿using NullGuard;
+using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Converters
@@ -17,11 +18,7 @@ namespace RomanticWeb.Converters
         /// <returns><b>true</b> if the data type is Base64 binary; otherwise <b>false</b>.</returns>
         public override LiteralConversionMatch CanConvert(Node literalNode)
         {
-            var match=new LiteralConversionMatch
-                       {
-                           LiteralFormatMatches = MatchResult.DontCare
-                       };
-
+            var match=new LiteralConversionMatch { LiteralFormatMatches=MatchResult.DontCare };
             if (new AbsoluteUriComparer().Equals(literalNode.DataType,Xsd.Base64Binary))
             {
                 match.DatatypeMatches=MatchResult.ExactMatch;
@@ -30,12 +27,19 @@ namespace RomanticWeb.Converters
             return match;
         }
 
+        /// <inheritdoc />
+        [return: AllowNull]
+        public override System.Uri CanConvertBack(System.Type type)
+        {
+            return (type==typeof(byte[])?Xsd.Base64Binary:null);
+        }
+
         /// <summary>Converts given Base64 binary literal into an array of bytes.</summary>
         /// <param name="objectNode">Node with Base64 binary literal.</param>
         /// <returns>Array of bytes or null if the passed node is also null.</returns>
         protected override object ConvertInternal(Node objectNode)
         {
-            return (objectNode.Literal != null ? System.Convert.FromBase64String(objectNode.Literal) : null);
+            return (objectNode.Literal!=null?System.Convert.FromBase64String(objectNode.Literal):null);
         }
     }
 }

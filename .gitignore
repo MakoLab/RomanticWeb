@@ -1,0 +1,17 @@
+# local build artifacts
+Tools
+packages
+[Oo]bj
+[Bb]in
+
+# NuGet packaging artifacts
+NuGetBuild/**/*.dll
+NuGetBuild/**/*.pdb
+NuGetBuild/**/*.nupkg
+NuGetBuild/**/Lib
+NuGet
+
+# local solution files
+StyleCop.Cache
+*.suo
+.localhistory

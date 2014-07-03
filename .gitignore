@@ -15,3 +15,4 @@ NuGet
 StyleCop.Cache
 *.suo
 .localhistory
+*.user

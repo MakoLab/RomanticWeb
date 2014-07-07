@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Attributes;
 namespace RomanticWeb.TestEntities.Animals
 {
     [Class("life", "Plant")]
-    public interface IPlant:IEntity
+    public interface IPlant : IEntity
     {
     }
 }

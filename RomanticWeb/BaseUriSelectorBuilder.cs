@@ -36,7 +36,7 @@ namespace RomanticWeb
                     throw new ArgumentException("Base URI must be absolute", "value");
                 }
 
-                _defaultBaseUri=value;
+                _defaultBaseUri = value;
             }
         }
 

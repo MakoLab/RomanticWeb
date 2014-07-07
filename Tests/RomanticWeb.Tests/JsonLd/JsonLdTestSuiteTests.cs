@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.JsonLd;
 using RomanticWeb.Model;
@@ -18,102 +17,103 @@ namespace RomanticWeb.Tests.JsonLd
     [TestFixture]
     public class JsonLdTestSuiteTests
     {
-        private readonly string _testsRoot=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,@"JsonLd\test-suite\tests");
+        private readonly string _testsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"JsonLd\test-suite\tests");
 
         private IJsonLdProcessor _processor;
 
         [SetUp]
         public void Setup()
         {
-            _processor=new JsonLdProcessor();
+            _processor = new JsonLdProcessor();
         }
 
         [TestCaseSource("RdfToJsonTestCases")]
-        public void RDF_to_JSON_test_suite(string input,string expectedPath,JObject options)
+        public void RDF_to_JSON_test_suite(string input, string expectedPath, JObject options)
         {
             // given
-            IEnumerable<EntityQuad> quads=GetQuads(input);
-            Func<string> processDatasetFunc=() => _processor.FromRdf(quads);
-            if (options!=null)
+            IEnumerable<EntityQuad> quads = GetQuads(input);
+            Func<string> processDatasetFunc = () => _processor.FromRdf(quads);
+            if (options != null)
             {
-                if (options.Property("useRdfType")!=null)
+                if (options.Property("useRdfType") != null)
                 {
-                    processDatasetFunc=() => _processor.FromRdf(quads,userRdfType:(bool)options["useRdfType"]);
+                    processDatasetFunc = () => _processor.FromRdf(quads, userRdfType: (bool)options["useRdfType"]);
                 }
-                if (options.Property("useNativeTypes")!=null)
+
+                if (options.Property("useNativeTypes") != null)
                 {
-                    processDatasetFunc=() => _processor.FromRdf(quads,useNativeTypes:(bool)options["useNativeTypes"]);
+                    processDatasetFunc = () => _processor.FromRdf(quads, useNativeTypes: (bool)options["useNativeTypes"]);
                 }
             }
 
             // when, then
-            ExecuteTest(processDatasetFunc,expectedPath);
+            ExecuteTest(processDatasetFunc, expectedPath);
         }
 
         [TestCaseSource("ExpandTestsCases")]
-        public void Expand_test_suite(string input,string expectedPath,JObject options)
+        public void Expand_test_suite(string input, string expectedPath, JObject options)
         {
             // given
-            string inputJson=File.ReadAllText(input);
-            var jsonOptions=new JsonLdOptions() { BaseUri=new Uri("http://json-ld.org/test-suite/tests/"+System.IO.Path.GetFileName(input)) };
-            Func<string> expandTestFunc=() => _processor.Expand(inputJson,jsonOptions);
+            string inputJson = File.ReadAllText(input);
+            var jsonOptions = new JsonLdOptions() { BaseUri = new Uri("http://json-ld.org/test-suite/tests/" + System.IO.Path.GetFileName(input)) };
+            Func<string> expandTestFunc = () => _processor.Expand(inputJson, jsonOptions);
 
-            if (options!=null)
+            if (options != null)
             {
-                if (options.Property("base")!=null)
+                if (options.Property("base") != null)
                 {
-                    jsonOptions.BaseUri=new Uri((string)options["base"]);
+                    jsonOptions.BaseUri = new Uri((string)options["base"]);
                 }
 
-                if (options.Property("expandContext")!=null)
+                if (options.Property("expandContext") != null)
                 {
-                    jsonOptions.ExpandContext=File.ReadAllText(Path.Combine(_testsRoot,(string)options["expandContext"]));
+                    jsonOptions.ExpandContext = File.ReadAllText(Path.Combine(_testsRoot, (string)options["expandContext"]));
                 }
             }
 
             // when, then
-            ExecuteTest(expandTestFunc,expectedPath);
+            ExecuteTest(expandTestFunc, expectedPath);
         }
 
         [TestCaseSource("JsonToRdfTestsCases")]
-        public void JSON_to_RDF_test_suite(string input,string expectedPath,JObject options)
+        public void JSON_to_RDF_test_suite(string input, string expectedPath, JObject options)
         {
             // given
-            string inputJson=File.ReadAllText(input);
-            var jsonOptions=new JsonLdOptions() { BaseUri=new Uri("http://json-ld.org/test-suite/tests/"+System.IO.Path.GetFileName(input)) };
-            Func<IEnumerable<EntityQuad>> processTestFunc=() => _processor.ToRdf(inputJson,jsonOptions);
-            if (options!=null)
+            string inputJson = File.ReadAllText(input);
+            var jsonOptions = new JsonLdOptions() { BaseUri = new Uri("http://json-ld.org/test-suite/tests/" + System.IO.Path.GetFileName(input)) };
+            Func<IEnumerable<EntityQuad>> processTestFunc = () => _processor.ToRdf(inputJson, jsonOptions);
+            if (options != null)
             {
-                if (options.Property("produceGeneralizedRdf")!=null)
+                if (options.Property("produceGeneralizedRdf") != null)
                 {
-                    processTestFunc=() => _processor.ToRdf(inputJson,jsonOptions,produceGeneralizedRdf:(bool)options["produceGeneralizedRdf"]);
+                    processTestFunc = () => _processor.ToRdf(inputJson, jsonOptions, produceGeneralizedRdf: (bool)options["produceGeneralizedRdf"]);
                 }
             }
 
             // given
-            IEnumerable<EntityQuad> expectedStore=GetQuads(expectedPath,(options!=null)&&(options.Property("produceGeneralizedRdf")!=null)?!(bool)options["produceGeneralizedRdf"]:true);
+            IEnumerable<EntityQuad> expectedStore = GetQuads(expectedPath, (options == null) || (options.Property("produceGeneralizedRdf") == null) || !(bool)options["produceGeneralizedRdf"]);
 
             // when
-            IEnumerable<EntityQuad> actualStore=processTestFunc();
+            IEnumerable<EntityQuad> actualStore = processTestFunc();
 
             // then
-            Assert.That(actualStore,Is.EquivalentTo(expectedStore));
+            Assert.That(actualStore, Is.EquivalentTo(expectedStore));
         }
 
-        private static void ExecuteTest(Func<string> getTestResult,string expectedPath)
+        private static void ExecuteTest(Func<string> getTestResult, string expectedPath)
         {
             // given
-            dynamic expectedJson=JsonConvert.DeserializeObject(File.ReadAllText(expectedPath));
+            dynamic expectedJson = JsonConvert.DeserializeObject(File.ReadAllText(expectedPath));
 
             // when
-            dynamic actualJson=JsonConvert.DeserializeObject(getTestResult());
+            dynamic actualJson = JsonConvert.DeserializeObject(getTestResult());
 
             // then
-            LogExpectedAndActualJson(expectedJson.ToString(),actualJson.ToString());
-            Assert.That(JToken.DeepEquals(actualJson,expectedJson));
+            LogExpectedAndActualJson(expectedJson.ToString(), actualJson.ToString());
+            Assert.That(JToken.DeepEquals(actualJson, expectedJson));
         }
 
-        private static void LogExpectedAndActualJson(string expectedJson,string actualJson)
+        private static void LogExpectedAndActualJson(string expectedJson, string actualJson)
         {
             Console.WriteLine("Result JSON:");
             Console.WriteLine(actualJson);
@@ -122,92 +122,93 @@ namespace RomanticWeb.Tests.JsonLd
             Console.WriteLine(expectedJson);
         }
 
-        private static IEnumerable<TestCaseData> ReadTestManifests(string namePrefix,string manifestsPath,string rootManifestName)
+        private static IEnumerable<TestCaseData> ReadTestManifests(string namePrefix, string manifestsPath, string rootManifestName)
         {
-            var manifest=File.ReadAllText(Path.Combine(manifestsPath,rootManifestName));
-            JObject manifestJson=JObject.Parse(manifest);
+            var manifest = File.ReadAllText(Path.Combine(manifestsPath, rootManifestName));
+            JObject manifestJson = JObject.Parse(manifest);
             foreach (var testManifest in manifestJson["sequence"])
             {
-                string input=Path.Combine(manifestsPath,(string)testManifest["input"]);
-                string expect=Path.Combine(manifestsPath,(string)testManifest["expect"]);
+                string input = Path.Combine(manifestsPath, (string)testManifest["input"]);
+                string expect = Path.Combine(manifestsPath, (string)testManifest["expect"]);
 
-                yield return new TestCaseData(input,expect,testManifest["option"])
-                        .SetName(System.String.Format("{2} {0}: {1}",testManifest["@id"].ToString().Substring(3),(string)testManifest["name"],namePrefix))
+                yield return new TestCaseData(input, expect, testManifest["option"])
+                        .SetName(System.String.Format("{2} {0}: {1}", testManifest["@id"].ToString().Substring(3), (string)testManifest["name"], namePrefix))
                         .SetDescription((string)testManifest["purpose"]);
             }
         }
 
         private IEnumerable<TestCaseData> ExpandTestsCases()
         {
-            return ReadTestManifests("Expand test",_testsRoot,"expand-manifest.jsonld");
+            return ReadTestManifests("Expand test", _testsRoot, "expand-manifest.jsonld");
         }
 
         private IEnumerable<TestCaseData> RdfToJsonTestCases()
         {
-            return ReadTestManifests("RDF to JSON-LD test",_testsRoot,"fromRdf-manifest.jsonld");
+            return ReadTestManifests("RDF to JSON-LD test", _testsRoot, "fromRdf-manifest.jsonld");
         }
 
         private IEnumerable<TestCaseData> JsonToRdfTestsCases()
         {
-            return ReadTestManifests("JSON-LD to RDF test",_testsRoot,"toRdf-manifest.jsonld");
+            return ReadTestManifests("JSON-LD to RDF test", _testsRoot, "toRdf-manifest.jsonld");
         }
 
-        private IEnumerable<EntityQuad> GetQuads(string fileName,bool useNQuads=true)
+        private IEnumerable<EntityQuad> GetQuads(string fileName, bool useNQuads = true)
         {
-            var store=new TripleStore();
+            var store = new TripleStore();
             if (useNQuads)
             {
-                new NQuadsParser().Load(store,fileName);
+                new NQuadsParser().Load(store, fileName);
             }
             else
             {
-                IGraph graph=new Graph();
-                new Notation3Parser().Load(graph,fileName);
+                IGraph graph = new Graph();
+                new Notation3Parser().Load(graph, fileName);
                 store.Add(graph);
             }
 
-            IDictionary<string,string> bnodes=CreateGraphMap(store,fileName,useNQuads);
+            IDictionary<string, string> bnodes = CreateGraphMap(store, fileName, useNQuads);
 
             return from triple in store.Triples
-                   let entityId=(triple.Subject is IUriNode?new EntityId(((IUriNode)triple.Subject).Uri):new BlankId(((IBlankNode)triple.Subject).InternalID))
+                   let graphNode = (triple.Graph == null) || (triple.Graph.BaseUri == null) ? null :
+                                   (Regex.IsMatch(triple.Graph.BaseUri.AbsoluteUri, "[a-zA-Z0-9_]+://") ? Node.ForUri(triple.Graph.BaseUri) : Node.ForBlank(bnodes[triple.Graph.BaseUri.AbsoluteUri], null, null))
+                   let entityId = (triple.Subject is IUriNode ? new EntityId(((IUriNode)triple.Subject).Uri) : new BlankId(((IBlankNode)triple.Subject).InternalID))
                    select
                        new EntityQuad(
                        entityId,
                        WrapNode(triple.Subject),
                        WrapNode(triple.Predicate),
                        WrapNode(triple.Object),
-                       (triple.Graph==null)||(triple.Graph.BaseUri==null)?null:
-                        (Regex.IsMatch(triple.Graph.BaseUri.AbsoluteUri,"[a-zA-Z0-9_]+://")?Node.ForUri(triple.Graph.BaseUri):
-                            Node.ForBlank(bnodes[triple.Graph.BaseUri.AbsoluteUri],null,null)));
+                       graphNode);
         }
 
         /// <summary>Creates a map graph names between store and the expected file.</summary>
         /// <remarks>This is due to fact that dotNetRDF expects an <see cref="Uri" /> as named graph, while the graph name can be also a blank node identifier.</remarks>
-        private IDictionary<string,string> CreateGraphMap(ITripleStore store,string fileName,bool useNQuads=true)
+        private IDictionary<string, string> CreateGraphMap(ITripleStore store, string fileName, bool useNQuads = true)
         {
-            IDictionary<string,string> result=new Dictionary<string,string>();
-            MemoryStream buffer=new MemoryStream(1024);
+            IDictionary<string, string> result = new Dictionary<string, string>();
+            MemoryStream buffer = new MemoryStream(1024);
             if (useNQuads)
             {
-                new VDS.RDF.Writing.NQuadsWriter().Save(store,new StreamWriter(buffer));
+                new VDS.RDF.Writing.NQuadsWriter().Save(store, new StreamWriter(buffer));
             }
             else
             {
-                new VDS.RDF.Writing.Notation3Writer().Save(store.Graphs.First(),new StreamWriter(buffer));
+                new VDS.RDF.Writing.Notation3Writer().Save(store.Graphs.First(), new StreamWriter(buffer));
             }
 
-            MatchCollection matches=Regex.Matches(System.Text.UTF8Encoding.UTF8.GetString(buffer.ToArray()),"\\<(?<bnode>nquads\\:bnode\\:[0-9]+)\\>");
-            FileStream fileStream=null;
+            MatchCollection matches = Regex.Matches(System.Text.UTF8Encoding.UTF8.GetString(buffer.ToArray()), "\\<(?<bnode>nquads\\:bnode\\:[0-9]+)\\>");
+            FileStream fileStream = null;
             try
             {
-                fileStream=File.Open(fileName,FileMode.Open,FileAccess.Read);
-                int index=0;
-                foreach (Match match in Regex.Matches(new StreamReader(fileStream).ReadToEnd(),"\\<[^>]+\\> \\<[^>]+\\> ((\\<[^>]+\\>)|(\"[^\"]+\")) _:(?<bnode>[a-zA-Z0-9]+) \\."))
+                fileStream = File.Open(fileName, FileMode.Open, FileAccess.Read);
+                int index = 0;
+                foreach (Match match in Regex.Matches(new StreamReader(fileStream).ReadToEnd(), "\\<[^>]+\\> \\<[^>]+\\> ((\\<[^>]+\\>)|(\"[^\"]+\")) _:(?<bnode>[a-zA-Z0-9]+) \\."))
                 {
                     if (!result.ContainsKey(matches[index].Groups["bnode"].Value))
                     {
-                        result[matches[index].Groups["bnode"].Value]=match.Groups["bnode"].Value;
+                        result[matches[index].Groups["bnode"].Value] = match.Groups["bnode"].Value;
                     }
+
                     index++;
                 }
             }
@@ -216,7 +217,7 @@ namespace RomanticWeb.Tests.JsonLd
             }
             finally
             {
-                if (fileStream!=null)
+                if (fileStream != null)
                 {
                     fileStream.Close();
                 }
@@ -227,35 +228,35 @@ namespace RomanticWeb.Tests.JsonLd
 
         private Node WrapNode(INode node)
         {
-            var literal=node as ILiteralNode;
-            if (literal!=null)
+            var literal = node as ILiteralNode;
+            if (literal != null)
             {
-                if (literal.DataType!=null)
+                if (literal.DataType != null)
                 {
-                    return Node.ForLiteral(literal.Value,literal.DataType);
+                    return Node.ForLiteral(literal.Value, literal.DataType);
                 }
 
-                if (literal.Language!=null)
+                if (literal.Language != null)
                 {
-                    return Node.ForLiteral(literal.Value,literal.Language);
+                    return Node.ForLiteral(literal.Value, literal.Language);
                 }
 
                 return Node.ForLiteral(literal.Value);
             }
 
-            var uriNode=node as IUriNode;
-            if (uriNode!=null)
+            var uriNode = node as IUriNode;
+            if (uriNode != null)
             {
                 return Node.ForUri(uriNode.Uri);
             }
 
-            var blankNode=node as IBlankNode;
-            if (blankNode!=null)
+            var blankNode = node as IBlankNode;
+            if (blankNode != null)
             {
-                return Node.ForBlank(blankNode.InternalID,null,null);
+                return Node.ForBlank(blankNode.InternalID, null, null);
             }
 
-            throw new ArgumentException("The node was neither URI, literal nor blank","node");
+            throw new ArgumentException("The node was neither URI, literal nor blank", "node");
         }
     }
 }

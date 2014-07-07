@@ -5,7 +5,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
     /// <summary>
     /// Configuration for a dotNetRDF configuration file
     /// </summary>
-    public class ConfigurationFileElement:ConfigurationElement
+    public class ConfigurationFileElement : ConfigurationElement
     {
         private const string NameAttributeName = "name";
         private const string PathAttributeName = "path";

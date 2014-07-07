@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// Base class for mapping providers, which return a RDF term mapping
     /// </summary>
-    public abstract class TermMappingProviderBase:ITermMappingProvider
+    public abstract class TermMappingProviderBase : ITermMappingProvider
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TermMappingProviderBase"/> class.
@@ -16,7 +16,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="termUri">The term URI.</param>
         protected TermMappingProviderBase(Uri termUri)
         {
-            ((ITermMappingProvider)this).GetTerm=provider => termUri;
+            ((ITermMappingProvider)this).GetTerm = provider => termUri;
         }
 
         /// <summary>
@@ -24,9 +24,9 @@ namespace RomanticWeb.Mapping.Providers
         /// </summary>
         /// <param name="namespacePrefix">The namespace prefix.</param>
         /// <param name="term">The term.</param>
-        protected TermMappingProviderBase(string namespacePrefix,string term)
+        protected TermMappingProviderBase(string namespacePrefix, string term)
         {
-            ((ITermMappingProvider)this).GetTerm=provider => GetTermUri(provider,namespacePrefix,term);
+            ((ITermMappingProvider)this).GetTerm = provider => GetTermUri(provider, namespacePrefix, term);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Providers
         {
         }
 
-        Func<IOntologyProvider,Uri> ITermMappingProvider.GetTerm { get; set; }
+        Func<IOntologyProvider, Uri> ITermMappingProvider.GetTerm { get; set; }
 
         /// <summary>
         /// Accepts the specified visitor.
@@ -45,13 +45,13 @@ namespace RomanticWeb.Mapping.Providers
         public abstract void Accept(IMappingProviderVisitor mappingProviderVisitor);
 
         // TODO: Consider a mechanism of ignoring missing ontology providers. Use case: partial publications, i.e. updated assembly with new mappings, but not published prefix mapping.
-        private static Uri GetTermUri(IOntologyProvider ontologyProvider,string namespacePrefix,string termName)
+        private static Uri GetTermUri(IOntologyProvider ontologyProvider, string namespacePrefix, string termName)
         {
-            var resolvedUri=ontologyProvider.ResolveUri(namespacePrefix,termName);
+            var resolvedUri = ontologyProvider.ResolveUri(namespacePrefix, termName);
 
-            if (resolvedUri==null)
+            if (resolvedUri == null)
             {
-                var message=string.Format("Cannot resolve QName {0}:{1}",namespacePrefix,termName);
+                var message = string.Format("Cannot resolve QName {0}:{1}", namespacePrefix, termName);
                 LogTo.Fatal(message);
                 throw new MappingException(message);
             }

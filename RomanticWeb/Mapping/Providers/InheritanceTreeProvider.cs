@@ -11,10 +11,10 @@ namespace RomanticWeb.Mapping.Providers
         private readonly IDictionary<Type, IEntityMappingProvider> _parentProviders;
         private ICollection<IPropertyMappingProvider> _propertyProviders;
 
-        public InheritanceTreeProvider(IEntityMappingProvider mainProvider,IEnumerable<IEntityMappingProvider> parentProviders)
+        public InheritanceTreeProvider(IEntityMappingProvider mainProvider, IEnumerable<IEntityMappingProvider> parentProviders)
         {
-            _mainProvider=mainProvider;
-            _parentProviders=parentProviders.ToDictionary(mp => mp.EntityType,mp => mp);
+            _mainProvider = mainProvider;
+            _parentProviders = parentProviders.ToDictionary(mp => mp.EntityType, mp => mp);
         }
 
         public override Type EntityType
@@ -37,9 +37,9 @@ namespace RomanticWeb.Mapping.Providers
         {
             get
             {
-                if (_propertyProviders==null)
+                if (_propertyProviders == null)
                 {
-                    _propertyProviders=CombineProperties();
+                    _propertyProviders = CombineProperties();
                 }
 
                 return _propertyProviders;
@@ -48,30 +48,30 @@ namespace RomanticWeb.Mapping.Providers
 
         private ICollection<IPropertyMappingProvider> CombineProperties()
         {
-            var providers=new Dictionary<string,IPropertyMappingProvider>();
+            var providers = new Dictionary<string, IPropertyMappingProvider>();
             foreach (var property in _mainProvider.Properties)
             {
                 providers[property.PropertyInfo.Name] = property;
             }
 
-            var parents=new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
+            var parents = new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
             while (parents.Any())
             {
-                var iface=parents.Dequeue();
+                var iface = parents.Dequeue();
                 foreach (var immediateParent in iface.GetImmediateParents())
                 {
                     parents.Enqueue(immediateParent);
-                    if (immediateParent.IsGenericTypeDefinition&&_parentProviders.ContainsKey(immediateParent))
+                    if (immediateParent.IsGenericTypeDefinition && _parentProviders.ContainsKey(immediateParent))
                     {
-                        var parentMapping=_parentProviders[immediateParent];
-                        _parentProviders[iface]=new ClosedGenericEntityMappingProvider(
-                            parentMapping,iface.GetGenericArguments());
+                        var parentMapping = _parentProviders[immediateParent];
+                        _parentProviders[iface] = new ClosedGenericEntityMappingProvider(
+                            parentMapping, iface.GetGenericArguments());
                     }
                 }
 
                 if (_parentProviders.ContainsKey(iface))
                 {
-                    var provider=_parentProviders[iface];
+                    var provider = _parentProviders[iface];
                     foreach (var property in provider.Properties)
                     {
                         if (!providers.ContainsKey(property.PropertyInfo.Name))

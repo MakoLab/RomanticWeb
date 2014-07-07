@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Validation
     /// <summary>
     /// A visitor, which executes validation logic on mapping providers
     /// </summary>
-    public class MappingProvidersValidator:Visitors.IMappingProviderVisitor
+    public class MappingProvidersValidator : Visitors.IMappingProviderVisitor
     {
         private Type _currentType;
 
@@ -34,8 +34,8 @@ namespace RomanticWeb.Mapping.Validation
         public void Visit(IDictionaryMappingProvider dictionaryMappingProvider)
         {
             Visit(dictionaryMappingProvider as IPropertyMappingProvider);
-            AssertTermMapped(dictionaryMappingProvider.Key,string.Format("{0}.Key",dictionaryMappingProvider));
-            AssertTermMapped(dictionaryMappingProvider.Value,string.Format("{0}.Value",dictionaryMappingProvider));
+            AssertTermMapped(dictionaryMappingProvider.Key, string.Format("{0}.Key", dictionaryMappingProvider));
+            AssertTermMapped(dictionaryMappingProvider.Value, string.Format("{0}.Value", dictionaryMappingProvider));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace RomanticWeb.Mapping.Validation
         /// </summary>
         public void Visit(IEntityMappingProvider entityMappingProvider)
         {
-            _currentType=entityMappingProvider.EntityType;
+            _currentType = entityMappingProvider.EntityType;
         }
 
         private void AssertConverter(IPropertyMappingProvider propertyMappingProvider)
@@ -62,11 +62,11 @@ namespace RomanticWeb.Mapping.Validation
             }
         }
 
-        private void AssertTermMapped(ITermMappingProvider term,string errorString=null)
+        private void AssertTermMapped(ITermMappingProvider term, string errorString = null)
         {
             if (term.GetTerm == null)
             {
-                LogTo.Warn("Entity {0}: missing term for {1}",_currentType,errorString??term.ToString());
+                LogTo.Warn("Entity {0}: missing term for {1}", _currentType, errorString ?? term.ToString());
             }
         }
     }

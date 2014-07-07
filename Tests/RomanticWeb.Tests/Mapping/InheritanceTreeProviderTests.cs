@@ -22,27 +22,27 @@ namespace RomanticWeb.Tests.Mapping
         [SetUp]
         public void Setup()
         {
-            _ontology=new Mock<IOntologyProvider>().Object;
+            _ontology = new Mock<IOntologyProvider>().Object;
         }
 
         [Test]
         public void Should_ignore_overriden_parent_properties()
         {
             // given
-            PropertyInfo property=new TestPropertyInfo(GetType());
-            var child=new
+            PropertyInfo property = new TestPropertyInfo(GetType());
+            var child = new
                           {
-                              EntityType=typeof(IDerivedLevel2),
-                              Properties=CreateProperty(property,new Uri("urn:in:child")).AsEnumerable(),
+                              EntityType = typeof(IDerivedLevel2),
+                              Properties = CreateProperty(property, new Uri("urn:in:child")).AsEnumerable(),
                           }.ActLike<IEntityMappingProvider>();
-            var parent=new
+            var parent = new
                            {
-                               EntityType=typeof(IDerived),
-                               Properties=CreateProperty(property,new Uri("urn:in:parent")).AsEnumerable()
+                               EntityType = typeof(IDerived),
+                               Properties = CreateProperty(property, new Uri("urn:in:parent")).AsEnumerable()
                            }.ActLike<IEntityMappingProvider>();
 
             // when
-            var provider=new InheritanceTreeProvider(child,parent.AsEnumerable());
+            var provider = new InheritanceTreeProvider(child, parent.AsEnumerable());
 
             // then
             provider.Properties.Should().HaveCount(1);
@@ -53,8 +53,8 @@ namespace RomanticWeb.Tests.Mapping
         {
             return new
                        {
-                           PropertyInfo=property,
-                           GetTerm=new Func<IOntologyProvider,Uri>(provider => uri)
+                           PropertyInfo = property,
+                           GetTerm = new Func<IOntologyProvider, Uri>(provider => uri)
                        }.ActLike<IPropertyMappingProvider>();
         }
     }

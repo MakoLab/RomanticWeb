@@ -3,12 +3,13 @@
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates binary operators.</summary>
-    internal class BinaryOperatorNavigator:QueryComponentNavigatorBase
+    internal class BinaryOperatorNavigator : QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated binary operator.</summary>
         /// <param name="binaryOperator">Nagivated binary operator.</param>
-        internal BinaryOperatorNavigator(BinaryOperator binaryOperator):base(binaryOperator)
+        internal BinaryOperatorNavigator(BinaryOperator binaryOperator)
+            : base(binaryOperator)
         {
         }
         #endregion
@@ -24,7 +25,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component can be added, otherwise <b>false</b>.</returns>
         public override bool CanAddComponent(IQueryComponent component)
         {
-            return (component is IExpression)&&((NavigatedComponent.LeftOperand==null)||(NavigatedComponent.RightOperand==null));
+            return (component is IExpression) && ((NavigatedComponent.LeftOperand == null) || this.NavigatedComponent.RightOperand == null);
         }
 
         /// <summary>Determines if the given component contains another component as a child.</summary>
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return ((NavigatedComponent.LeftOperand==component)||(NavigatedComponent.RightOperand==component));
+            return NavigatedComponent.LeftOperand == component || NavigatedComponent.RightOperand == component;
         }
 
         /// <summary>Adds component as a child of another component.</summary>
@@ -41,13 +42,13 @@ namespace RomanticWeb.Linq.Model.Navigators
         {
             if (component is IExpression)
             {
-                if (NavigatedComponent.LeftOperand==null)
+                if (NavigatedComponent.LeftOperand == null)
                 {
-                    NavigatedComponent.LeftOperand=(IExpression)component;
+                    NavigatedComponent.LeftOperand = (IExpression)component;
                 }
-                else if (NavigatedComponent.RightOperand==null)
+                else if (NavigatedComponent.RightOperand == null)
                 {
-                    NavigatedComponent.RightOperand=(IExpression)component;
+                    NavigatedComponent.RightOperand = (IExpression)component;
                 }
             }
         }
@@ -55,17 +56,17 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        public override void ReplaceComponent(IQueryComponent component, IQueryComponent replacement)
         {
-            if ((component is IExpression)&&(replacement is IExpression))
+            if ((component is IExpression) && (replacement is IExpression))
             {
-                if (NavigatedComponent.LeftOperand==(IExpression)component)
+                if (NavigatedComponent.LeftOperand == (IExpression)component)
                 {
-                    NavigatedComponent.LeftOperand=(IExpression)replacement;
+                    NavigatedComponent.LeftOperand = (IExpression)replacement;
                 }
-                else if (NavigatedComponent.RightOperand==(IExpression)component)
+                else if (NavigatedComponent.RightOperand == (IExpression)component)
                 {
-                    NavigatedComponent.RightOperand=(IExpression)replacement;
+                    NavigatedComponent.RightOperand = (IExpression)replacement;
                 }
             }
         }
@@ -74,13 +75,13 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()
         {
-            List<IQueryComponent> result=new List<IQueryComponent>();
-            if (NavigatedComponent.LeftOperand!=null)
+            List<IQueryComponent> result = new List<IQueryComponent>();
+            if (NavigatedComponent.LeftOperand != null)
             {
                 result.Add(NavigatedComponent.LeftOperand);
             }
 
-            if (NavigatedComponent.RightOperand!=null)
+            if (NavigatedComponent.RightOperand != null)
             {
                 result.Add(NavigatedComponent.RightOperand);
             }

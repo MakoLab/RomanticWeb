@@ -4,11 +4,11 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public interface IGenericParent<T>:IEntity
+    public interface IGenericParent<T> : IEntity
     {
         [Property("urn:open:mapping1")]
         T MappedProperty1 { get; }
-        
+
         [Property("urn:open:mapping2")]
         T MappedProperty2 { get; }
 
@@ -16,7 +16,7 @@ namespace RomanticWeb.TestEntities.MixedMappings
 
         [Property("urn:open:mapping1")]
         ICollection<T> GenericProperty { get; }
-        
+
         string NonGenericProperty { get; }
     }
 }

@@ -6,15 +6,15 @@ namespace RomanticWeb.Tests.Helpers
 {
     public static class TripleExtentions
     {
-         public static EntityQuad ToEntityQuad(this VDS.RDF.Triple triple,EntityId id)
-         {
-             return new EntityQuad(
-                 id,
-                 triple.Subject.ToNode(id),
-                 triple.Predicate.ToNode(id),
-                 triple.Object.ToNode(id),
-                 Node.ForUri(triple.GraphUri));
-         }
+        public static EntityQuad ToEntityQuad(this VDS.RDF.Triple triple, EntityId id)
+        {
+            return new EntityQuad(
+                id,
+                triple.Subject.ToNode(id),
+                triple.Predicate.ToNode(id),
+                triple.Object.ToNode(id),
+                Node.ForUri(triple.GraphUri));
+        }
 
         private static Node ToNode(this INode node, EntityId id)
         {
@@ -25,19 +25,19 @@ namespace RomanticWeb.Tests.Helpers
 
             if (node is IBlankNode)
             {
-                return Node.ForBlank(((IBlankNode)node).InternalID,id,node.GraphUri);
+                return Node.ForBlank(((IBlankNode)node).InternalID, id, node.GraphUri);
             }
 
-            var literal=(ILiteralNode)node;
+            var literal = (ILiteralNode)node;
 
-            if (literal.DataType!=null)
+            if (literal.DataType != null)
             {
-                return Node.ForLiteral(literal.Value,literal.DataType);
+                return Node.ForLiteral(literal.Value, literal.DataType);
             }
-            
-            if(literal.Language!=null)
+
+            if (literal.Language != null)
             {
-                return Node.ForLiteral(literal.Value,literal.Language);
+                return Node.ForLiteral(literal.Value, literal.Language);
             }
 
             return Node.ForLiteral(literal.Value);

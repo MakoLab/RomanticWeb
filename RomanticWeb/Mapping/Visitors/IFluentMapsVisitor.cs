@@ -32,7 +32,7 @@ namespace RomanticWeb.Mapping.Visitors
         /// <param name="dictionaryMap">The dictionary map.</param>
         /// <param name="key">The key property mapping provider.</param>
         /// <param name="value">The value property mapping provider.</param>
-        IPropertyMappingProvider Visit(DictionaryMap dictionaryMap,ITermMappingProvider key,ITermMappingProvider value);
+        IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value);
 
         /// <summary>
         /// Visits the specified collection map.

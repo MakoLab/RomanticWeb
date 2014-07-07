@@ -7,7 +7,7 @@ using VDS.RDF;
 namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
     [TestFixture]
-    public class MappingTests:MappingTestsBase
+    public class MappingTests : MappingTestsBase
     {
         private TripleStore _store;
 
@@ -15,9 +15,9 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         {
             get
             {
-                if (_store==null)
+                if (_store == null)
                 {
-                    _store=new TripleStore();
+                    _store = new TripleStore();
                 }
 
                 return _store;
@@ -37,7 +37,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
 
         protected override void ChildTeardown()
         {
-            _store=null;
+            _store = null;
         }
     }
 }

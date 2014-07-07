@@ -19,10 +19,10 @@ namespace RomanticWeb
     /// Creates a new instance of <see cref="EntityContext"/>
     /// </summary>
     [NullGuard(ValidationFlags.All)]
-    public class EntityContext:IEntityContext
+    public class EntityContext : IEntityContext
     {
         #region Fields
-        private static readonly EntityMapping EntityMapping=new EntityMapping(typeof(IEntity));
+        private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
         private readonly IEntityContextFactory _factory;
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
@@ -32,7 +32,7 @@ namespace RomanticWeb
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
 
-        private IBlankNodeIdGenerator _blankIdGenerator=new DefaultBlankNodeIdGenerator();
+        private IBlankNodeIdGenerator _blankIdGenerator = new DefaultBlankNodeIdGenerator();
         #endregion
 
         #region Constructors
@@ -47,16 +47,16 @@ namespace RomanticWeb
             IRdfTypeCache typeCache)
         {
             LogTo.Info("Creating entity context");
-            _factory=factory;
-            _entityStore=entityStore;
-            _entitySource=entitySource;
-            _baseUriSelector=baseUriSelector;
-            _mappings=mappings;
-            _mappingContext=mappingContext;
-            GraphSelector=namedGraphSelector;
-            _typeCache=typeCache;
-            _transformerCatalog=new ResultTransformerCatalog();
-            EntityCache=new InMemoryEntityCache();
+            _factory = factory;
+            _entityStore = entityStore;
+            _entitySource = entitySource;
+            _baseUriSelector = baseUriSelector;
+            _mappings = mappings;
+            _mappingContext = mappingContext;
+            GraphSelector = namedGraphSelector;
+            _typeCache = typeCache;
+            _transformerCatalog = new ResultTransformerCatalog();
+            EntityCache = new InMemoryEntityCache();
         }
         #endregion
 
@@ -100,19 +100,19 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<IEntity>(this,_entitySource,_mappings,_baseUriSelector);
+            return new EntityQueryable<IEntity>(this, _entitySource, _mappings, _baseUriSelector);
         }
 
         /// <inheritdoc />
-        public IQueryable<T> AsQueryable<T>() where T:class,IEntity
+        public IQueryable<T> AsQueryable<T>() where T : class, IEntity
         {
-            return new EntityQueryable<T>(this,_entitySource,_mappings,_baseUriSelector);
+            return new EntityQueryable<T>(this, _entitySource, _mappings, _baseUriSelector);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
         /// <param name="entityId">IRI of the entity to be loaded.</param>
         /// <returns>Loaded entity.</returns>
-        public T Load<T>(EntityId entityId) where T:class,IEntity
+        public T Load<T>(EntityId entityId) where T : class, IEntity
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Loading entity {0}", entityId);
@@ -120,14 +120,14 @@ namespace RomanticWeb
         }
 
         /// <inheritdoc />
-        public T Create<T>(EntityId entityId) where T:class,IEntity
+        public T Create<T>(EntityId entityId) where T : class, IEntity
         {
-            if ((typeof(T)==typeof(IEntity))||(typeof(T)==typeof(Entity)))
+            if ((typeof(T) == typeof(IEntity)) || (typeof(T) == typeof(Entity)))
             {
                 return (T)(IEntity)CreateInternal(entityId, true);
             }
 
-            var entity=CreateInternal(entityId,true);
+            var entity = CreateInternal(entityId, true);
             AssertEntityTypes<T>(entity);
             return EntityAs<T>(entity);
         }
@@ -143,14 +143,15 @@ namespace RomanticWeb
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
-            Delete(entityId,DeleteBehaviours.Default);
+            Delete(entityId, DeleteBehaviours.Default);
         }
 
-        public void Delete(EntityId entityId,DeleteBehaviours deleteBehaviour)
+        /// <inheritdoc />
+        public void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour)
         {
-            entityId=EnsureAbsoluteEntityId(entityId);
-            LogTo.Info("Deleting entity {0}",entityId);
-            _entityStore.Delete(entityId,deleteBehaviour);
+            entityId = EnsureAbsoluteEntityId(entityId);
+            LogTo.Info("Deleting entity {0}", entityId);
+            _entityStore.Delete(entityId, deleteBehaviour);
         }
 
         void IDisposable.Dispose()
@@ -162,15 +163,15 @@ namespace RomanticWeb
         /// <param name="entity">Entity to be initialized</param>
         public void InitializeEnitity(IEntity entity)
         {
-            LogTo.Debug("Initializing entity {0}",entity.Id);
-            _entitySource.LoadEntity(Store,entity.Id);
+            LogTo.Debug("Initializing entity {0}", entity.Id);
+            _entitySource.LoadEntity(Store, entity.Id);
         }
 
         /// <inheritdoc />
-        public T EntityAs<T>(IEntity entity) where T:class,IEntity
+        public T EntityAs<T>(IEntity entity) where T : class, IEntity
         {
-            var entityTypes=_typeCache.GetMostDerivedMappedTypes(entity,typeof(T));
-            return EntityAs((Entity)entity,typeof(T),entityTypes.ToArray());
+            var entityTypes = _typeCache.GetMostDerivedMappedTypes(entity, typeof(T));
+            return EntityAs((Entity)entity, typeof(T), entityTypes.ToArray());
         }
 
         /// <inheritdoc />
@@ -188,18 +189,18 @@ namespace RomanticWeb
             return CreateInternal(entityId, entityId is BlankId);
         }
 
-        private Entity CreateInternal(EntityId entityId,bool markAsInitialized)
+        private Entity CreateInternal(EntityId entityId, bool markAsInitialized)
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             if (!EntityCache.HasEntity(entityId))
             {
                 LogTo.Info("Creating entity {0}", entityId);
-                var entity=new Entity(entityId,this);
+                var entity = new Entity(entityId, this);
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor=new OntologyAccessor(entity,ontology,TransformerCatalog);
-                    entity[ontology.Prefix]=ontologyAccessor;
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, TransformerCatalog);
+                    entity[ontology.Prefix] = ontologyAccessor;
                 }
 
                 if (markAsInitialized)
@@ -215,8 +216,8 @@ namespace RomanticWeb
 
         private void AssertEntityTypes<T>(Entity entity)
         {
-            var entityMapping=_mappings.MappingFor<T>();
-            if (entityMapping==null)
+            var entityMapping = _mappings.MappingFor<T>();
+            if (entityMapping == null)
             {
                 throw new UnMappedTypeException(typeof(T));
             }
@@ -226,61 +227,61 @@ namespace RomanticWeb
 
         private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
         {
-            var graph=GraphSelector.SelectGraph(entity.Id,entityMapping,null);
-            var currentTypes=Store.GetObjectsForPredicate(entity.Id,Rdf.type,graph);
+            var graph = GraphSelector.SelectGraph(entity.Id, entityMapping, null);
+            var currentTypes = Store.GetObjectsForPredicate(entity.Id, Rdf.type, graph);
 
-            var rdfTypes=currentTypes.Union(entityMapping.Classes.Select(c => Node.ForUri(c.Uri)));
+            var rdfTypes = currentTypes.Union(entityMapping.Classes.Select(c => Node.ForUri(c.Uri)));
 
-            Store.ReplacePredicateValues(entity.Id,Node.ForUri(Rdf.type),rdfTypes.ToList,graph);
+            Store.ReplacePredicateValues(entity.Id, Node.ForUri(Rdf.type), rdfTypes.ToList, graph);
         }
 
         private EntityId EnsureAbsoluteEntityId(EntityId entityId)
         {
             if (!entityId.Uri.IsAbsoluteUri)
             {
-                entityId=entityId.MakeAbsolute(_baseUriSelector.SelectBaseUri(entityId));
+                entityId = entityId.MakeAbsolute(_baseUriSelector.SelectBaseUri(entityId));
             }
 
             return entityId;
         }
 
-        private dynamic EntityAs(Entity entity,Type requested,Type[] types)
+        private dynamic EntityAs(Entity entity, Type requested, Type[] types)
         {
             IEntityMapping mapping;
-            if (types.Length==1)
+            if (types.Length == 1)
             {
-                mapping=GetMapping(types[0]);
+                mapping = GetMapping(types[0]);
             }
-            else if (types.Length==0)
+            else if (types.Length == 0)
             {
-                types=new[] { requested };
-                mapping=GetMapping(requested);
+                types = new[] { requested };
+                mapping = GetMapping(requested);
             }
             else
             {
-                mapping=new MultiMapping(types.Select(GetMapping).ToArray());                
+                mapping = new MultiMapping(types.Select(GetMapping).ToArray());
             }
 
-            return EntityAs(entity,mapping,types);
+            return EntityAs(entity, mapping, types);
         }
 
-        private dynamic EntityAs(Entity entity,IEntityMapping mapping,Type[] types)
+        private dynamic EntityAs(Entity entity, IEntityMapping mapping, Type[] types)
         {
-            AssertEntityTypes(entity,mapping);
+            AssertEntityTypes(entity, mapping);
 
-            var proxy=new EntityProxy(entity,mapping,TransformerCatalog);
-            return Impromptu.DynamicActLike(proxy,types);
+            var proxy = new EntityProxy(entity, mapping, TransformerCatalog);
+            return Impromptu.DynamicActLike(proxy, types);
         }
 
         private IEntityMapping GetMapping(Type type)
         {
-            if (type==typeof(IEntity))
+            if (type == typeof(IEntity))
             {
                 return EntityMapping;
             }
 
-            var mapping=_mappings.MappingFor(type);
-            if (mapping==null)
+            var mapping = _mappings.MappingFor(type);
+            if (mapping == null)
             {
                 throw new UnMappedTypeException(type);
             }

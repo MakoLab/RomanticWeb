@@ -13,7 +13,7 @@ namespace RomanticWeb.Mapping.Sources
         public ClosedGenericEntityMappingProvider(IEntityMappingProvider openGenericProvider, params Type[] typeArguments)
         {
             _closedGenericEntityType = openGenericProvider.EntityType.MakeGenericType(typeArguments);
-            _collector=new OpenGenericEntityMappingCollector(typeArguments);
+            _collector = new OpenGenericEntityMappingCollector(typeArguments);
             openGenericProvider.Accept(_collector);
         }
 

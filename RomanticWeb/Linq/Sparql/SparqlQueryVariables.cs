@@ -15,14 +15,14 @@ namespace RomanticWeb.Linq.Sparql
         private readonly string _metaGraph;
         private readonly string _scalar;
 
-        internal SparqlQueryVariables(string entity,string subject,string predicate,string o,string metaGraph,string scalar)
+        internal SparqlQueryVariables(string entity, string subject, string predicate, string o, string metaGraph, string scalar)
         {
-            _entity=entity;
-            _subject=subject;
-            _predicate=predicate;
-            _object=o;
-            _metaGraph=metaGraph;
-            _scalar=scalar;
+            _entity = entity;
+            _subject = subject;
+            _predicate = predicate;
+            _object = o;
+            _metaGraph = metaGraph;
+            _scalar = scalar;
         }
 
         /// <summary>

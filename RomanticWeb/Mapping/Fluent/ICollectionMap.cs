@@ -17,6 +17,6 @@ namespace RomanticWeb.Mapping.Fluent
         StorageStrategyPart StoreAs { get; }
 
         /// <summary>Sets the converter type for the collection's elements.</summary>
-        ICollectionMap ConvertElementsWith<TConverter>() where TConverter:INodeConverter;
+        ICollectionMap ConvertElementsWith<TConverter>() where TConverter : INodeConverter;
     }
 }

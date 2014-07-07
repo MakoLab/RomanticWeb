@@ -6,9 +6,9 @@ namespace RomanticWeb
     /// <summary>
     /// Basic in-memory cache
     /// </summary>
-    internal class DictionaryCache:ICache
+    internal class DictionaryCache : ICache
     {
-        private readonly IDictionary<string,object> _dict=new ConcurrentDictionary<string,object>(); 
+        private readonly IDictionary<string, object> _dict = new ConcurrentDictionary<string, object>();
 
         public bool Contains(string key)
         {
@@ -20,9 +20,9 @@ namespace RomanticWeb
             return (T)_dict[key];
         }
 
-        public void Store(string key,object data)
+        public void Store(string key, object data)
         {
-            _dict[key]=data;
+            _dict[key] = data;
         }
     }
 }

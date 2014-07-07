@@ -11,27 +11,27 @@ namespace RomanticWeb.Mapping
     /// <summary>Provides useful mappings repository extension methods.</summary>
     public static class Extensions
     {
-        private static readonly Type EntityType=typeof(IEntity);
-        private static readonly Type ObjectType=typeof(object);
+        private static readonly Type EntityType = typeof(IEntity);
+        private static readonly Type ObjectType = typeof(object);
 
         /// <summary>Searches for class mappings.</summary>
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <param name="type">Type of entity.</param>
         /// <returns>Class mapping or null.</returns>
-        public static IEnumerable<Uri> FindMappedClasses(this IMappingsRepository mappingsRepository,Type type)
+        public static IEnumerable<Uri> FindMappedClasses(this IMappingsRepository mappingsRepository, Type type)
         {
-            IEnumerable<Uri> result=new Uri[0];
-            if ((mappingsRepository!=null)&&(type!=null))
+            IEnumerable<Uri> result = new Uri[0];
+            if ((mappingsRepository != null) && (type != null))
             {
-                IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(type);
-                if (entityMapping==null)
+                IEntityMapping entityMapping = mappingsRepository.FindEntityMapping(type);
+                if (entityMapping == null)
                 {
-                    entityMapping=mappingsRepository.FindEntityMapping(type.FindEntityType());
+                    entityMapping = mappingsRepository.FindEntityMapping(type.FindEntityType());
                 }
 
-                if (entityMapping!=null)
+                if (entityMapping != null)
                 {
-                    result=entityMapping.Classes.OfType<IQueryableClassMapping>().SelectMany(cm=>cm.Uris).Distinct(AbsoluteUriComparer.Default);
+                    result = entityMapping.Classes.OfType<IQueryableClassMapping>().SelectMany(cm => cm.Uris).Distinct(AbsoluteUriComparer.Default);
                 }
             }
 
@@ -53,9 +53,9 @@ namespace RomanticWeb.Mapping
         /// <param name="propertyName">Property name to be searched for.</param>
         /// <returns>Property mapping or null.</returns>
         [return: AllowNull]
-        public static IPropertyMapping FindPropertyMapping<T>(this IMappingsRepository mappingsRepository,string propertyName) where T:IEntity
+        public static IPropertyMapping FindPropertyMapping<T>(this IMappingsRepository mappingsRepository, string propertyName) where T : IEntity
         {
-            return mappingsRepository.FindPropertyMapping(typeof(T),propertyName);
+            return mappingsRepository.FindPropertyMapping(typeof(T), propertyName);
         }
 
         /// <summary>Searches for property mappings.</summary>
@@ -63,9 +63,9 @@ namespace RomanticWeb.Mapping
         /// <param name="property">Property to be searched for.</param>
         /// <returns>Property mapping or null.</returns>
         [return: AllowNull]
-        public static IPropertyMapping FindPropertyMapping(this IMappingsRepository mappingsRepository,PropertyInfo property)
+        public static IPropertyMapping FindPropertyMapping(this IMappingsRepository mappingsRepository, PropertyInfo property)
         {
-            return mappingsRepository.FindPropertyMapping(property.DeclaringType,property.Name);
+            return mappingsRepository.FindPropertyMapping(property.DeclaringType, property.Name);
         }
 
         /// <summary>Searches for property mappings.</summary>
@@ -74,13 +74,13 @@ namespace RomanticWeb.Mapping
         /// <param name="propertyName">Property name to be searched for.</param>
         /// <returns>Property mapping or null.</returns>
         [return: AllowNull]
-        public static IPropertyMapping FindPropertyMapping(this IMappingsRepository mappingsRepository,Type declaringType,string propertyName)
+        public static IPropertyMapping FindPropertyMapping(this IMappingsRepository mappingsRepository, Type declaringType, string propertyName)
         {
-            IEntityMapping entityMapping=mappingsRepository.FindEntityMapping(declaringType);
-            IPropertyMapping result=null;
-            if (entityMapping!=null)
+            IEntityMapping entityMapping = mappingsRepository.FindEntityMapping(declaringType);
+            IPropertyMapping result = null;
+            if (entityMapping != null)
             {
-                result=entityMapping.PropertyFor(propertyName);
+                result = entityMapping.PropertyFor(propertyName);
             }
 
             return result;
@@ -91,7 +91,7 @@ namespace RomanticWeb.Mapping
         /// <param name="type">Type of entity.</param>
         /// <returns>Entity mapping or null.</returns>
         [return: AllowNull]
-        public static IEntityMapping FindEntityMapping(this IMappingsRepository mappingsRepository,Type type)
+        public static IEntityMapping FindEntityMapping(this IMappingsRepository mappingsRepository, Type type)
         {
             return mappingsRepository.MappingFor(type);
         }
@@ -101,7 +101,7 @@ namespace RomanticWeb.Mapping
         /// <param name="mappingsRepository">Repository to be queried.</param>
         /// <returns>Entity mapping or null.</returns>
         [return: AllowNull]
-        public static IEntityMapping FindEntityMapping<T>(this IMappingsRepository mappingsRepository) where T:IEntity
+        public static IEntityMapping FindEntityMapping<T>(this IMappingsRepository mappingsRepository) where T : IEntity
         {
             return mappingsRepository.FindEntityMapping(typeof(T));
         }
@@ -112,34 +112,34 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public static Type FindEntityType(this Type type)
         {
-            Type result=EntityTypeSanityCheck(type);
-            if ((result!=null)&&(!typeof(IEntity).IsAssignableFrom(result)))
+            Type result = EntityTypeSanityCheck(type);
+            if ((result != null) && (!typeof(IEntity).IsAssignableFrom(result)))
             {
-                result=null;
-                Type resultType=type;
+                result = null;
+                Type resultType = type;
                 if (resultType.IsGenericType)
                 {
-                    result=FindEntityType(resultType.GetGenericArguments());
+                    result = FindEntityType(resultType.GetGenericArguments());
                 }
 
-                if (result==null)
+                if (result == null)
                 {
-                    if ((resultType.IsArray)&&(!EntityType.IsAssignableFrom(result=resultType.GetElementType())))
+                    if ((resultType.IsArray) && (!EntityType.IsAssignableFrom(result = resultType.GetElementType())))
                     {
-                        result=null;
+                        result = null;
                     }
                 }
 
-                if (result==null)
+                if (result == null)
                 {
-                    result=FindEntityType(resultType.GetInterfaces());
+                    result = FindEntityType(resultType.GetInterfaces());
                 }
 
-                if (result==null)
+                if (result == null)
                 {
-                    if (resultType.BaseType!=ObjectType)
+                    if (resultType.BaseType != ObjectType)
                     {
-                        result=resultType.BaseType.FindEntityType();
+                        result = resultType.BaseType.FindEntityType();
                     }
                 }
             }

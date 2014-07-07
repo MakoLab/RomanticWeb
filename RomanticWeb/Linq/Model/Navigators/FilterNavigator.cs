@@ -3,12 +3,13 @@
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates filters.</summary>
-    internal class FilterNavigator:QueryComponentNavigatorBase
+    internal class FilterNavigator : QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated filter.</summary>
         /// <param name="filter">Nagivated filter.</param>
-        internal FilterNavigator(Filter filter):base(filter)
+        internal FilterNavigator(Filter filter)
+            : base(filter)
         {
         }
         #endregion
@@ -24,7 +25,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component can be added, otherwise <b>false</b>.</returns>
         public override bool CanAddComponent(IQueryComponent component)
         {
-            return (component is IExpression)&&(NavigatedComponent.Expression==null);
+            return (component is IExpression) && (NavigatedComponent.Expression == null);
         }
 
         /// <summary>Determines if the given component contains another component as a child.</summary>
@@ -32,29 +33,29 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (NavigatedComponent.Expression==component);
+            return (NavigatedComponent.Expression == component);
         }
 
         /// <summary>Adds component as a child of another component.</summary>
         /// <param name="component">Component to be added.</param>
         public override void AddComponent(IQueryComponent component)
         {
-            if ((component is IExpression)&&(NavigatedComponent.Expression==null))
+            if ((component is IExpression) && (NavigatedComponent.Expression == null))
             {
-                NavigatedComponent.Expression=(IExpression)component;
+                NavigatedComponent.Expression = (IExpression)component;
             }
         }
 
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        public override void ReplaceComponent(IQueryComponent component, IQueryComponent replacement)
         {
-            if ((component is IExpression)&&(replacement is IExpression))
+            if ((component is IExpression) && (replacement is IExpression))
             {
-                if (NavigatedComponent.Expression==(IExpression)component)
+                if (NavigatedComponent.Expression == (IExpression)component)
                 {
-                    NavigatedComponent.Expression=(IExpression)replacement;
+                    NavigatedComponent.Expression = (IExpression)replacement;
                 }
             }
         }
@@ -63,7 +64,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()
         {
-            return (NavigatedComponent.Expression!=null?new IQueryComponent[] { NavigatedComponent.Expression } :new IQueryComponent[0]);
+            return (NavigatedComponent.Expression != null ? new IQueryComponent[] { NavigatedComponent.Expression } : new IQueryComponent[0]);
         }
         #endregion
     }

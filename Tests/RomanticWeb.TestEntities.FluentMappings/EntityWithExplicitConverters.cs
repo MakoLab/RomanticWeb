@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.FluentMappings
 {
-    public class EntityWithExplicitConverters:EntityMap<IEntityWithExplicitConverters>
+    public class EntityWithExplicitConverters : EntityMap<IEntityWithExplicitConverters>
     {
         public EntityWithExplicitConverters()
         {

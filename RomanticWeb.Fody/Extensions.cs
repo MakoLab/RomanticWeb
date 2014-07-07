@@ -48,9 +48,9 @@ namespace RomanticWeb.Fody
 
         internal static TypeDefinition FindType(this AssemblyDefinition assembly, string name)
         {
-            var type=assembly.MainModule.Types.SingleOrDefault(t => t.Name==name||t.FullName==name);
+            var type = assembly.MainModule.Types.SingleOrDefault(t => t.Name == name || t.FullName == name);
 
-            if (type==null)
+            if (type == null)
             {
                 throw new WeavingException(string.Format("Expected to find type '{0}' in assemnly '{1}'.", name, assembly.FullName));
             }
@@ -75,9 +75,9 @@ namespace RomanticWeb.Fody
             return childType.HasAncestorOfType("RomanticWeb.Entities.EntityId");
         }
 
-        internal static bool Implements(this TypeDefinition childType,TypeReference interfaceType)
+        internal static bool Implements(this TypeDefinition childType, TypeReference interfaceType)
         {
-            return childType.FullName==interfaceType.FullName||childType.Interfaces.Any(iface => iface.FullName == interfaceType.FullName);
+            return childType.FullName == interfaceType.FullName || childType.Interfaces.Any(iface => iface.FullName == interfaceType.FullName);
         }
 
         internal static bool HasNancyModuleAncestor(this TypeDefinition childType)
@@ -85,18 +85,18 @@ namespace RomanticWeb.Fody
             return childType.HasAncestorOfType("Nancy.NancyModule");
         }
 
-        internal static bool HasAncestorOfType(this TypeDefinition childType,string typeName)
+        internal static bool HasAncestorOfType(this TypeDefinition childType, string typeName)
         {
-            var baseType=childType.BaseType;
+            var baseType = childType.BaseType;
 
-            while (baseType!=null)
+            while (baseType != null)
             {
-                if (baseType.FullName==typeName)
+                if (baseType.FullName == typeName)
                 {
                     return true;
                 }
 
-                baseType=baseType.Resolve().BaseType;
+                baseType = baseType.Resolve().BaseType;
             }
 
             return false;
@@ -111,11 +111,11 @@ namespace RomanticWeb.Fody
         {
             return (from constructor in type.GetConstructors()
                     where constructor.Parameters.Count == 1
-                    let parameter=constructor.Parameters.Single()
-                    where parameter.ParameterType.FullName==typeof(Uri).FullName
+                    let parameter = constructor.Parameters.Single()
+                    where parameter.ParameterType.FullName == typeof(Uri).FullName
                     select constructor).Any();
         }
-        
+
         internal static TypeReference[] JoinWith(this TypeReference reference, IEnumerable<TypeReference> otherRefs)
         {
             var typeReferences = otherRefs as TypeReference[] ?? otherRefs.ToArray();

@@ -7,94 +7,94 @@ using RomanticWeb.Mapping.Providers;
 namespace RomanticWeb.Mapping.Attributes
 {
     // todo: refactor similarity with FluentMappingProviderBuilder
-    internal class AttributeMappingProviderBuilder:Visitors.IMappingAttributesVisitor
+    internal class AttributeMappingProviderBuilder : Visitors.IMappingAttributesVisitor
     {
         private Type _entityType;
 
         public IClassMappingProvider Visit(ClassAttribute attribute)
         {
-            if (attribute.Uri!=null)
+            if (attribute.Uri != null)
             {
-                return new ClassMappingProvider(_entityType,attribute.Uri);
+                return new ClassMappingProvider(_entityType, attribute.Uri);
             }
 
-            return new ClassMappingProvider(_entityType,attribute.Prefix,attribute.Term);
+            return new ClassMappingProvider(_entityType, attribute.Prefix, attribute.Term);
         }
 
-        public IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute,PropertyInfo property)
+        public IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute, PropertyInfo property)
         {
-            return CreatePropertyMapping(propertyAttribute,property);
+            return CreatePropertyMapping(propertyAttribute, property);
         }
 
-        public ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute,PropertyInfo property)
+        public ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute, PropertyInfo property)
         {
-            var propertyMapping=CreatePropertyMapping(collectionAttribute,property);
-            var result=new CollectionMappingProvider(propertyMapping,collectionAttribute.StoreAs);
-            if (collectionAttribute.ElementConverterType!=null)
+            var propertyMapping = CreatePropertyMapping(collectionAttribute, property);
+            var result = new CollectionMappingProvider(propertyMapping, collectionAttribute.StoreAs);
+            if (collectionAttribute.ElementConverterType != null)
             {
-                result.ElementConverterType=collectionAttribute.ElementConverterType;
+                result.ElementConverterType = collectionAttribute.ElementConverterType;
             }
 
             return result;
         }
 
-        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute,PropertyInfo property,ITermMappingProvider key,ITermMappingProvider value)
+        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value)
         {
-            var prop=CreatePropertyMapping(dictionaryAttribute,property);
-            return new DictionaryMappingProvider(prop,key,value);
+            var prop = CreatePropertyMapping(dictionaryAttribute, property);
+            return new DictionaryMappingProvider(prop, key, value);
         }
 
         public ITermMappingProvider Visit(KeyAttribute keyAttribute)
         {
-            if (keyAttribute==null)
+            if (keyAttribute == null)
             {
                 return new KeyMappingProvider();
             }
 
-            if (keyAttribute.Uri!=null)
+            if (keyAttribute.Uri != null)
             {
                 return new KeyMappingProvider(keyAttribute.Uri);
             }
 
-            return new KeyMappingProvider(keyAttribute.Prefix,keyAttribute.Term);
+            return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
         }
 
         public ITermMappingProvider Visit(ValueAttribute valueAttribute)
         {
-            if (valueAttribute==null)
+            if (valueAttribute == null)
             {
                 return new ValueMappingProvider();
             }
 
-            if (valueAttribute.Uri!=null)
+            if (valueAttribute.Uri != null)
             {
                 return new ValueMappingProvider(valueAttribute.Uri);
             }
 
-            return new ValueMappingProvider(valueAttribute.Prefix,valueAttribute.Term);
+            return new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
         }
 
         public IEntityMappingProvider Visit(Type entityType)
         {
-            _entityType=entityType;
-            return new EntityMappingProvider(entityType,GetClasses(entityType),GetProperties(entityType));
+            _entityType = entityType;
+            return new EntityMappingProvider(entityType, GetClasses(entityType), GetProperties(entityType));
         }
 
-        private static PropertyMappingProvider CreatePropertyMapping(PropertyAttribute propertyAttribute,PropertyInfo property)
+        private static PropertyMappingProvider CreatePropertyMapping(PropertyAttribute propertyAttribute, PropertyInfo property)
         {
             PropertyMappingProvider propertyMappingProvider;
-            if (propertyAttribute.Uri!=null)
+            if (propertyAttribute.Uri != null)
             {
-                propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Uri,property);
+                propertyMappingProvider = new PropertyMappingProvider(propertyAttribute.Uri, property);
             }
             else
             {
-                propertyMappingProvider=new PropertyMappingProvider(propertyAttribute.Prefix,propertyAttribute.Term,property);
+                propertyMappingProvider = new PropertyMappingProvider(propertyAttribute.Prefix, propertyAttribute.Term, property);
             }
 
-            if (propertyAttribute.ConverterType!=null)
+            if (propertyAttribute.ConverterType != null)
             {
-                propertyMappingProvider.ConverterType=propertyAttribute.ConverterType;
+                propertyMappingProvider.ConverterType = propertyAttribute.ConverterType;
             }
 
             return propertyMappingProvider;
@@ -104,7 +104,7 @@ namespace RomanticWeb.Mapping.Attributes
         {
             return (from property in entityType.GetProperties()
                     from attribute in property.GetCustomAttributes<PropertyAttribute>()
-                    select attribute.Accept(this,property)).ToList();
+                    select attribute.Accept(this, property)).ToList();
         }
 
         private IList<IClassMappingProvider> GetClasses(Type entityType)

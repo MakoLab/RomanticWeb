@@ -3,10 +3,10 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.Animals
 {
-    [Class("life","Herbivore")]
-    public interface IHerbivore:IAnimal
+    [Class("life", "Herbivore")]
+    public interface IHerbivore : IAnimal
     {
-        [Collection("life","plantEaten")]
+        [Collection("life", "plantEaten")]
         IList<IPlant> Diet { get; }
     }
 }

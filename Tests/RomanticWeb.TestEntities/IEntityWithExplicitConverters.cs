@@ -5,12 +5,12 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities
 {
-    public interface IEntityWithExplicitConverters:IEntity
+    public interface IEntityWithExplicitConverters : IEntity
     {
-        [Property("urn:not:important",ConverterType=typeof(BooleanConverter))]
+        [Property("urn:not:important", ConverterType = typeof(BooleanConverter))]
         int Property { get; }
 
-        [Collection("urn:not:important",ConverterType=typeof(BooleanConverter))]
+        [Collection("urn:not:important", ConverterType = typeof(BooleanConverter))]
         IList<string> Collection { get; }
     }
 }

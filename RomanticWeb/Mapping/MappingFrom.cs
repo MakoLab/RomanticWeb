@@ -15,7 +15,7 @@ namespace RomanticWeb.Mapping
         /// <param name="mappingBuilder">The mapping builder.</param>
         protected MappingFrom(MappingBuilder mappingBuilder)
         {
-            _mappingBuilder=mappingBuilder;
+            _mappingBuilder = mappingBuilder;
         }
 
         /// <summary>

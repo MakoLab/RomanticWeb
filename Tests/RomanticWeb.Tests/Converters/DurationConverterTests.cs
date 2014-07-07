@@ -25,19 +25,19 @@ namespace RomanticWeb.Tests.Converters
             get
             {
                 return new object[]
-                {
-                    new object[] { "PT1H30M",new Duration(1,30,0,0) },
-                    new object[] { "-PT1H30M",new Duration(-1,30,0,0) }
-                };
+                           {
+                               new object[] { "PT1H30M", new Duration(1, 30, 0, 0) },
+                               new object[] { "-PT1H30M", new Duration(-1, 30, 0, 0) }
+                           };
             }
-        } 
+        }
 
         [Test]
         [TestCaseSource("TimeSpanValues")]
-        public void Should_convert_values(string literal,Duration expected)
+        public void Should_convert_values(string literal, Duration expected)
         {
-            var duration=Converter.Convert(Node.ForLiteral(literal),new Mock<IEntityContext>().Object);
-            Assert.That(duration,Is.EqualTo(expected));
+            var duration = Converter.Convert(Node.ForLiteral(literal), new Mock<IEntityContext>().Object);
+            Assert.That(duration, Is.EqualTo(expected));
         }
     }
 }

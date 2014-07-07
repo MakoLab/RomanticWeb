@@ -9,19 +9,19 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Statically typed converter for <see cref="EntityId"/>.</summary>
-    public class EntityIdConverter:EntityIdConverter<EntityId>
+    public class EntityIdConverter : EntityIdConverter<EntityId>
     {
     }
 
     /// <summary>Generic converter for any type of entity id.</summary>
     /// <typeparam name="TEntityId">Type of the entity identifier.</typeparam>
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic nad non-generic class")]
-    public class EntityIdConverter<TEntityId>:INodeConverter where TEntityId:EntityId
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Generic nad non-generic class")]
+    public class EntityIdConverter<TEntityId> : INodeConverter where TEntityId : EntityId
     {
-        private static TypeConverter _converter=TypeDescriptor.GetConverter(typeof(TEntityId));
+        private static TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TEntityId));
 
         /// <inheritdoc />
-        public object Convert(Node node,IEntityContext context)
+        public object Convert(Node node, IEntityContext context)
         {
             if (node.IsBlank)
             {
@@ -34,7 +34,7 @@ namespace RomanticWeb.Converters
         /// <inheritdoc />
         public bool CanConvert(IEntity objectNode, [AllowNull] IPropertyMapping predicate)
         {
-            return (predicate!=null)&&(typeof(TEntityId).IsAssignableFrom(predicate.ReturnType.FindItemType()))&&(!(objectNode.Id is BlankId));
+            return (predicate != null) && (typeof(TEntityId).IsAssignableFrom(predicate.ReturnType.FindItemType())) && (!(objectNode.Id is BlankId));
         }
 
         /// <inheritdoc />

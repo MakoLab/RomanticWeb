@@ -15,18 +15,18 @@ namespace RomanticWeb
 
         private int _value;
 
-        private FluentCompare(T left,object right)
+        private FluentCompare(T left, object right)
         {
-            _left=left;
-            _right=right as T;
+            _left = left;
+            _right = right as T;
 
-            if (_right==null)
+            if (_right == null)
             {
-                _value=1;
+                _value = 1;
             }
         }
 
-        public static FluentCompare<T> Arguments(T left,object right)
+        public static FluentCompare<T> Arguments(T left, object right)
         {
             return new FluentCompare<T>(left, right);
         }
@@ -48,9 +48,9 @@ namespace RomanticWeb
 
         public FluentCompare<T> By<TProp>(Func<T, TProp> getter, bool ascending, IComparer<TProp> comparer)
         {
-            if (_value==0)
+            if (_value == 0)
             {
-                _value=DoCompare(getter(_left),getter(_right),ascending,comparer);
+                _value = DoCompare(getter(_left), getter(_right), ascending, comparer);
             }
 
             return this;
@@ -65,10 +65,10 @@ namespace RomanticWeb
         {
             if (ascending)
             {
-                return comparer.Compare(a,b);
+                return comparer.Compare(a, b);
             }
 
-            return comparer.Compare(b,a);
+            return comparer.Compare(b, a);
         }
     }
 }

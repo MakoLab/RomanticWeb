@@ -10,6 +10,6 @@ namespace RomanticWeb.IO
         /// <param name="uri">Original Uri of the content.</param>
         /// <param name="response">Response object containing content stream.</param>
         /// <returns>String representing a MIME type of the given content.</returns>
-        string Resolve(Uri uri,WebResponse response);
+        string Resolve(Uri uri, WebResponse response);
     }
 }

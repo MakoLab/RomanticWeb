@@ -5,8 +5,8 @@ using System.Reflection;
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Defines a navigator type for given query component.</summary>
-    [AttributeUsage(AttributeTargets.Class,AllowMultiple=false)]
-    internal class QueryComponentNavigatorAttribute:Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    internal class QueryComponentNavigatorAttribute : Attribute
     {
         #region Fields
         private Type _navigatorType;
@@ -23,16 +23,16 @@ namespace RomanticWeb.Linq.Model.Navigators
                 throw new ArgumentOutOfRangeException("navigatorType");
             }
 
-            _constructor=navigatorType.GetConstructors(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance)
-                .Where(item => (item.GetParameters().Length==1)&&(typeof(IQueryComponent).IsAssignableFrom(item.GetParameters()[0].ParameterType)))
+            _constructor = navigatorType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                .Where(item => (item.GetParameters().Length == 1) && (typeof(IQueryComponent).IsAssignableFrom(item.GetParameters()[0].ParameterType)))
                 .FirstOrDefault();
 
-            if (_constructor==null)
+            if (_constructor == null)
             {
                 throw new ArgumentOutOfRangeException("navigatorType");
             }
 
-            _navigatorType=navigatorType;
+            _navigatorType = navigatorType;
         }
         #endregion
 

@@ -7,7 +7,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Mapping
 {
-    internal class TestingInheritanceTreeProvider:InheritanceTreeProvider
+    internal class TestingInheritanceTreeProvider : InheritanceTreeProvider
     {
         public TestingInheritanceTreeProvider()
             : base(new ChildMap(), CreateParentProviders())

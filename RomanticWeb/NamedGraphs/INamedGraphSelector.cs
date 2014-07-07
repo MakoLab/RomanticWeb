@@ -16,6 +16,6 @@ namespace RomanticWeb.NamedGraphs
         /// <param name="entityMapping">The entity mapping.</param>
         /// <param name="predicate">The predicate.</param>
         /// <returns>Should return an absolute <see cref="Uri"/></returns>
-        Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate);
+        Uri SelectGraph(EntityId entityId, IEntityMapping entityMapping, IPropertyMapping predicate);
     }
 }

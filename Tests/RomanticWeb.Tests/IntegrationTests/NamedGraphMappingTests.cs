@@ -9,17 +9,17 @@ using RomanticWeb.TestEntities.LargeDataset;
 namespace RomanticWeb.Tests.IntegrationTests
 {
     [TestFixture]
-    public abstract class NamedGraphMappingTestsBase:IntegrationTestsBase
+    public abstract class NamedGraphMappingTestsBase : IntegrationTestsBase
     {
         [Test]
         public void Should_set_graph_for_new_entities()
         {
             // Given
-            Uri entityUri=new Uri("http://test/product");
-            IProduct product=EntityContext.Create<IProduct>(new EntityId(entityUri));
+            Uri entityUri = new Uri("http://test/product");
+            IProduct product = EntityContext.Create<IProduct>(new EntityId(entityUri));
 
             // When
-            product.Name="test";
+            product.Name = "test";
             EntityContext.Commit();
 
             // Then

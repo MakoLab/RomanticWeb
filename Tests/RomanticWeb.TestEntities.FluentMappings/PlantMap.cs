@@ -7,7 +7,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
     {
         public PlantMap()
         {
-            Class.Is("life","Plant");
+            Class.Is("life", "Plant");
         }
     }
 }

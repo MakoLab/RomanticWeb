@@ -12,7 +12,7 @@ namespace RomanticWeb.Entities
     /// <summary>An Entity's identifier (URI or blank node).</summary>
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     [TypeConverter(typeof(EntityIdTypeConverter<EntityId>))]
-    public class EntityId:IComparable,IComparable<EntityId>,IXmlSerializable
+    public class EntityId : IComparable, IComparable<EntityId>, IXmlSerializable
     {
         #region Fields
         private Uri _uri;
@@ -20,14 +20,15 @@ namespace RomanticWeb.Entities
 
         #region Constructors
         /// <summary>Creates a new instance of <see cref="EntityId"/> from string.</summary>
-        public EntityId(string uri):this(new Uri(uri,UriKind.RelativeOrAbsolute))
+        public EntityId(string uri)
+            : this(new Uri(uri, UriKind.RelativeOrAbsolute))
         {
         }
 
         /// <summary>Creates a new instance of <see cref="EntityId"/> from an Uniform Resource Identifies.</summary>
         public EntityId(Uri uri)
         {
-            _uri=uri;
+            _uri = uri;
         }
 
         /// <summary>Used for XML serialization.</summary>
@@ -46,18 +47,18 @@ namespace RomanticWeb.Entities
         /// <param name="left">Left operand.</param>
         /// <param name="right">Right operand.</param>
         /// <returns><b>true</b> if both entity identifiers has same type and same Uri, otherwise <b>false</b>.</returns>
-        public static bool operator==([AllowNull] EntityId left,[AllowNull] EntityId right)
+        public static bool operator ==([AllowNull] EntityId left, [AllowNull] EntityId right)
         {
-            return Equals(left,right);
+            return Equals(left, right);
         }
 
         /// <summary>Tests for inequality two entity identifiers.</summary>
         /// <param name="left">Left operand.</param>
         /// <param name="right">Right operand.</param>
         /// <returns><b>true</b> if both entity identifiers are of different type or has different Uri, otherwise <b>false</b>.</returns>
-        public static bool operator!=([AllowNull] EntityId left,[AllowNull] EntityId right)
+        public static bool operator !=([AllowNull] EntityId left, [AllowNull] EntityId right)
         {
-            return !(left==right);
+            return !(left == right);
         }
 
         /// <summary>Converts a string into an entity identifier.</summary>
@@ -65,10 +66,10 @@ namespace RomanticWeb.Entities
         /// <returns><see cref="EntityId"/> instance or null.</returns>
         public static implicit operator EntityId(string entityId)
         {
-            EntityId result=null;
-            if (entityId!=null)
+            EntityId result = null;
+            if (entityId != null)
             {
-                result=new EntityId(entityId);
+                result = new EntityId(entityId);
             }
 
             return result;
@@ -79,10 +80,10 @@ namespace RomanticWeb.Entities
         /// <returns><see cref="EntityId"/> instance or null.</returns>
         public static implicit operator EntityId(Uri uri)
         {
-            EntityId result=null;
-            if (uri!=null)
+            EntityId result = null;
+            if (uri != null)
             {
-                result=new EntityId(uri);
+                result = new EntityId(uri);
             }
 
             return result;
@@ -103,7 +104,7 @@ namespace RomanticWeb.Entities
         /// A value that indicates the relative order of the objects being compared.</returns>
         int IComparable.CompareTo(object operand)
         {
-            return FluentCompare<EntityId>.Arguments(this,operand).By(id => id.Uri,new AbsoluteUriComparer()).End();
+            return FluentCompare<EntityId>.Arguments(this, operand).By(id => id.Uri, new AbsoluteUriComparer()).End();
         }
 
         /// <summary>Compares the current identifier with another identifier of the same type.</summary>
@@ -123,17 +124,17 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object obj)
         {
-            if ((obj==null)||(GetType()!=obj.GetType()))
+            if ((obj == null) || (GetType() != obj.GetType()))
             {
                 return false;
             }
 
-            if (ReferenceEquals(this,obj))
+            if (ReferenceEquals(this, obj))
             {
                 return true;
             }
 
-            return _uri.ToString()==((EntityId)obj)._uri.ToString();
+            return _uri.ToString() == ((EntityId)obj)._uri.ToString();
         }
 
         /// <summary>Creates a string representation of this entity identifier.</summary>
@@ -156,7 +157,7 @@ namespace RomanticWeb.Entities
         /// The <see cref="System.Xml.XmlReader"/> stream from which the object is deserialized.</param>
         public void ReadXml(XmlReader reader)
         {
-            _uri=new Uri(reader.ReadElementContentAsString());
+            _uri = new Uri(reader.ReadElementContentAsString());
         }
 
         /// <summary>Converts an object into its XML representation.</summary>
@@ -176,7 +177,7 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified identifier is equal to the current one; otherwise, <b>false</b>.</returns>
         protected bool Equals([AllowNull] EntityId other)
         {
-            return (other!=null)&&(Equals(_uri,other._uri));
+            return (other != null) && (Equals(_uri, other._uri));
         }
         #endregion
 
@@ -186,7 +187,7 @@ namespace RomanticWeb.Entities
 
             public DebuggerViewProxy(EntityId entityId)
             {
-                _entityId=entityId;
+                _entityId = entityId;
             }
 
             public Uri Uri

@@ -12,17 +12,17 @@ namespace RomanticWeb.Mapping
         /// <summary>Default constructor with ontology provider and default graph selector passed.</summary>
         /// <param name="ontologyProvider">Ontology provider.</param>
         public MappingContext(IOntologyProvider ontologyProvider)
-            :this(ontologyProvider,new IConvention[0])
+            : this(ontologyProvider, new IConvention[0])
         {
         }
 
         /// <summary>Default constructor with ontology provider and default graph selector passed.</summary>
         /// <param name="ontologyProvider">Ontology provider.</param>
         /// <param name="conventions"></param>
-        public MappingContext(IOntologyProvider ontologyProvider,IEnumerable<IConvention> conventions)
+        public MappingContext(IOntologyProvider ontologyProvider, IEnumerable<IConvention> conventions)
         {
             _ontologyProvider = ontologyProvider;
-            Conventions=conventions;
+            Conventions = conventions;
         }
 
         /// <summary>Gets the ontology provider.</summary>

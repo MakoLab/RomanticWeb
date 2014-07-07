@@ -10,9 +10,9 @@ namespace RomanticWeb.Collections
 {
     [DebuggerDisplay("Count = {Count}")]
     [NullGuard(ValidationFlags.All)]
-    internal class RdfListAdapter<TOwner,TNode,T>:IList<T>,IRdfListAdapter<T>
-        where TOwner : class,IRdfListOwner
-        where TNode : class,IRdfListNode<T>
+    internal class RdfListAdapter<TOwner, TNode, T> : IList<T>, IRdfListAdapter<T>
+        where TOwner : class, IRdfListOwner
+        where TNode : class, IRdfListNode<T>
     {
         private readonly IEntityContext _context;
         private readonly ISourceGraphSelectionOverride _namedGraphOverride;
@@ -20,19 +20,19 @@ namespace RomanticWeb.Collections
         private IRdfListNode<T> _head;
         private IRdfListNode<T> _tail;
 
-        public RdfListAdapter(IEntityContext context,IEntity owner,IRdfListNode<T> head,ISourceGraphSelectionOverride namedGraphOverride)
+        public RdfListAdapter(IEntityContext context, IEntity owner, IRdfListNode<T> head, ISourceGraphSelectionOverride namedGraphOverride)
         {
-            Count=0;
-            _context=context;
-            _owner=owner.AsEntity<TOwner>();
-            _namedGraphOverride=namedGraphOverride;
-            _head=_tail=head;
+            Count = 0;
+            _context = context;
+            _owner = owner.AsEntity<TOwner>();
+            _namedGraphOverride = namedGraphOverride;
+            _head = _tail = head;
 
             Initialize();
         }
 
-        public RdfListAdapter(IEntityContext context,IEntity owner,ISourceGraphSelectionOverride namedGraphOverride)
-            :this(context,owner,context.Load<TNode>(Vocabularies.Rdf.nil),namedGraphOverride)
+        public RdfListAdapter(IEntityContext context, IEntity owner, ISourceGraphSelectionOverride namedGraphOverride)
+            : this(context, owner, context.Load<TNode>(Vocabularies.Rdf.nil), namedGraphOverride)
         {
         }
 
@@ -45,7 +45,7 @@ namespace RomanticWeb.Collections
         public T this[int index]
         {
             get { return GetNodeAt(index).First; }
-            set { Insert(index,value); }
+            set { Insert(index, value); }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -65,67 +65,67 @@ namespace RomanticWeb.Collections
 
         public void Add(T item)
         {
-            if (_head.Id==Vocabularies.Rdf.nil)
+            if (_head.Id == Vocabularies.Rdf.nil)
             {
                 InsertToEmptyList(item);
             }
             else
             {
-                var newTail=InsertNodeAfter(_tail,item);
-                _tail=newTail;
+                var newTail = InsertNodeAfter(_tail, item);
+                _tail = newTail;
             }
         }
 
         public void Clear()
         {
-            var currentNode=_head;
-            while (currentNode.Id!=Vocabularies.Rdf.nil)
+            var currentNode = _head;
+            while (currentNode.Id != Vocabularies.Rdf.nil)
             {
                 _context.Delete(currentNode.Id);
-                currentNode=currentNode.Rest;
+                currentNode = currentNode.Rest;
             }
 
-            _head=_tail=_context.Load<TNode>(Vocabularies.Rdf.nil);
+            _head = _tail = _context.Load<TNode>(Vocabularies.Rdf.nil);
         }
 
         public bool Contains(T item)
         {
-            return GetNodeForItemWithPredecessor(item).Item1.Id!=Vocabularies.Rdf.nil;
+            return GetNodeForItemWithPredecessor(item).Item1.Id != Vocabularies.Rdf.nil;
         }
 
-        public void CopyTo(T[] array,int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
-            if (arrayIndex<0)
+            if (arrayIndex < 0)
             {
                 throw new ArgumentOutOfRangeException("arrayIndex");
             }
 
-            if (Count>array.Length-arrayIndex)
+            if (Count > array.Length - arrayIndex)
             {
                 throw new ArgumentException("The number of elements in the source collection is greater than the available space from 'arrayIndex' to the end of the destination array.");
             }
 
-            IRdfListNode<T> currentNode=_head;
-            int currentIndex=0;
+            IRdfListNode<T> currentNode = _head;
+            int currentIndex = 0;
 
-            while (currentNode.Id!=Vocabularies.Rdf.nil)
+            while (currentNode.Id != Vocabularies.Rdf.nil)
             {
-                array[arrayIndex+currentIndex]=currentNode.First;
-                currentNode=currentNode.Rest;
+                array[arrayIndex + currentIndex] = currentNode.First;
+                currentNode = currentNode.Rest;
                 currentIndex++;
             }
         }
 
         public bool Remove(T item)
         {
-            var nodeWithPredecessor=GetNodeForItemWithPredecessor(item);
+            var nodeWithPredecessor = GetNodeForItemWithPredecessor(item);
 
-            if (nodeWithPredecessor.Item1.Id==Vocabularies.Rdf.nil)
+            if (nodeWithPredecessor.Item1.Id == Vocabularies.Rdf.nil)
             {
                 return false;
             }
 
-            DeleteNode(nodeWithPredecessor.Item1,nodeWithPredecessor.Item2);
+            DeleteNode(nodeWithPredecessor.Item1, nodeWithPredecessor.Item2);
 
             return true;
         }
@@ -135,102 +135,102 @@ namespace RomanticWeb.Collections
             throw new System.NotImplementedException();
         }
 
-        public void Insert(int index,T item)
+        public void Insert(int index, T item)
         {
-            if ((index<0)||(index>Count))
+            if ((index < 0) || (index > Count))
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
-            if (index==0)
+            if (index == 0)
             {
                 InsertFirstNode(item);
             }
-            else if (index==Count)
+            else if (index == Count)
             {
                 Add(item);
             }
             else
             {
-                var nodeToReplace=GetNodeAt(index-1);
-                InsertNodeAfter(nodeToReplace,item);
+                var nodeToReplace = GetNodeAt(index - 1);
+                InsertNodeAfter(nodeToReplace, item);
             }
         }
 
         public void RemoveAt(int index)
         {
-            if (index==0)
+            if (index == 0)
             {
-                DeleteNode(_head,null);
+                DeleteNode(_head, null);
             }
             else
             {
-                IRdfListNode<T> previousNode=GetNodeAt(index-1);
-                DeleteNode(previousNode.Rest,previousNode);
+                IRdfListNode<T> previousNode = GetNodeAt(index - 1);
+                DeleteNode(previousNode.Rest, previousNode);
             }
         }
 
-        private void DeleteNode(IRdfListNode<T> nodeToDelete,[AllowNull] IRdfListNode<T> previousNode)
+        private void DeleteNode(IRdfListNode<T> nodeToDelete, [AllowNull] IRdfListNode<T> previousNode)
         {
-            if (previousNode!=null)
+            if (previousNode != null)
             {
-                previousNode.Rest=nodeToDelete.Rest;
-                if (nodeToDelete.Rest.Id==Vocabularies.Rdf.nil)
+                previousNode.Rest = nodeToDelete.Rest;
+                if (nodeToDelete.Rest.Id == Vocabularies.Rdf.nil)
                 {
-                    _tail=previousNode;
+                    _tail = previousNode;
                 }
             }
             else
             {
-                _head=nodeToDelete.Rest;
+                _head = nodeToDelete.Rest;
             }
 
             _context.Delete(nodeToDelete.Id);
         }
 
-        private Tuple<IRdfListNode<T>,IRdfListNode<T>> GetNodeForItemWithPredecessor(T item)
+        private Tuple<IRdfListNode<T>, IRdfListNode<T>> GetNodeForItemWithPredecessor(T item)
         {
-            IRdfListNode<T> previousNode=null;
-            var currentNode=_head;
-            while (currentNode.Id!=Vocabularies.Rdf.nil)
+            IRdfListNode<T> previousNode = null;
+            var currentNode = _head;
+            while (currentNode.Id != Vocabularies.Rdf.nil)
             {
-                if (Equals(currentNode.First,item))
+                if (Equals(currentNode.First, item))
                 {
                     break;
                 }
 
-                previousNode=currentNode;
-                currentNode=currentNode.Rest;
+                previousNode = currentNode;
+                currentNode = currentNode.Rest;
             }
 
-            return Tuple.Create(currentNode,previousNode);
+            return Tuple.Create(currentNode, previousNode);
         }
 
         private IRdfListNode<T> GetNodeAt(int index)
         {
-            if ((index<0)||(index>=Count))
+            if ((index < 0) || (index >= Count))
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
-            IRdfListNode<T> currentNode=_head;
-            int currentIndex=0;
+            IRdfListNode<T> currentNode = _head;
+            int currentIndex = 0;
 
-            while ((currentIndex<index)&&(currentNode.Id!=Vocabularies.Rdf.nil))
+            while ((currentIndex < index) && (currentNode.Id != Vocabularies.Rdf.nil))
             {
-                currentNode=currentNode.Rest;
+                currentNode = currentNode.Rest;
                 currentIndex++;
             }
 
             return currentNode;
         }
 
-        private IRdfListNode<T> InsertNodeAfter(IRdfListNode<T> existingNode,T item)
+        private IRdfListNode<T> InsertNodeAfter(IRdfListNode<T> existingNode, T item)
         {
-            var newNode=CreateNode();
-            newNode.First=item;
-            newNode.Rest=existingNode.Rest;
-            existingNode.Rest=newNode;
+            var newNode = CreateNode();
+            newNode.First = item;
+            newNode.Rest = existingNode.Rest;
+            existingNode.Rest = newNode;
             Count++;
 
             return newNode;
@@ -238,17 +238,17 @@ namespace RomanticWeb.Collections
 
         private void InsertToEmptyList(T item)
         {
-            var newNode=InsertFirstNode(item);
-            _tail=newNode;
+            var newNode = InsertFirstNode(item);
+            _tail = newNode;
         }
 
         private IRdfListNode<T> InsertFirstNode(T item)
         {
-            var newNode=CreateNode();
-            newNode.First=item;
-            newNode.Rest=_head;
+            var newNode = CreateNode();
+            newNode.First = item;
+            newNode.Rest = _head;
             _head = newNode;
-            _owner.ListHead=_head;
+            _owner.ListHead = _head;
             Count++;
 
             return newNode;
@@ -256,11 +256,11 @@ namespace RomanticWeb.Collections
 
         private IRdfListNode<T> CreateNode()
         {
-            var nodeId=_owner.CreateBlankId();
-            var newNode=_context.Create<TNode>(nodeId);
-            var proxy=newNode.UnwrapProxy() as IEntityProxy;
+            var nodeId = _owner.CreateBlankId();
+            var newNode = _context.Create<TNode>(nodeId);
+            var proxy = newNode.UnwrapProxy() as IEntityProxy;
 
-            if (proxy!=null)
+            if (proxy != null)
             {
                 proxy.OverrideGraphSelection(_namedGraphOverride);
             }
@@ -276,21 +276,21 @@ namespace RomanticWeb.Collections
             }
         }
 
-        private class Enumerator:IEnumerator<T>
+        private class Enumerator : IEnumerator<T>
         {
             private readonly IRdfListNode<T> _firstNode;
             private IRdfListNode<T> _currentNode;
 
             public Enumerator(IRdfListNode<T> actualEntity)
             {
-                _firstNode=actualEntity;
+                _firstNode = actualEntity;
             }
 
             public T Current
             {
                 get
                 {
-                    if ((_currentNode==null)||(Equals(_currentNode.First, default(T))))
+                    if ((_currentNode == null) || (Equals(_currentNode.First, default(T))))
                     {
                         return default(T);
                     }
@@ -313,16 +313,16 @@ namespace RomanticWeb.Collections
 
             public bool MoveNext()
             {
-                if (_currentNode==null)
+                if (_currentNode == null)
                 {
-                    _currentNode=_firstNode;
+                    _currentNode = _firstNode;
                 }
                 else
                 {
-                    _currentNode=_currentNode.Rest;
+                    _currentNode = _currentNode.Rest;
                 }
 
-                if (_currentNode==null||_currentNode.Id==Vocabularies.Rdf.nil)
+                if (_currentNode == null || _currentNode.Id == Vocabularies.Rdf.nil)
                 {
                     return false;
                 }
@@ -332,7 +332,7 @@ namespace RomanticWeb.Collections
 
             public void Reset()
             {
-                _currentNode=null;
+                _currentNode = null;
             }
         }
     }

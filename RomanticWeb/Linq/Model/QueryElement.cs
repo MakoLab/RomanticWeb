@@ -3,7 +3,7 @@
 namespace RomanticWeb.Linq.Model
 {
     /// <summary>Provides an abstract for query element.</summary>
-    public abstract class QueryElement:QueryComponent
+    public abstract class QueryElement : QueryComponent
     {
     }
 }

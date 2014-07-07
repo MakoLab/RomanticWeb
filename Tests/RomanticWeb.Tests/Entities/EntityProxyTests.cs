@@ -22,18 +22,18 @@ namespace RomanticWeb.Tests.Entities
         [SetUp]
         public void Setup()
         {
-            _mapping=new Mock<IEntityMapping>(MockBehavior.Strict);
-            _context=new Mock<IEntityContext>(MockBehavior.Strict);
-            _graphSelector=new Mock<INamedGraphSelector>();
+            _mapping = new Mock<IEntityMapping>(MockBehavior.Strict);
+            _context = new Mock<IEntityContext>(MockBehavior.Strict);
+            _graphSelector = new Mock<INamedGraphSelector>();
 
             _context.Setup(c => c.Store).Returns(new EntityStore());
             _context.Setup(c => c.GraphSelector).Returns(_graphSelector.Object);
             _context.Setup(c => c.InitializeEnitity(It.IsAny<IEntity>()));
-            _graphSelector.Setup(g => g.SelectGraph(It.IsAny<EntityId>(),It.IsAny<IEntityMapping>(),It.IsAny<IPropertyMapping>()))
+            _graphSelector.Setup(g => g.SelectGraph(It.IsAny<EntityId>(), It.IsAny<IEntityMapping>(), It.IsAny<IPropertyMapping>()))
                           .Returns(new Uri("urn:default:graph"));
 
             var entity = new Entity(_entityId, _context.Object);
-            _entityProxy=new EntityProxy(entity,_mapping.Object,new TestTransformerCatalog());
+            _entityProxy = new EntityProxy(entity, _mapping.Object, new TestTransformerCatalog());
         }
 
         [TearDown]
@@ -45,28 +45,28 @@ namespace RomanticWeb.Tests.Entities
         public void Should_allow_overriding_parameters_for_selecting_named_graph()
         {
             // given
-            var idToUse=new EntityId("urn:actual:id");
-            var entityMappingToUse=ImpromptuInterface.Dynamic.Builder.New().ActLike<IEntityMapping>();
-            Mock<IPropertyMapping> mappingToUse=new Mock<IPropertyMapping>();
+            var idToUse = new EntityId("urn:actual:id");
+            var entityMappingToUse = ImpromptuInterface.Dynamic.Builder.New().ActLike<IEntityMapping>();
+            Mock<IPropertyMapping> mappingToUse = new Mock<IPropertyMapping>();
             mappingToUse.SetupGet(instance => instance.Uri).Returns(Rdf.subject);
-            var propertyMapping=new Mock<IPropertyMapping>();
+            var propertyMapping = new Mock<IPropertyMapping>();
             propertyMapping.SetupGet(instance => instance.Uri).Returns(Rdf.predicate);
             _mapping.Setup(m => m.PropertyFor("property")).Returns(propertyMapping.Object);
 
             // when
-            _entityProxy.OverrideGraphSelection(new OverridingGraphSelector(idToUse,entityMappingToUse,mappingToUse.Object));
-            Impromptu.InvokeGet(_entityProxy,"property");
+            _entityProxy.OverrideGraphSelection(new OverridingGraphSelector(idToUse, entityMappingToUse, mappingToUse.Object));
+            Impromptu.InvokeGet(_entityProxy, "property");
 
             // then
-            _graphSelector.Verify(c => c.SelectGraph(idToUse,entityMappingToUse,mappingToUse.Object),Times.Once);
-            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping.Object),Times.Never);
+            _graphSelector.Verify(c => c.SelectGraph(idToUse, entityMappingToUse, mappingToUse.Object), Times.Once);
+            _graphSelector.Verify(c => c.SelectGraph(_entityId, _mapping.Object, propertyMapping.Object), Times.Never);
         }
 
         [Test]
         public void Should_retrieve_named_graph_when_getting_property()
         {
             // given
-            var propertyMapping=new Mock<IPropertyMapping>();
+            var propertyMapping = new Mock<IPropertyMapping>();
             propertyMapping.SetupGet(instance => instance.Uri).Returns(Rdf.predicate);
             _mapping.Setup(m => m.PropertyFor("property")).Returns(propertyMapping.Object);
 
@@ -74,7 +74,7 @@ namespace RomanticWeb.Tests.Entities
             Impromptu.InvokeGet(_entityProxy, "property");
 
             // then
-            _graphSelector.Verify(c => c.SelectGraph(_entityId,_mapping.Object,propertyMapping.Object),Times.Once);
+            _graphSelector.Verify(c => c.SelectGraph(_entityId, _mapping.Object, propertyMapping.Object), Times.Once);
         }
     }
 }

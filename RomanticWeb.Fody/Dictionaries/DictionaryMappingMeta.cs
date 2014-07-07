@@ -6,8 +6,8 @@ namespace RomanticWeb.Fody.Dictionaries
     {
         internal DictionaryMappingMeta(PropertyDefinition property)
         {
-            Property=property;
-            GenericArguments=((GenericInstanceType)property.PropertyType).GenericArguments.ToArray();
+            Property = property;
+            GenericArguments = ((GenericInstanceType)property.PropertyType).GenericArguments.ToArray();
         }
 
         public TypeReference[] GenericArguments { get; private set; }

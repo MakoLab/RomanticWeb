@@ -6,15 +6,15 @@ namespace RomanticWeb.Dynamic
 {
     internal static class EmitHelper
     {
-        private static readonly object Locker=new object();
-        private static readonly Lazy<AssemblyBuilder> AsmBuilder=new Lazy<AssemblyBuilder>(CreateBuilder);
+        private static readonly object Locker = new object();
+        private static readonly Lazy<AssemblyBuilder> AsmBuilder = new Lazy<AssemblyBuilder>(CreateBuilder);
 
         public static ModuleBuilder GetDynamicModule(string name)
         {
             lock (Locker)
             {
                 var assemblyBuilder = GetBuilder();
-                return assemblyBuilder.GetDynamicModule(name)??assemblyBuilder.DefineDynamicModule(name);
+                return assemblyBuilder.GetDynamicModule(name) ?? assemblyBuilder.DefineDynamicModule(name);
             }
         }
 
@@ -23,7 +23,7 @@ namespace RomanticWeb.Dynamic
             return AsmBuilder.Value;
         }
 
-        public static Type GetOrEmitType(this ModuleBuilder moduleBuilder, string typeName, Func<ModuleBuilder,TypeBuilder> emitType)
+        public static Type GetOrEmitType(this ModuleBuilder moduleBuilder, string typeName, Func<ModuleBuilder, TypeBuilder> emitType)
         {
             Type mapType;
             if (moduleBuilder.GetType(typeName) != null)
@@ -32,7 +32,7 @@ namespace RomanticWeb.Dynamic
             }
             else
             {
-                mapType=emitType(moduleBuilder).CreateType();
+                mapType = emitType(moduleBuilder).CreateType();
             }
 
             return mapType;

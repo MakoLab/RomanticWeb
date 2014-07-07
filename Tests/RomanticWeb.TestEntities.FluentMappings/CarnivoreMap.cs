@@ -8,7 +8,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
         public CarnivoreMap()
         {
             Class.Is("life", "Carnivore");
-            Collection(p => p.Prey).Term.Is("life","animalEaten");
+            Collection(p => p.Prey).Term.Is("life", "animalEaten");
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RomanticWeb.Entities.ResultAggregations
 {
-    internal class SingleResult:IResultAggregator
+    internal class SingleResult : IResultAggregator
     {
         public Aggregation Aggregation
         {

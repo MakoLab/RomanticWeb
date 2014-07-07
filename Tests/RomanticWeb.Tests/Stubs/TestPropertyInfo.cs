@@ -4,15 +4,15 @@ using System.Reflection;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    internal class TestPropertyInfo:PropertyInfo
+    internal class TestPropertyInfo : PropertyInfo
     {
         private readonly Type _type;
         private readonly string _name;
 
-        public TestPropertyInfo(Type type, string name="Property")
+        public TestPropertyInfo(Type type, string name = "Property")
         {
-            _type=type;
-            _name=name;
+            _type = type;
+            _name = name;
         }
 
         public override string Name
@@ -76,17 +76,17 @@ namespace RomanticWeb.Tests.Stubs
             throw new NotImplementedException();
         }
 
-        public override bool IsDefined(Type attributeType,bool inherit)
+        public override bool IsDefined(Type attributeType, bool inherit)
         {
             throw new NotImplementedException();
         }
 
-        public override object GetValue(object obj,BindingFlags invokeAttr,Binder binder,object[] index,CultureInfo culture)
+        public override object GetValue(object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
 
-        public override void SetValue(object obj,object value,BindingFlags invokeAttr,Binder binder,object[] index,CultureInfo culture)
+        public override void SetValue(object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -111,7 +111,7 @@ namespace RomanticWeb.Tests.Stubs
             throw new NotImplementedException();
         }
 
-        public override object[] GetCustomAttributes(Type attributeType,bool inherit)
+        public override object[] GetCustomAttributes(Type attributeType, bool inherit)
         {
             throw new NotImplementedException();
         }

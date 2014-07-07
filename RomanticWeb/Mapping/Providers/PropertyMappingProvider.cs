@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// Mapping provider, which returns a mapping for property predicate
     /// </summary>
-    public class PropertyMappingProvider:TermMappingProviderBase,IPropertyMappingProvider
+    public class PropertyMappingProvider : TermMappingProviderBase, IPropertyMappingProvider
     {
         private readonly PropertyInfo _property;
 
@@ -17,10 +17,10 @@ namespace RomanticWeb.Mapping.Providers
         /// </summary>
         /// <param name="termUri">The term URI.</param>
         /// <param name="property">The property.</param>
-        public PropertyMappingProvider(Uri termUri,PropertyInfo property)
-            :base(termUri)
+        public PropertyMappingProvider(Uri termUri, PropertyInfo property)
+            : base(termUri)
         {
-            _property=property;
+            _property = property;
         }
 
         /// <summary>
@@ -29,10 +29,10 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="namespacePrefix">The namespace prefix.</param>
         /// <param name="term">The term.</param>
         /// <param name="property">The property.</param>
-        public PropertyMappingProvider(string namespacePrefix,string term,PropertyInfo property)
-            :base(namespacePrefix,term)
+        public PropertyMappingProvider(string namespacePrefix, string term, PropertyInfo property)
+            : base(namespacePrefix, term)
         {
-            _property=property;
+            _property = property;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace RomanticWeb.Mapping.Providers
         }
 
         /// <inheritdoc/>
-        public Type ConverterType { [return:AllowNull] get; set; }
+        public Type ConverterType { [return: AllowNull] get; set; }
 
         /// <inheritdoc/>
         public override void Accept(IMappingProviderVisitor mappingProviderVisitor)
@@ -58,7 +58,7 @@ namespace RomanticWeb.Mapping.Providers
 #pragma warning disable 1591
         public override string ToString()
         {
-            return string.Format("Property {0}",PropertyInfo.Name);
+            return string.Format("Property {0}", PropertyInfo.Name);
         }
 #pragma warning restore
     }

@@ -5,7 +5,7 @@ namespace RomanticWeb.Converters
 {
     internal static class CatalogConverterExtensions
     {
-        public static ILiteralNodeConverter GetBestConverter(this IConverterCatalog catalog,Node literalNode)
+        public static ILiteralNodeConverter GetBestConverter(this IConverterCatalog catalog, Node literalNode)
         {
             var matches = from converter in catalog.LiteralNodeConverters
                           let match = converter.CanConvert(literalNode)

@@ -12,7 +12,7 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_not_be_match_for_different_has_Uri()
         {
             // given
-            var classMapping=new ClassMapping(new Uri("http://example/#uri1"),false);
+            var classMapping = new ClassMapping(new Uri("http://example/#uri1"), false);
 
             // when
             var result = classMapping.IsMatch(new[] { new Uri("http://example/#uri2") });

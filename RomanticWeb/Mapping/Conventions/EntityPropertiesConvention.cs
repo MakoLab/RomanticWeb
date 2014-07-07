@@ -9,19 +9,19 @@ namespace RomanticWeb.Mapping.Conventions
     /// Sets the converter of <see cref="IEntity"/> properties to an appropriate
     /// <see cref="AsEntityConverter{TEntityId}"/>
     /// </summary>
-    public class EntityPropertiesConvention:IPropertyConvention
+    public class EntityPropertiesConvention : IPropertyConvention
     {
         /// <inheritdoc/>
         public bool ShouldApply(IPropertyMappingProvider target)
         {
-            return target.ConverterType==null
-                   &&typeof(IEntity).IsAssignableFrom(target.PropertyInfo.PropertyType.FindItemType());
+            return target.ConverterType == null
+                   && typeof(IEntity).IsAssignableFrom(target.PropertyInfo.PropertyType.FindItemType());
         }
 
         /// <inheritdoc/>
         public void Apply(IPropertyMappingProvider target)
         {
-            target.ConverterType=typeof(AsEntityConverter<>).MakeGenericType(target.PropertyInfo.PropertyType.FindItemType());
+            target.ConverterType = typeof(AsEntityConverter<>).MakeGenericType(target.PropertyInfo.PropertyType.FindItemType());
         }
     }
 }

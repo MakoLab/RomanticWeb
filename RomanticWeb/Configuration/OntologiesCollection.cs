@@ -5,7 +5,7 @@ namespace RomanticWeb.Configuration
     /// <summary>
     /// Collection of ontology configuration elements
     /// </summary>
-    public class OntologiesCollection:ConfigurationElementCollection
+    public class OntologiesCollection : ConfigurationElementCollection
     {
         /// <summary>
         /// Creates a new instance of <see cref="OntologyElement"/>

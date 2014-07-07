@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public class Derived2Map:EntityMap<IDerivedLevel2>
+    public class Derived2Map : EntityMap<IDerivedLevel2>
     {
         public Derived2Map()
         {

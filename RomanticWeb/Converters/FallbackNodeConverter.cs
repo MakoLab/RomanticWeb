@@ -13,7 +13,7 @@ namespace RomanticWeb.Converters
         /// <summary>Constructor with entity context passed.</summary>
         static FallbackNodeConverter()
         {
-            Converters=new ConverterCatalog();
+            Converters = new ConverterCatalog();
         }
 
         /// <summary>
@@ -24,10 +24,10 @@ namespace RomanticWeb.Converters
         {
             if (objectNode.IsLiteral)
             {
-                return ConvertLiteral(objectNode,context);
+                return ConvertLiteral(objectNode, context);
             }
 
-            return ConvertUri(objectNode,context);
+            return ConvertUri(objectNode, context);
         }
 
         /// <inheritdoc/>
@@ -37,12 +37,12 @@ namespace RomanticWeb.Converters
             {
                 return Node.FromEntityId(((IEntity)value).Id);
             }
-            
-            if (value is IEnumerable&&!(value is string))
+
+            if (value is IEnumerable && !(value is string))
             {
                 throw new InvalidOperationException();
             }
-            
+
             return ConvertOneBack(value);
         }
 
@@ -57,22 +57,22 @@ namespace RomanticWeb.Converters
             {
                 return Node.ForUri((Uri)element);
             }
-            
+
             return Node.ForLiteral(element.ToString());
         }
 
-        private static object ConvertLiteral(Node objectNode,IEntityContext context)
+        private static object ConvertLiteral(Node objectNode, IEntityContext context)
         {
-            var converter=Converters.GetBestConverter(objectNode);
-            if (converter!=null)
+            var converter = Converters.GetBestConverter(objectNode);
+            if (converter != null)
             {
-                return converter.Convert(objectNode,context);
+                return converter.Convert(objectNode, context);
             }
 
             throw new InvalidOperationException();
         }
 
-        private static object ConvertUri(Node uriNode,IEntityContext context)
+        private static object ConvertUri(Node uriNode, IEntityContext context)
         {
             return context.Load<IEntity>(uriNode.ToEntityId());
         }

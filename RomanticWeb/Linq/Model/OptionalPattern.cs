@@ -8,7 +8,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Represents a binary operator in the query.</summary>
     [QueryComponentNavigator(typeof(OptionalPatternNavigator))]
-    public class OptionalPattern:QueryElement
+    public class OptionalPattern : QueryElement
     {
         #region Fields
         private IList<EntityConstrain> _patterns;
@@ -16,9 +16,10 @@ namespace RomanticWeb.Linq.Model
 
         #region Constructors
         /// <summary>Default parameterles constructor.</summary>
-        public OptionalPattern():base()
+        public OptionalPattern()
+            : base()
         {
-            _patterns=new List<EntityConstrain>();
+            _patterns = new List<EntityConstrain>();
         }
         #endregion
 
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this optional pattern.</returns>
         public override string ToString()
         {
-            return System.String.Format("OPTIONAL {{ {0} }}",System.String.Join(" ",_patterns));
+            return System.String.Format("OPTIONAL {{ {0} }}", System.String.Join(" ", _patterns));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -42,7 +43,7 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(OptionalPattern))&&
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(OptionalPattern)) &&
                 (_patterns.SequenceEqual(((OptionalPattern)operand)._patterns));
         }
 
@@ -51,10 +52,10 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            int result=typeof(OptionalPattern).FullName.GetHashCode();
+            int result = typeof(OptionalPattern).FullName.GetHashCode();
             foreach (EntityConstrain pattern in _patterns)
             {
-                result^=pattern.GetHashCode();
+                result ^= pattern.GetHashCode();
             }
 
             return result;

@@ -1,7 +1,6 @@
 ﻿namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public interface IDerivedLevel2:IDerived
+    public interface IDerivedLevel2 : IDerived
     {
-        
     }
 }

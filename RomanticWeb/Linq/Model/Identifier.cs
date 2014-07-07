@@ -5,11 +5,11 @@ using NullGuard;
 namespace RomanticWeb.Linq.Model
 {
     /// <summary>Expresses a literal in the query.</summary>
-    public class Identifier:QueryComponent,IExpression,ISelectableQueryComponent
+    public class Identifier : QueryComponent, IExpression, ISelectableQueryComponent
     {
         #region Fields
         /// <summary>Gets a meta-identiefier that refers to current context's subject.</summary>
-        public static readonly Identifier Current=new Identifier("s",typeof(object));
+        public static readonly Identifier Current = new Identifier("s", typeof(object));
         private string _name;
         private Type _nativeType;
         #endregion
@@ -17,17 +17,19 @@ namespace RomanticWeb.Linq.Model
         #region Constructors
         /// <summary>Base constructor with name passed.</summary>
         /// <param name="name">Name of this identifier.</param>
-        public Identifier(string name):this(name,typeof(object))
+        public Identifier(string name)
+            : this(name, typeof(object))
         {
         }
 
         /// <summary>Base constructor with name passed.</summary>
         /// <param name="name">Name of this identifier.</param>
         /// <param name="nativeType">Native type of the identifier.</param>
-        public Identifier(string name,Type nativeType):base()
+        public Identifier(string name, Type nativeType)
+            : base()
         {
-            _name=name;
-            _nativeType=nativeType;
+            _name = name;
+            _nativeType = nativeType;
         }
         #endregion
 
@@ -47,7 +49,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this identifier.</returns>
         public override string ToString()
         {
-            return System.String.Format("?{0}",_name);
+            return System.String.Format("?{0}", _name);
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -57,7 +59,7 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Identifier))&&(_name.Equals(((Identifier)operand)._name));
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(Identifier)) && (_name.Equals(((Identifier)operand)._name));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -65,7 +67,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(Identifier).FullName.GetHashCode()^_name.GetHashCode();
+            return typeof(Identifier).FullName.GetHashCode() ^ _name.GetHashCode();
         }
         #endregion
     }

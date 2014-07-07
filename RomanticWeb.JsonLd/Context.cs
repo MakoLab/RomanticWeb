@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace RomanticWeb.JsonLd
 {
-    internal class Context:IDictionary<string,TermDefinition>,ICloneable
+    internal class Context : IDictionary<string, TermDefinition>, ICloneable
     {
         #region Fields
-        private readonly IDictionary<string,TermDefinition> _termDefinitions=new Dictionary<string,TermDefinition>();
+        private readonly IDictionary<string, TermDefinition> _termDefinitions = new Dictionary<string, TermDefinition>();
         #endregion
 
         #region Properties
@@ -42,20 +42,20 @@ namespace RomanticWeb.JsonLd
         {
             get
             {
-                return (_termDefinitions.ContainsKey(termName)?_termDefinitions[termName]:null);
+                return (_termDefinitions.ContainsKey(termName) ? _termDefinitions[termName] : null);
             }
 
             set
             {
-                _termDefinitions[termName]=value;
+                _termDefinitions[termName] = value;
             }
         }
         #endregion
 
         #region Public methods
-        public void Add(string termName,TermDefinition termDefinition)
+        public void Add(string termName, TermDefinition termDefinition)
         {
-            _termDefinitions.Add(termName,termDefinition);
+            _termDefinitions.Add(termName, termDefinition);
         }
 
         public bool ContainsKey(string termName)
@@ -68,9 +68,9 @@ namespace RomanticWeb.JsonLd
             return _termDefinitions.Remove(termName);
         }
 
-        public bool TryGetValue(string termName,out TermDefinition termDefinition)
+        public bool TryGetValue(string termName, out TermDefinition termDefinition)
         {
-            return _termDefinitions.TryGetValue(termName,out termDefinition);
+            return _termDefinitions.TryGetValue(termName, out termDefinition);
         }
 
         public void Clear()
@@ -80,41 +80,41 @@ namespace RomanticWeb.JsonLd
 
         public void Merge(Context localContext)
         {
-            if (localContext!=null)
+            if (localContext != null)
             {
-                foreach (KeyValuePair<string,TermDefinition> term in localContext)
+                foreach (KeyValuePair<string, TermDefinition> term in localContext)
                 {
                     if (!ContainsKey(term.Key))
                     {
-                        this[term.Key]=term.Value;
+                        this[term.Key] = term.Value;
                     }
                 }
             }
         }
 
         #region ICollection<KeyValuePair<string,TermDefinition>> methods
-        void ICollection<KeyValuePair<string,TermDefinition>>.Add(KeyValuePair<string,TermDefinition> term)
+        void ICollection<KeyValuePair<string, TermDefinition>>.Add(KeyValuePair<string, TermDefinition> term)
         {
             _termDefinitions.Add(term);
         }
 
-        bool ICollection<KeyValuePair<string,TermDefinition>>.Contains(KeyValuePair<string,TermDefinition> item)
+        bool ICollection<KeyValuePair<string, TermDefinition>>.Contains(KeyValuePair<string, TermDefinition> item)
         {
             return _termDefinitions.Contains(item);
         }
 
-        void ICollection<KeyValuePair<string,TermDefinition>>.CopyTo(KeyValuePair<string,TermDefinition>[] array,int arrayIndex)
+        void ICollection<KeyValuePair<string, TermDefinition>>.CopyTo(KeyValuePair<string, TermDefinition>[] array, int arrayIndex)
         {
-            _termDefinitions.CopyTo(array,arrayIndex);
+            _termDefinitions.CopyTo(array, arrayIndex);
         }
 
-        bool ICollection<KeyValuePair<string,TermDefinition>>.Remove(KeyValuePair<string,TermDefinition> term)
+        bool ICollection<KeyValuePair<string, TermDefinition>>.Remove(KeyValuePair<string, TermDefinition> term)
         {
             return _termDefinitions.Remove(term);
         }
         #endregion
 
-        public IEnumerator<KeyValuePair<string,TermDefinition>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, TermDefinition>> GetEnumerator()
         {
             return _termDefinitions.GetEnumerator();
         }
@@ -126,14 +126,14 @@ namespace RomanticWeb.JsonLd
 
         public Context Clone()
         {
-            var result=new Context();
-            result.BaseIri=BaseIri;
-            result.DocumentUri=DocumentUri;
-            result.Vocabulary=Vocabulary;
-            result.Language=Language;
-            foreach (KeyValuePair<string,TermDefinition> term in this)
+            var result = new Context();
+            result.BaseIri = BaseIri;
+            result.DocumentUri = DocumentUri;
+            result.Vocabulary = Vocabulary;
+            result.Language = Language;
+            foreach (KeyValuePair<string, TermDefinition> term in this)
             {
-                ((IDictionary<string,TermDefinition>)result).Add(new KeyValuePair<string,TermDefinition>(term.Key,term.Value.Clone()));
+                ((IDictionary<string, TermDefinition>)result).Add(new KeyValuePair<string, TermDefinition>(term.Key, term.Value.Clone()));
             }
 
             return result;

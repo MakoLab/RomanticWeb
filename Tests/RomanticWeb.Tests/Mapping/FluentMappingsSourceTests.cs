@@ -6,7 +6,7 @@ using RomanticWeb.TestEntities.FluentMappings;
 namespace RomanticWeb.Tests.Mapping
 {
     [TestFixture]
-    public class FluentMappingsSourceTests:MappingSourceTests
+    public class FluentMappingsSourceTests : MappingSourceTests
     {
         protected override IEnumerable<IMappingProviderSource> CreateMappingSources()
         {

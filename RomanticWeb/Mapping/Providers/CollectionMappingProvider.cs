@@ -9,25 +9,25 @@ using RomanticWeb.Ontologies;
 namespace RomanticWeb.Mapping.Providers
 {
     /// <summary>Mapping provider, which returns a mapping for collection property predicate.</summary>
-    public class CollectionMappingProvider:ICollectionMappingProvider
+    public class CollectionMappingProvider : ICollectionMappingProvider
     {
         private readonly IPropertyMappingProvider _propertyMapping;
-        private Type _elementConverterType=null;
+        private Type _elementConverterType = null;
 
         /// <summary>Initializes a new instance of the <see cref="CollectionMappingProvider" /> class.</summary>
         /// <param name="propertyMapping">The property mapping.</param>
         /// <param name="storeAs">The storage strategy.</param>
-        public CollectionMappingProvider(IPropertyMappingProvider propertyMapping,StoreAs storeAs)
+        public CollectionMappingProvider(IPropertyMappingProvider propertyMapping, StoreAs storeAs)
         {
-            _propertyMapping=propertyMapping;
-            ((ICollectionMappingProvider)this).StoreAs=storeAs;
+            _propertyMapping = propertyMapping;
+            ((ICollectionMappingProvider)this).StoreAs = storeAs;
         }
 
         /// <inheritdoc />
-        public Func<IOntologyProvider,Uri> GetTerm
+        public Func<IOntologyProvider, Uri> GetTerm
         {
             get { return _propertyMapping.GetTerm; }
-            set { _propertyMapping.GetTerm=value; }
+            set { _propertyMapping.GetTerm = value; }
         }
 
         /// <inheritdoc />
@@ -38,7 +38,7 @@ namespace RomanticWeb.Mapping.Providers
         {
             [return: AllowNull]
             get { return _propertyMapping.ConverterType; }
-            set { _propertyMapping.ConverterType=value; }
+            set { _propertyMapping.ConverterType = value; }
         }
 
         /// <summary>Gets or sets the storage strategy.</summary>
@@ -50,7 +50,7 @@ namespace RomanticWeb.Mapping.Providers
         {
             [return: AllowNull]
             get { return _elementConverterType; }
-            set { _elementConverterType=value; }
+            set { _elementConverterType = value; }
         }
 
         /// <inheritdoc/>

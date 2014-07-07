@@ -8,7 +8,7 @@ using RomanticWeb.TestEntities.MixedMappings;
 namespace RomanticWeb.Tests.Mapping
 {
     [TestFixture]
-    public class MixedMappingTests:MappingRepositoryTestBase
+    public class MixedMappingTests : MappingRepositoryTestBase
     {
         [Test]
         public void Should_use_open_generic_mapping_fallback()
@@ -27,10 +27,10 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_fill_return_types_for_inherited_generic_properties()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IDerived>();
+            var mapping = MappingsRepository.MappingFor<IDerived>();
 
             // when
-            var property=mapping.PropertyFor("MappedProperty2");
+            var property = mapping.PropertyFor("MappedProperty2");
 
             // then
             property.ReturnType.Should().Be(typeof(int));
@@ -40,10 +40,10 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_contain_closed_generic_mappings_not_mapped_explicitly()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IGenericParent<int>>();
+            var mapping = MappingsRepository.MappingFor<IGenericParent<int>>();
 
             // when
-            var property=mapping.PropertyFor("MappedProperty2");
+            var property = mapping.PropertyFor("MappedProperty2");
 
             // then
             property.ReturnType.Should().Be(typeof(int));
@@ -53,10 +53,10 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_contain_open_generic_mappings()
         {
             // given
-            var mapping=MappingsRepository.MappingFor(typeof(IGenericParent<>));
+            var mapping = MappingsRepository.MappingFor(typeof(IGenericParent<>));
 
             // when
-            var property=mapping.PropertyFor("MappedProperty2");
+            var property = mapping.PropertyFor("MappedProperty2");
 
             // then
             property.ReturnType.Name.Should().Be("T");
@@ -73,15 +73,15 @@ namespace RomanticWeb.Tests.Mapping
             mapping.PropertyFor("MappedProperty2").Uri.Should().Be(new Uri("urn:hidden:fluent"));
         }
 
-        [TestCase(typeof(IDerived),"urn:override:fluent1")]
-        [TestCase(typeof(IDerivedLevel2),"urn:override:fluent2")]
-        public void Should_respect_mapping_override(Type type,string expectedUri)
+        [TestCase(typeof(IDerived), "urn:override:fluent1")]
+        [TestCase(typeof(IDerivedLevel2), "urn:override:fluent2")]
+        public void Should_respect_mapping_override(Type type, string expectedUri)
         {
             // given
-            var mapping=MappingsRepository.MappingFor(type);
+            var mapping = MappingsRepository.MappingFor(type);
 
             // when
-            var property=mapping.PropertyFor("MappedProperty1");
+            var property = mapping.PropertyFor("MappedProperty1");
 
             // then
             property.Uri.Should().Be(new Uri(expectedUri));
@@ -120,7 +120,7 @@ namespace RomanticWeb.Tests.Mapping
             var mapping = MappingsRepository.MappingFor<FluentNoIEntityInnerMapChild>();
 
             // when
-            var properties=mapping.Properties;
+            var properties = mapping.Properties;
 
             // then
             properties.Should().HaveCount(2);

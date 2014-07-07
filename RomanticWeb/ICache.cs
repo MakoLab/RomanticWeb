@@ -17,6 +17,6 @@
         /// <summary>Stores data under given key.</summary>
         /// <param name="key">Key to be stored at.</param>
         /// <param name="data">Data to be stored.</param>
-        void Store(string key,object data);
+        void Store(string key, object data);
     }
 }

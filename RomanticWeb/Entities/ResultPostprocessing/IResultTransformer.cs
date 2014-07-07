@@ -16,7 +16,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <param name="property">The property.</param>
         /// <param name="context">The context.</param>
         /// <param name="nodes">The nodes.</param>
-        object FromNodes(IEntityProxy proxy,IPropertyMapping property,IEntityContext context,IEnumerable<Node> nodes);
+        object FromNodes(IEntityProxy proxy, IPropertyMapping property, IEntityContext context, IEnumerable<Node> nodes);
 
         /// <summary>
         /// Gets the transformed result.
@@ -25,6 +25,6 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <param name="property">The property.</param>
         /// <param name="context">The context.</param>
         /// <param name="value">The object to transform.</param>
-        IEnumerable<Node> ToNodes(object value,IEntityProxy proxy,IPropertyMapping property,IEntityContext context);
+        IEnumerable<Node> ToNodes(object value, IEntityProxy proxy, IPropertyMapping property, IEntityContext context);
     }
 }

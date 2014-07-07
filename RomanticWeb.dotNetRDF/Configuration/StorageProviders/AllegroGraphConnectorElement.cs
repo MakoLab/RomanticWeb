@@ -4,7 +4,7 @@ using VDS.RDF.Storage;
 
 namespace RomanticWeb.DotNetRDF.Configuration.StorageProviders
 {
-    internal class AllegroGraphConnectorElement:StorageProviderElement
+    internal class AllegroGraphConnectorElement : StorageProviderElement
     {
         private const string BaseUriAttributeName = "baseUri";
         private const string StoreIdAttributeName = "storeID";

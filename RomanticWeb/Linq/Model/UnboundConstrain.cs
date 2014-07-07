@@ -8,7 +8,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Provides details about entity constrain.</summary>
     [QueryComponentNavigator(typeof(UnboundConstrainNavigator))]
-    public class UnboundConstrain:EntityConstrain,ISelectableQueryComponent
+    public class UnboundConstrain : EntityConstrain, ISelectableQueryComponent
     {
         #region Fields
         private IExpression _subject;
@@ -16,7 +16,8 @@ namespace RomanticWeb.Linq.Model
 
         #region Constructors
         /// <summary>Default parameterles constructor.</summary>
-        public UnboundConstrain():base()
+        public UnboundConstrain()
+            : base()
         {
         }
 
@@ -25,9 +26,10 @@ namespace RomanticWeb.Linq.Model
         /// <param name="predicate">Predicate.</param>
         /// <param name="value">Object.</param>
         /// <param name="targetExpression">Target expression that was source of this constrain.</param>
-        public UnboundConstrain(IExpression subject,IExpression predicate,IExpression value,Expression targetExpression):base(predicate,value,targetExpression)
+        public UnboundConstrain(IExpression subject, IExpression predicate, IExpression value, Expression targetExpression)
+            : base(predicate, value, targetExpression)
         {
-            Subject=subject;
+            Subject = subject;
         }
         #endregion
 
@@ -43,9 +45,9 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                if (((_subject=value)!=null)&&(_subject is QueryComponent))
+                if (((_subject = value) != null) && (_subject is QueryComponent))
                 {
-                    ((QueryComponent)_subject).OwnerQuery=OwnerQuery;
+                    ((QueryComponent)_subject).OwnerQuery = OwnerQuery;
                 }
             }
         }
@@ -55,18 +57,18 @@ namespace RomanticWeb.Linq.Model
         {
             get
             {
-                List<IExpression> result=new List<IExpression>();
-                if (_subject!=null)
+                List<IExpression> result = new List<IExpression>();
+                if (_subject != null)
                 {
                     result.Add(_subject);
                 }
 
-                if (Predicate!=null)
+                if (Predicate != null)
                 {
                     result.Add(Predicate);
                 }
 
-                if (Value!=null)
+                if (Value != null)
                 {
                     result.Add(Value);
                 }
@@ -85,10 +87,10 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                base.OwnerQuery=value;
-                if ((_subject!=null)&&(_subject is QueryComponent))
+                base.OwnerQuery = value;
+                if ((_subject != null) && (_subject is QueryComponent))
                 {
-                    ((QueryComponent)_subject).OwnerQuery=value;
+                    ((QueryComponent)_subject).OwnerQuery = value;
                 }
             }
         }
@@ -102,10 +104,10 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand is UnboundConstrain)&&
-                (_subject!=null?_subject.Equals(((UnboundConstrain)operand)._subject):Object.Equals(((UnboundConstrain)operand)._subject,null))&&
-                (Predicate!=null?Predicate.Equals(((UnboundConstrain)operand).Predicate):Object.Equals(((UnboundConstrain)operand).Predicate,null))&&
-                (Value!=null?Value.Equals(((UnboundConstrain)operand).Value):Object.Equals(((UnboundConstrain)operand).Value,null));
+            return (!Object.Equals(operand, null)) && (operand is UnboundConstrain) &&
+                (_subject != null ? _subject.Equals(((UnboundConstrain)operand)._subject) : Object.Equals(((UnboundConstrain)operand)._subject, null)) &&
+                (Predicate != null ? Predicate.Equals(((UnboundConstrain)operand).Predicate) : Object.Equals(((UnboundConstrain)operand).Predicate, null)) &&
+                (Value != null ? Value.Equals(((UnboundConstrain)operand).Value) : Object.Equals(((UnboundConstrain)operand).Value, null));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -113,7 +115,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(UnboundConstrain).FullName.GetHashCode()^(_subject!=null?_subject.GetHashCode():0)^(Predicate!=null?Predicate.GetHashCode():0)^(Value!=null?Value.GetHashCode():0);
+            return typeof(UnboundConstrain).FullName.GetHashCode() ^ (_subject != null ? _subject.GetHashCode() : 0) ^ (Predicate != null ? Predicate.GetHashCode() : 0) ^ (Value != null ? Value.GetHashCode() : 0);
         }
 
         /// <summary>Creates a string representation of this entity constrain.</summary>
@@ -122,9 +124,9 @@ namespace RomanticWeb.Linq.Model
         {
             return System.String.Format(
                 "{0} {1} {2} .",
-                (_subject!=null?_subject.ToString():System.String.Empty),
-                (Predicate!=null?Predicate.ToString():System.String.Empty),
-                (Value!=null?Value.ToString():System.String.Empty));
+                (_subject != null ? _subject.ToString() : System.String.Empty),
+                (Predicate != null ? Predicate.ToString() : System.String.Empty),
+                (Value != null ? Value.ToString() : System.String.Empty));
         }
         #endregion
     }

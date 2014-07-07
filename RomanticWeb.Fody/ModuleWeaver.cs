@@ -26,9 +26,9 @@ namespace RomanticWeb.Fody
                 // skip RomanticWeb assemblies and those that don't reference RomanticWeb
                 return;
             }
-            
-            References=new WeaverReferences(this);
-            Imports=new WeaverImports(this,References);
+
+            References = new WeaverReferences(this);
+            Imports = new WeaverImports(this, References);
 
             AddTypeConverters();
             AddDictionaryEntityTypes();
@@ -36,15 +36,15 @@ namespace RomanticWeb.Fody
 
         private bool ModuleHasNoRomanticWebReference(out AssemblyDefinition ormAssembly)
         {
-            var reference=ModuleDefinition.AssemblyReferences.FirstOrDefault(refe => refe.FullName.StartsWith("RomanticWeb,"));
+            var reference = ModuleDefinition.AssemblyReferences.FirstOrDefault(refe => refe.FullName.StartsWith("RomanticWeb,"));
 
-            if (reference!=null)
+            if (reference != null)
             {
-                ormAssembly=ModuleDefinition.AssemblyResolver.Resolve(reference);
+                ormAssembly = ModuleDefinition.AssemblyResolver.Resolve(reference);
                 return false;
             }
 
-            ormAssembly=null;
+            ormAssembly = null;
             return true;
         }
 

@@ -6,11 +6,12 @@ using RomanticWeb.Mapping.Visitors;
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>A mapping definition for properties.</summary>
-    public sealed class PropertyMap:PropertyMapBase,IPropertyMap
+    public sealed class PropertyMap : PropertyMapBase, IPropertyMap
     {
         /// <summary>Initializes a new instance of the <see cref="PropertyMap"/> class.</summary>
         /// <param name="propertyInfo">The property.</param>
-        public PropertyMap(PropertyInfo propertyInfo):base(propertyInfo)
+        public PropertyMap(PropertyInfo propertyInfo)
+            : base(propertyInfo)
         {
         }
 
@@ -18,9 +19,9 @@ namespace RomanticWeb.Mapping.Fluent
         public ITermPart<IPropertyMap> Term { get { return new TermPart<PropertyMap>(this); } }
 
         /// <inheritdoc/>
-        public IPropertyMap ConvertWith<TConverter>() where TConverter:INodeConverter
+        public IPropertyMap ConvertWith<TConverter>() where TConverter : INodeConverter
         {
-            ConverterType=typeof(TConverter);
+            ConverterType = typeof(TConverter);
             return this;
         }
 

@@ -6,7 +6,7 @@ namespace RomanticWeb.Fody
     {
         public DictionaryCache()
         {
-            Storage=new Dictionary<string,object>();
+            Storage = new Dictionary<string, object>();
         }
 
         private Dictionary<string, object> Storage { get; set; }

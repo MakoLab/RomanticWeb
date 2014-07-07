@@ -3,16 +3,16 @@ using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping
 {
-    internal class MappingFromFluent:MappingFrom
+    internal class MappingFromFluent : MappingFrom
     {
         public MappingFromFluent(MappingBuilder mappingBuilder)
-            :base(mappingBuilder)
+            : base(mappingBuilder)
         {
         }
 
         public override void FromAssembly(Assembly mappingAssembly)
         {
-            MappingBuilder.AddMapping(mappingAssembly,new FluentMappingsSource(mappingAssembly));
+            MappingBuilder.AddMapping(mappingAssembly, new FluentMappingsSource(mappingAssembly));
         }
     }
 }

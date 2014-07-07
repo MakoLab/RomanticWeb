@@ -15,13 +15,13 @@ namespace RomanticWeb.Tests.Mapping.Conventions
     [TestFixture]
     public class CollectionConventionTests
     {
-        private static readonly dynamic New=Builder.New();
+        private static readonly dynamic New = Builder.New();
         private CollectionStorageConvention _rdfListConvention;
 
         [SetUp]
         public void Setup()
         {
-            _rdfListConvention=new CollectionStorageConvention();
+            _rdfListConvention = new CollectionStorageConvention();
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             }.ActLike<ICollectionMappingProvider>();
 
             // when
-            var shouldApply=_rdfListConvention.ShouldApply(mapping);
+            var shouldApply = _rdfListConvention.ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeFalse();

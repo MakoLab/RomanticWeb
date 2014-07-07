@@ -7,17 +7,17 @@ namespace RomanticWeb.Mapping.Fluent
     /// <summary>
     /// A mapping definition for dictionary properties
     /// </summary>
-    public sealed class DictionaryMap:PropertyMapBase,IDictionaryMap
+    public sealed class DictionaryMap : PropertyMapBase, IDictionaryMap
     {
         private readonly KeyMap _keyMap;
 
         private readonly ValueMap _valueMap;
 
         internal DictionaryMap(PropertyInfo propertyInfo)
-            :base(propertyInfo)
+            : base(propertyInfo)
         {
-            _keyMap=new KeyMap();
-            _valueMap=new ValueMap();
+            _keyMap = new KeyMap();
+            _valueMap = new ValueMap();
         }
 
         /// <inheritdoc/>
@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Fluent
         {
             get
             {
-                return new DictionaryPart(this,_keyMap);
+                return new DictionaryPart(this, _keyMap);
             }
         }
 
@@ -47,20 +47,20 @@ namespace RomanticWeb.Mapping.Fluent
         {
             get
             {
-                return new DictionaryPart(this,_valueMap);
+                return new DictionaryPart(this, _valueMap);
             }
         }
 
         /// <inheritdoc/>
         public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
-            return fluentMapsVisitor.Visit(this,_keyMap.Accept(fluentMapsVisitor),_valueMap.Accept(fluentMapsVisitor));
+            return fluentMapsVisitor.Visit(this, _keyMap.Accept(fluentMapsVisitor), _valueMap.Accept(fluentMapsVisitor));
         }
 
         /// <summary>
         /// A definition for mapping dictionary value predicate
         /// </summary>
-        public class ValueMap:TermMap
+        public class ValueMap : TermMap
         {
             /// <summary>
             /// Accepts the specified fluent maps visitor.
@@ -74,7 +74,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// A definition for mapping dictionary key predicate
         /// </summary>
-        public class KeyMap:TermMap
+        public class KeyMap : TermMap
         {
             /// <summary>
             /// Accepts the specified fluent maps visitor.
@@ -85,20 +85,20 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        private class DictionaryPart:ITermPart<DictionaryMap>
+        private class DictionaryPart : ITermPart<DictionaryMap>
         {
             private readonly DictionaryMap _dictionaryMap;
             private readonly TermMap _actualMap;
 
-            internal DictionaryPart(DictionaryMap dictionaryMap,TermMap actualMap)
+            internal DictionaryPart(DictionaryMap dictionaryMap, TermMap actualMap)
             {
-                _dictionaryMap=dictionaryMap;
-                _actualMap=actualMap;
+                _dictionaryMap = dictionaryMap;
+                _actualMap = actualMap;
             }
 
-            public DictionaryMap Is(string prefix,string predicateName)
+            public DictionaryMap Is(string prefix, string predicateName)
             {
-                _actualMap.SetQName(prefix,predicateName);
+                _actualMap.SetQName(prefix, predicateName);
                 return _dictionaryMap;
             }
 

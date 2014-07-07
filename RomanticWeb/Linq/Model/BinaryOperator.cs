@@ -7,12 +7,13 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Represents a binary operator in the query.</summary>
     [QueryComponentNavigator(typeof(BinaryOperatorNavigator))]
-    public class BinaryOperator:UnaryOperator
+    public class BinaryOperator : UnaryOperator
     {
         #region Constructors
         /// <summary>Default constructor with operator name.</summary>
         /// <param name="operatorName">Operator name.</param>
-        public BinaryOperator(MethodNames operatorName):base(operatorName)
+        public BinaryOperator(MethodNames operatorName)
+            : base(operatorName)
         {
         }
 
@@ -20,16 +21,17 @@ namespace RomanticWeb.Linq.Model
         /// <param name="operatorName">Operator name.</param>
         /// <param name="leftOperand">Left operand.</param>
         /// <param name="rightOperand">Right operand.</param>
-        public BinaryOperator(MethodNames operatorName,IExpression leftOperand,IExpression rightOperand):base(operatorName,leftOperand)
+        public BinaryOperator(MethodNames operatorName, IExpression leftOperand, IExpression rightOperand)
+            : base(operatorName, leftOperand)
         {
-            RightOperand=rightOperand;
+            RightOperand = rightOperand;
         }
         #endregion
 
         #region Properties
         /// <summary>Gets or sets left operand of this operator.</summary>
         [AllowNull]
-        public IExpression LeftOperand { get { return Operand; } set { Operand=value; } }
+        public IExpression LeftOperand { get { return Operand; } set { Operand = value; } }
 
         /// <summary>Gets or sets right operand of this operator.</summary>
         [AllowNull]
@@ -37,28 +39,28 @@ namespace RomanticWeb.Linq.Model
         {
             get
             {
-                return (Arguments.Count>1?Arguments[1]:null);
+                return (Arguments.Count > 1 ? Arguments[1] : null);
             }
 
             set
             {
-                if (Arguments.Count<2)
+                if (Arguments.Count < 2)
                 {
-                    if (Arguments.Count<1)
+                    if (Arguments.Count < 1)
                     {
-                        Arguments[0]=null;
+                        Arguments[0] = null;
                     }
 
-                    if (value!=null)
+                    if (value != null)
                     {
                         Arguments.Add(value);
                     }
                 }
                 else
                 {
-                    if (value!=null)
+                    if (value != null)
                     {
-                        Arguments[1]=value;
+                        Arguments[1] = value;
                     }
                     else
                     {
@@ -74,109 +76,109 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this binary operator.</returns>
         public override string ToString()
         {
-            string operatorString=Member.ToString();
+            string operatorString = Member.ToString();
             switch (Member)
             {
                 case MethodNames.Add:
-                    operatorString="+";
+                    operatorString = "+";
                     break;
                 case MethodNames.AddAndAssign:
-                    operatorString="+=";
+                    operatorString = "+=";
                     break;
                 case MethodNames.Substract:
-                    operatorString="-";
+                    operatorString = "-";
                     break;
                 case MethodNames.SubstractAndAssign:
-                    operatorString="-=";
+                    operatorString = "-=";
                     break;
                 case MethodNames.Multiply:
-                    operatorString="*";
+                    operatorString = "*";
                     break;
                 case MethodNames.MultiplyAndAssign:
-                    operatorString="*=";
+                    operatorString = "*=";
                     break;
                 case MethodNames.Divide:
-                    operatorString="/";
+                    operatorString = "/";
                     break;
                 case MethodNames.DivideAndAssign:
-                    operatorString="/=";
+                    operatorString = "/=";
                     break;
                 case MethodNames.Modulo:
-                    operatorString="%";
+                    operatorString = "%";
                     break;
                 case MethodNames.ModuloAndAssign:
-                    operatorString="%=";
+                    operatorString = "%=";
                     break;
                 case MethodNames.Equal:
-                    operatorString="==";
+                    operatorString = "==";
                     break;
                 case MethodNames.NotEqual:
-                    operatorString="!=";
+                    operatorString = "!=";
                     break;
                 case MethodNames.GreaterThan:
-                    operatorString=">";
+                    operatorString = ">";
                     break;
                 case MethodNames.GreaterThanOrEqual:
-                    operatorString=">=";
+                    operatorString = ">=";
                     break;
                 case MethodNames.LessThan:
-                    operatorString="<";
+                    operatorString = "<";
                     break;
                 case MethodNames.LessThanOrEqual:
-                    operatorString="<=";
+                    operatorString = "<=";
                     break;
                 case MethodNames.BitwiseAnd:
-                    operatorString="&";
+                    operatorString = "&";
                     break;
                 case MethodNames.BitwiseAndAndAssign:
-                    operatorString="&=";
+                    operatorString = "&=";
                     break;
                 case MethodNames.BitwiseOr:
-                    operatorString="|";
+                    operatorString = "|";
                     break;
                 case MethodNames.BitwiseOrAndAssign:
-                    operatorString="|=";
+                    operatorString = "|=";
                     break;
                 case MethodNames.BitwiseXor:
-                    operatorString="^";
+                    operatorString = "^";
                     break;
                 case MethodNames.BitwiseXorAndAssign:
-                    operatorString="^=";
+                    operatorString = "^=";
                     break;
                 case MethodNames.BitwiseNot:
-                    operatorString="~";
+                    operatorString = "~";
                     break;
                 case MethodNames.BitwiseNotAndAssign:
-                    operatorString="~=";
+                    operatorString = "~=";
                     break;
                 case MethodNames.And:
-                    operatorString="&&";
+                    operatorString = "&&";
                     break;
                 case MethodNames.Or:
-                    operatorString="||";
+                    operatorString = "||";
                     break;
                 case MethodNames.Xor:
-                    operatorString="^^";
+                    operatorString = "^^";
                     break;
                 case MethodNames.BitwiseShiftLeft:
-                    operatorString="<<";
+                    operatorString = "<<";
                     break;
                 case MethodNames.BitwiseShiftLeftAndAssign:
-                    operatorString="<<=";
+                    operatorString = "<<=";
                     break;
                 case MethodNames.BitwiseShiftRight:
-                    operatorString=">>";
+                    operatorString = ">>";
                     break;
                 case MethodNames.BitwiseShiftRightAndAssign:
-                    operatorString=">>=";
+                    operatorString = ">>=";
                     break;
             }
 
             return System.String.Format(
                 "{0}{1}{2}",
-                (LeftOperand!=null?LeftOperand.ToString():System.String.Empty),
+                LeftOperand != null ? LeftOperand.ToString() : System.String.Empty,
                 operatorString,
-                (RightOperand!=null?RightOperand.ToString():System.String.Empty));
+                RightOperand != null ? RightOperand.ToString() : System.String.Empty);
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -186,9 +188,9 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(BinaryOperator))&&
-                (LeftOperand!=null?LeftOperand.Equals(((BinaryOperator)operand).LeftOperand):Object.Equals(((BinaryOperator)operand).LeftOperand,null))&&
-                (RightOperand!=null?RightOperand.Equals(((BinaryOperator)operand).RightOperand):Object.Equals(((BinaryOperator)operand).RightOperand,null));
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(BinaryOperator)) &&
+                (LeftOperand != null ? LeftOperand.Equals(((BinaryOperator)operand).LeftOperand) : Object.Equals(((BinaryOperator)operand).LeftOperand, null)) &&
+                (RightOperand != null ? RightOperand.Equals(((BinaryOperator)operand).RightOperand) : Object.Equals(((BinaryOperator)operand).RightOperand, null));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -196,7 +198,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(BinaryOperator).FullName.GetHashCode()^(LeftOperand!=null?LeftOperand.GetHashCode():0)^(RightOperand!=null?RightOperand.GetHashCode():0);
+            return typeof(BinaryOperator).FullName.GetHashCode() ^ (LeftOperand != null ? LeftOperand.GetHashCode() : 0) ^ (RightOperand != null ? RightOperand.GetHashCode() : 0);
         }
         #endregion
 
@@ -204,7 +206,7 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Rised when arguments collection has changed.</summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="e">Eventarguments.</param>
-        protected override void OnCollectionChanged(object sender,NotifyCollectionChangedEventArgs e)
+        protected override void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -212,13 +214,13 @@ namespace RomanticWeb.Linq.Model
                     {
                         foreach (QueryComponent queryComponent in e.NewItems)
                         {
-                            if (queryComponent!=null)
+                            if (queryComponent != null)
                             {
-                                queryComponent.OwnerQuery=OwnerQuery;
+                                queryComponent.OwnerQuery = OwnerQuery;
                             }
                         }
 
-                        if (Arguments.Count>2)
+                        if (Arguments.Count > 2)
                         {
                             throw new InvalidOperationException("Cannot add more than two operands for binary operator.");
                         }

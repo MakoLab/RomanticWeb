@@ -19,8 +19,8 @@ namespace RomanticWeb.Tests.Stubs
 
         public IResultTransformer GetTransformer(IPropertyMapping property)
         {
-            var collection=property as ICollectionMapping;
-            if (collection!=null)
+            var collection = property as ICollectionMapping;
+            if (collection != null)
             {
                 switch (collection.StoreAs)
                 {

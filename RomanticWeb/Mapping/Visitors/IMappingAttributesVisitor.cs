@@ -20,14 +20,14 @@ namespace RomanticWeb.Mapping.Visitors
         /// </summary>
         /// <param name="propertyAttribute">The property attribute.</param>
         /// <param name="property">The property.</param>
-        IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute,PropertyInfo property);
+        IPropertyMappingProvider Visit(PropertyAttribute propertyAttribute, PropertyInfo property);
 
         /// <summary>
         /// Visits the specified collection attribute.
         /// </summary>
         /// <param name="collectionAttribute">The collection attribute.</param>
         /// <param name="property">The property.</param>
-        ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute,PropertyInfo property);
+        ICollectionMappingProvider Visit(CollectionAttribute collectionAttribute, PropertyInfo property);
 
         /// <summary>
         /// Visits the specified dictionary attribute.
@@ -36,7 +36,7 @@ namespace RomanticWeb.Mapping.Visitors
         /// <param name="property">The property.</param>
         /// <param name="key">The key property mapping provider.</param>
         /// <param name="value">The value property mapping provider.</param>
-        IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute,PropertyInfo property,ITermMappingProvider key,ITermMappingProvider value);
+        IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value);
 
         /// <summary>
         /// Visits the specified key attribute.

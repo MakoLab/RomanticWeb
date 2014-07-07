@@ -6,28 +6,28 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Collections
 {
-    [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
-    internal class RdfDictionary<TKey,TValue,TEntry,TOwner>:IDictionary<TKey,TValue>,IRdfDictionary
-        where TEntry:class,IDictionaryEntry<TKey,TValue>
-        where TOwner:class,IDictionaryOwner<TEntry,TKey,TValue>
+    [NullGuard(ValidationFlags.All ^ ValidationFlags.OutValues)]
+    internal class RdfDictionary<TKey, TValue, TEntry, TOwner> : IDictionary<TKey, TValue>, IRdfDictionary
+        where TEntry : class, IDictionaryEntry<TKey, TValue>
+        where TOwner : class, IDictionaryOwner<TEntry, TKey, TValue>
     {
         private readonly TOwner _dictionaryOwner;
         private readonly IEntityContext _context;
 
-        public RdfDictionary(EntityId ownerId,IEntityContext context)
+        public RdfDictionary(EntityId ownerId, IEntityContext context)
         {
-            _dictionaryOwner=context.Load<TOwner>(ownerId);
-            _context=context;
+            _dictionaryOwner = context.Load<TOwner>(ownerId);
+            _context = context;
         }
 
-        public RdfDictionary(EntityId ownerId,IEntityContext context,IEnumerable<KeyValuePair<TKey,TValue>> existingDictionary)
-            :this(ownerId,context)
+        public RdfDictionary(EntityId ownerId, IEntityContext context, IEnumerable<KeyValuePair<TKey, TValue>> existingDictionary)
+            : this(ownerId, context)
         {
             foreach (var pair in existingDictionary)
             {
                 Add(pair);
             }
-        } 
+        }
 
         public int Count
         {
@@ -73,9 +73,9 @@ namespace RomanticWeb.Collections
         {
             get
             {
-                var entry=_dictionaryOwner.DictionaryEntries.SingleOrDefault(e => Equals(e.Key,key));
+                var entry = _dictionaryOwner.DictionaryEntries.SingleOrDefault(e => Equals(e.Key, key));
 
-                if (entry==null)
+                if (entry == null)
                 {
                     throw new KeyNotFoundException();
                 }
@@ -85,11 +85,11 @@ namespace RomanticWeb.Collections
 
             set
             {
-                Add(key,value);
+                Add(key, value);
             }
         }
 
-        public IEnumerator<KeyValuePair<TKey,TValue>> GetEnumerator()
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return new Enumerator(_dictionaryOwner);
         }
@@ -99,9 +99,9 @@ namespace RomanticWeb.Collections
             return GetEnumerator();
         }
 
-        public void Add(KeyValuePair<TKey,TValue> item)
+        public void Add(KeyValuePair<TKey, TValue> item)
         {
-            Add(item.Key,item.Value);
+            Add(item.Key, item.Value);
         }
 
         public void Clear()
@@ -114,30 +114,30 @@ namespace RomanticWeb.Collections
             _dictionaryOwner.DictionaryEntries.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey,TValue> item)
+        public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            return _dictionaryOwner.DictionaryEntries.Any(pair => Equals(pair.Key,item.Key)&&Equals(pair.Value,item.Value));
+            return _dictionaryOwner.DictionaryEntries.Any(pair => Equals(pair.Key, item.Key) && Equals(pair.Value, item.Value));
         }
 
-        public void CopyTo(KeyValuePair<TKey,TValue>[] array,int index)
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
-            int num=Count;
-            var entryArray=_dictionaryOwner.DictionaryEntries.ToArray();
+            int num = Count;
+            var entryArray = _dictionaryOwner.DictionaryEntries.ToArray();
             for (int index1 = 0; index1 < num; ++index1)
             {
-                array[index++]=new KeyValuePair<TKey,TValue>(entryArray[index1].Key,entryArray[index1].Value);
+                array[index++] = new KeyValuePair<TKey, TValue>(entryArray[index1].Key, entryArray[index1].Value);
             }
         }
 
-        public bool Remove(KeyValuePair<TKey,TValue> item)
+        public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            var pair=GetPair(item.Key);
-            if (pair==null)
+            var pair = GetPair(item.Key);
+            if (pair == null)
             {
                 return false;
             }
 
-            if (!Equals(item.Value,pair.Value))
+            if (!Equals(item.Value, pair.Value))
             {
                 return false;
             }
@@ -151,18 +151,18 @@ namespace RomanticWeb.Collections
             return _dictionaryOwner.DictionaryEntries.Any(e => Equals(e.Key, key));
         }
 
-        public void Add(TKey key,TValue value)
+        public void Add(TKey key, TValue value)
         {
-            var pair=_context.Create<TEntry>(new BlankId(_context.BlankIdGenerator.Generate(),_dictionaryOwner.Id));
-            pair.Key=key;
-            pair.Value=value;
+            var pair = _context.Create<TEntry>(new BlankId(_context.BlankIdGenerator.Generate(), _dictionaryOwner.Id));
+            pair.Key = key;
+            pair.Value = value;
             _dictionaryOwner.DictionaryEntries.Add(pair);
         }
 
         public bool Remove(TKey key)
         {
             var pair = GetPair(key);
-            if (pair!=null)
+            if (pair != null)
             {
                 DeletePair(pair);
                 return true;
@@ -171,14 +171,14 @@ namespace RomanticWeb.Collections
             return false;
         }
 
-        public bool TryGetValue(TKey key,out TValue value)
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            value=default(TValue);
+            value = default(TValue);
 
-            var pair=GetPair(key);
-            if (pair!=null)
+            var pair = GetPair(key);
+            if (pair != null)
             {
-                value=pair.Value;
+                value = pair.Value;
                 return true;
             }
 
@@ -191,26 +191,26 @@ namespace RomanticWeb.Collections
             _dictionaryOwner.DictionaryEntries.Remove(pair);
         }
 
-        [return:AllowNull]
+        [return: AllowNull]
         private TEntry GetPair(TKey key)
         {
             return _dictionaryOwner.DictionaryEntries.SingleOrDefault(entry => Equals(entry.Key, key));
         }
 
-        private class Enumerator:IEnumerator<KeyValuePair<TKey,TValue>>
+        private class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
         {
             private readonly IEnumerator<TEntry> _inner;
 
-            public Enumerator(IDictionaryOwner<TEntry,TKey,TValue> dictionaryOwner)
+            public Enumerator(IDictionaryOwner<TEntry, TKey, TValue> dictionaryOwner)
             {
-                _inner=dictionaryOwner.DictionaryEntries.GetEnumerator();
+                _inner = dictionaryOwner.DictionaryEntries.GetEnumerator();
             }
 
             public KeyValuePair<TKey, TValue> Current
             {
                 get
                 {
-                    return new KeyValuePair<TKey,TValue>(_inner.Current.Key,_inner.Current.Value);
+                    return new KeyValuePair<TKey, TValue>(_inner.Current.Key, _inner.Current.Value);
                 }
             }
 

@@ -17,9 +17,9 @@ namespace RomanticWeb.Tests.Configuration
         [SetUp]
         public void Setup()
         {
-            _element=new ExternallyConfiguredStoreElement(new StoresConfigurationSection());
-            _loader=new Mock<IConfigurationLoader>(MockBehavior.Strict);
-            _element.ConfigurationLoader=_loader.Object;
+            _element = new ExternallyConfiguredStoreElement(new StoresConfigurationSection());
+            _loader = new Mock<IConfigurationLoader>(MockBehavior.Strict);
+            _element.ConfigurationLoader = _loader.Object;
         }
 
         [TearDown]

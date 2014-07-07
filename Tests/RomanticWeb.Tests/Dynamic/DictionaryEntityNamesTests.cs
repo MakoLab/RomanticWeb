@@ -12,7 +12,7 @@ namespace RomanticWeb.Tests.Dynamic
         [SetUp]
         public void Setup()
         {
-            _names=new DictionaryEntityNamesTestable("RomanticWeb.Tests","ITestEntity","SomeProperty","The.Assembly");
+            _names = new DictionaryEntityNamesTestable("RomanticWeb.Tests", "ITestEntity", "SomeProperty", "The.Assembly");
         }
 
         [Test]
@@ -45,10 +45,10 @@ namespace RomanticWeb.Tests.Dynamic
             _names.Namespace.Should().Be("RomanticWeb.Tests");
         }
 
-        private class DictionaryEntityNamesTestable:DictionaryEntityNames
+        private class DictionaryEntityNamesTestable : DictionaryEntityNames
         {
-            public DictionaryEntityNamesTestable(string @namespace,string entityTypeName,string propertyName,string assemblyName)
-                :base(@namespace,entityTypeName,propertyName,assemblyName)
+            public DictionaryEntityNamesTestable(string @namespace, string entityTypeName, string propertyName, string assemblyName)
+                : base(@namespace, entityTypeName, propertyName, assemblyName)
             {
             }
         }

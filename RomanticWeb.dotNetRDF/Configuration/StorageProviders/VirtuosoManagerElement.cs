@@ -5,7 +5,7 @@ using VDS.RDF.Storage;
 
 namespace RomanticWeb.DotNetRDF.Configuration.StorageProviders
 {
-    internal class VirtuosoManagerElement:StorageProviderElement
+    internal class VirtuosoManagerElement : StorageProviderElement
     {
         private const string ConnectionStringNameAttributeName = "connectionStringName";
         private const string ConnectionStringAttributeName = "connectionString";
@@ -14,7 +14,7 @@ namespace RomanticWeb.DotNetRDF.Configuration.StorageProviders
         private const string DatabaseAttributeName = "db";
         private const string UserAttributeName = "user";
         private const string PasswordAttributeName = "password";
-        private const string TimeoutAttributeName ="timeout";
+        private const string TimeoutAttributeName = "timeout";
 
         protected override Type ProviderType
         {

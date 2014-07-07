@@ -4,7 +4,7 @@ using NullGuard;
 namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Base class for mapping attributes.</summary>
-    public abstract class TermMappingAttribute:Attribute
+    public abstract class TermMappingAttribute : Attribute
     {
         #region Fields
         private readonly string _prefix;
@@ -19,10 +19,10 @@ namespace RomanticWeb.Mapping.Attributes
         /// </summary>
         /// <param name="prefix">The prefix.</param>
         /// <param name="term">The term.</param>
-        protected TermMappingAttribute(string prefix,string term)
+        protected TermMappingAttribute(string prefix, string term)
         {
-            _prefix=prefix;
-            _term=term;
+            _prefix = prefix;
+            _term = term;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace RomanticWeb.Mapping.Attributes
         /// <param name="termUri">The term URI.</param>
         protected TermMappingAttribute(string termUri)
         {
-            _uri=new Uri(termUri);
+            _uri = new Uri(termUri);
         }
 
         #endregion
@@ -48,7 +48,7 @@ namespace RomanticWeb.Mapping.Attributes
         /// </summary>
         public Uri Uri
         {
-            [return:AllowNull]
+            [return: AllowNull]
             get
             {
                 return _uri;

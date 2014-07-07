@@ -9,7 +9,7 @@
         /// <returns>Primary place where assemblies for given application domain are stored.</returns>
         public static string GetPrimaryAssemblyPath(this AppDomain appDomain)
         {
-            return (System.String.IsNullOrWhiteSpace(appDomain.RelativeSearchPath)?appDomain.BaseDirectory:appDomain.RelativeSearchPath);
+            return System.String.IsNullOrWhiteSpace(appDomain.RelativeSearchPath) ? appDomain.BaseDirectory : appDomain.RelativeSearchPath;
         }
 
         /// <summary>Gets a primary path storing assemblies for given application domain.</summary>
@@ -19,7 +19,7 @@
         public static string GetApplicationStoragePath(this AppDomain appDomain)
         {
             return System.IO.Path.Combine(
-                (System.String.IsNullOrWhiteSpace(appDomain.RelativeSearchPath)?appDomain.BaseDirectory:System.IO.Path.Combine(appDomain.RelativeSearchPath,"..")),
+                (System.String.IsNullOrWhiteSpace(appDomain.RelativeSearchPath) ? appDomain.BaseDirectory : System.IO.Path.Combine(appDomain.RelativeSearchPath, "..")),
                 "App_Data");
         }
     }

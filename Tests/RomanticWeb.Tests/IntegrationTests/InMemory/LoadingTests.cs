@@ -7,7 +7,7 @@ using VDS.RDF;
 namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
     [TestFixture]
-    public class LoadingTests:LoadingTestsBase
+    public class LoadingTests : LoadingTestsBase
     {
         private TripleStore _store;
 

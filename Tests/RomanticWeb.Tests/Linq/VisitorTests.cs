@@ -25,26 +25,26 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private Tuple<IQueryable<IPerson>,string,string,string,string,string,string>[] _testQueries;
+        private Tuple<IQueryable<IPerson>, string, string, string, string, string, string>[] _testQueries;
 
         [SetUp]
         public void Setup()
         {
-            _mappings=new TestMappingsRepository(new QueryableTests.NamedGraphsPersonMapping());
-            _baseUriSelectionPolicy=new Mock<IBaseUriSelectionPolicy>();
+            _mappings = new TestMappingsRepository(new QueryableTests.NamedGraphsPersonMapping());
+            _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
-            _entitySource=new Mock<IEntitySource>(MockBehavior.Strict);
-            _entityStore=new Mock<IEntityStore>(MockBehavior.Strict);
-            _entityStore.Setup(store => store.AssertEntity(It.IsAny<EntityId>(),It.IsAny<IEnumerable<EntityQuad>>()));
+            _entitySource = new Mock<IEntitySource>(MockBehavior.Strict);
+            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
+            _entityStore.Setup(store => store.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
 
-            _entityContext=new Mock<IEntityContext>(MockBehavior.Strict);
+            _entityContext = new Mock<IEntityContext>(MockBehavior.Strict);
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>())).Returns((EntityId id) => CreatePersonEntity(id));
             _entityContext.Setup(context => context.Store).Returns(_entityStore.Object);
             _entityContext.SetupGet(context => context.Mappings).Returns(_mappings);
             _entityContext.SetupGet(context => context.BaseUriSelector).Returns(_baseUriSelectionPolicy.Object);
 
-            _persons=new EntityQueryable<IPerson>(_entityContext.Object,_entitySource.Object,_mappings,_baseUriSelectionPolicy.Object);
-            _testQueries=GetTestQueries();
+            _persons = new EntityQueryable<IPerson>(_entityContext.Object, _entitySource.Object, _mappings, _baseUriSelectionPolicy.Object);
+            _testQueries = GetTestQueries();
         }
 
         [Test]
@@ -91,276 +91,151 @@ namespace RomanticWeb.Tests.Linq
 
         private void Test_correctness_of_query_asking(int queryIndex)
         {
-            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
-            string computedCommandText="";
+            Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string> query = _testQueries[queryIndex];
+            var computedCommandText = string.Empty;
             _entitySource.Setup(e => e.ExecuteAskQuery(It.IsAny<Query>())).Returns<Query>(model =>
             {
-                computedCommandText=VisitModel(model).CommandText;
+                computedCommandText = VisitModel(model).CommandText;
                 return true;
             });
 
             query.Item1.Any();
-            computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
-            Assert.That(computedCommandText,Is.EqualTo(query.Item2));
+            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
+            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
         }
 
         private void Test_correctness_of_scalar_query(int queryIndex)
         {
-            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
-            string computedCommandText="";
+            Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string> query = _testQueries[queryIndex];
+            string computedCommandText = string.Empty;
             _entitySource.Setup(e => e.ExecuteScalarQuery(It.IsAny<Query>())).Returns<Query>(model =>
             {
-                computedCommandText=VisitModel(model).CommandText;
+                computedCommandText = VisitModel(model).CommandText;
                 return 1;
             });
 
             query.Item1.Count();
-            computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
-            Assert.That(computedCommandText,Is.EqualTo(query.Item2));
+            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
+            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
         }
 
         private void Test_correctness_of_query(int queryIndex)
         {
-            Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string> query=_testQueries[queryIndex];
-            string computedCommandText="";
-            string computedMetaGraphVariableName="";
-            string computedEntityVariableName="";
-            string computedSubjectVariableName="";
-            string computedPredicateVariableName="";
-            string computedObjectVariableName="";
+            Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string> query = _testQueries[queryIndex];
+            string computedCommandText = string.Empty;
+            string computedMetaGraphVariableName = string.Empty;
+            string computedEntityVariableName = string.Empty;
+            string computedSubjectVariableName = string.Empty;
+            string computedPredicateVariableName = string.Empty;
+            string computedObjectVariableName = string.Empty;
             _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>())).Returns<Query>(model =>
             {
-                GenericSparqlQueryVisitor visitor=VisitModel(model);
-                computedCommandText=visitor.CommandText;
-                computedMetaGraphVariableName=visitor.Variables.MetaGraph;
-                computedEntityVariableName=visitor.Variables.Entity;
-                computedSubjectVariableName=visitor.Variables.Subject;
-                computedPredicateVariableName=visitor.Variables.Predicate;
-                computedObjectVariableName=visitor.Variables.Object;
+                GenericSparqlQueryVisitor visitor = VisitModel(model);
+                computedCommandText = visitor.CommandText;
+                computedMetaGraphVariableName = visitor.Variables.MetaGraph;
+                computedEntityVariableName = visitor.Variables.Entity;
+                computedSubjectVariableName = visitor.Variables.Subject;
+                computedPredicateVariableName = visitor.Variables.Predicate;
+                computedObjectVariableName = visitor.Variables.Object;
                 return GetSamplePersonTriples(5);
             });
 
             query.Item1.ToList();
-            computedCommandText=Regex.Replace(Regex.Replace(computedCommandText.Replace("\r",""),"[\n\t]"," ")," {2,}"," ").Trim();
-            Assert.That(computedCommandText,Is.EqualTo(query.Item2));
-            Assert.That(computedMetaGraphVariableName,Is.EqualTo(query.Item3));
-            Assert.That(computedEntityVariableName,Is.EqualTo(query.Item4));
-            Assert.That(computedSubjectVariableName,Is.EqualTo(query.Item5));
-            Assert.That(computedPredicateVariableName,Is.EqualTo(query.Item6));
-            Assert.That(computedObjectVariableName,Is.EqualTo(query.Item7));
+            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
+            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
+            Assert.That(computedMetaGraphVariableName, Is.EqualTo(query.Item3));
+            Assert.That(computedEntityVariableName, Is.EqualTo(query.Item4));
+            Assert.That(computedSubjectVariableName, Is.EqualTo(query.Item5));
+            Assert.That(computedPredicateVariableName, Is.EqualTo(query.Item6));
+            Assert.That(computedObjectVariableName, Is.EqualTo(query.Item7));
         }
 
         protected GenericSparqlQueryVisitor VisitModel(Query queryModel)
         {
-            GenericSparqlQueryVisitor visitor=new GenericSparqlQueryVisitor();
-            visitor.MetaGraphUri=new Uri("http://app.magi/graphs");
+            GenericSparqlQueryVisitor visitor = new GenericSparqlQueryVisitor();
+            visitor.MetaGraphUri = new Uri("http://app.magi/graphs");
             visitor.VisitQuery(queryModel);
             return visitor;
         }
 
-        protected Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] GetTestQueries()
+        protected Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>[] GetTestQueries()
         {
-            return new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>[] {
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+            return new[] 
+            {
+                new Tuple<IQueryable<IPerson>, string, string, string, string, string, string>(
                     from person in _persons select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    Resourcer.Resource.AsString("Queries.SelectAll.rq"),
                     "Gperson0",
                     "person0",
                     "s",
                     "p",
-                    "o"
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
-                    from person in _persons where person.FirstName=="Karol" select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                            "?person0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    "o"),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
+                    from person in _persons where person.FirstName == "Karol" select person,
+                    Resourcer.Resource.AsString("Queries.SelectByName.rq"),
                     "Gperson0",
                     "person0",
                     "s",
                     "p",
-                    "o"
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
-                    from person in _persons where person.Friends.Any(friend => friend.FirstName=="Karol") select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                            "?person0 <http://xmlns.com/foaf/0.1/friends> ?friend0 . "+
-                            "FILTER ("+
-                                "EXISTS { "+
-                                    "SELECT ?friend0 "+
-                                    "WHERE { "+
-                                        "GRAPH ?Gfriend0 { "+
-                                            "?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                                            "?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) "+
-                                        "} "+
-                                        "GRAPH <http://app.magi/graphs> { "+
-                                            "?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . "+
-                                        "} "+
-                                    "} "+
-                                "} "+
-                            ") "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    "o"),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
+                    from person in _persons where person.Friends.Any(friend => friend.FirstName == "Karol") select person,
+                    Resourcer.Resource.AsString("Queries.SelectFriendByNameWithSubquery.rq"),
                     "Gperson0",
                     "person0",
                     "s",
                     "p",
-                    "o"
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
-                    from person in _persons from friend in person.Friends where friend.FirstName=="Karol" select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                            "?person0 <http://xmlns.com/foaf/0.1/friends> ?friend0 . "+
-                            "FILTER (?firstName0 = \"Karol\"^^xsd:string) " +
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                        "GRAPH ?Gfriend0 { "+
-                            "?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                            "?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . "+
-                        "} "+
-                    "}",
+                    "o"),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
+                    from person in _persons from friend in person.Friends where friend.FirstName == "Karol" select person,
+                    Resourcer.Resource.AsString("Queries.SelectFriendByName.rq"),
                     "Gperson0",
                     "person0",
                     "s",
                     "p",
-                    "o"
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
-                    from person in _persons where person.Friend.Friends.Any(friend => Regex.IsMatch(friend.FirstName,"Ka.*")) select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT ?s ?p ?o ?Gperson0 ?person0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                            "?person0 <http://xmlns.com/foaf/0.1/knows> ?friend1 . "+
-                            "FILTER ("+
-                                "EXISTS { "+
-                                    "SELECT ?friend0 "+
-                                    "WHERE { "+
-                                        "GRAPH ?Gfriend0 { "+
-                                            "?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                                            "?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . "+
-                                            "FILTER (REGEX(?firstName0,\"Ka.*\"^^xsd:string)) "+
-                                        "} "+
-                                        "GRAPH <http://app.magi/graphs> { "+
-                                            "?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . "+
-                                        "} "+
-                                        "GRAPH ?Gfriend1 { "+
-                                            "?friend1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                                            "?friend1 <http://xmlns.com/foaf/0.1/friends> ?friend0 . "+
-                                        "} "+
-                                        "GRAPH <http://app.magi/graphs> { "+
-                                            "?Gfriend1 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend1 . "+
-                                        "} "+
-                                    "} "+
-                                "} "+
-                            ") "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    "o"),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
+                    from person in _persons where person.Friend.Friends.Any(friend => Regex.IsMatch(friend.FirstName, "Ka.*")) select person,
+                    Resourcer.Resource.AsString("Queries.SelectEntityComplexSubquery.rq"),
                     "Gperson0",
                     "person0",
                     "s",
                     "p",
-                    "o"
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+                    "o"),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
                     from person in _persons select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "ASK "+
-                    "{ "+
-                        "GRAPH ?Gperson0 { "+
-                            "?s ?p ?o . "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    Resourcer.Resource.AsString("Queries.Ask.rq"),
                     null,
                     null,
                     null,
                     null,
-                    null
-                ),
-                new Tuple<System.Linq.IQueryable<IPerson>,string,string,string,string,string,string>(
+                    null),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
                     from person in _persons select person,
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
-                    "SELECT COUNT(DISTINCT(?person0)) AS ?personCount0 "+
-                    "WHERE { "+
-                        "GRAPH ?Gperson0 { "+
-                            "?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . "+
-                        "} "+
-                        "GRAPH <http://app.magi/graphs> { "+
-                            "?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . "+
-                        "} "+
-                    "}",
+                    Resourcer.Resource.AsString("Queries.SelectCountDistinct.rq"),
                     null,
                     null,
                     null,
                     null,
-                    null
-                )
+                    null)
             };
         }
 
         protected IEnumerable<EntityQuad> GetSamplePersonTriples(int count)
         {
-            const string IdFormat="http://magi/test/person/{0}";
-            return from i in Enumerable.Range(1,count)
-                   from j in Enumerable.Range(1,10)
-                   let id=new EntityId(string.Format(IdFormat,i))
-                   let s=Node.ForUri(id.Uri)
-                   let p=Node.ForUri(new Uri(string.Format("http://magi/onto/predicate/{0}",j)))
-                   let o=Node.ForUri(new Uri(string.Format("http://magi/onto/object/{0}",j)))
-                   select new EntityQuad(id,s,p,o);
+            const string IdFormat = "http://magi/test/person/{0}";
+            return from i in Enumerable.Range(1, count)
+                   from j in Enumerable.Range(1, 10)
+                   let id = new EntityId(string.Format(IdFormat, i))
+                   let s = Node.ForUri(id.Uri)
+                   let p = Node.ForUri(new Uri(string.Format("http://magi/onto/predicate/{0}", j)))
+                   let o = Node.ForUri(new Uri(string.Format("http://magi/onto/object/{0}", j)))
+                   select new EntityQuad(id, s, p, o);
         }
 
         private static IPerson CreatePersonEntity(EntityId id)
         {
-            return new { Id=id }.ActLike<IPerson>();
+            return new { Id = id }.ActLike<IPerson>();
         }
     }
 }

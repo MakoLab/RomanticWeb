@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Serves as a base navigator class.</summary>
-    internal abstract class QueryComponentNavigatorBase:IQueryComponentNavigator
+    internal abstract class QueryComponentNavigatorBase : IQueryComponentNavigator
     {
         #region Fields
         private IQueryComponent _component;
@@ -15,7 +15,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <param name="component">Navigated component.</param>
         internal QueryComponentNavigatorBase(IQueryComponent component)
         {
-            _component=component;
+            _component = component;
         }
         #endregion
 
@@ -29,20 +29,20 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <param name="operandA">Left operand.</param>
         /// <param name="operandB">Right operand.</param>
         /// <returns><b>true</b> if both operands has the navigated component equals, otherwise <b>false</b>.</returns>
-        public static bool operator==(QueryComponentNavigatorBase operandA,QueryComponentNavigatorBase operandB)
+        public static bool operator ==(QueryComponentNavigatorBase operandA, QueryComponentNavigatorBase operandB)
         {
-            return ((!Object.Equals(operandA,null))&&(!Object.Equals(operandB,null))&&(operandA._component==operandB._component))||(Object.Equals(operandA,null)&&(Object.Equals(operandB,null)));
+            return ((!Object.Equals(operandA, null)) && (!Object.Equals(operandB, null)) && (operandA._component == operandB._component)) || (Object.Equals(operandA, null) && (Object.Equals(operandB, null)));
         }
 
         /// <summary>Checks for inequality of two query component operators.</summary>
         /// <param name="operandA">Left operand.</param>
         /// <param name="operandB">Right operand.</param>
         /// <returns><b>true</b> if both operands has the navigated component different, otherwise <b>false</b>.</returns>
-        public static bool operator!=(QueryComponentNavigatorBase operandA,QueryComponentNavigatorBase operandB)
+        public static bool operator !=(QueryComponentNavigatorBase operandA, QueryComponentNavigatorBase operandB)
         {
-            return ((Object.Equals(operandA,null))&&(!Object.Equals(operandB,null)))||
-                ((!Object.Equals(operandA,null))&&(Object.Equals(operandB,null)))||
-                ((!Object.Equals(operandA,null))&&(!Object.Equals(operandB,null))&&(operandA._component!=operandB._component));
+            return ((Object.Equals(operandA, null)) && (!Object.Equals(operandB, null))) ||
+                ((!Object.Equals(operandA, null)) && (Object.Equals(operandB, null))) ||
+                ((!Object.Equals(operandA, null)) && (!Object.Equals(operandB, null)) && (operandA._component != operandB._component));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -52,7 +52,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// true  if the specified object is equal to the current object; otherwise, false.</returns>
         public override bool Equals(object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand is IQueryComponentNavigator)&&(_component.Equals(((IQueryComponentNavigator)operand).NavigatedComponent));
+            return (!Object.Equals(operand, null)) && (operand is IQueryComponentNavigator) && (_component.Equals(((IQueryComponentNavigator)operand).NavigatedComponent));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -80,7 +80,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public abstract void ReplaceComponent(IQueryComponent component,IQueryComponent replacement);
+        public abstract void ReplaceComponent(IQueryComponent component, IQueryComponent replacement);
 
         /// <summary>Retrieves all child components.</summary>
         /// <returns>Enumeration of all child components.</returns>

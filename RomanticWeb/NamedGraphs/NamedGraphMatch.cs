@@ -15,13 +15,13 @@ namespace RomanticWeb.NamedGraphs
 
     public struct NamedGraphMatch
     {
-        public NamedGraphMatch(Uri namedGraph,MatchResult idMatch,MatchResult predicateMatch,MatchResult typeMatch)
-            :this()
+        public NamedGraphMatch(Uri namedGraph, MatchResult idMatch, MatchResult predicateMatch, MatchResult typeMatch)
+            : this()
         {
-            NamedGraph=namedGraph;
-            IdMatch=idMatch;
-            PredicateMatch=predicateMatch;
-            TypeMatch=typeMatch;
+            NamedGraph = namedGraph;
+            IdMatch = idMatch;
+            PredicateMatch = predicateMatch;
+            TypeMatch = typeMatch;
         }
 
         public Uri NamedGraph { get; private set; }

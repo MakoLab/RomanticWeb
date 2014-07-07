@@ -5,9 +5,9 @@ namespace RomanticWeb.Configuration
     /// <summary>
     /// Mapping assembly configuration element
     /// </summary>
-    public class MappingAssemblyElement:ConfigurationElement
+    public class MappingAssemblyElement : ConfigurationElement
     {
-        private const string AssemlyAttributeName="assembly";
+        private const string AssemlyAttributeName = "assembly";
 
         /// <summary>
         /// Gets or sets the assembly name.

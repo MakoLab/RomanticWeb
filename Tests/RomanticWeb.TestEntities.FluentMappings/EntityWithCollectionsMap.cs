@@ -3,13 +3,13 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.FluentMappings
 {
-    public class EntityWithCollectionsMap:EntityMap<IEntityWithCollections>
+    public class EntityWithCollectionsMap : EntityMap<IEntityWithCollections>
     {
         public EntityWithCollectionsMap()
         {
             foreach (var collectionMap in Collections)
             {
-                collectionMap.Term.Is("magi","collection");
+                collectionMap.Term.Is("magi", "collection");
             }
         }
 

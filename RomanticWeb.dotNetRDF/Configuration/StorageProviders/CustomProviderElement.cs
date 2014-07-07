@@ -5,27 +5,27 @@ using System.Linq;
 
 namespace RomanticWeb.DotNetRDF.Configuration.StorageProviders
 {
-    internal class CustomProviderElement:StorageProviderElement
+    internal class CustomProviderElement : StorageProviderElement
     {
-        private const string TypeAttributeName="type";
-        private const string ConstructorParametersElementName="parameters";
+        private const string TypeAttributeName = "type";
+        private const string ConstructorParametersElementName = "parameters";
 
-        [ConfigurationProperty(TypeAttributeName,IsRequired=true)]
-        [CallbackValidator(CallbackMethodName="ValidateType",Type=typeof(Validators))]
+        [ConfigurationProperty(TypeAttributeName, IsRequired = true)]
+        [CallbackValidator(CallbackMethodName = "ValidateType", Type = typeof(Validators))]
         public string TypeName
         {
             get { return (string)this[TypeAttributeName]; }
-            set { this[TypeAttributeName]=value; }
+            set { this[TypeAttributeName] = value; }
         }
 
         [ConfigurationProperty(ConstructorParametersElementName)]
         public KeyValueConfigurationCollection ConstructorParametersElement
         {
             get { return (KeyValueConfigurationCollection)this[ConstructorParametersElementName]; }
-            set { this[ConstructorParametersElementName]=value; } 
+            set { this[ConstructorParametersElementName] = value; }
         }
 
-        protected override IDictionary<string,string> ConstructorParameters
+        protected override IDictionary<string, string> ConstructorParameters
         {
             get
             {

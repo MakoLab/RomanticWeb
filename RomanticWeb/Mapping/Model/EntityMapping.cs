@@ -9,28 +9,29 @@ namespace RomanticWeb.Mapping.Model
 {
     [DebuggerDisplay("Entity {EntityType}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    internal class EntityMapping:IEntityMapping
+    internal class EntityMapping : IEntityMapping
     {
         private readonly Type _entityType;
         private readonly List<IClassMapping> _classes;
         private readonly List<IPropertyMapping> _properties;
 
-        internal EntityMapping(Type entityType,IEnumerable<IClassMapping> classes,IEnumerable<IPropertyMapping> properties)
-            :this(classes,properties)
+        internal EntityMapping(Type entityType, IEnumerable<IClassMapping> classes, IEnumerable<IPropertyMapping> properties)
+            : this(classes, properties)
         {
-            _entityType=entityType;
-            _properties.OfType<PropertyMapping>().ToList().ForEach(p => p.EntityMapping=this);
+            _entityType = entityType;
+            _properties.OfType<PropertyMapping>().ToList().ForEach(p => p.EntityMapping = this);
         }
 
-        internal EntityMapping(Type entityType):this(entityType,new IClassMapping[0],new PropertyMapping[0])
+        internal EntityMapping(Type entityType)
+            : this(entityType, new IClassMapping[0], new PropertyMapping[0])
         {
         }
 
-        protected EntityMapping(IEnumerable<IClassMapping> classes,IEnumerable<IPropertyMapping> properties)
+        protected EntityMapping(IEnumerable<IClassMapping> classes, IEnumerable<IPropertyMapping> properties)
         {
-            _entityType=typeof(IEntity);
-            _properties=properties.ToList();
-            _classes=classes.ToList();
+            _entityType = typeof(IEntity);
+            _properties = properties.ToList();
+            _classes = classes.ToList();
         }
 
         public Type EntityType
@@ -47,11 +48,11 @@ namespace RomanticWeb.Mapping.Model
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            var propertyMapping=Properties.SingleOrDefault(p => p.Name==propertyName);
+            var propertyMapping = Properties.SingleOrDefault(p => p.Name == propertyName);
 
-            if (propertyMapping==null)
+            if (propertyMapping == null)
             {
-                throw new MappingException(string.Format("No mapping found for property {0}",propertyName));
+                throw new MappingException(string.Format("No mapping found for property {0}", propertyName));
             }
 
             return propertyMapping;
@@ -78,7 +79,7 @@ namespace RomanticWeb.Mapping.Model
 
             public DebuggerViewProxy(EntityMapping mapping)
             {
-                _mapping=mapping;
+                _mapping = mapping;
             }
 
             public Type EntityType
@@ -101,17 +102,17 @@ namespace RomanticWeb.Mapping.Model
             {
                 get
                 {
-                    var propertyMappings=_mapping.Properties.ToList();
+                    var propertyMappings = _mapping.Properties.ToList();
                     propertyMappings.Sort(CompareProperty);
                     return propertyMappings;
                 }
             }
 
-            private static int CompareProperty(IPropertyMapping left,IPropertyMapping right)
+            private static int CompareProperty(IPropertyMapping left, IPropertyMapping right)
             {
-                if (left.GetType()==right.GetType())
+                if (left.GetType() == right.GetType())
                 {
-                    return string.Compare(left.Name,right.Name,StringComparison.CurrentCulture);
+                    return string.Compare(left.Name, right.Name, StringComparison.CurrentCulture);
                 }
 
                 if (left is CollectionMapping)

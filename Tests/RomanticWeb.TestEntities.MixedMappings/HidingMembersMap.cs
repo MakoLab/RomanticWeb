@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public class HidingMembersMap:EntityMap<IHidesMember>
+    public class HidingMembersMap : EntityMap<IHidesMember>
     {
         public HidingMembersMap()
         {

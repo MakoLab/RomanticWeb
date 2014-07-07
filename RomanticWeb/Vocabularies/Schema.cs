@@ -8,11 +8,11 @@ namespace RomanticWeb.Vocabularies
     public static class Schema
     {
 #pragma warning disable 1591 // ReSharper disable InconsistentNaming
-        public const string BaseUri="http://schema.org/";
+        public const string BaseUri = "http://schema.org/";
 
-        public static readonly Uri text=new Uri(BaseUri+"text");
+        public static readonly Uri text = new Uri(BaseUri + "text");
 
-        public static readonly Uri fileFormat=new Uri(BaseUri+"fileFormat");
+        public static readonly Uri fileFormat = new Uri(BaseUri + "fileFormat");
 #pragma warning restore 1591 // ReSharper restore InconsistentNaming
     }
 }

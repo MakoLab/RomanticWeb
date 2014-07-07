@@ -16,14 +16,14 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class EntityStoreTests
     {
-        private static readonly Uri GraphUri=new Uri("http://data.magi/people/Tomasz");
+        private static readonly Uri GraphUri = new Uri("http://data.magi/people/Tomasz");
         private static readonly EntityId EntityId = new EntityId("http://magi/people/Tomasz");
         private EntityStore _entityStore;
 
         [SetUp]
         public void Setup()
         {
-            _entityStore=new EntityStore();
+            _entityStore = new EntityStore();
         }
 
         [Test]
@@ -42,11 +42,11 @@ namespace RomanticWeb.Tests
 
         private static IEnumerable<EntityQuad> GetGraphWithBlankNodes()
         {
-            var store=new TripleStore();
+            var store = new TripleStore();
             store.LoadFromString(Resource.AsString("TestGraphs.BlankNodes.trig"));
 
             Debug.WriteLine("Loading original graph with {0} triples", store.Graphs[GraphUri].Triples.Count());
-            return from triple in store.Graphs[GraphUri].Triples 
+            return from triple in store.Graphs[GraphUri].Triples
                    select triple.ToEntityQuad(EntityId);
         }
     }

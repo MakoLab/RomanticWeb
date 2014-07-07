@@ -6,7 +6,7 @@ namespace RomanticWeb.Collections.Mapping
     /// <typeparam name="T">Type of entity, which contains the dictionary</typeparam>
     /// <typeparam name="TKey">The type of the dictionary key.</typeparam>
     /// <typeparam name="TValue">The type of the dictionary value.</typeparam>
-    public abstract class DictionaryEntryMap<T,TKey,TValue>:EntityMap<T> where T:IDictionaryEntry<TKey,TValue>
+    public abstract class DictionaryEntryMap<T, TKey, TValue> : EntityMap<T> where T : IDictionaryEntry<TKey, TValue>
     {
         /// <summary>Initializes a new instance of the <see cref="DictionaryEntryMap{T, TKey, TValue}"/> class.</summary>
         protected DictionaryEntryMap()

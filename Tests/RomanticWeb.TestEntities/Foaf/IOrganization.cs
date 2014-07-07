@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.TestEntities.Foaf
 {
-    [Class("foaf","Organization")]
+    [Class("foaf", "Organization")]
     public interface IOrganization : IAgent
     {
     }

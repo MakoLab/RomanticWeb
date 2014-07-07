@@ -8,7 +8,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Expresses a literal in the query.</summary>
     [QueryComponentNavigator(typeof(ListNavigator))]
-    public class List:QueryComponent,IExpression
+    public class List : QueryComponent, IExpression
     {
         #region Fields
         private IList<IExpression> _values;
@@ -16,9 +16,10 @@ namespace RomanticWeb.Linq.Model
 
         #region Constructors
         /// <summary>Base parameterles constructor.</summary>
-        public List():base()
+        public List()
+            : base()
         {
-            _values=new List<IExpression>();
+            _values = new List<IExpression>();
         }
         #endregion
 
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this literal.</returns>
         public override string ToString()
         {
-            return System.String.Format("({0})",System.String.Join(" ",_values));
+            return System.String.Format("({0})", System.String.Join(" ", _values));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -42,7 +43,7 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(List))&&(_values.SequenceEqual(((List)operand)._values));
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(List)) && (_values.SequenceEqual(((List)operand)._values));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -50,10 +51,10 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            int result=typeof(List).FullName.GetHashCode();
+            int result = typeof(List).FullName.GetHashCode();
             foreach (IExpression value in _values)
             {
-                result^=value.GetHashCode();
+                result ^= value.GetHashCode();
             }
 
             return result;

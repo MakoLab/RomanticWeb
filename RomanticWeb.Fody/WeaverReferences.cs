@@ -10,8 +10,8 @@ namespace RomanticWeb.Fody
 
         public WeaverReferences(ModuleWeaver weaver)
         {
-            _weaver=weaver;
-            Orm=LoadAssemblyReference("RomanticWeb");
+            _weaver = weaver;
+            Orm = LoadAssemblyReference("RomanticWeb");
         }
 
         public AssemblyDefinition Orm { get; private set; }

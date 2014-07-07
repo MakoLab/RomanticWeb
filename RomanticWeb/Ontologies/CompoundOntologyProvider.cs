@@ -9,7 +9,7 @@ namespace RomanticWeb.Ontologies
     /// <summary>Provides a base functionality for compoung ontology providers.</summary>
     [DebuggerDisplay("{DebuggerString}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public class CompoundOntologyProvider:OntologyProviderBase
+    public class CompoundOntologyProvider : OntologyProviderBase
     {
         #region Fields
         private readonly IList<IOntologyProvider> _ontologyProviders;
@@ -18,10 +18,11 @@ namespace RomanticWeb.Ontologies
         #region Constructors
         internal CompoundOntologyProvider(params IOntologyProvider[] ontologyProviders)
         {
-            _ontologyProviders=new List<IOntologyProvider>(ontologyProviders);
+            _ontologyProviders = new List<IOntologyProvider>(ontologyProviders);
         }
 
-        internal CompoundOntologyProvider(IEnumerable<IOntologyProvider> ontologyProviders):this(ontologyProviders.ToArray())
+        internal CompoundOntologyProvider(IEnumerable<IOntologyProvider> ontologyProviders)
+            : this(ontologyProviders.ToArray())
         {
         }
         #endregion
@@ -37,7 +38,7 @@ namespace RomanticWeb.Ontologies
         {
             get
             {
-                return string.Format("Providers: {0}, Ontolgies: {1}",_ontologyProviders.Count,Ontologies.Count());
+                return string.Format("Providers: {0}, Ontolgies: {1}", _ontologyProviders.Count, Ontologies.Count());
             }
         }
         #endregion
@@ -45,9 +46,9 @@ namespace RomanticWeb.Ontologies
         #region Public methods
         /// <summary>Gets a URI from a QName.</summary>
         [return: AllowNull]
-        public override Uri ResolveUri(string prefix,string rdfTermName)
+        public override Uri ResolveUri(string prefix, string rdfTermName)
         {
-            return OntologyProviders.Select(provider => provider.ResolveUri(prefix,rdfTermName)).Where(uri => uri!=null).FirstOrDefault();
+            return OntologyProviders.Select(provider => provider.ResolveUri(prefix, rdfTermName)).Where(uri => uri != null).FirstOrDefault();
         }
         #endregion
 
@@ -59,14 +60,14 @@ namespace RomanticWeb.Ontologies
             return new IOntologyProvider[0];
         }
         #endregion
-    
+
         private class DebuggerViewProxy
         {
             private readonly CompoundOntologyProvider _provider;
 
             public DebuggerViewProxy(CompoundOntologyProvider provider)
             {
-                _provider=provider;
+                _provider = provider;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -76,7 +77,7 @@ namespace RomanticWeb.Ontologies
                 {
                     return _provider.Ontologies.ToList();
                 }
-            } 
+            }
         }
     }
 }

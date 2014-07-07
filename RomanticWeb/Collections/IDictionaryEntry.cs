@@ -7,7 +7,7 @@ namespace RomanticWeb.Collections
     /// </summary>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <typeparam name="TValue">The type of the value.</typeparam>
-    public interface IDictionaryEntry<TKey, TValue>:IEntity
+    public interface IDictionaryEntry<TKey, TValue> : IEntity
     {
         /// <summary>
         /// Gets or sets the key.

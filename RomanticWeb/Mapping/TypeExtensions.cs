@@ -9,17 +9,17 @@ namespace RomanticWeb.Mapping
     {
         public static bool IsConstructableEntityMap(this Type mappingType)
         {
-            var hasConstructor=new Lazy<bool>(() => HasParameterlessConstructor(mappingType));
-            return (typeof(EntityMap).IsAssignableFrom(mappingType))&&(!mappingType.IsAbstract)&&(hasConstructor.Value)&&(!mappingType.IsGenericTypeDefinition);
+            var hasConstructor = new Lazy<bool>(() => HasParameterlessConstructor(mappingType));
+            return (typeof(EntityMap).IsAssignableFrom(mappingType)) && (!mappingType.IsAbstract) && (hasConstructor.Value) && (!mappingType.IsGenericTypeDefinition);
         }
 
         public static PropertyInfo FindProperty(this Type type, string name)
         {
-            var property = GetProperty(type,name);
+            var property = GetProperty(type, name);
 
-            if (property==null&&type.IsInterface)
+            if (property == null && type.IsInterface)
             {
-                property=type.GetInterfaces().Select(iface => GetProperty(iface,name)).FirstOrDefault();
+                property = type.GetInterfaces().Select(iface => GetProperty(iface, name)).FirstOrDefault();
             }
 
             return property;
@@ -27,13 +27,13 @@ namespace RomanticWeb.Mapping
 
         private static PropertyInfo GetProperty(Type type, string name)
         {
-            return type.GetProperty(name,BindingFlags.Public|BindingFlags.FlattenHierarchy|BindingFlags.Instance);
+            return type.GetProperty(name, BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
         }
 
         private static bool HasParameterlessConstructor(Type mappingType)
         {
-            const BindingFlags Flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
-            return mappingType.GetConstructor(Flags,null,Type.EmptyTypes,null)!=null;
+            const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            return mappingType.GetConstructor(Flags, null, Type.EmptyTypes, null) != null;
         }
     }
 }

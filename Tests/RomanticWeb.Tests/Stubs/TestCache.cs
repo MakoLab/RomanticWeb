@@ -5,16 +5,16 @@ using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestCache:IRdfTypeCache
+    public class TestCache : IRdfTypeCache
     {
-        private readonly IDictionary<Type,Type> _setups;
+        private readonly IDictionary<Type, Type> _setups;
 
         public TestCache()
         {
-            _setups=new Dictionary<Type,Type>();
+            _setups = new Dictionary<Type, Type>();
         }
 
-        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity,Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType)
         {
             if (_setups.ContainsKey(requestedType))
             {
@@ -26,9 +26,9 @@ namespace RomanticWeb.Tests.Stubs
             }
         }
 
-        public void Setup<TRequested,TReturned>()
+        public void Setup<TRequested, TReturned>()
         {
-            _setups[typeof(TRequested)]=typeof(TReturned);
+            _setups[typeof(TRequested)] = typeof(TReturned);
         }
     }
 }

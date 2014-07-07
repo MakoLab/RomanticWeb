@@ -13,13 +13,13 @@ namespace RomanticWeb.Tests
     {
         private EntityContextFactory _entityContextFactory;
         private Mock<IOntologyProvider> _ontology;
-        
+
         [SetUp]
         public void Setup()
         {
-            _ontology=new Mock<IOntologyProvider>();
-            _ontology.Setup(provider => provider.ResolveUri(It.IsAny<string>(),It.IsAny<string>())).Returns((string prefix,string name) => new Uri(new Uri("http://base/"),name));
-            _entityContextFactory=new EntityContextFactory().WithOntology(_ontology.Object);
+            _ontology = new Mock<IOntologyProvider>();
+            _ontology.Setup(provider => provider.ResolveUri(It.IsAny<string>(), It.IsAny<string>())).Returns((string prefix, string name) => new Uri(new Uri("http://base/"), name));
+            _entityContextFactory = new EntityContextFactory().WithOntology(_ontology.Object);
         }
 
         [TearDown]
@@ -64,7 +64,7 @@ namespace RomanticWeb.Tests
             _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
 
-        [Test,Description("Calling WithMappings twice")]
+        [Test, Description("Calling WithMappings twice")]
         public void Adding_attribute_mappings_for_an_Assembly_twice_should_add_only_one_repository()
         {
             // given
@@ -79,7 +79,7 @@ namespace RomanticWeb.Tests
             _entityContextFactory.Mappings.As<MappingsRepository>().Sources.Should().HaveCount(3);
         }
 
-        [Test,Description("Calling WithMappings twice")]
+        [Test, Description("Calling WithMappings twice")]
         public void Adding_fluent_mappings_for_an_Assembly_twice_should_add_only_one_repository()
         {
             // given

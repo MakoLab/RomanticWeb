@@ -8,108 +8,110 @@ namespace RomanticWeb.Ontologies
 {
     /// <summary>Enumerates all built in ontologies.</summary>
     [Flags]
-    public enum BuiltInOntologies:uint
+    public enum BuiltInOntologies : uint
     {
         /// <summary>Points to an Resource Description Framework ontology.</summary>
-        RDF=1,
+        RDF = 1,
 
         /// <summary>Points to an RDF Schema ontology.</summary>
-        RDFS=1<<1,
+        RDFS = 1 << 1,
 
         /// <summary>Points to a Web Ontology Language ontology.</summary>
-        OWL=1<<2,
+        OWL = 1 << 2,
 
         /// <summary>Points to a Simple Knowledge Organization System ontology.</summary>
-        SKOS=1<<3,
+        SKOS = 1 << 3,
 
         /// <summary>Points to a Dublin Core ontology.</summary>
-        DC=1<<4,
+        DC = 1 << 4,
 
         /// <summary>Points to a Dublin Core Terms ontology.</summary>
-        DCTerms=1<<5,
+        DCTerms = 1 << 5,
 
         /// <summary>Points to a Dublin Core Abstract Model ontology.</summary>
-        DCAM=1<<6,
+        DCAM = 1 << 6,
 
         /// <summary>Points to a Dublin Core Metadata Initiatie Type vocabulary.</summary>
-        DCMIType=1<<7,
+        DCMIType = 1 << 7,
 
         /// <summary>Points to a Friend of a Friend vocabulary.</summary>
-        FOAF=1<<8,
+        FOAF = 1 << 8,
 
         /// <summary>Points to a Schema.org vocabulary.</summary>
-        Schema=1<<9,
+        Schema = 1 << 9,
 
         /// <summary>Points to a GoodRelations ontology.</summary>
-        GR=1<<10,
+        GR = 1 << 10,
 
         /// <summary>Points to a Semantically-Interlinked Online Communities ontology.</summary>
-        SIOC=1<<11,
+        SIOC = 1 << 11,
 
         /// <summary>Points to a WGS84 Geo Positioning: an RDF vocabulary.</summary>
-        GEO=1<<12,
+        GEO = 1 << 12,
 
         /// <summary>Points to the W3C Linked Data Platform vocabulary.</summary>
-        LDP=1<<13,
+        LDP = 1 << 13,
 
         /// <summary>Points to the W3C content description vocabulary.</summary>
-        CNT=1<<14,
+        CNT = 1 << 14,
 
         /// <summary>Points to the SPIN Modeling Vocabulary.</summary>
-        SPIN=1<<15,
+        SPIN = 1 << 15,
 
         /// <summary>Points to the SPIN SPARQL Syntax.</summary>
-        SP=1<<16
+        SP = 1 << 16
     }
 
     /// <summary>Provides default, built in ontologies.</summary>
     [DebuggerDisplay("Ontologies count = {_ontologies.Count}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class DefaultOntologiesProvider:OntologyProviderBase
+    public sealed class DefaultOntologiesProvider : OntologyProviderBase
     {
         /// <summary>Provides map of supported OWL serialization and their file extensions.</summary>
-        public static readonly IDictionary<string,string> OwlSerializationExtensions=new Dictionary<string,string>
+        public static readonly IDictionary<string, string> OwlSerializationExtensions = new Dictionary<string, string>
         {
-            { "application/rdf+xml","rdf" },
-            { "application/owl+xml","owl" }
+            { "application/rdf+xml", "rdf" },
+            { "application/owl+xml", "owl" }
         };
 
         private IList<Ontology> _ontologies;
         private IList<BuiltInOntologies> _includedOntologies;
 
         /// <summary>Creates a default ontology provider with all built in ontologies.</summary>
-        public DefaultOntologiesProvider():base()
+        public DefaultOntologiesProvider()
+            : base()
         {
-            _ontologies=new List<Ontology>();
-            _includedOntologies=new List<BuiltInOntologies>();
-            Include(BuiltInOntologies.RDF|
-                BuiltInOntologies.RDFS|
-                BuiltInOntologies.OWL|
-                BuiltInOntologies.SKOS|
-                BuiltInOntologies.DC|
-                BuiltInOntologies.DCTerms|
-                BuiltInOntologies.DCAM|
-                BuiltInOntologies.DCMIType|
-                BuiltInOntologies.FOAF|
-                BuiltInOntologies.Schema|
-                BuiltInOntologies.SIOC|
-                BuiltInOntologies.GEO|
-                BuiltInOntologies.LDP|
-                BuiltInOntologies.CNT|
-                BuiltInOntologies.SPIN|
+            _ontologies = new List<Ontology>();
+            _includedOntologies = new List<BuiltInOntologies>();
+            Include(BuiltInOntologies.RDF |
+                BuiltInOntologies.RDFS |
+                BuiltInOntologies.OWL |
+                BuiltInOntologies.SKOS |
+                BuiltInOntologies.DC |
+                BuiltInOntologies.DCTerms |
+                BuiltInOntologies.DCAM |
+                BuiltInOntologies.DCMIType |
+                BuiltInOntologies.FOAF |
+                BuiltInOntologies.Schema |
+                BuiltInOntologies.SIOC |
+                BuiltInOntologies.GEO |
+                BuiltInOntologies.LDP |
+                BuiltInOntologies.CNT |
+                BuiltInOntologies.SPIN |
                 BuiltInOntologies.SP);
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
-        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider):
-            this(ontologyProvider,BuiltInOntologies.RDF|BuiltInOntologies.RDFS|BuiltInOntologies.OWL|BuiltInOntologies.SKOS|BuiltInOntologies.DC|BuiltInOntologies.DCTerms|BuiltInOntologies.DCAM|BuiltInOntologies.DCMIType|BuiltInOntologies.FOAF|BuiltInOntologies.Schema|BuiltInOntologies.SIOC|BuiltInOntologies.GEO|BuiltInOntologies.LDP|BuiltInOntologies.CNT|BuiltInOntologies.SPIN|BuiltInOntologies.SP)
-            {
-            }
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider) :
+            this(ontologyProvider, BuiltInOntologies.RDF | BuiltInOntologies.RDFS | BuiltInOntologies.OWL | BuiltInOntologies.SKOS | BuiltInOntologies.DC | BuiltInOntologies.DCTerms | BuiltInOntologies.DCAM | BuiltInOntologies.DCMIType | BuiltInOntologies.FOAF | BuiltInOntologies.Schema | BuiltInOntologies.SIOC | BuiltInOntologies.GEO | BuiltInOntologies.LDP | BuiltInOntologies.CNT | BuiltInOntologies.SPIN | BuiltInOntologies.SP)
+        {
+        }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologies">Ontologies to be included int this instance.</param>
-        public DefaultOntologiesProvider(BuiltInOntologies ontologies):this()
+        public DefaultOntologiesProvider(BuiltInOntologies ontologies)
+            : this()
         {
             Include(ontologies);
         }
@@ -117,10 +119,11 @@ namespace RomanticWeb.Ontologies
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
         /// <param name="ontologies">Ontologies to be included int this instance.</param>
-        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider,BuiltInOntologies ontologies):base()
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider, BuiltInOntologies ontologies)
+            : base()
         {
-            _ontologies=ontologyProvider.Ontologies.ToList();
-            _includedOntologies=new List<BuiltInOntologies>();
+            _ontologies = ontologyProvider.Ontologies.ToList();
+            _includedOntologies = new List<BuiltInOntologies>();
             Include(ontologies);
         }
 
@@ -134,21 +137,21 @@ namespace RomanticWeb.Ontologies
         {
             foreach (BuiltInOntologies ontology in Enum.GetValues(typeof(BuiltInOntologies)))
             {
-                if (((ontologies&ontology)==ontology)&&(!_includedOntologies.Contains(ontology)))
+                if (((ontologies & ontology) == ontology) && (!_includedOntologies.Contains(ontology)))
                 {
-                    string resourceName=System.String.Format("{0}.{1}.",typeof(DefaultOntologiesProvider).Namespace,ontology.ToString());
-                    resourceName=(from manifestResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()
-                                  where manifestResourceName.StartsWith(resourceName)
-                                  select manifestResourceName).FirstOrDefault();
+                    string resourceName = System.String.Format("{0}.{1}.", typeof(DefaultOntologiesProvider).Namespace, ontology.ToString());
+                    resourceName = (from manifestResourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                                    where manifestResourceName.StartsWith(resourceName)
+                                    select manifestResourceName).FirstOrDefault();
                     if (System.String.IsNullOrEmpty(resourceName))
                     {
-                        throw new System.IO.FileNotFoundException(System.String.Format("No embedded ontology stream found for '{0}'.",ontology.ToString()));
+                        throw new System.IO.FileNotFoundException(System.String.Format("No embedded ontology stream found for '{0}'.", ontology.ToString()));
                     }
 
-                    Ontology ontologyInstance=OntologyFactory.Create(
+                    Ontology ontologyInstance = OntologyFactory.Create(
                         Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName),
-                        "application/"+(resourceName.EndsWith(".owl")?"owl":"rdf")+"+xml");
-                    if (ontologyInstance!=null)
+                        "application/" + (resourceName.EndsWith(".owl") ? "owl" : "rdf") + "+xml");
+                    if (ontologyInstance != null)
                     {
                         _includedOntologies.Add(ontology);
                         _ontologies.Add(ontologyInstance);
@@ -284,7 +287,7 @@ namespace RomanticWeb.Ontologies
 
             public DebuggerViewProxy(DefaultOntologiesProvider provider)
             {
-                _provider=provider;
+                _provider = provider;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -294,7 +297,7 @@ namespace RomanticWeb.Ontologies
                 {
                     return _provider.Ontologies.ToList();
                 }
-            } 
+            }
         }
     }
 }

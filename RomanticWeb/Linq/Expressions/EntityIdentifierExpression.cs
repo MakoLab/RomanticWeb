@@ -5,7 +5,7 @@ using System.Reflection;
 namespace RomanticWeb.Linq.Expressions
 {
     /// <summary>Provides basic details about entity identifier access.</summary>
-    public class EntityIdentifierExpression:System.Linq.Expressions.Expression
+    public class EntityIdentifierExpression : System.Linq.Expressions.Expression
     {
         #region Fields
         private System.Linq.Expressions.MemberExpression _expression;
@@ -16,15 +16,16 @@ namespace RomanticWeb.Linq.Expressions
         /// <summary>Default constructor with base <see cref="System.Linq.Expressions.MemberExpression" /> and <see cref="Remotion.Linq.Clauses.FromClauseBase" />.</summary>
         /// <param name="expression">Base member expression.</param>
         /// <param name="target">Target of the invocation.</param>
-        internal EntityIdentifierExpression(System.Linq.Expressions.MemberExpression expression,Remotion.Linq.Clauses.FromClauseBase target):base()
+        internal EntityIdentifierExpression(System.Linq.Expressions.MemberExpression expression, Remotion.Linq.Clauses.FromClauseBase target)
+            : base()
         {
             if (!(expression.Member is PropertyInfo))
             {
                 throw new ArgumentOutOfRangeException("expression");
             }
 
-            _expression=expression;
-            _target=target;
+            _expression = expression;
+            _target = target;
         }
         #endregion
 

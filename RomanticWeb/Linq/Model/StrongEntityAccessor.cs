@@ -22,7 +22,7 @@ namespace RomanticWeb.Linq.Model
 
     /// <summary>Provides details about entity accessor.</summary>
     [QueryComponentNavigator(typeof(StrongEntityAccessorNavigator))]
-    public class StrongEntityAccessor:QueryElement,ISelectableQueryComponent
+    public class StrongEntityAccessor : QueryElement, ISelectableQueryComponent
     {
         #region Fields
         private Identifier _about;
@@ -34,27 +34,30 @@ namespace RomanticWeb.Linq.Model
         #region Constructors
         /// <summary>Default constructor with aboutness assuming that a source is a variable.</summary>
         /// <param name="about">Points to the primary topic of given entity accessor.</param>
-        internal StrongEntityAccessor(Identifier about):this()
+        internal StrongEntityAccessor(Identifier about)
+            : this()
         {
-            About=about;
-            _source=SourceTypes.Variable;
+            About = about;
+            _source = SourceTypes.Variable;
         }
 
         /// <summary>Default constructor with aboutness and its source passed.</summary>
         /// <param name="about">Specifies an entity identifier given accesor uses.</param>
         /// <param name="sourceExpression">Source of this entity accessor.</param>
-        internal StrongEntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression):this()
+        internal StrongEntityAccessor(Identifier about, Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+            : this()
         {
-            About=about;
-            _source=SourceTypes.Member;
-            _sourceExpression=sourceExpression;
+            About = about;
+            _source = SourceTypes.Member;
+            _sourceExpression = sourceExpression;
         }
 
-        private StrongEntityAccessor():base()
+        private StrongEntityAccessor()
+            : base()
         {
-            ObservableCollection<QueryElement> elements=new ObservableCollection<QueryElement>();
-            elements.CollectionChanged+=OnElementsCollectionChanged;
-            _elements=elements;
+            ObservableCollection<QueryElement> elements = new ObservableCollection<QueryElement>();
+            elements.CollectionChanged += OnElementsCollectionChanged;
+            _elements = elements;
         }
         #endregion
 
@@ -66,12 +69,12 @@ namespace RomanticWeb.Linq.Model
             {
                 return _about;
             }
-            
+
             internal set
             {
-                if ((_about=value)!=null)
+                if ((_about = value) != null)
                 {
-                    _about.OwnerQuery=OwnerQuery;
+                    _about.OwnerQuery = OwnerQuery;
                 }
             }
         }
@@ -80,7 +83,7 @@ namespace RomanticWeb.Linq.Model
         public IList<QueryElement> Elements { get { return _elements; } }
 
         /// <summary>Gets an enumeration of selectable expressions.</summary>
-        IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return (_about!=null?new IExpression[] { _about } :new IExpression[0]); } }
+        IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return (_about != null ? new IExpression[] { _about } : new IExpression[0]); } }
 
         /// <summary>Gets a source type of this accessor.</summary>
         internal SourceTypes Source { get { return _source; } }
@@ -98,15 +101,15 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                base.OwnerQuery=value;
-                if (_about!=null)
+                base.OwnerQuery = value;
+                if (_about != null)
                 {
-                    _about.OwnerQuery=OwnerQuery;
+                    _about.OwnerQuery = OwnerQuery;
                 }
 
                 foreach (QueryComponent queryComponent in _elements)
                 {
-                    queryComponent.OwnerQuery=value;
+                    queryComponent.OwnerQuery = value;
                 }
             }
         }
@@ -120,8 +123,8 @@ namespace RomanticWeb.Linq.Model
             return System.String.Format(
                 "GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}",
                 Environment.NewLine,
-                (_about!=null?_about.ToString():System.String.Empty),
-                System.String.Join(Environment.NewLine,_elements.Select(item => (item is StrongEntityAccessor?(_about!=null?item.ToString().Replace("?s ",_about.ToString()):item.ToString()):item.ToString()))));
+                (_about != null ? _about.ToString() : System.String.Empty),
+                System.String.Join(Environment.NewLine, _elements.Select(item => (item is StrongEntityAccessor ? (_about != null ? item.ToString().Replace("?s ", _about.ToString()) : item.ToString()) : item.ToString()))));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -131,10 +134,10 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(StrongEntityAccessor))&&
-                (_about!=null?_about.Equals(((StrongEntityAccessor)operand)._about):Object.Equals(((StrongEntityAccessor)operand)._about,null))&&
-                (_sourceExpression!=null?_sourceExpression.Equals(((StrongEntityAccessor)operand)._sourceExpression):Object.Equals(((StrongEntityAccessor)operand)._sourceExpression,null))&&
-                (_source==((StrongEntityAccessor)operand)._source);
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(StrongEntityAccessor)) &&
+                (_about != null ? _about.Equals(((StrongEntityAccessor)operand)._about) : Object.Equals(((StrongEntityAccessor)operand)._about, null)) &&
+                (_sourceExpression != null ? _sourceExpression.Equals(((StrongEntityAccessor)operand)._sourceExpression) : Object.Equals(((StrongEntityAccessor)operand)._sourceExpression, null)) &&
+                (_source == ((StrongEntityAccessor)operand)._source);
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -142,7 +145,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(StrongEntityAccessor).FullName.GetHashCode()^(_about!=null?_about.GetHashCode():0)^(_sourceExpression!=null?_sourceExpression.GetHashCode():0)^_source.GetHashCode();
+            return typeof(StrongEntityAccessor).FullName.GetHashCode() ^ (_about != null ? _about.GetHashCode() : 0) ^ (_sourceExpression != null ? _sourceExpression.GetHashCode() : 0) ^ _source.GetHashCode();
         }
         #endregion
 
@@ -150,7 +153,7 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Rised when elements collection has changed.</summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="e">Eventarguments.</param>
-        protected void OnElementsCollectionChanged(object sender,NotifyCollectionChangedEventArgs e)
+        protected void OnElementsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -158,9 +161,9 @@ namespace RomanticWeb.Linq.Model
                     {
                         foreach (QueryComponent queryComponent in e.NewItems)
                         {
-                            if (queryComponent!=null)
+                            if (queryComponent != null)
                             {
-                                queryComponent.OwnerQuery=OwnerQuery;
+                                queryComponent.OwnerQuery = OwnerQuery;
                             }
                         }
 

@@ -8,7 +8,7 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converts xsd:date and xsd:datetime to <see cref="DateTime"/>.</summary>
-    public class DateTimeConverter:XsdConverterBase
+    public class DateTimeConverter : XsdConverterBase
     {
         /// <summary>Gets xsd date datatypes.</summary>
         protected override IEnumerable<Uri> SupportedDataTypes
@@ -26,7 +26,7 @@ namespace RomanticWeb.Converters
         public override Node ConvertBack(object value)
         {
             // todo: xsd:Time and xsd:Date
-            return Node.ForLiteral(XmlConvert.ToString((DateTime)value,XmlDateTimeSerializationMode.RoundtripKind),Xsd.DateTime);
+            return Node.ForLiteral(XmlConvert.ToString((DateTime)value, XmlDateTimeSerializationMode.RoundtripKind), Xsd.DateTime);
         }
 
         /// <inheritdoc />
@@ -47,9 +47,9 @@ namespace RomanticWeb.Converters
         /// <inheritdoc />
         protected override object ConvertInternal(Node literalNode)
         {
-            var dateTime=XmlConvert.ToDateTime(literalNode.Literal,XmlDateTimeSerializationMode.RoundtripKind);
+            var dateTime = XmlConvert.ToDateTime(literalNode.Literal, XmlDateTimeSerializationMode.RoundtripKind);
 
-            if (dateTime.Kind==DateTimeKind.Local)
+            if (dateTime.Kind == DateTimeKind.Local)
             {
                 return dateTime.ToUniversalTime();
             }

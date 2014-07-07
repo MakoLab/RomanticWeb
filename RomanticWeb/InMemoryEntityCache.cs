@@ -5,9 +5,9 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb
 {
-    internal class InMemoryEntityCache:IEntityCache
+    internal class InMemoryEntityCache : IEntityCache
     {
-        private readonly IDictionary<EntityId,Entity> _cache = new ConcurrentDictionary<EntityId,Entity>(); 
+        private readonly IDictionary<EntityId, Entity> _cache = new ConcurrentDictionary<EntityId, Entity>();
 
         public bool HasEntity(EntityId entityId)
         {
@@ -16,7 +16,7 @@ namespace RomanticWeb
 
         public void Add(Entity entity)
         {
-            _cache[entity.Id]=entity;
+            _cache[entity.Id] = entity;
         }
 
         public Entity Get(EntityId entityId)

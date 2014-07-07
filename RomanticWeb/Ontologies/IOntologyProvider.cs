@@ -10,6 +10,6 @@ namespace RomanticWeb.Ontologies
         IEnumerable<Ontology> Ontologies { get; }
 
         /// <summary>Gets a URI from a QName.</summary>
-        Uri ResolveUri(string prefix,string rdfTermName);
+        Uri ResolveUri(string prefix, string rdfTermName);
     }
 }

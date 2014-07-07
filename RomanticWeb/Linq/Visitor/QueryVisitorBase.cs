@@ -17,17 +17,17 @@ namespace RomanticWeb.Linq.Visitor
         /// <param name="component">Component to be visited.</param>
         public virtual void VisitComponent(IQueryComponent component)
         {
-            Type componentType=GetType();
-            MethodInfo componentMethodInfo=null;
-            while ((componentType!=typeof(object))&&(componentMethodInfo==null))
+            Type componentType = GetType();
+            MethodInfo componentMethodInfo = null;
+            while ((componentType != typeof(object)) && (componentMethodInfo == null))
             {
-                componentMethodInfo=componentType.GetMethod("Visit"+component.GetType().Name,BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance);
-                componentType=componentType.BaseType;
+                componentMethodInfo = componentType.GetMethod("Visit" + component.GetType().Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                componentType = componentType.BaseType;
             }
 
-            if (componentMethodInfo!=null)
+            if (componentMethodInfo != null)
             {
-                componentMethodInfo.Invoke(this,new object[] { component });
+                componentMethodInfo.Invoke(this, new object[] { component });
             }
         }
 

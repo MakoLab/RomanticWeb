@@ -10,15 +10,15 @@ namespace RomanticWeb.Mapping.Model
 {
     [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Class {Uri}")]
-    internal class ClassMapping:IQueryableClassMapping
+    internal class ClassMapping : IQueryableClassMapping
     {
-        private static readonly AbsoluteUriComparer UriComparer=new AbsoluteUriComparer();
+        private static readonly AbsoluteUriComparer UriComparer = new AbsoluteUriComparer();
         private readonly Uri _uri;
 
-        public ClassMapping(Uri uri,bool isInherited)
+        public ClassMapping(Uri uri, bool isInherited)
         {
             _uri = uri;
-            IsInherited=isInherited;
+            IsInherited = isInherited;
         }
 
         public Uri Uri
@@ -39,19 +39,19 @@ namespace RomanticWeb.Mapping.Model
             }
         }
 
-        public static bool operator ==([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
+        public static bool operator ==([AllowNull]ClassMapping left, [AllowNull]ClassMapping right)
         {
-            return Equals(left,right);
+            return Equals(left, right);
         }
 
-        public static bool operator !=([AllowNull]ClassMapping left,[AllowNull]ClassMapping right)
+        public static bool operator !=([AllowNull]ClassMapping left, [AllowNull]ClassMapping right)
         {
-            return !Equals(left,right);
+            return !Equals(left, right);
         }
 
         public bool IsMatch(IEnumerable<Uri> entityClasses)
         {
-            return entityClasses.Contains(_uri,AbsoluteUriComparer.Default);
+            return entityClasses.Contains(_uri, AbsoluteUriComparer.Default);
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)
@@ -61,9 +61,9 @@ namespace RomanticWeb.Mapping.Model
 
         public override bool Equals([AllowNull]object obj)
         {
-            if (ReferenceEquals(null,obj)) { return false; }
-            if (ReferenceEquals(this,obj)) { return true; }
-            if (obj.GetType()!=GetType()) { return false; }
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            if (obj.GetType() != GetType()) { return false; }
 
             return Equals((ClassMapping)obj);
         }

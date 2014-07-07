@@ -5,15 +5,15 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal class MultiMappingProvider:IEntityMappingProvider
+    internal class MultiMappingProvider : IEntityMappingProvider
     {
         private readonly Type _entityType;
         private readonly IEnumerable<IEntityMappingProvider> _entityMappingProviders;
 
-        public MultiMappingProvider(Type entityType,IEnumerable<IEntityMappingProvider> entityMappingProviders)
+        public MultiMappingProvider(Type entityType, IEnumerable<IEntityMappingProvider> entityMappingProviders)
         {
-            _entityType=entityType;
-            _entityMappingProviders=entityMappingProviders;
+            _entityType = entityType;
+            _entityMappingProviders = entityMappingProviders;
         }
 
         public IEnumerable<IClassMappingProvider> Classes { get { return _entityMappingProviders.SelectMany(mp => mp.Classes); } }

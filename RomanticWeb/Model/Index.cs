@@ -9,32 +9,32 @@ namespace RomanticWeb.Model
 {
     internal sealed class Index<T>
     {
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        internal int ItemIndex=0;
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance is top priority here.")]
+        internal int ItemIndex = 0;
 
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        internal T Key=default(T);
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance is top priority here.")]
+        internal T Key = default(T);
 
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        internal int StartAt=0;
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance is top priority here.")]
+        internal int StartAt = 0;
 
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1401:FieldsMustBePrivate",Justification="Performance is top priority here.")]
-        internal int Length=0;
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance is top priority here.")]
+        internal int Length = 0;
 
-        internal Index(int index,T key,int startAt,int length)
+        internal Index(int index, T key, int startAt, int length)
         {
-            ItemIndex=index;
-            Key=key;
-            StartAt=startAt;
-            Length=length;
+            ItemIndex = index;
+            Key = key;
+            StartAt = startAt;
+            Length = length;
         }
 
         public override bool Equals(object obj)
         {
-            if (Object.Equals(obj,null)) { return false; }
-            if (Object.ReferenceEquals(obj,this)) { return true; }
+            if (Object.Equals(obj, null)) { return false; }
+            if (Object.ReferenceEquals(obj, this)) { return true; }
             if (!(obj is Index<T>)) { return false; }
-            Index<T> index=(Index<T>)obj;
+            Index<T> index = (Index<T>)obj;
             return index.Key.Equals(Key);
         }
 
@@ -45,12 +45,12 @@ namespace RomanticWeb.Model
 
         public override string ToString()
         {
-            return System.String.Format("{0}.{1} @ {2} -> {3}",ItemIndex,Key,StartAt,Length);
+            return System.String.Format("{0}.{1} @ {2} -> {3}", ItemIndex, Key, StartAt, Length);
         }
 
         internal bool Contains(int itemIndex)
         {
-            return ((itemIndex!=IndexCollection<T>.FirstPossible)&&(itemIndex>=StartAt)&&(itemIndex<StartAt+Length))||(itemIndex==IndexCollection<T>.FirstPossible);
+            return ((itemIndex != IndexCollection<T>.FirstPossible) && (itemIndex >= StartAt) && (itemIndex < StartAt + Length)) || (itemIndex == IndexCollection<T>.FirstPossible);
         }
     }
 }

@@ -65,8 +65,8 @@ namespace RomanticWeb.Tests.Converters
         public void Exact_literal_match_should_be_greater_than_datatype_match(MatchResult datatypeMatch)
         {
             // given
-            var left=new LiteralConversionMatch { LiteralFormatMatches=MatchResult.ExactMatch };
-            var right=new LiteralConversionMatch { DatatypeMatches=datatypeMatch };
+            var left = new LiteralConversionMatch { LiteralFormatMatches = MatchResult.ExactMatch };
+            var right = new LiteralConversionMatch { DatatypeMatches = datatypeMatch };
 
             // when
             var compareTo = left.CompareTo(right);

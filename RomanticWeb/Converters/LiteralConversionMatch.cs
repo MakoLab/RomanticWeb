@@ -26,7 +26,7 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Result of matching literals for conversion by <see cref="LiteralNodeConverter"/>
     /// </summary>
-    public struct LiteralConversionMatch:IComparable<LiteralConversionMatch>
+    public struct LiteralConversionMatch : IComparable<LiteralConversionMatch>
     {
         /// <summary>
         /// Gets or sets the value indicating whether the literal node's datatype matched

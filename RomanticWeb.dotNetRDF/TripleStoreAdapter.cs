@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using Anotar.NLog;
-using Resourcer;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Model;
-using RomanticWeb.Vocabularies;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
@@ -20,7 +16,7 @@ using VDS.RDF.Update;
 namespace RomanticWeb.DotNetRDF
 {
     /// <summary>An implementation of <see cref="IEntitySource"/>, which reads triples from a VDS.RDF.ITripleStore.</summary>
-    public class TripleStoreAdapter:IEntitySource
+    public class TripleStoreAdapter : IEntitySource
     {
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
@@ -29,36 +25,36 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="store">The underlying triple store</param>
         public TripleStoreAdapter(ITripleStore store)
         {
-            _store=store;
-            _namespaces=new NamespaceMapper(true);
-            _namespaces.AddNamespace("foaf",new Uri("http://xmlns.com/foaf/0.1/"));
+            _store = store;
+            _namespaces = new NamespaceMapper(true);
+            _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
 
         /// <summary>Uri of the meta graph, which contains information about Entities' named graphs.</summary>
         public Uri MetaGraphUri { get; set; }
 
         /// <summary>Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>.</summary>
-        public void LoadEntity(IEntityStore store,EntityId entityId)
+        public void LoadEntity(IEntityStore store, EntityId entityId)
         {
             // todo: maybe this should return EntityTriples instead and they should be asserted in EntityContext?
-            var sparql=QueryBuilder.Select("s","p","o","g")
-                                   .Graph("?g",graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")))
+            var sparql = QueryBuilder.Select("s", "p", "o", "g")
+                                   .Graph("?g", graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")))
                                    .Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             sparql.Prefixes.Import(_namespaces);
-            var triples=from result in ExecuteSelect(sparql.BuildQuery())
-                        let subject=result["s"].WrapNode(entityId)
-                        let predicate=result["p"].WrapNode(entityId)
-                        let @object=result["o"].WrapNode(entityId)
-                        let graph=result.HasBoundValue("g")?result["g"].WrapNode(entityId):null
-                        select new EntityQuad(entityId,subject,predicate,@object,graph);
+            var triples = from result in ExecuteSelect(sparql.BuildQuery())
+                          let subject = result["s"].WrapNode(entityId)
+                          let predicate = result["p"].WrapNode(entityId)
+                          let @object = result["o"].WrapNode(entityId)
+                          let graph = result.HasBoundValue("g") ? result["g"].WrapNode(entityId) : null
+                          select new EntityQuad(entityId, subject, predicate, @object, graph);
 
-            store.AssertEntity(entityId,triples);
+            store.AssertEntity(entityId, triples);
         }
 
         /// <summary>Executes an ASK query to perform existence check.</summary>
         public bool EntityExist(EntityId entityId)
         {
-            var ask=QueryBuilder.Ask()
+            var ask = QueryBuilder.Ask()
                                 .Graph(
                                     MetaGraphUri,
                                     graph => graph.Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri)));
@@ -72,16 +68,16 @@ namespace RomanticWeb.DotNetRDF
         public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel)
         {
             SparqlQueryVariables variables;
-            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out variables));
+            var resultSet = ExecuteSelect(GetSparqlQuery(queryModel, out variables));
             return from result in resultSet
-                   let id=(result[variables.Entity] is IBlankNode?
-                    new BlankId(((IBlankNode)result[variables.Entity]).InternalID,null,((IUriNode)result[variables.MetaGraph]).Uri):
+                   let id = (result[variables.Entity] is IBlankNode ?
+                    new BlankId(((IBlankNode)result[variables.Entity]).InternalID, null, ((IUriNode)result[variables.MetaGraph]).Uri) :
                     new EntityId(((IUriNode)result[variables.Entity]).Uri))
-                   let s=result[variables.Subject].WrapNode(id)
-                   let p=result[variables.Predicate].WrapNode(id)
-                   let o=result[variables.Object].WrapNode(id)
-                   let g=result[variables.MetaGraph].WrapNode(id)
-                   select new EntityQuad(id,s,p,o,g);
+                   let s = result[variables.Subject].WrapNode(id)
+                   let p = result[variables.Predicate].WrapNode(id)
+                   let o = result[variables.Object].WrapNode(id)
+                   let g = result[variables.MetaGraph].WrapNode(id)
+                   select new EntityQuad(id, s, p, o, g);
         }
 
         /// <summary>Executes a SPARQL query with scalar result.</summary>
@@ -90,7 +86,7 @@ namespace RomanticWeb.DotNetRDF
         public int ExecuteScalarQuery(Query queryModel)
         {
             SparqlQueryVariables variables;
-            var resultSet=ExecuteSelect(GetSparqlQuery(queryModel,out variables));
+            var resultSet = ExecuteSelect(GetSparqlQuery(queryModel, out variables));
             return (from result in resultSet select Int32.Parse(((ILiteralNode)result[variables.Scalar]).Value)).FirstOrDefault();
         }
 
@@ -105,23 +101,23 @@ namespace RomanticWeb.DotNetRDF
         /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
         public void ApplyChanges(DatasetChanges datasetChanges)
         {
-            ExecuteCommandSet(new DatasetChangesCommandSetConverter(_store.Triples,MetaGraphUri,datasetChanges).ConvertToSparqlUpdateCommandSet());
+            ExecuteCommandSet(new DatasetChangesCommandSetConverter(_store.Triples, MetaGraphUri, datasetChanges).ConvertToSparqlUpdateCommandSet());
         }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)
         {
             SparqlQueryVariables variables;
-            return GetSparqlQuery(sparqlQuery,out variables);
+            return GetSparqlQuery(sparqlQuery, out variables);
         }
 
-        private SparqlQuery GetSparqlQuery(Query sparqlQuery,out SparqlQueryVariables variables)
+        private SparqlQuery GetSparqlQuery(Query sparqlQuery, out SparqlQueryVariables variables)
         {
-            GenericSparqlQueryVisitor queryVisitor=new SparqlQueryVisitor();
-            queryVisitor.MetaGraphUri=MetaGraphUri;
+            GenericSparqlQueryVisitor queryVisitor = new SparqlQueryVisitor();
+            queryVisitor.MetaGraphUri = MetaGraphUri;
             queryVisitor.VisitQuery(sparqlQuery);
-            variables=queryVisitor.Variables;
-            LogTo.Info("RomanticWeb.dotNetRDF.TripleStoreAdapter parsed query: {0}",queryVisitor.CommandText);
-            SparqlQueryParser parser=new SparqlQueryParser();
+            variables = queryVisitor.Variables;
+            LogTo.Info("RomanticWeb.dotNetRDF.TripleStoreAdapter parsed query: {0}", queryVisitor.CommandText);
+            SparqlQueryParser parser = new SparqlQueryParser();
             return parser.ParseFromString(queryVisitor.CommandText);
         }
 
@@ -129,7 +125,7 @@ namespace RomanticWeb.DotNetRDF
         {
             if (!_store.HasGraph(graphUri))
             {
-                _store.Add(new Graph { BaseUri=graphUri });
+                _store.Add(new Graph { BaseUri = graphUri });
             }
 
             return _store[graphUri];
@@ -137,10 +133,10 @@ namespace RomanticWeb.DotNetRDF
 
         private void ExecuteCommandSet(SparqlUpdateCommandSet commands)
         {
-            var store=_store as IUpdateableTripleStore;
-            if (store==null)
+            var store = _store as IUpdateableTripleStore;
+            if (store == null)
             {
-                throw new InvalidOperationException(string.Format("Store doesn't implement {0}",typeof(IUpdateableTripleStore)));
+                throw new InvalidOperationException(string.Format("Store doesn't implement {0}", typeof(IUpdateableTripleStore)));
             }
 
             store.ExecuteUpdate(commands);
@@ -148,11 +144,11 @@ namespace RomanticWeb.DotNetRDF
 
         private bool ExecuteAsk(SparqlQuery query)
         {
-            var store=_store as IInMemoryQueryableStore;
-            if (store!=null)
+            var store = _store as IInMemoryQueryableStore;
+            if (store != null)
             {
-                var inMemoryQuadDataset=new InMemoryQuadDataset(store,MetaGraphUri);
-                var processor=new LeviathanQueryProcessor(inMemoryQuadDataset);
+                var inMemoryQuadDataset = new InMemoryQuadDataset(store, MetaGraphUri);
+                var processor = new LeviathanQueryProcessor(inMemoryQuadDataset);
                 return ((SparqlResultSet)processor.ProcessQuery(query)).Result;
             }
 
@@ -161,11 +157,11 @@ namespace RomanticWeb.DotNetRDF
 
         private SparqlResultSet ExecuteSelect(SparqlQuery query)
         {
-            var store=_store as IInMemoryQueryableStore;
-            if (store!=null)
+            var store = _store as IInMemoryQueryableStore;
+            if (store != null)
             {
-                var inMemoryQuadDataset=new InMemoryQuadDataset(store,MetaGraphUri);
-                var processor=new LeviathanQueryProcessor(inMemoryQuadDataset);
+                var inMemoryQuadDataset = new InMemoryQuadDataset(store, MetaGraphUri);
+                var processor = new LeviathanQueryProcessor(inMemoryQuadDataset);
                 return (SparqlResultSet)processor.ProcessQuery(query);
             }
 

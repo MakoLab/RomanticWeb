@@ -11,9 +11,9 @@ namespace RomanticWeb.DotNetRDF.Configuration.StorageProviders
                 return;
             }
 
-            if (Type.GetType(typeName.ToString())==null)
+            if (Type.GetType(typeName.ToString()) == null)
             {
-                throw new ArgumentException(string.Format("Cannot load type {0}",typeName));
+                throw new ArgumentException(string.Format("Cannot load type {0}", typeName));
             }
         }
     }

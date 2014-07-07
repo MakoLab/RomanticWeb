@@ -12,7 +12,7 @@ namespace RomanticWeb.Tests.Helpers
 
         private Nodes(int count)
         {
-            _count=count;
+            _count = count;
         }
 
         public static Nodes Create(int count)
@@ -43,7 +43,7 @@ namespace RomanticWeb.Tests.Helpers
 
             public UriNodesBuilder(int count)
             {
-                _count=count;
+                _count = count;
                 _createUri = i => new Uri(new Uri("http://magi/test/"), i.ToString());
             }
 
@@ -58,22 +58,22 @@ namespace RomanticWeb.Tests.Helpers
         {
             private readonly int _count;
 
-            private Func<int,string> _createNodeIdentifier;
+            private Func<int, string> _createNodeIdentifier;
 
-            private Func<int,Uri> _createGraphUri;
+            private Func<int, Uri> _createGraphUri;
 
             public BlankNodesBuilder(int count)
             {
                 _count = count;
                 _createNodeIdentifier = i => string.Format("test{0}", i);
-                _createGraphUri=i => null;
+                _createGraphUri = i => null;
             }
 
             public IEnumerable<Node> GetNodes(EntityId entityId)
             {
                 return from i in Enumerable.Range(0, _count)
                        let blankId = _createNodeIdentifier(i)
-                       select Node.ForBlank(blankId,entityId,_createGraphUri(i));
+                       select Node.ForBlank(blankId, entityId, _createGraphUri(i));
             }
         }
 
@@ -86,19 +86,19 @@ namespace RomanticWeb.Tests.Helpers
 
             public LiteralNodesBuilder(int count)
             {
-                _count=count;
-                _createNodeValue=i => string.Format("test{0}",i);
+                _count = count;
+                _createNodeValue = i => string.Format("test{0}", i);
             }
 
             public IEnumerable<Node> GetNodes()
             {
-                var values=from i in Enumerable.Range(0,_count) 
-                           select _createNodeValue(i);
+                var values = from i in Enumerable.Range(0, _count)
+                             select _createNodeValue(i);
 
-                if (_createDatatype!=null)
+                if (_createDatatype != null)
                 {
-                    return from value in values 
-                           select Node.ForLiteral(value,_createDatatype());
+                    return from value in values
+                           select Node.ForLiteral(value, _createDatatype());
                 }
 
                 return from value in values
@@ -107,13 +107,13 @@ namespace RomanticWeb.Tests.Helpers
 
             public LiteralNodesBuilder WithValues(Func<int, string> createNodeValueFunc)
             {
-                _createNodeValue=createNodeValueFunc;
+                _createNodeValue = createNodeValueFunc;
                 return this;
             }
 
             public LiteralNodesBuilder WithDatatype(Uri datatype)
             {
-                _createDatatype=() => datatype;
+                _createDatatype = () => datatype;
                 return this;
             }
 

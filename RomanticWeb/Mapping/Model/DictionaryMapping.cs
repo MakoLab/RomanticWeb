@@ -7,12 +7,13 @@ namespace RomanticWeb.Mapping.Model
 {
     [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Dictionary {Name}")]
-    internal class DictionaryMapping:PropertyMapping,IDictionaryMapping
+    internal class DictionaryMapping : PropertyMapping, IDictionaryMapping
     {
-        public DictionaryMapping(Type declaringType,Type returnType,string name,Uri predicateUri,Uri keyPredicate,Uri valuePredicate): base(declaringType,returnType,name,predicateUri)
+        public DictionaryMapping(Type declaringType, Type returnType, string name, Uri predicateUri, Uri keyPredicate, Uri valuePredicate)
+            : base(declaringType, returnType, name, predicateUri)
         {
-            ValuePredicate=valuePredicate;
-            KeyPredicate=keyPredicate;
+            ValuePredicate = valuePredicate;
+            KeyPredicate = keyPredicate;
         }
 
         public Uri KeyPredicate { get; private set; }

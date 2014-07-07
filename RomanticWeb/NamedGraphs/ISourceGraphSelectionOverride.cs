@@ -10,6 +10,6 @@ namespace RomanticWeb.NamedGraphs
         /// <summary>
         /// Gets the select graph function.
         /// </summary>
-        Func<INamedGraphSelector,Uri> SelectGraph { get; }
+        Func<INamedGraphSelector, Uri> SelectGraph { get; }
     }
 }

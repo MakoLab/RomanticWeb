@@ -15,13 +15,13 @@ namespace RomanticWeb.Tests.IntegrationTests.TestMappings
 
             Collection(p => p.Homepage).Term.Is(new Uri("http://xmlns.com/foaf/0.1/homePage"));
 
-            Property(p => p.Friend).Term.Is("foaf","knows");
+            Property(p => p.Friend).Term.Is("foaf", "knows");
 
-            Property(p => p.Age).Term.Is("foaf","age");
+            Property(p => p.Age).Term.Is("foaf", "age");
 
             Collection(p => p.Friends).Term.Is("foaf", "friends");
 
-            Class.Is("foaf","Person");
+            Class.Is("foaf", "Person");
 
             Collection(p => p.Interests)
                 .Term.Is("foaf", "interest")

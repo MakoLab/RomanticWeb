@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.TestEntities.BlankNodes
 {
-    public interface IRoot:IEntity
+    public interface IRoot : IEntity
     {
         INested Child { get; }
     }

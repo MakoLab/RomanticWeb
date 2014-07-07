@@ -15,22 +15,22 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class RdfTypeCacheTests
     {
-        private static readonly dynamic New=Builder.New();
+        private static readonly dynamic New = Builder.New();
         private RdfTypeCache _rdfTypeCache;
         private ITypedEntity _entity;
 
         [SetUp]
         public void Setup()
         {
-            _entity=new TypedEntity();
-            _rdfTypeCache=new RdfTypeCache();
+            _entity = new TypedEntity();
+            _rdfTypeCache = new RdfTypeCache();
         }
 
         [Test]
         public void Should_return_requested_type_if_not_mapped()
         {
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -43,7 +43,7 @@ namespace RomanticWeb.Tests
             Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
 
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -58,7 +58,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IPerson>();
@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -108,7 +108,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(new Uri("urn:other:type")));
 
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IPerson>();
@@ -125,7 +125,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
 
             // when
-            var type=_rdfTypeCache.GetMostDerivedMappedTypes(_entity,typeof(IAgent)).ToList();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).ToList();
 
             // then
             type.Should().Contain(typeof(IPerson));
@@ -135,11 +135,11 @@ namespace RomanticWeb.Tests
 
         private static IEntityMapping CreateMapping<T>(params Uri[] classUris)
         {
-            var classMappings=classUris.Select(CreateClassMapping);
+            var classMappings = classUris.Select(CreateClassMapping);
             return new
                        {
-                           EntityType=typeof(T),
-                           Classes=classMappings
+                           EntityType = typeof(T),
+                           Classes = classMappings
                        }.ActLike<IEntityMapping>();
         }
 
@@ -147,7 +147,7 @@ namespace RomanticWeb.Tests
         {
             return New.ExpandoObject(
                         IsInherited: false,
-                        IsMatch: new Func<IEnumerable<Uri>,bool>(uris => uris.Contains(uri)))
+                        IsMatch: new Func<IEnumerable<Uri>, bool>(uris => uris.Contains(uri)))
                       .ActLike<IClassMapping>();
         }
 
@@ -161,11 +161,11 @@ namespace RomanticWeb.Tests
             }
         }
 
-        private class TypedEntity:ITypedEntity
+        private class TypedEntity : ITypedEntity
         {
             public TypedEntity()
             {
-                Types=new List<EntityId>();
+                Types = new List<EntityId>();
             }
 
             public EntityId Id

@@ -5,7 +5,7 @@ namespace RomanticWeb.Collections
     /// <summary>
     /// Represents a rdf:List node, typed for a specific collection element of type <typeparamref name="T"/>
     /// </summary>
-    public interface IRdfListNode<T>:IEntity
+    public interface IRdfListNode<T> : IEntity
     {
         /// <summary>
         /// Gets or sets next list node

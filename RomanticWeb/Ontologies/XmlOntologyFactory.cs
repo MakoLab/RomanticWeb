@@ -7,10 +7,10 @@ using System.Xml.Linq;
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Converts an OWL based ontology written with XML syntax into an object representation.</summary>
-    public class XmlOntologyFactory:IOntologyFactory
+    public class XmlOntologyFactory : IOntologyFactory
     {
-        private static readonly string[] AcceptedMimeTypes=new string[] { "application/rdf+xml","application/owl+xml" };
-        private static readonly string[] AcceptedNodeTypes=new string[] { "Class","Property","DatatypeProperty","ObjectProperty" };
+        private static readonly string[] AcceptedMimeTypes = new string[] { "application/rdf+xml", "application/owl+xml" };
+        private static readonly string[] AcceptedNodeTypes = new string[] { "Class", "Property", "DatatypeProperty", "ObjectProperty" };
 
         /// <summary>Returns a list of accepted content MIME types handled by this factory.</summary>
         public string[] Accepts { get { return AcceptedMimeTypes; } }
@@ -25,70 +25,70 @@ namespace RomanticWeb.Ontologies
 
         private Ontology CreateFromXML(Stream fileStream)
         {
-            bool isOwlBasedFile=true;
-            XDocument document=XDocument.Load(fileStream);
-            XElement ontologyElement=(from element in document.Descendants() where element.Name.LocalName=="Ontology" select element).FirstOrDefault();
-            if (ontologyElement==null)
+            bool isOwlBasedFile = true;
+            XDocument document = XDocument.Load(fileStream);
+            XElement ontologyElement = (from element in document.Descendants() where element.Name.LocalName == "Ontology" select element).FirstOrDefault();
+            if (ontologyElement == null)
             {
-                isOwlBasedFile=false;
-                ontologyElement=(
-                    from element in document.Descendants() 
-                    where (element.Name.LocalName=="Description")&&(element.Descendants().Any(item => 
-                        (item.Name.LocalName=="type")&&(item.Attributes().Any(attribute => (attribute.Name.LocalName=="resource")&&(attribute.Value=="http://www.w3.org/2002/07/owl#Ontology")))))
+                isOwlBasedFile = false;
+                ontologyElement = (
+                    from element in document.Descendants()
+                    where (element.Name.LocalName == "Description") && (element.Descendants().Any(item =>
+                        (item.Name.LocalName == "type") && (item.Attributes().Any(attribute => (attribute.Name.LocalName == "resource") && (attribute.Value == "http://www.w3.org/2002/07/owl#Ontology")))))
                     select element).FirstOrDefault();
-                if (ontologyElement==null)
+                if (ontologyElement == null)
                 {
                     throw new ArgumentOutOfRangeException("Provided stream does not contain ontology information suitable for usage.");
                 }
             }
 
-            NamespaceSpecification namespaceSpecification=null;
-            string displayName=null;
-            IEnumerable<Term> terms=null;
-            namespaceSpecification=(
+            NamespaceSpecification namespaceSpecification = null;
+            string displayName = null;
+            IEnumerable<Term> terms = null;
+            namespaceSpecification = (
                 from attribute in ontologyElement.Attributes()
-                where attribute.Name.LocalName=="about"
-                select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value),new Uri(attribute.Value))).FirstOrDefault();
-            displayName=(
+                where attribute.Name.LocalName == "about"
+                select new NamespaceSpecification(ontologyElement.GetPrefixOfNamespace(attribute.Value), new Uri(attribute.Value))).FirstOrDefault();
+            displayName = (
                 from child in ontologyElement.Descendants()
-                where (child.Name.LocalName=="label")||(child.Name.LocalName=="title")
+                where (child.Name.LocalName == "label") || (child.Name.LocalName == "title")
                 select child.Value).FirstOrDefault();
             if (isOwlBasedFile)
             {
-                terms=CreateFromOWLXML(document,namespaceSpecification.BaseUri);
+                terms = CreateFromOWLXML(document, namespaceSpecification.BaseUri);
             }
             else
             {
-                terms=CreateFromRDFXML(document,namespaceSpecification.BaseUri);
+                terms = CreateFromRDFXML(document, namespaceSpecification.BaseUri);
             }
 
-            return new Ontology(displayName,namespaceSpecification,terms.ToArray());
+            return new Ontology(displayName, namespaceSpecification, terms.ToArray());
         }
 
-        private IEnumerable<Term> CreateFromOWLXML(XDocument document,Uri baseUri)
+        private IEnumerable<Term> CreateFromOWLXML(XDocument document, Uri baseUri)
         {
             return (from element in document.Descendants()
                     where AcceptedNodeTypes.Contains(element.Name.LocalName)
                     from attribute in element.Attributes()
-                    where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
-                    select CreateTerm(element.Name.LocalName,attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
+                    where (attribute.Name.LocalName == "about") && (attribute.Value.StartsWith(baseUri.AbsoluteUri))
+                    select CreateTerm(element.Name.LocalName, attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
         }
 
-        private IEnumerable<Term> CreateFromRDFXML(XDocument document,Uri baseUri)
+        private IEnumerable<Term> CreateFromRDFXML(XDocument document, Uri baseUri)
         {
             return (from element in document.Descendants()
-                    where (element.Name.LocalName=="Description")
+                    where (element.Name.LocalName == "Description")
                     from child in element.Descendants()
-                    where (child.Name.LocalName=="type")
+                    where (child.Name.LocalName == "type")
                     from childAttribute in child.Attributes()
-                    where (childAttribute.Name.LocalName=="resource")&&(AcceptedNodeTypes.Any(nodeName => childAttribute.Value.EndsWith(nodeName)))
+                    where (childAttribute.Name.LocalName == "resource") && (AcceptedNodeTypes.Any(nodeName => childAttribute.Value.EndsWith(nodeName)))
                     from attribute in element.Attributes()
-                    where (attribute.Name.LocalName=="about")&&(attribute.Value.StartsWith(baseUri.AbsoluteUri))
-                    let typeName=AcceptedNodeTypes.First(nodeName => childAttribute.Value.EndsWith(nodeName))
-                    select CreateTerm(typeName,attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
+                    where (attribute.Name.LocalName == "about") && (attribute.Value.StartsWith(baseUri.AbsoluteUri))
+                    let typeName = AcceptedNodeTypes.First(nodeName => childAttribute.Value.EndsWith(nodeName))
+                    select CreateTerm(typeName, attribute.Value.Substring(baseUri.AbsoluteUri.Length)));
         }
 
-        private Term CreateTerm(string typeName,string termName)
+        private Term CreateTerm(string typeName, string termName)
         {
             switch (typeName)
             {

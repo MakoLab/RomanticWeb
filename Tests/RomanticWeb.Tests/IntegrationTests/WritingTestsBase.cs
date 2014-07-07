@@ -6,7 +6,7 @@ using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    public abstract class WritingTestsBase:IntegrationTestsBase
+    public abstract class WritingTestsBase : IntegrationTestsBase
     {
         protected abstract int MetagraphTripleCount { get; }
 
@@ -18,7 +18,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
 
             // when
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
             EntityContext.Commit();
 
             // then
@@ -31,8 +31,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
 
             // when
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
-            entity.Gender="male";
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            entity.Gender = "male";
             EntityContext.Commit();
 
             // then
@@ -45,8 +45,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
 
             // when
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
-            entity.KnowsOne=EntityContext.Create<IAgent>(entity.CreateBlankId());
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            entity.KnowsOne = EntityContext.Create<IAgent>(entity.CreateBlankId());
             EntityContext.Commit();
 
             // then
@@ -57,7 +57,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_remove_uri_node()
         {
             // given
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
             EntityContext.Commit();
 
             // when
@@ -65,31 +65,31 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            AssertStoreCounts(0,0);
+            AssertStoreCounts(0, 0);
         }
 
         [Test]
         public void Should_remove_literal_node()
         {
             // given
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
-            entity.Gender="male";
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            entity.Gender = "male";
             EntityContext.Commit();
 
             // when
-            entity.Gender=null;
+            entity.Gender = null;
             EntityContext.Commit();
 
             // then
-            AssertStoreCounts(1,1);
+            AssertStoreCounts(1, 1);
         }
 
         [Test]
         public void Should_remove_blank_node()
         {
             // given
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
-            entity.KnowsOne=EntityContext.Create<IAgent>(entity.CreateBlankId());
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            entity.KnowsOne = EntityContext.Create<IAgent>(entity.CreateBlankId());
             EntityContext.Commit();
 
             // when
@@ -97,22 +97,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // then
-            AssertStoreCounts(1,1);
+            AssertStoreCounts(1, 1);
         }
 
         [Test]
         public void Should_remove_whole_entity_graph()
         {
             // given
-            IAgent entity=EntityContext.Create<IAgent>("http://magi/people/Tomasz");
-            entity.KnowsOne=EntityContext.Create<IAgent>(entity.CreateBlankId());
-            entity.Gender="male";
-            IAgent someEntity=EntityContext.Create<IAgent>("http://magi/people/Karol");
-            someEntity.KnowsOne=entity;
+            IAgent entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            entity.KnowsOne = EntityContext.Create<IAgent>(entity.CreateBlankId());
+            entity.Gender = "male";
+            IAgent someEntity = EntityContext.Create<IAgent>("http://magi/people/Karol");
+            someEntity.KnowsOne = entity;
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(entity.Id,DeleteBehaviours.DeleteChildren|DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(entity.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
             EntityContext.Commit();
 
             // then
@@ -123,19 +123,19 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_reconstruct_entity()
         {
             // given
-            IAlsoAgent entity=EntityContext.Create<IAlsoAgent>("http://magi/people/Tomasz");
-            IAgent someAgent=EntityContext.Create<IAgent>(entity.CreateBlankId());
-            IAgent anotherAgent=EntityContext.Create<IAgent>(entity.CreateBlankId());
+            IAlsoAgent entity = EntityContext.Create<IAlsoAgent>("http://magi/people/Tomasz");
+            IAgent someAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
+            IAgent anotherAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
             entity.Knows.Add(someAgent);
             entity.Knows.Add(anotherAgent);
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(someAgent.Id,DeleteBehaviours.DeleteChildren|DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(someAgent.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
             EntityContext.Commit();
 
             // then
-            AssertStoreCounts(6,1);
+            AssertStoreCounts(6, 1);
         }
 
         protected override void ChildSetup()

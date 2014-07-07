@@ -8,7 +8,7 @@ using VDS.RDF;
 namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
     [TestFixture]
-    public class WritingTests:WritingTestsBase
+    public class WritingTests : WritingTestsBase
     {
         private TripleStore _store;
 
@@ -16,9 +16,9 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         {
             get
             {
-                if (_store==null)
+                if (_store == null)
                 {
-                    _store=new TripleStore();
+                    _store = new TripleStore();
                 }
 
                 return _store;
@@ -43,7 +43,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
 
         protected override void LoadTestFile(string fileName)
         {
-            Console.WriteLine("Reading dataset file '{0}'",fileName);
+            Console.WriteLine("Reading dataset file '{0}'", fileName);
             Store.LoadTestFile(fileName);
         }
 
@@ -54,7 +54,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
 
         protected override void ChildTeardown()
         {
-            _store=null;
+            _store = null;
         }
     }
 }

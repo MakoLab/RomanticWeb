@@ -6,13 +6,13 @@ using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestMappingsRepository:IMappingsRepository
+    public class TestMappingsRepository : IMappingsRepository
     {
         private readonly List<IEntityMapping> _mappings;
 
         public TestMappingsRepository(params IEntityMapping[] entityMaps)
         {
-            _mappings=entityMaps.ToList();
+            _mappings = entityMaps.ToList();
         }
 
         private List<IEntityMapping> Mappings

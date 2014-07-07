@@ -8,12 +8,12 @@ namespace RomanticWeb.Mapping.Conventions
     /// Convention to ensure <see cref="ICollection{T}"/> and <see cref="IEnumerable{T}"/> properties
     /// are stored and read as rdf:List objects
     /// </summary>
-    public class RdfListConvention:ICollectionConvention
+    public class RdfListConvention : ICollectionConvention
     {
         /// <inheritdoc/>
         public bool ShouldApply(ICollectionMappingProvider target)
         {
-            return target.StoreAs==StoreAs.Undefined
+            return target.StoreAs == StoreAs.Undefined
                 && target.PropertyInfo.PropertyType.IsGenericType
                 && target.PropertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(IList<>);
         }
@@ -21,7 +21,7 @@ namespace RomanticWeb.Mapping.Conventions
         /// <inheritdoc/>
         public void Apply(ICollectionMappingProvider target)
         {
-            target.StoreAs=StoreAs.RdfList;
+            target.StoreAs = StoreAs.RdfList;
         }
     }
 }

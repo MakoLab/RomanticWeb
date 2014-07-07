@@ -15,6 +15,6 @@ namespace RomanticWeb.Mapping
         /// <param name="entity">The entity.</param>
         /// <param name="requestedType">Requested <see cref="IEntity"/> type.</param>
         /// <returns>the <paramref name="requestedType"/> or a type derived from it</returns>
-        IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity,Type requestedType);
+        IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType);
     }
 }

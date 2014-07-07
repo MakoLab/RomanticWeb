@@ -7,31 +7,34 @@ namespace RomanticWeb.Model
     /// <summary>
     /// Represents a triple (subject, predicate, object)
     /// </summary>
-    public sealed class EntityQuad:Triple,IComparable,IComparable<EntityQuad>
+    public sealed class EntityQuad : Triple, IComparable, IComparable<EntityQuad>
     {
         private readonly Node _graph;
         private readonly EntityId _entityId;
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> from given <see cref="Triple"/>.</summary>
-        public EntityQuad(EntityId entityId,Triple triple):this(entityId,triple.Subject,triple.Predicate,triple.Object)
+        public EntityQuad(EntityId entityId, Triple triple)
+            : this(entityId, triple.Subject, triple.Predicate, triple.Object)
         {
         }
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> in named graph.</summary>
-        public EntityQuad(EntityId entityId,Node s,Node p,Node o,[AllowNull]Node graph):this(entityId,s,p,o)
+        public EntityQuad(EntityId entityId, Node s, Node p, Node o, [AllowNull]Node graph)
+            : this(entityId, s, p, o)
         {
-            if ((graph!=null)&&(!graph.IsUri)&&(!graph.IsBlank))
+            if ((graph != null) && (!graph.IsUri) && (!graph.IsBlank))
             {
-                throw new ArgumentOutOfRangeException("graph","Graph must not be a literal.");
+                throw new ArgumentOutOfRangeException("graph", "Graph must not be a literal.");
             }
-            
-            _graph=graph;
+
+            _graph = graph;
         }
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> in default graph.</summary>
-        public EntityQuad(EntityId entityId,Node s,Node p,Node o):base(s,p,o)
+        public EntityQuad(EntityId entityId, Node s, Node p, Node o)
+            : base(s, p, o)
         {
-            _entityId=entityId;
+            _entityId = entityId;
         }
 
         /// <summary>Gets the named graph node or null, if triple is in named graph.</summary>
@@ -47,9 +50,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="o">Object <see cref="Uri" />.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,Uri o)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, Uri o)
         {
-            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForUri(o));
+            return new EntityQuad(entityId, Node.ForUri(s), Node.ForUri(p), Node.ForUri(o));
         }
 
         /// <summary>Creates a quad.</summary>
@@ -58,9 +61,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,object value)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, object value)
         {
-            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value.ToString()));
+            return new EntityQuad(entityId, Node.ForUri(s), Node.ForUri(p), Node.ForLiteral(value.ToString()));
         }
 
         /// <summary>Creates a quad.</summary>
@@ -69,9 +72,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, string value)
         {
-            return For(entityId,s,p,value,Vocabularies.Xsd.String);
+            return For(entityId, s, p, value, Vocabularies.Xsd.String);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -80,9 +83,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,int value)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, int value)
         {
-            return For(entityId,s,p,value.ToString(),Vocabularies.Xsd.Int);
+            return For(entityId, s, p, value.ToString(), Vocabularies.Xsd.Int);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -91,9 +94,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,float value)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, float value)
         {
-            return For(entityId,s,p,value.ToString("R",System.Globalization.CultureInfo.InvariantCulture),Vocabularies.Xsd.Float);
+            return For(entityId, s, p, value.ToString("R", System.Globalization.CultureInfo.InvariantCulture), Vocabularies.Xsd.Float);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -102,9 +105,9 @@ namespace RomanticWeb.Model
         /// <param name="p">Predicate <see cref="Uri" />.</param>
         /// <param name="value">Value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,bool value)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, bool value)
         {
-            return For(entityId,s,p,value.ToString().ToLower(),Vocabularies.Xsd.Boolean);
+            return For(entityId, s, p, value.ToString().ToLower(), Vocabularies.Xsd.Boolean);
         }
 
         /// <summary>Creates a quad.</summary>
@@ -114,9 +117,9 @@ namespace RomanticWeb.Model
         /// <param name="value">Value.</param>
         /// <param name="dataType">Optional Uri of the datatype of the value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value,Uri dataType)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, string value, Uri dataType)
         {
-            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,dataType??Vocabularies.Xsd.String));
+            return new EntityQuad(entityId, Node.ForUri(s), Node.ForUri(p), Node.ForLiteral(value, dataType ?? Vocabularies.Xsd.String));
         }
 
         /// <summary>Creates a quad.</summary>
@@ -126,43 +129,43 @@ namespace RomanticWeb.Model
         /// <param name="value">Value.</param>
         /// <param name="language">Language of the value.</param>
         /// <returns><see cref="EntityQuad" /> created.</returns>
-        public static EntityQuad For(EntityId entityId,Uri s,Uri p,string value,string language)
+        public static EntityQuad For(EntityId entityId, Uri s, Uri p, string value, string language)
         {
-            return new EntityQuad(entityId,Node.ForUri(s),Node.ForUri(p),Node.ForLiteral(value,language));
+            return new EntityQuad(entityId, Node.ForUri(s), Node.ForUri(p), Node.ForLiteral(value, language));
         }
 
 #pragma warning disable 1591
-        public static bool operator==([AllowNull] EntityQuad left,[AllowNull] EntityQuad right)
+        public static bool operator ==([AllowNull] EntityQuad left, [AllowNull] EntityQuad right)
         {
-            return Equals(left,right);
+            return Equals(left, right);
         }
 
-        public static bool operator!=([AllowNull] EntityQuad left,[AllowNull] EntityQuad right)
+        public static bool operator !=([AllowNull] EntityQuad left, [AllowNull] EntityQuad right)
         {
-            return !Equals(left,right);
+            return !Equals(left, right);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null,obj)) { return false; }
-            if (ReferenceEquals(this,obj)) { return true; }
-            return obj is EntityQuad&&Equals((EntityQuad)obj);
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            return obj is EntityQuad && Equals((EntityQuad)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode=base.GetHashCode();
-                hashCode=(hashCode*397)^(_graph!=null?_graph.GetHashCode():0);
-                hashCode=(hashCode*397)^_entityId.GetHashCode();
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_graph != null ? _graph.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _entityId.GetHashCode();
                 return hashCode;
             }
         }
 
         public override string ToString()
         {
-            return String.Format("{0} {1} {2} {3}",Subject,Predicate,Object,Graph);
+            return String.Format("{0} {1} {2} {3}", Subject, Predicate, Object, Graph);
         }
 
         int IComparable<EntityQuad>.CompareTo(EntityQuad other)
@@ -173,7 +176,7 @@ namespace RomanticWeb.Model
         int IComparable.CompareTo(object other)
         {
             return FluentCompare<EntityQuad>
-                .Arguments(this,other)
+                .Arguments(this, other)
                 .By(t => t.EntityId)
                 .By(t => t.Graph)
                 .By(t => t.Subject)
@@ -185,9 +188,9 @@ namespace RomanticWeb.Model
 
         internal EntityQuad InGraph([AllowNull] Uri graphUri)
         {
-            if (graphUri!=null)
+            if (graphUri != null)
             {
-                return new EntityQuad(EntityId,Subject,Predicate,Object,Node.ForUri(graphUri));
+                return new EntityQuad(EntityId, Subject, Predicate, Object, Node.ForUri(graphUri));
             }
 
             return this;
@@ -195,7 +198,7 @@ namespace RomanticWeb.Model
 
         private bool Equals(EntityQuad other)
         {
-            return (base.Equals(other))&&(Equals(_graph,other._graph))&&(_entityId.Equals(other._entityId));
+            return (base.Equals(other)) && (Equals(_graph, other._graph)) && (_entityId.Equals(other._entityId));
         }
     }
 }

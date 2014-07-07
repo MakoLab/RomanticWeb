@@ -4,13 +4,13 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.Foaf
 {
-    [Class("foaf","Agent")]
-    public interface IAlsoAgent:IEntity
+    [Class("foaf", "Agent")]
+    public interface IAlsoAgent : IEntity
     {
         [Collection("foaf", "knows")]
         IList<IAgent> Knows { get; }
 
-        [Property("foaf","gender")]
+        [Property("foaf", "gender")]
         string Gender { get; set; }
     }
 }

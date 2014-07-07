@@ -14,13 +14,13 @@ namespace RomanticWeb.Mapping.Conventions
         /// <inheritdoc/>
         public bool ShouldApply(IPropertyMappingProvider target)
         {
-            return target.ConverterType==null&&typeof(EntityId).IsAssignableFrom(target.PropertyInfo.PropertyType.FindItemType());
+            return target.ConverterType == null && typeof(EntityId).IsAssignableFrom(target.PropertyInfo.PropertyType.FindItemType());
         }
 
         /// <inheritdoc/>
         public void Apply(IPropertyMappingProvider target)
         {
-            target.ConverterType=typeof(EntityIdConverter<>).MakeGenericType(target.PropertyInfo.PropertyType.FindItemType());
+            target.ConverterType = typeof(EntityIdConverter<>).MakeGenericType(target.PropertyInfo.PropertyType.FindItemType());
         }
     }
 }

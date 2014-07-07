@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.TestEntities.BlankNodes
 {
-    public interface INested:IEntity
+    public interface INested : IEntity
     {
     }
 }

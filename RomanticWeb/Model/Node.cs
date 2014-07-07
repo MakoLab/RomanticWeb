@@ -9,11 +9,11 @@ namespace RomanticWeb.Model
     /// <remarks>Blank nodes are not supported currently.</remarks>
     [DebuggerDisplay("{DebuggerString,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class Node:IComparable,IComparable<Node>
+    public sealed class Node : IComparable, IComparable<Node>
     {
         #region Fields
         /// <summary>Gets a reference for node with rdf:type predicate usually shortened in Turtle syntax to 'a'.</summary>
-        private static readonly Node A=new Node(Vocabularies.Rdf.type);
+        private static readonly Node A = new Node(Vocabularies.Rdf.type);
 
         private readonly string _literal;
         private readonly string _language;
@@ -28,37 +28,37 @@ namespace RomanticWeb.Model
         #region Constructors
         private Node(Uri uri)
         {
-            _uri=uri;
+            _uri = uri;
         }
 
-        private Node(string literal,string language,Uri dataType)
+        private Node(string literal, string language, Uri dataType)
         {
-            if (language!=null&&dataType!=null)
+            if (language != null && dataType != null)
             {
                 throw new InvalidOperationException("Literal node cannot have both laguage and data type");
             }
 
-            _literal=literal;
-            _language=language;
-            _dataType=dataType;
+            _literal = literal;
+            _language = language;
+            _dataType = dataType;
         }
 
-        private Node(string identifier,Uri graphUri,[AllowNull]EntityId entityId)
+        private Node(string identifier, Uri graphUri, [AllowNull]EntityId entityId)
         {
-            _identifier=identifier;
-            _graphUri=graphUri;
-            _entityId=entityId;
-            _blankNodeId=new BlankId(identifier,entityId,graphUri);
-            _uri=_blankNodeId.Uri;
+            _identifier = identifier;
+            _graphUri = graphUri;
+            _entityId = entityId;
+            _blankNodeId = new BlankId(identifier, entityId, graphUri);
+            _uri = _blankNodeId.Uri;
         }
         #endregion
 
         #region Properties
         /// <summary>Gets the value indicating that the node is a URI.</summary>
-        public bool IsUri { get { return (_uri!=null)&&(_blankNodeId==null); } }
+        public bool IsUri { get { return (_uri != null) && (_blankNodeId == null); } }
 
         /// <summary>Gets the value indicating that the node is a literal.</summary>
-        public bool IsLiteral { get { return _literal!=null; } }
+        public bool IsLiteral { get { return _literal != null; } }
 
         /// <summary>Gets the value indicating that the node is a blank node.</summary>
         public bool IsBlank { get { return _blankNodeId != null; } }
@@ -84,7 +84,7 @@ namespace RomanticWeb.Model
         {
             get
             {
-                if (IsUri||IsBlank)
+                if (IsUri || IsBlank)
                 {
                     throw new InvalidOperationException("Uri and blank nodes do not have a literal value");
                 }
@@ -114,7 +114,7 @@ namespace RomanticWeb.Model
         {
             get
             {
-                if (IsUri||IsBlank)
+                if (IsUri || IsBlank)
                 {
                     throw new InvalidOperationException("Uri and blank nodes do not have a data type");
                 }
@@ -130,7 +130,7 @@ namespace RomanticWeb.Model
         {
             get
             {
-                if (IsUri||IsBlank)
+                if (IsUri || IsBlank)
                 {
                     throw new InvalidOperationException("Uri and blank nodes do not have a language tag");
                 }
@@ -148,17 +148,17 @@ namespace RomanticWeb.Model
                 {
                     return Uri.ToString();
                 }
-                
+
                 if (IsLiteral)
                 {
                     return Literal;
                 }
-                
+
                 if (IsBlank)
                 {
                     return _identifier;
                 }
-                
+
                 return null;
             }
         }
@@ -170,39 +170,39 @@ namespace RomanticWeb.Model
         {
             if (!uri.IsAbsoluteUri)
             {
-                throw new ArgumentOutOfRangeException("uri","Node URI must be absolute!");
+                throw new ArgumentOutOfRangeException("uri", "Node URI must be absolute!");
             }
 
-            return (uri.AbsoluteUri==Vocabularies.Rdf.type.AbsoluteUri?A:new Node(uri));
+            return (uri.AbsoluteUri == Vocabularies.Rdf.type.AbsoluteUri ? A : new Node(uri));
         }
 
         /// <summary>Factory method for creating simple literal nodes.</summary>
         public static Node ForLiteral(string literal)
         {
-            return new Node(literal,null,null);
+            return new Node(literal, null, null);
         }
 
         /// <summary>Factory method for creating typed literal nodes.</summary>
-        public static Node ForLiteral(string literal,Uri datatype)
+        public static Node ForLiteral(string literal, Uri datatype)
         {
-            return new Node(literal,null,datatype);
+            return new Node(literal, null, datatype);
         }
 
         /// <summary>Factory method for creating literal nodes with language tag.</summary>
-        public static Node ForLiteral(string literal,string language)
+        public static Node ForLiteral(string literal, string language)
         {
             if (string.IsNullOrWhiteSpace(language))
             {
-                language=null;
+                language = null;
             }
 
-            return new Node(literal,language,null);
+            return new Node(literal, language, null);
         }
 
         /// <summary>Factory method for creating blank nodes.</summary>
-        public static Node ForBlank(string blankNodeId,[AllowNull]EntityId entityId,[AllowNull] Uri graphUri)
+        public static Node ForBlank(string blankNodeId, [AllowNull]EntityId entityId, [AllowNull] Uri graphUri)
         {
-            return new Node(blankNodeId,graphUri,entityId);
+            return new Node(blankNodeId, graphUri, entityId);
         }
 
         /// <summary>Factory method for creating nodes from <see cref="EntityId"/>.</summary>
@@ -218,23 +218,23 @@ namespace RomanticWeb.Model
         }
 
 #pragma warning disable 1591
-        public static bool operator==([AllowNull]Node left,[AllowNull]Node right)
+        public static bool operator ==([AllowNull]Node left, [AllowNull]Node right)
         {
-            return Equals(left,right);
+            return Equals(left, right);
         }
 
-        public static bool operator!=([AllowNull]Node left,[AllowNull]Node right)
+        public static bool operator !=([AllowNull]Node left, [AllowNull]Node right)
         {
-            return !Equals(left,right);
+            return !Equals(left, right);
         }
 #pragma warning restore 1591
 
         /// <summary>Determines whether the specified System.Object is equal to the current node.</summary>
         public override bool Equals([AllowNull]object obj)
         {
-            if (ReferenceEquals(null,obj)) { return false; }
-            if (ReferenceEquals(this,obj)) { return true; }
-            return obj is Node&&Equals((Node)obj);
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            return obj is Node && Equals((Node)obj);
         }
 
         /// <summary>Gets hash code for the node.</summary>
@@ -246,13 +246,13 @@ namespace RomanticWeb.Model
 
                 if (IsLiteral)
                 {
-                    hashCode=_literal.GetHashCode();
-                    hashCode=(hashCode*397)^(_language!=null?_language.GetHashCode():0);
-                    hashCode=(hashCode*397)^(_dataType!=null?_dataType.GetHashCode():0);
+                    hashCode = _literal.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (_language != null ? _language.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ (_dataType != null ? _dataType.GetHashCode() : 0);
                 }
                 else
                 {
-                    hashCode=_uri.AbsoluteUri.GetHashCode();
+                    hashCode = _uri.AbsoluteUri.GetHashCode();
                 }
 
                 return hashCode;
@@ -266,21 +266,21 @@ namespace RomanticWeb.Model
 
         int IComparable<Node>.CompareTo(Node other)
         {
-            var compare=FluentCompare<Node>.Arguments(this,other);
+            var compare = FluentCompare<Node>.Arguments(this, other);
 
-            if ((IsUri||IsBlank))
+            if ((IsUri || IsBlank))
             {
-                if ((IsUri)&&(other.IsUri))
+                if ((IsUri) && (other.IsUri))
                 {
                     return compare.By(n => n.Uri.AbsoluteUri).End();
                 }
-                
-                if ((IsBlank)&&(other.IsBlank))
+
+                if ((IsBlank) && (other.IsBlank))
                 {
                     return compare.By(n => n._blankNodeId).End();
                 }
 
-                if (((IsUri)&&(!other.IsUri))||(IsBlank&&other.IsLiteral))
+                if (((IsUri) && (!other.IsUri)) || (IsBlank && other.IsLiteral))
                 {
                     // blank node is more than literal node
                     // Uri node is more than blank node
@@ -293,9 +293,9 @@ namespace RomanticWeb.Model
 
             if (other.IsLiteral)
             {
-                return compare.By(n => n.Literal,StringComparer.Ordinal)
-                              .By(n => n.DataType,new AbsoluteUriComparer())
-                              .By(n => n.Language,StringComparer.OrdinalIgnoreCase).End();
+                return compare.By(n => n.Literal, StringComparer.Ordinal)
+                              .By(n => n.DataType, new AbsoluteUriComparer())
+                              .By(n => n.Language, StringComparer.OrdinalIgnoreCase).End();
             }
 
             // Literal node is always less then URI and blanks
@@ -347,10 +347,10 @@ namespace RomanticWeb.Model
         {
             if (IsLiteral)
             {
-                return string.Equals(_literal,other._literal)&&string.Equals(_language,other._language)&&Equals(_dataType,other._dataType);
+                return string.Equals(_literal, other._literal) && string.Equals(_language, other._language) && Equals(_dataType, other._dataType);
             }
 
-            return Uri.Compare(_uri,other._uri,UriComponents.AbsoluteUri,UriFormat.UriEscaped,StringComparison.Ordinal)==0;
+            return Uri.Compare(_uri, other._uri, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.Ordinal) == 0;
         }
         #endregion
 
@@ -362,23 +362,23 @@ namespace RomanticWeb.Model
             {
                 if (node.IsUri)
                 {
-                    _displayString=string.Format("<{0}>",node.Uri);
+                    _displayString = string.Format("<{0}>", node.Uri);
                 }
                 else if (node.IsLiteral)
                 {
-                    _displayString=string.Format("\"{0}\"",node.Literal);
+                    _displayString = string.Format("\"{0}\"", node.Literal);
                     if (!string.IsNullOrWhiteSpace(node.Language))
                     {
-                        _displayString+=string.Format("@{0}",node.Language);
+                        _displayString += string.Format("@{0}", node.Language);
                     }
-                    else if (node.DataType!=null)
+                    else if (node.DataType != null)
                     {
-                        _displayString+=string.Format("^^<{0}>",node.DataType);
+                        _displayString += string.Format("^^<{0}>", node.DataType);
                     }
                 }
                 else
                 {
-                    _displayString=node._identifier;
+                    _displayString = node._identifier;
                 }
             }
 

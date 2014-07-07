@@ -6,10 +6,10 @@ namespace RomanticWeb.NamedGraphs
     /// An implementation of <see cref="ISourceGraphSelectionOverride"/>, 
     /// which will cause the default graph to be used
     /// </summary>
-    public class UnionGraphSelector:ISourceGraphSelectionOverride
+    public class UnionGraphSelector : ISourceGraphSelectionOverride
     {
         /// <inheritdoc />
-        public virtual Func<INamedGraphSelector,Uri> SelectGraph
+        public virtual Func<INamedGraphSelector, Uri> SelectGraph
         {
             get
             {

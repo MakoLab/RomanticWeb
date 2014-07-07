@@ -5,7 +5,7 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public class ConcreteEntity :IGenericParent<string>
+    public class ConcreteEntity : IGenericParent<string>
     {
         public EntityId Id
         {

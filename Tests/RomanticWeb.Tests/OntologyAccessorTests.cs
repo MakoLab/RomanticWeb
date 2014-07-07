@@ -14,7 +14,7 @@ namespace RomanticWeb.Tests
     [TestFixture]
     public class OntologyAccessorTests
     {
-        private const string Uri="urn:test:identity";
+        private const string Uri = "urn:test:identity";
         private Entity _entity;
         private Mock<INodeConverter> _nodeProcessor;
         private Ontology _ontology;
@@ -23,18 +23,18 @@ namespace RomanticWeb.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            _ontology=new TestOntologyProvider().Ontologies.First();
+            _ontology = new TestOntologyProvider().Ontologies.First();
         }
 
         [SetUp]
         public void Setup()
         {
-            var _context=new Mock<IEntityContext>();
-            _store=new Mock<IEntityStore>(MockBehavior.Strict);
+            var _context = new Mock<IEntityContext>();
+            _store = new Mock<IEntityStore>(MockBehavior.Strict);
             _context.Setup(c => c.Store).Returns(_store.Object);
-            _entity=new Entity(new EntityId(Uri),_context.Object);
+            _entity = new Entity(new EntityId(Uri), _context.Object);
             _entity.MarkAsInitialized();
-            _nodeProcessor=new Mock<INodeConverter>();
+            _nodeProcessor = new Mock<INodeConverter>();
         }
 
         [TearDown]
@@ -48,14 +48,14 @@ namespace RomanticWeb.Tests
         public void Getting_known_predicate_should_return_objects()
         {
             // given
-            _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(),It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog());
+            _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
+            dynamic accessor = new OntologyAccessor(_entity, _ontology, new TestTransformerCatalog());
 
             // when
-            var givenName=accessor.givenName;
+            var givenName = accessor.givenName;
 
             // then
-            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri,null), Times.Once);
+            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new DatatypeProperty("givenName").InOntology(_ontology).Uri, null), Times.Once);
         }
 
         [Test]
@@ -63,13 +63,13 @@ namespace RomanticWeb.Tests
         {
             // given
             _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor=new OntologyAccessor(_entity,_ontology,new TestTransformerCatalog());
+            dynamic accessor = new OntologyAccessor(_entity, _ontology, new TestTransformerCatalog());
 
             // when
-            var givenName=accessor.fullName;
+            var givenName = accessor.fullName;
 
             // then
-            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri,null), Times.Once);
+            _store.Verify(s => s.GetObjectsForPredicate(_entity.Id, new Property("fullName").InOntology(_ontology).Uri, null), Times.Once);
         }
     }
 }

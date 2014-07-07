@@ -7,18 +7,18 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Changes <see cref="IEntity"/> type by calling <see cref="EntityExtensions.AsEntity{TInterface}"/> method
     /// </summary>
-    public class AsEntityConverter<TEntity>:INodeConverter where TEntity:IEntity
+    public class AsEntityConverter<TEntity> : INodeConverter where TEntity : IEntity
     {
-        private static readonly MethodInfo AsEntityMethod=Info.OfMethod("RomanticWeb","RomanticWeb.Entities.EntityExtensions","AsEntity","IEntity").MakeGenericMethod(typeof(TEntity));
-        private static readonly INodeConverter EntityIdConverter=new EntityIdConverter();
+        private static readonly MethodInfo AsEntityMethod = Info.OfMethod("RomanticWeb", "RomanticWeb.Entities.EntityExtensions", "AsEntity", "IEntity").MakeGenericMethod(typeof(TEntity));
+        private static readonly INodeConverter EntityIdConverter = new EntityIdConverter();
 
         /// <summary>
         /// Converts entity
         /// </summary>
-        public object Convert(Node node,IEntityContext context)
+        public object Convert(Node node, IEntityContext context)
         {
-            var entityId=(EntityId)EntityIdConverter.Convert(node,context);
-            return AsEntityMethod.Invoke(null,new object[] { context.Load<IEntity>(entityId) });
+            var entityId = (EntityId)EntityIdConverter.Convert(node, context);
+            return AsEntityMethod.Invoke(null, new object[] { context.Load<IEntity>(entityId) });
         }
 
         /// <summary>

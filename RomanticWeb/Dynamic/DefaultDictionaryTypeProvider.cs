@@ -8,7 +8,7 @@ namespace RomanticWeb.Dynamic
     /// which assumes dictionary types are named according to a pattern 
     /// based on original entity type name and property details
     /// </summary>
-    public class DefaultDictionaryTypeProvider:IDictionaryTypeProvider
+    public class DefaultDictionaryTypeProvider : IDictionaryTypeProvider
     {
         /// <inheritdoc/>
         public Type GetEntryType(IPropertyMapping property)

@@ -5,13 +5,13 @@ namespace RomanticWeb.JsonLd
 {
     public interface IJsonLdProcessor
     {
-        string FromRdf(IEnumerable<EntityQuad> dataset,bool userRdfType=false,bool useNativeTypes=false);
+        string FromRdf(IEnumerable<EntityQuad> dataset, bool userRdfType = false, bool useNativeTypes = false);
 
-        IEnumerable<EntityQuad> ToRdf(string json,JsonLdOptions options,bool produceGeneralizedRdf=false);
+        IEnumerable<EntityQuad> ToRdf(string json, JsonLdOptions options, bool produceGeneralizedRdf = false);
 
-        string Compact(string json,string jsonLdContext);
+        string Compact(string json, string jsonLdContext);
 
-        string Flatten(string json,string jsonLdContext);
+        string Flatten(string json, string jsonLdContext);
 
         string Expand(string json, JsonLdOptions options);
     }

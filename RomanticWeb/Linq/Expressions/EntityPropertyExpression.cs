@@ -6,7 +6,7 @@ using RomanticWeb.Mapping.Model;
 namespace RomanticWeb.Linq.Expressions
 {
     /// <summary>Provides basic details about entity member access.</summary>
-    public class EntityPropertyExpression:System.Linq.Expressions.Expression
+    public class EntityPropertyExpression : System.Linq.Expressions.Expression
     {
         #region Fields
         private System.Linq.Expressions.MemberExpression _expression;
@@ -20,8 +20,8 @@ namespace RomanticWeb.Linq.Expressions
         /// <param name="expression">Base member expression.</param>
         /// <param name="propertyMapping">Ontology property mapping.</param>
         /// <param name="target">Target of the invocation.</param>
-        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression,IPropertyMapping propertyMapping,Remotion.Linq.Clauses.FromClauseBase target):
-            this(expression,propertyMapping,target,expression.Member.Name)
+        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression, IPropertyMapping propertyMapping, Remotion.Linq.Clauses.FromClauseBase target) :
+            this(expression, propertyMapping, target, expression.Member.Name)
         {
         }
 
@@ -30,22 +30,23 @@ namespace RomanticWeb.Linq.Expressions
         /// <param name="propertyMapping">Ontology property mapping.</param>
         /// <param name="target">Target of the invocation.</param>
         /// <param name="name">Name of the element in the property.</param>
-        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression,IPropertyMapping propertyMapping,Remotion.Linq.Clauses.FromClauseBase target,string name):base()
+        internal EntityPropertyExpression(System.Linq.Expressions.MemberExpression expression, IPropertyMapping propertyMapping, Remotion.Linq.Clauses.FromClauseBase target, string name)
+            : base()
         {
             if (!(expression.Member is PropertyInfo))
             {
                 throw new ArgumentOutOfRangeException("expression");
             }
 
-            if (name.Length==0)
+            if (name.Length == 0)
             {
                 throw new ArgumentOutOfRangeException("name");
             }
 
-            _expression=expression;
-            _propertyMapping=propertyMapping;
-            _target=target;
-            _name=name;
+            _expression = expression;
+            _propertyMapping = propertyMapping;
+            _target = target;
+            _name = name;
         }
         #endregion
 

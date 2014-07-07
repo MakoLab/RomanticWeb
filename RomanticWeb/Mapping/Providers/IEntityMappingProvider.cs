@@ -6,7 +6,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// A <see cref="IMappingProvider"/>, which provides an entity mapping
     /// </summary>
-    public interface IEntityMappingProvider:IMappingProvider
+    public interface IEntityMappingProvider : IMappingProvider
     {
         /// <summary>
         /// Gets the type of the entity.

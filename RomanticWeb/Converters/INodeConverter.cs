@@ -8,7 +8,7 @@ namespace RomanticWeb.Converters
     public interface INodeConverter
     {
         /// <summary>Converts a node to it's .NET representation</summary>
-        object Convert(Node objectNode,IEntityContext context);
+        object Convert(Node objectNode, IEntityContext context);
 
         /// <summary>Converts an object to an RDF node</summary>
         Node ConvertBack(object value);

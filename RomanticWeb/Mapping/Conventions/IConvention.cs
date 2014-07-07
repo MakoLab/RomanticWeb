@@ -11,7 +11,7 @@
     /// A base constract for implementing conventions
     /// </summary>
     /// <typeparam name="T">type this convention should be applied to</typeparam>
-    public interface IConvention<in T>:IConvention
+    public interface IConvention<in T> : IConvention
     {
         /// <summary>
         /// Checks if convention should be applied

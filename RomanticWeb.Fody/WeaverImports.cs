@@ -12,11 +12,11 @@ namespace RomanticWeb.Fody
         private readonly ModuleWeaver _moduleWeaver;
         private readonly WeaverReferences _references;
 
-        public WeaverImports(ModuleWeaver moduleWeaver,WeaverReferences references)
+        public WeaverImports(ModuleWeaver moduleWeaver, WeaverReferences references)
         {
-            _moduleWeaver=moduleWeaver;
-            _references=references;
-            Cache=new DictionaryCache();
+            _moduleWeaver = moduleWeaver;
+            _references = references;
+            Cache = new DictionaryCache();
         }
 
         public MethodReference PropertyMapIsUriRef { get { return ModuleDefinition.Import(TermPartIsUriMethodRef.Resolve().MakeHostInstanceGeneric(PropertyMapTypeRef)); } }
@@ -55,19 +55,37 @@ namespace RomanticWeb.Fody
 
         public MethodReference CompilerGeneratedAttributeCtorRef { get { return ModuleDefinition.Import(CompilerGeneratedAttributeType.GetConstructors().Single()); } }
 
-        public MethodReference TermPartIsQNameMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is","String","String")); } }
+        public MethodReference TermPartIsQNameMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is", "String", "String")); } }
 
-        public MethodReference TermPartIsUriMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is","Uri")); } }
+        public MethodReference TermPartIsUriMethodRef { get { return ModuleDefinition.Import(TermPartType.FindMethod("Is", "Uri")); } }
 
-        public FieldReference ObjectFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="object")); } }
+        public FieldReference ObjectFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name == "object")); } }
 
-        public FieldReference PredicateFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name=="predicate")); } }
+        public FieldReference PredicateFieldRef { get { return ModuleDefinition.Import(RdfVocabularyType.Fields.Single(f => f.Name == "predicate")); } }
 
-        public MethodReference UriStringConstructorRef { get { return ModuleDefinition.Import(ModuleDefinition.Import(typeof(Uri)).Resolve().FindConstructor("String")); } }
+        public MethodReference UriStringConstructorRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(ModuleDefinition.Import(typeof(Uri)).Resolve().FindConstructor("String"));
+            }
+        }
 
-        public TypeDefinition TermPartType { get { return _references.Orm.FindType("ITermPart`1"); } }
+        public TypeDefinition TermPartType
+        {
+            get
+            {
+                return _references.Orm.FindType("ITermPart`1");
+            }
+        }
 
-        public TypeReference EntityMapTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("EntityMap")); } }
+        public TypeReference EntityMapTypeRef
+        {
+            get
+            {
+                return ModuleDefinition.Import(_references.Orm.FindType("EntityMap"));
+            }
+        }
 
         public TypeReference EntityTypeRef { get { return ModuleDefinition.Import(_references.Orm.FindType("IEntity")); } }
 

@@ -6,7 +6,7 @@ namespace RomanticWeb.Entities
     /// Implementation of <see cref="IBaseUriSelectionPolicy"/>,
     /// which always returns the same base <see cref="Uri"/> 
     /// </summary>
-    public class ConstantBaseUri:IBaseUriSelectionPolicy
+    public class ConstantBaseUri : IBaseUriSelectionPolicy
     {
         private readonly Uri _defaultBaseUri;
 
@@ -19,10 +19,10 @@ namespace RomanticWeb.Entities
         {
             if (!defaultBaseUri.IsAbsoluteUri)
             {
-                throw new ArgumentException("Base URI must be absolute","defaultBaseUri");
+                throw new ArgumentException("Base URI must be absolute", "defaultBaseUri");
             }
 
-            _defaultBaseUri=defaultBaseUri;
+            _defaultBaseUri = defaultBaseUri;
         }
 
         /// <summary>

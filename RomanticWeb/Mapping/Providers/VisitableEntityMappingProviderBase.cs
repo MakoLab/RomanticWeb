@@ -4,7 +4,7 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal abstract class VisitableEntityMappingProviderBase:IEntityMappingProvider
+    internal abstract class VisitableEntityMappingProviderBase : IEntityMappingProvider
     {
         public abstract Type EntityType { get; }
 

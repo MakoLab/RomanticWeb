@@ -9,12 +9,12 @@ namespace RomanticWeb.Collections
     /// <typeparam name="TEntry">The type of the dictionary entry entity.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <typeparam name="TValue">The type of the value.</typeparam>
-    public interface IDictionaryOwner<TEntry,TKey,TValue>:IEntity
-        where TEntry:IDictionaryEntry<TKey,TValue>
+    public interface IDictionaryOwner<TEntry, TKey, TValue> : IEntity
+        where TEntry : IDictionaryEntry<TKey, TValue>
     {
         /// <summary>
         /// Gets or sets the dictionary entries.
         /// </summary>
-        ICollection<TEntry> DictionaryEntries { get; set; } 
+        ICollection<TEntry> DictionaryEntries { get; set; }
     }
 }

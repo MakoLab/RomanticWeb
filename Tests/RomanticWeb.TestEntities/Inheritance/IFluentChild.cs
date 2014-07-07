@@ -1,6 +1,6 @@
 ﻿namespace RomanticWeb.TestEntities.Inheritance
 {
-    public interface IFluentChild:IAttributesParent
+    public interface IFluentChild : IAttributesParent
     {
     }
 }

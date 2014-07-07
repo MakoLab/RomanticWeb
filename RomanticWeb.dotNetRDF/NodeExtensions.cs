@@ -10,41 +10,41 @@ namespace RomanticWeb.DotNetRDF
     public static class NodeExtensions
     {
         /// <summary>Converts a dotNetRDF's <see cref="INode"/> into RomanticWeb's <see cref="Node"/>.</summary>
-        public static Node WrapNode(this INode node,[AllowNull] EntityId entityId)
+        public static Node WrapNode(this INode node, [AllowNull] EntityId entityId)
         {
-            var literal=node as ILiteralNode;
-            if (literal!=null)
+            var literal = node as ILiteralNode;
+            if (literal != null)
             {
-                if (literal.DataType!=null)
+                if (literal.DataType != null)
                 {
-                    return Node.ForLiteral(literal.Value,literal.DataType);
+                    return Node.ForLiteral(literal.Value, literal.DataType);
                 }
 
-                if (literal.Language!=null)
+                if (literal.Language != null)
                 {
-                    return Node.ForLiteral(literal.Value,literal.Language);
+                    return Node.ForLiteral(literal.Value, literal.Language);
                 }
 
                 return Node.ForLiteral(literal.Value);
             }
 
-            var uriNode=node as IUriNode;
-            if (uriNode!=null)
+            var uriNode = node as IUriNode;
+            if (uriNode != null)
             {
                 return Node.ForUri(uriNode.Uri);
             }
 
-            var blankNode=node as IBlankNode;
-            if (blankNode!=null)
+            var blankNode = node as IBlankNode;
+            if (blankNode != null)
             {
-                return Node.ForBlank(blankNode.InternalID,entityId,blankNode.GraphUri);
+                return Node.ForBlank(blankNode.InternalID, entityId, blankNode.GraphUri);
             }
 
-            throw new ArgumentException("The node was neither URI, literal nor blank","node");
+            throw new ArgumentException("The node was neither URI, literal nor blank", "node");
         }
 
         /// <summary>Converts a RomanticWeb's <see cref="Node"/> into dotNetRDF's <see cref="INode"/>.</summary>
-        public static INode UnWrapNode(this Node node,INodeFactory nodeFactory)
+        public static INode UnWrapNode(this Node node, INodeFactory nodeFactory)
         {
             if (node.IsUri)
             {
@@ -53,14 +53,14 @@ namespace RomanticWeb.DotNetRDF
 
             if (node.IsLiteral)
             {
-                if (node.Language!=null)
+                if (node.Language != null)
                 {
-                    return nodeFactory.CreateLiteralNode(node.Literal,node.Language);
+                    return nodeFactory.CreateLiteralNode(node.Literal, node.Language);
                 }
 
-                if (node.DataType!=null)
+                if (node.DataType != null)
                 {
-                    return nodeFactory.CreateLiteralNode(node.Literal,node.DataType);
+                    return nodeFactory.CreateLiteralNode(node.Literal, node.DataType);
                 }
 
                 return nodeFactory.CreateLiteralNode(node.Literal);
@@ -72,7 +72,7 @@ namespace RomanticWeb.DotNetRDF
         /// <summary>Gets the graph node's Uri.</summary>
         public static Uri UnWrapGraphUri(this Node graphUriNode)
         {
-            if (graphUriNode==null)
+            if (graphUriNode == null)
             {
                 return null;
             }

@@ -8,20 +8,20 @@ namespace RomanticWeb.NamedGraphs
     /// </summary>
     public abstract class GraphSelectionStrategyBase
     {
-        internal Uri SelectGraph(EntityId entityId,Uri predicate)
+        internal Uri SelectGraph(EntityId entityId, Uri predicate)
         {
-            var nonBlankId=entityId;
+            var nonBlankId = entityId;
             while (nonBlankId is BlankId)
             {
                 nonBlankId = ((BlankId)entityId).RootEntityId;
 
                 if (nonBlankId == null)
                 {
-                    throw new ArgumentException("Blank node must have parent id","entityId");
+                    throw new ArgumentException("Blank node must have parent id", "entityId");
                 }
             }
 
-            return GetGraphForEntityId(nonBlankId,predicate);
+            return GetGraphForEntityId(nonBlankId, predicate);
         }
 
         /// <summary>
@@ -29,6 +29,6 @@ namespace RomanticWeb.NamedGraphs
         /// </summary>
         /// <param name="entityId">Entity's identifier</param>
         /// <param name="predicate"></param>
-        protected abstract Uri GetGraphForEntityId(EntityId entityId,Uri predicate);
+        protected abstract Uri GetGraphForEntityId(EntityId entityId, Uri predicate);
     }
 }

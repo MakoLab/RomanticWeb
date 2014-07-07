@@ -4,12 +4,12 @@ using NullGuard;
 
 namespace RomanticWeb.Ontologies
 {
-	/// <summary>
-	/// Base class for RDF terms (properties and classes)
+    /// <summary>
+    /// Base class for RDF terms (properties and classes)
     /// </summary>
     [DebuggerDisplay("{TermName}")]
-	public abstract class Term
-	{
+    public abstract class Term
+    {
         private Ontology _ontology;
 
         /// <summary>
@@ -24,38 +24,38 @@ namespace RomanticWeb.Ontologies
         /// Gets the <see cref="Term"/>'s URI
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
-		public Uri Uri
-		{
-			get
-			{
-				if (_ontology == null)
-				{
-					throw new InvalidOperationException("Ontology isn't set");
-				}
+        public Uri Uri
+        {
+            get
+            {
+                if (_ontology == null)
+                {
+                    throw new InvalidOperationException("Ontology isn't set");
+                }
 
-				return new Uri(Ontology.BaseUri + TermName);
-			}
-		}
+                return new Uri(Ontology.BaseUri + TermName);
+            }
+        }
 
         /// <summary>
         /// Gets the <see cref="Ontology"/>, which defines this <see cref="Term"/>
         /// </summary>
-		public Ontology Ontology
-		{
-			get
-			{
-			    return _ontology;
-			}
+        public Ontology Ontology
+        {
+            get
+            {
+                return _ontology;
+            }
 
-			internal set
-			{
-				if (_ontology != null)
-				{
-					throw new InvalidOperationException("Ontology is already set");
-				}
+            internal set
+            {
+                if (_ontology != null)
+                {
+                    throw new InvalidOperationException("Ontology is already set");
+                }
 
-				_ontology = value;
-			}
+                _ontology = value;
+            }
         }
 
         internal string Prefix
@@ -84,28 +84,28 @@ namespace RomanticWeb.Ontologies
         }
 
         public override bool Equals([AllowNull] object obj)
-		{
-			if (ReferenceEquals(null, obj)) { return false; }
-			if (ReferenceEquals(this, obj)) { return true; }
-			if (obj.GetType() != this.GetType()) { return false; }
-			return Equals((Term) obj);
-		}
+        {
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            if (obj.GetType() != this.GetType()) { return false; }
+            return Equals((Term)obj);
+        }
 
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				int hashCode = (Uri != null ? Uri.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ (Ontology != null ? Ontology.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ (TermName != null ? TermName.GetHashCode() : 0);
-				return hashCode;
-			}
-		}
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (Uri != null ? Uri.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Ontology != null ? Ontology.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (TermName != null ? TermName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
 
         protected bool Equals([AllowNull] Term other)
         {
             return Equals(Uri, other.Uri) && Equals(Ontology, other.Ontology) && string.Equals(TermName, other.TermName);
         }
 #pragma warning restore 1591
-	}
+    }
 }

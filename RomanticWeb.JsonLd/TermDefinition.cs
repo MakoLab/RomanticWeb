@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace RomanticWeb.JsonLd
 {
-    internal class TermDefinition:ICloneable
+    internal class TermDefinition : ICloneable
     {
         public string Iri { get; set; }
 
@@ -17,20 +17,20 @@ namespace RomanticWeb.JsonLd
 
         public JToken Original { get; set; }
 
-        public JObject Object { get { return (Original is JObject)?(JObject)Original:null; } }
+        public JObject Object { get { return (Original is JObject) ? (JObject)Original : null; } }
 
-        public JValue Value { get { return (Original is JValue?(JValue)Original:null); } }
+        public JValue Value { get { return (Original is JValue ? (JValue)Original : null); } }
 
         public TermDefinition Clone()
         {
             return new TermDefinition()
             {
-                Iri=Iri,
-                IsReverse=IsReverse,
-                Type=Type,
-                Language=Language,
-                Container=Container,
-                Original=Original.DeepClone()
+                Iri = Iri,
+                IsReverse = IsReverse,
+                Type = Type,
+                Language = Language,
+                Container = Container,
+                Original = Original.DeepClone()
             };
         }
 

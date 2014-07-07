@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// Mapping provider, which returns a mapping for dictionary property predicate
     /// </summary>
-    public class DictionaryMappingProvider:IDictionaryMappingProvider
+    public class DictionaryMappingProvider : IDictionaryMappingProvider
     {
         private readonly IPropertyMappingProvider _property;
 
@@ -21,11 +21,11 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="key">The key mapping provider.</param>
         /// <param name="value">The value mapping provider.</param>
         /// <param name="property">The property.</param>
-        public DictionaryMappingProvider(IPropertyMappingProvider property,ITermMappingProvider key,ITermMappingProvider value)
+        public DictionaryMappingProvider(IPropertyMappingProvider property, ITermMappingProvider key, ITermMappingProvider value)
         {
-            _property=property;
-            _key=key;
-            _value=value;
+            _property = property;
+            _key = key;
+            _value = value;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <inheritdoc/>
         public Type ConverterType
         {
-            [return:AllowNull]
+            [return: AllowNull]
             get
             {
                 return _property.ConverterType;

@@ -1,7 +1,6 @@
 ﻿namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public class ConcreteEntityChild:ConcreteEntity
+    public class ConcreteEntityChild : ConcreteEntity
     {
-        
     }
 }

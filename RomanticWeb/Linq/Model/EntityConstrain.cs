@@ -7,7 +7,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Provides details about entity constrain.</summary>
     [QueryComponentNavigator(typeof(EntityConstrainNavigator))]
-    public class EntityConstrain:QueryElement,IExpression
+    public class EntityConstrain : QueryElement, IExpression
     {
         #region Fields
         private IExpression _predicate;
@@ -16,7 +16,8 @@ namespace RomanticWeb.Linq.Model
 
         #region Constructors
         /// <summary>Default parameterles constructor.</summary>
-        public EntityConstrain():base()
+        public EntityConstrain()
+            : base()
         {
         }
 
@@ -24,11 +25,11 @@ namespace RomanticWeb.Linq.Model
         /// <param name="predicate">Predicate.</param>
         /// <param name="value">Object.</param>
         /// <param name="targetExpression">Target expression that was source of this constrain.</param>
-        public EntityConstrain(IExpression predicate,IExpression value,Expression targetExpression)
+        public EntityConstrain(IExpression predicate, IExpression value, Expression targetExpression)
         {
-            Predicate=predicate;
-            Value=value;
-            TargetExpression=targetExpression;
+            Predicate = predicate;
+            Value = value;
+            TargetExpression = targetExpression;
         }
         #endregion
 
@@ -44,9 +45,9 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                if (((_predicate=value)!=null)&&(_predicate is QueryComponent))
+                if (((_predicate = value) != null) && (_predicate is QueryComponent))
                 {
-                    ((QueryComponent)_predicate).OwnerQuery=OwnerQuery;
+                    ((QueryComponent)_predicate).OwnerQuery = OwnerQuery;
                 }
             }
         }
@@ -62,9 +63,9 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                if (((_value=value)!=null)&&(_value is QueryComponent))
+                if (((_value = value) != null) && (_value is QueryComponent))
                 {
-                    ((QueryComponent)_value).OwnerQuery=OwnerQuery;
+                    ((QueryComponent)_value).OwnerQuery = OwnerQuery;
                 }
             }
         }
@@ -82,15 +83,15 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                base.OwnerQuery=value;
-                if ((_predicate!=null)&&(_predicate is QueryComponent))
+                base.OwnerQuery = value;
+                if ((_predicate != null) && (_predicate is QueryComponent))
                 {
-                    ((QueryComponent)_predicate).OwnerQuery=value;
+                    ((QueryComponent)_predicate).OwnerQuery = value;
                 }
 
-                if ((_value!=null)&&(_value is QueryComponent))
+                if ((_value != null) && (_value is QueryComponent))
                 {
-                    ((QueryComponent)_value).OwnerQuery=value;
+                    ((QueryComponent)_value).OwnerQuery = value;
                 }
             }
         }
@@ -104,9 +105,9 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand is EntityConstrain)&&
-                (_predicate!=null?_predicate.Equals(((EntityConstrain)operand)._predicate):Object.Equals(((EntityConstrain)operand)._predicate,null))&&
-                (_value!=null?_value.Equals(((EntityConstrain)operand)._value):Object.Equals(((EntityConstrain)operand)._value,null));
+            return (!Object.Equals(operand, null)) && (operand is EntityConstrain) &&
+                (_predicate != null ? _predicate.Equals(((EntityConstrain)operand)._predicate) : Object.Equals(((EntityConstrain)operand)._predicate, null)) &&
+                (_value != null ? _value.Equals(((EntityConstrain)operand)._value) : Object.Equals(((EntityConstrain)operand)._value, null));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -114,7 +115,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(EntityConstrain).FullName.GetHashCode()^(_predicate!=null?_predicate.GetHashCode():0)^(_value!=null?_value.GetHashCode():0);
+            return typeof(EntityConstrain).FullName.GetHashCode() ^ (_predicate != null ? _predicate.GetHashCode() : 0) ^ (_value != null ? _value.GetHashCode() : 0);
         }
 
         /// <summary>Creates a string representation of this entity constrain.</summary>
@@ -123,8 +124,8 @@ namespace RomanticWeb.Linq.Model
         {
             return System.String.Format(
                 "?s {0} {1} .",
-                (_predicate!=null?_predicate.ToString():System.String.Empty),
-                (_value!=null?_value.ToString():System.String.Empty));
+                (_predicate != null ? _predicate.ToString() : System.String.Empty),
+                (_value != null ? _value.ToString() : System.String.Empty));
         }
         #endregion
     }

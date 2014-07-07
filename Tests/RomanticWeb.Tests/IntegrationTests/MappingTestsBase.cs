@@ -15,9 +15,9 @@ using IPerson = RomanticWeb.TestEntities.IPerson;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
-    public abstract class MappingTestsBase:IntegrationTestsBase
+    public abstract class MappingTestsBase : IntegrationTestsBase
     {
-        private static readonly EntityId EntityId=new EntityId("http://magi/people/Tomasz");
+        private static readonly EntityId EntityId = new EntityId("http://magi/people/Tomasz");
 
         protected IPerson Entity
         {
@@ -131,7 +131,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(friends, Has.Count.EqualTo(5));
             friends.Select(friend => friend.FirstName)
-                   .Should().Contain(new[] { "Karol","Gniewko","Monika","Dominik","Przemek" });
+                   .Should().Contain(new[] { "Karol", "Gniewko", "Monika", "Dominik", "Przemek" });
         }
 
         [Test]
@@ -186,10 +186,10 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("RdfLists.trig");
 
             // when
-            var friends=Entity.FriendsAsLiterals;
+            var friends = Entity.FriendsAsLiterals;
 
             // then
-            Assert.That(friends,Has.Count.EqualTo(5));
+            Assert.That(friends, Has.Count.EqualTo(5));
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("Collections.trig");
 
             // then
-            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.FirstName; });
+            var cardinalityException = Assert.Throws<CardinalityException>(() => { var hp = Entity.FirstName; });
             Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
             Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(2));
         }
@@ -211,7 +211,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            var cardinalityException=Assert.Throws<CardinalityException>(() => { var hp=Entity.HomepageAsEntities; });
+            var cardinalityException = Assert.Throws<CardinalityException>(() => { var hp = Entity.HomepageAsEntities; });
             Assert.That(cardinalityException.ExpectedCardinality, Is.EqualTo(1));
             Assert.That(cardinalityException.ActualCardinality, Is.EqualTo(2));
         }
@@ -223,7 +223,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("MixedCollections.trig");
 
             // then
-            var cardinalityException=Assert.Throws<ArgumentOutOfRangeException>(() => { var hp=Entity.Homepage; });
+            var cardinalityException = Assert.Throws<ArgumentOutOfRangeException>(() => { var hp = Entity.Homepage; });
             Assert.That(cardinalityException.ParamName, Is.EqualTo("objectNode"));
         }
 
@@ -245,7 +245,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             // when
-            Entity.FirstName="Michał";
+            Entity.FirstName = "Michał";
 
             // then
             Assert.That(Entity.FirstName, Is.EqualTo("Michał"));
@@ -284,8 +284,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             Entity.Interests = new[] { "semantic web", "linked data" };
 
             // then
-            Entity.Interests.Should().ContainInOrder("semantic web","linked data");
-            var quads=EntityStore.Quads.Where(q => q.Graph==Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
+            Entity.Interests.Should().ContainInOrder("semantic web", "linked data");
+            var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
             Assert.That(quads.ToList(), Has.Count.EqualTo(5), "Actual triples were: {0}", SerializeStore());
         }
 
@@ -295,17 +295,17 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
             LoadTestFile("TriplesInNamedGraphs.trig");
-            var someEntity=EntityContext.Create<IEntity>(new EntityId("urn:possibly:external"));
+            var someEntity = EntityContext.Create<IEntity>(new EntityId("urn:possibly:external"));
             Entity.ForceInitialize();
-            var quadsInitially=EntityStore.Quads.Count();
+            var quadsInitially = EntityStore.Quads.Count();
 
             // when
-            Entity.Entity=someEntity;
+            Entity.Entity = someEntity;
 
             // then
             Assert.That(Entity.Entity, Is.Not.Null);
             Assert.That(Entity.Entity.Id, Is.EqualTo(new EntityId("urn:possibly:external")));
-            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially+1), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 1), "Actual triples were: {0}", SerializeStore());
         }
 
         [Test]
@@ -354,7 +354,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("AssociatedInstances.trig");
 
             // when
-            var karol=Entity.Friend;
+            var karol = Entity.Friend;
 
             // then
             Assert.That(karol, Is.InstanceOf<IPerson>());
@@ -366,8 +366,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            var entityUri=new Uri("http://magi/people/Tomasz");
-            var entityId=new EntityId(entityUri);
+            var entityUri = new Uri("http://magi/people/Tomasz");
+            var entityId = new EntityId(entityUri);
 
             // then
             EntityContext.Create<IPerson>(entityId);
@@ -375,9 +375,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(EntityContext.HasChanges);
             var newTriple = new EntityQuad(
-                entityId, 
-                Node.ForUri(entityUri), 
-                Node.ForUri(Rdf.type), 
+                entityId,
+                Node.ForUri(entityUri),
+                Node.ForUri(Rdf.type),
                 Node.ForUri(Foaf.Person),
                 Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
             EntityContext.Store.Changes.QuadsAdded.Should().Contain(newTriple);
@@ -391,10 +391,10 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesInUnmappedGraphs.trig");
 
             // when
-            var name=Entity.FirstName;
+            var name = Entity.FirstName;
 
             // then
-            Assert.That(name,Is.Null);
+            Assert.That(name, Is.Null);
         }
 
         [Test]
@@ -402,8 +402,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            var tomasz=EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
-            var gniewo=EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
+            var tomasz = EntityContext.Create<IPerson>(new EntityId("urn:person:tomasz"));
+            var gniewo = EntityContext.Create<IPerson>(new EntityId("urn:person:gniewo"));
 
             // when
             tomasz.Friends.Add(gniewo);
@@ -438,22 +438,22 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("TriplesInNamedGraphs.trig");
 
             // when
-            Entity.Age=30;
+            Entity.Age = 30;
 
             // then
             Assert.That(Entity.Age, Is.EqualTo(30));
             (from quad in EntityContext.Store.Quads
-             where quad.Predicate==Node.ForUri(new Uri("http://xmlns.com/foaf/0.1/age"))
-             select quad).ToList().Should().OnlyContain(q => q.Object.DataType==Xsd.Int);
+             where quad.Predicate == Node.ForUri(new Uri("http://xmlns.com/foaf/0.1/age"))
+             select quad).ToList().Should().OnlyContain(q => q.Object.DataType == Xsd.Int);
         }
 
         [Test]
         public void Should_retrieve_value_from_interface_inherited_property()
         {
             LoadTestFile("InheritedPropertyGraph.trig");
-            var entity=EntityContext.Load<TestEntities.Inheritance.Specialized.IInterface>(new EntityId(new Uri("http://test.org/test")));
-            entity.Description="test";
-            Assert.That(entity.Description,Is.EqualTo("test"));
+            var entity = EntityContext.Load<TestEntities.Inheritance.Specialized.IInterface>(new EntityId(new Uri("http://test.org/test")));
+            entity.Description = "test";
+            Assert.That(entity.Description, Is.EqualTo("test"));
         }
 
         [Test]
@@ -494,15 +494,15 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         private string SerializeStore()
         {
-            return String.Join(Environment.NewLine,EntityStore.Quads);
+            return String.Join(Environment.NewLine, EntityStore.Quads);
         }
 
         [Obsolete]
-        private class ProtocolReplaceGraphSelector:RomanticWeb.NamedGraphs.INamedGraphSelector
+        private class ProtocolReplaceGraphSelector : RomanticWeb.NamedGraphs.INamedGraphSelector
         {
-            public Uri SelectGraph(EntityId id,IEntityMapping entityMapping,IPropertyMapping predicate)
+            public Uri SelectGraph(EntityId id, IEntityMapping entityMapping, IPropertyMapping predicate)
             {
-                string replacementProtocol="http";
+                string replacementProtocol = "http";
 
                 if (predicate != null && predicate.Uri != null)
                 {
@@ -510,7 +510,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                     {
                         case "http://xmlns.com/foaf/0.1/familyName":
                         case "http://xmlns.com/foaf/0.1/givenName":
-                            replacementProtocol="personal";
+                            replacementProtocol = "personal";
                             break;
                         case "http://xmlns.com/foaf/0.1/knows":
                             replacementProtocol = "friendsOf";
@@ -522,7 +522,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                     }
                 }
 
-                return new Uri(id.ToString().Replace("http",replacementProtocol));
+                return new Uri(id.ToString().Replace("http", replacementProtocol));
             }
         }
     }

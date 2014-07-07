@@ -8,7 +8,7 @@ namespace RomanticWeb.Vocabularies
     public static partial class Rdf
     {
 #pragma warning disable 1591 // ReSharper disable InconsistentNaming
-        public static readonly Uri about=new Uri(BaseUri+"about");
+        public static readonly Uri about = new Uri(BaseUri + "about");
 #pragma warning restore 1591 // ReSharper restore InconsistentNaming
     }
 }

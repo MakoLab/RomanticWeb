@@ -10,7 +10,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <summary>
         /// Sets the class name 
         /// </summary>
-        IClassMap Is(string prefix,string className);
+        IClassMap Is(string prefix, string className);
 
         /// <summary>
         /// Sets the class name 

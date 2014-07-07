@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Conventions
     /// Convention to ensure <see cref="IDictionary{TKey,TValue}"/> properties
     /// have the value predicate set
     /// </summary>
-    public class DefaultDictionaryValuePredicateConvention:IDictionaryConvention
+    public class DefaultDictionaryValuePredicateConvention : IDictionaryConvention
     {
         /// <inheritdoc/>
         /// <returns>true if <see cref="IDictionaryMappingProvider.Value"/> doesn't map to a URI</returns>
@@ -22,7 +22,7 @@ namespace RomanticWeb.Mapping.Conventions
         /// </summary>
         public void Apply(IDictionaryMappingProvider target)
         {
-            target.Value.GetTerm=provider => Rdf.@object;
+            target.Value.GetTerm = provider => Rdf.@object;
         }
     }
 }

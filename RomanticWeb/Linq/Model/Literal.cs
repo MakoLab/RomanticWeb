@@ -5,7 +5,7 @@ using NullGuard;
 namespace RomanticWeb.Linq.Model
 {
     /// <summary>Expresses a literal in the query.</summary>
-    public class Literal:QueryComponent,IExpression
+    public class Literal : QueryComponent, IExpression
     {
         #region Fields
         private object _value;
@@ -15,22 +15,24 @@ namespace RomanticWeb.Linq.Model
         #region Constructors
         /// <summary>Constructor for creating <b>null</b> literals of given type.</summary>
         /// <param name="valueType"></param>
-        public Literal(Type valueType):base()
+        public Literal(Type valueType)
+            : base()
         {
-            _valueType=valueType;
+            _valueType = valueType;
         }
 
         /// <summary>Base constructor with value passed.</summary>
         /// <param name="value">Value of this literal.</param>
-        public Literal(object value):base()
+        public Literal(object value)
+            : base()
         {
-            _valueType=(_value=value).GetType();
+            _valueType = (_value = value).GetType();
         }
         #endregion
 
         #region Properties
         /// <summary>Gets a value of this literal.</summary>
-        public object Value { [return:AllowNull] get { return _value; } }
+        public object Value { [return: AllowNull] get { return _value; } }
 
         /// <summary>Gets the type of value.</summary>
         public Type ValueType { get { return _valueType; } }
@@ -41,15 +43,15 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this literal.</returns>
         public override string ToString()
         {
-            string valueString=System.String.Empty;
-            if (_value!=null)
+            string valueString = System.String.Empty;
+            if (_value != null)
             {
                 switch (_value.GetType().FullName)
                 {
                     default:
                     case "System.TimeSpan":
                     case "System.String":
-                        valueString=System.String.Format("\"{0}\"",_value);
+                        valueString = System.String.Format("\"{0}\"", _value);
                         break;
                     case "System.Byte":
                     case "System.SByte":
@@ -59,20 +61,20 @@ namespace RomanticWeb.Linq.Model
                     case "System.UInt32":
                     case "System.Int64":
                     case "System.UInt64":
-                        valueString=_value.ToString();
+                        valueString = _value.ToString();
                         break;
                     case "System.Char":
-                        valueString=System.String.Format("'{0}'",_value);
+                        valueString = System.String.Format("'{0}'", _value);
                         break;
                     case "System.Single":
                     case "System.Double":
                     case "System.Decimal":
                     case "System.DateTime":
-                        valueString=System.String.Format(CultureInfo.InvariantCulture,"{0}",_value);
+                        valueString = System.String.Format(CultureInfo.InvariantCulture, "{0}", _value);
                         break;
                     case "RomanticWeb.Entities.EntityId":
                     case "System.Uri":
-                        valueString=System.String.Format("<{0}>",_value);
+                        valueString = System.String.Format("<{0}>", _value);
                         break;
                 }
             }
@@ -87,7 +89,7 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(Literal))&&(_value!=null?_value.Equals(((Literal)operand)._value):Object.Equals(((Literal)operand)._value,null));
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(Literal)) && (_value != null ? _value.Equals(((Literal)operand)._value) : Object.Equals(((Literal)operand)._value, null));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -95,7 +97,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(Literal).FullName.GetHashCode()^(_value!=null?_value.GetHashCode():0);
+            return typeof(Literal).FullName.GetHashCode() ^ (_value != null ? _value.GetHashCode() : 0);
         }
         #endregion
     }

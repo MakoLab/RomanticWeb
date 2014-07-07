@@ -10,24 +10,24 @@ using VDS.RDF.Writing;
 namespace RomanticWeb.DotNetRDF
 {
     /// <summary>Provides a basic implementation of a file based updateable triple store.</summary>
-    public class FileTripleStore:TripleStore,IUpdateableTripleStore
+    public class FileTripleStore : TripleStore, IUpdateableTripleStore
     {
-        private const int MaxTries=5;
-        private static object Locker=new Object();
+        private const int MaxTries = 5;
+        private static readonly object Locker = new Object();
 
-        private string _filePath=null;
-        private Stream _fileStream=null;
-        private IRdfReader _rdfReader=null;
-        private IRdfWriter _rdfWriter=null;
-        private IStoreReader _storeReader=null;
-        private IStoreWriter _storeWriter=null;
+        private string _filePath = null;
+        private Stream _fileStream = null;
+        private IRdfReader _rdfReader = null;
+        private IRdfWriter _rdfWriter = null;
+        private IStoreReader _storeReader = null;
+        private IStoreWriter _storeWriter = null;
 
         /// <summary>Creates a new instance of the file triple store.</summary>
         /// <param name="filePath">Path of the file to read/write.</param>
         public FileTripleStore(string filePath)
         {
             CreateIOHandlers(Path.GetExtension(filePath).ToLower());
-            if (!File.Exists(_filePath=filePath))
+            if (!File.Exists(_filePath = filePath))
             {
                 File.Create(filePath).Close();
             }
@@ -39,15 +39,15 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="filePath">Path of the file to read/write.</param>
         /// <param name="storeReader">Store reader used to read the file.</param>
         /// <param name="storeWriter">Store writer to write the file.</param>
-        public FileTripleStore(string filePath,IStoreReader storeReader,IStoreWriter storeWriter)
+        public FileTripleStore(string filePath, IStoreReader storeReader, IStoreWriter storeWriter)
         {
-            if (!File.Exists(_filePath=filePath))
+            if (!File.Exists(_filePath = filePath))
             {
                 File.Create(filePath).Close();
             }
 
-            _storeReader=storeReader;
-            _storeWriter=storeWriter;
+            _storeReader = storeReader;
+            _storeWriter = storeWriter;
 
             Read();
         }
@@ -56,15 +56,15 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="filePath">Path of the file to read/write.</param>
         /// <param name="rdfReader">RDF reader used to read the file.</param>
         /// <param name="rdfWriter">RDF writer to write the file.</param>
-        public FileTripleStore(string filePath,IRdfReader rdfReader,IRdfWriter rdfWriter)
+        public FileTripleStore(string filePath, IRdfReader rdfReader, IRdfWriter rdfWriter)
         {
-            if (!File.Exists(_filePath=filePath))
+            if (!File.Exists(_filePath = filePath))
             {
                 File.Create(filePath).Close();
             }
 
-            _rdfReader=rdfReader;
-            _rdfWriter=rdfWriter;
+            _rdfReader = rdfReader;
+            _rdfWriter = rdfWriter;
 
             Read();
         }
@@ -73,11 +73,11 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="fileStream">Stream to read/write.</param>
         /// <param name="storeReader">Store reader used to read the file.</param>
         /// <param name="storeWriter">Store writer to write the file.</param>
-        public FileTripleStore(Stream fileStream,IStoreReader storeReader,IStoreWriter storeWriter)
+        public FileTripleStore(Stream fileStream, IStoreReader storeReader, IStoreWriter storeWriter)
         {
-            _fileStream=fileStream;
-            _storeReader=storeReader;
-            _storeWriter=storeWriter;
+            _fileStream = fileStream;
+            _storeReader = storeReader;
+            _storeWriter = storeWriter;
             Read();
         }
 
@@ -85,11 +85,11 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="fileStream">Stream to read/write.</param>
         /// <param name="rdfReader">RDF reader used to read the file.</param>
         /// <param name="rdfWriter">RDF writer to write the file.</param>
-        public FileTripleStore(Stream fileStream,IRdfReader rdfReader,IRdfWriter rdfWriter)
+        public FileTripleStore(Stream fileStream, IRdfReader rdfReader, IRdfWriter rdfWriter)
         {
-            _fileStream=fileStream;
-            _rdfReader=rdfReader;
-            _rdfWriter=rdfWriter;
+            _fileStream = fileStream;
+            _rdfReader = rdfReader;
+            _rdfWriter = rdfWriter;
             Read();
         }
 
@@ -116,7 +116,7 @@ namespace RomanticWeb.DotNetRDF
         {
             lock (Locker)
             {
-                LeviathanUpdateProcessor processor=new LeviathanUpdateProcessor(this);
+                LeviathanUpdateProcessor processor = new LeviathanUpdateProcessor(this);
                 processor.ProcessCommandSet(updates);
                 Write();
             }
@@ -139,32 +139,32 @@ namespace RomanticWeb.DotNetRDF
             switch (extension)
             {
                 case ".nq":
-                    _storeReader=new NQuadsParser();
-                    _storeWriter=new NQuadsWriter();
+                    _storeReader = new NQuadsParser();
+                    _storeWriter = new NQuadsWriter();
                     break;
                 case ".ttl":
-                    _rdfReader=new TurtleParser();
-                    _rdfWriter=new CompressingTurtleWriter();
+                    _rdfReader = new TurtleParser();
+                    _rdfWriter = new CompressingTurtleWriter();
                     break;
                 case ".trig":
-                    _storeReader=new TriGParser();
-                    _storeWriter=new TriGWriter();
+                    _storeReader = new TriGParser();
+                    _storeWriter = new TriGWriter();
                     break;
                 case ".xml":
-                    _rdfReader=new RdfXmlParser();
-                    _rdfWriter=new RdfXmlWriter();
+                    _rdfReader = new RdfXmlParser();
+                    _rdfWriter = new RdfXmlWriter();
                     break;
                 case ".n3":
-                    _rdfReader=new Notation3Parser();
-                    _rdfWriter=new Notation3Writer();
+                    _rdfReader = new Notation3Parser();
+                    _rdfWriter = new Notation3Writer();
                     break;
                 case ".trix":
-                    _storeReader=new TriXParser();
-                    _storeWriter=new TriXWriter();
+                    _storeReader = new TriXParser();
+                    _storeWriter = new TriXWriter();
                     break;
                 case ".json":
-                    _rdfReader=new RdfJsonParser();
-                    _rdfWriter=new RdfJsonWriter();
+                    _rdfReader = new RdfJsonParser();
+                    _rdfWriter = new RdfJsonWriter();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(System.String.Format("Provided file path does not allow to detect a type of the RDF serialization type."));
@@ -175,7 +175,7 @@ namespace RomanticWeb.DotNetRDF
         {
             lock (Locker)
             {
-                if (_storeReader!=null)
+                if (_storeReader != null)
                 {
                     ReadStore();
                 }
@@ -188,47 +188,47 @@ namespace RomanticWeb.DotNetRDF
 
         private void ReadStore()
         {
-            if (_filePath!=null)
+            if (_filePath != null)
             {
-                _storeReader.Load(this,_filePath);
+                _storeReader.Load(this, _filePath);
             }
             else
             {
-                _fileStream.Seek(0,SeekOrigin.Begin);
-                TextReader fileReader=new StreamReader(_fileStream,System.Text.UTF8Encoding.UTF8,true,4096,true);
-                _storeReader.Load(this,fileReader);
+                _fileStream.Seek(0, SeekOrigin.Begin);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                _storeReader.Load(this, fileReader);
             }
         }
 
         private void ReadGraphs()
         {
-            IGraph graph=this.Graphs.FirstOrDefault();
-            if (graph==null)
+            IGraph graph = this.Graphs.FirstOrDefault();
+            if (graph == null)
             {
-                graph=new Graph();
+                graph = new Graph();
                 this.Add(graph);
             }
 
-            if (_filePath!=null)
+            if (_filePath != null)
             {
-                _rdfReader.Load(graph,_filePath);
+                _rdfReader.Load(graph, _filePath);
             }
             else
             {
-                _fileStream.Seek(0,SeekOrigin.Begin);
-                TextReader fileReader=new StreamReader(_fileStream,System.Text.UTF8Encoding.UTF8,true,4096,true);
-                _rdfReader.Load(graph,fileReader);
+                _fileStream.Seek(0, SeekOrigin.Begin);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                _rdfReader.Load(graph, fileReader);
             }
         }
 
         private void Write()
         {
-            int tries=0;
-            while (tries<MaxTries)
+            int tries = 0;
+            while (tries < MaxTries)
             {
                 try
                 {
-                    if (_storeWriter!=null)
+                    if (_storeWriter != null)
                     {
                         WriteStore();
                     }
@@ -237,7 +237,7 @@ namespace RomanticWeb.DotNetRDF
                         WriteGraphs();
                     }
 
-                    tries=MaxTries;
+                    tries = MaxTries;
                 }
                 catch (IOException)
                 {
@@ -249,52 +249,52 @@ namespace RomanticWeb.DotNetRDF
 
         private void WriteStore()
         {
-            if (_filePath!=null)
+            if (_filePath != null)
             {
-                _storeWriter.Save(this,_filePath);
+                _storeWriter.Save(this, _filePath);
             }
             else
             {
                 _fileStream.SetLength(0);
-                TextWriter fileWriter=new StreamWriter(_fileStream,System.Text.UTF8Encoding.UTF8,4096,true);
-                _storeWriter.Save(this,fileWriter);
+                TextWriter fileWriter = new StreamWriter(_fileStream, System.Text.UTF8Encoding.UTF8, 4096, true);
+                _storeWriter.Save(this, fileWriter);
                 _fileStream.Flush();
             }
         }
 
         private void WriteGraphs()
         {
-            Stream fileStream=_fileStream;
-            TextWriter fileWriter=null;
+            Stream fileStream = _fileStream;
+            TextWriter fileWriter = null;
             try
             {
-                if (fileStream==null)
+                if (fileStream == null)
                 {
-                    fileStream=File.Open(_filePath,FileMode.Open,FileAccess.Write);
+                    fileStream = File.Open(_filePath, FileMode.Open, FileAccess.Write);
                 }
                 else
                 {
                     _fileStream.SetLength(0);
                 }
 
-                fileWriter=new StreamWriter(fileStream);
+                fileWriter = new StreamWriter(fileStream);
                 foreach (IGraph graph in this.Graphs)
                 {
-                    _rdfWriter.Save(graph,fileWriter);
+                    _rdfWriter.Save(graph, fileWriter);
                 }
 
                 fileStream.Flush();
             }
             finally
             {
-                if (_fileStream==null)
+                if (_fileStream == null)
                 {
-                    if (fileWriter!=null)
+                    if (fileWriter != null)
                     {
                         fileWriter.Close();
                     }
 
-                    if (fileStream!=null)
+                    if (fileStream != null)
                     {
                         fileStream.Close();
                     }

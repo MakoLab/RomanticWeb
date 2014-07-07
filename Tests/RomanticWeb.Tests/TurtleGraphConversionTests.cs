@@ -16,14 +16,14 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            store=new TripleStore();
-            store.LoadFromEmbeddedResource(System.String.Format("{0}.ttl, {1}",GetType().FullName,GetType().Assembly.FullName),new Uri("http://app.magi/graphs"));
+            store = new TripleStore();
+            store.LoadFromEmbeddedResource(System.String.Format("{0}.ttl, {1}", GetType().FullName, GetType().Assembly.FullName), new Uri("http://app.magi/graphs"));
         }
 
         [Test]
         public void Should_generate_graphs_automatically()
         {
-            Assert.That(store.Graphs.Any(item => item.BaseUri.AbsoluteUri=="http://test/individual1"));
+            Assert.That(store.Graphs.Any(item => item.BaseUri.AbsoluteUri == "http://test/individual1"));
         }
     }
 }

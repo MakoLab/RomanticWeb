@@ -10,17 +10,17 @@ namespace RomanticWeb.DotNetRDF.Configuration
     /// <summary>
     /// Configuration of a third-party triple store
     /// </summary>
-    public class PersistentStoreElement:StoreElement
+    public class PersistentStoreElement : StoreElement
     {
-        private static readonly IDictionary<string,Func<StorageProviderElement>> ProviderElementFactories;
+        private static readonly IDictionary<string, Func<StorageProviderElement>> ProviderElementFactories;
         private StorageProviderElement _storageProvider;
 
         static PersistentStoreElement()
         {
-            ProviderElementFactories=new Dictionary<string,Func<StorageProviderElement>>();
-            ProviderElementFactories["virtuosoManager"]=() => new VirtuosoManagerElement();
-            ProviderElementFactories["allegroGraphConnector"]=() => new AllegroGraphConnectorElement();
-            ProviderElementFactories["customProvider"]=() => new CustomProviderElement();
+            ProviderElementFactories = new Dictionary<string, Func<StorageProviderElement>>();
+            ProviderElementFactories["virtuosoManager"] = () => new VirtuosoManagerElement();
+            ProviderElementFactories["allegroGraphConnector"] = () => new AllegroGraphConnectorElement();
+            ProviderElementFactories["customProvider"] = () => new CustomProviderElement();
         }
 
         private StorageProviderElement StorageProvider
@@ -32,12 +32,12 @@ namespace RomanticWeb.DotNetRDF.Configuration
 
             set
             {
-                if (_storageProvider!=null)
+                if (_storageProvider != null)
                 {
                     throw new ConfigurationErrorsException("Cannot set two storage providers");
                 }
 
-                _storageProvider=value;
+                _storageProvider = value;
             }
         }
 
@@ -53,13 +53,13 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// Tries to deserialize known elements representing third-party triple store connector,
         /// like Virtuoso, AllegroGraph and others
         /// </summary>
-        protected override bool OnDeserializeUnrecognizedElement(string elementName,XmlReader reader)
+        protected override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
         {
             if (ProviderElementFactories.ContainsKey(elementName))
             {
-                StorageProviderElement providerElement=ProviderElementFactories[elementName].Invoke();
+                StorageProviderElement providerElement = ProviderElementFactories[elementName].Invoke();
                 providerElement.DeserializeElementForConfig(reader, false);
-                StorageProvider=providerElement;
+                StorageProvider = providerElement;
                 return true;
             }
 

@@ -80,9 +80,9 @@ namespace RomanticWeb.Tests.JsonLd
 
         private dynamic GetSerializedJson(EntityId id, Stream resource)
         {
-            string json=_processor.FromRdf(GetQuads(id, resource));
+            string json = _processor.FromRdf(GetQuads(id, resource));
 
-            object deserializeObject = JsonConvert.DeserializeObject(Regex.Replace(json,"\"_:autos[0-9]+\"","\"_:blank\""));
+            object deserializeObject = JsonConvert.DeserializeObject(Regex.Replace(json, "\"_:autos[0-9]+\"", "\"_:blank\""));
             Console.WriteLine("Result JSON:");
             Console.WriteLine(deserializeObject.ToString());
 
@@ -91,8 +91,8 @@ namespace RomanticWeb.Tests.JsonLd
 
         private IEnumerable<EntityQuad> GetQuads(EntityId entityId, Stream resource)
         {
-            IGraph graph=new Graph();
-            using (var streamReader=new StreamReader(resource))
+            IGraph graph = new Graph();
+            using (var streamReader = new StreamReader(resource))
             {
                 new TurtleParser().Load(graph, streamReader);
             }

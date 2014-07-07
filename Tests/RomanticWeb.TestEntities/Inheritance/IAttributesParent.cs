@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Attributes;
 
 namespace RomanticWeb.TestEntities.Inheritance
 {
-    public interface IAttributesParent:IEntity
+    public interface IAttributesParent : IEntity
     {
         [Property("urn:parent:mapped")]
         string SomeProperty { get; set; }

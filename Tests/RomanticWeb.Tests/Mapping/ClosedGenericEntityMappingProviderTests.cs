@@ -17,7 +17,7 @@ namespace RomanticWeb.Tests.Mapping
     [TestFixture]
     public class ClosedGenericEntityMappingProviderTests
     {
-        private static readonly dynamic New=Builder.New();
+        private static readonly dynamic New = Builder.New();
 
         [SetUp]
         public void Setup()
@@ -39,7 +39,7 @@ namespace RomanticWeb.Tests.Mapping
 
         [TestCase("MappedProperty1", typeof(int))]
         [TestCase("GenericProperty", typeof(ICollection<int>))]
-        public void Should_return_mappings_for_closed_properties(string propertyName,Type expectedType)
+        public void Should_return_mappings_for_closed_properties(string propertyName, Type expectedType)
         {
             // given
             var provider = new ClosedGenericEntityMappingProvider(CreateOpenGenericProvider(propertyName), typeof(int));
@@ -54,8 +54,8 @@ namespace RomanticWeb.Tests.Mapping
 
         private IEntityMappingProvider CreateOpenGenericProvider(string propertyName)
         {
-            var type=typeof(IGenericParent<>);
-            var _provider=new Mock<VisitableEntityMappingProviderBase>();
+            var type = typeof(IGenericParent<>);
+            var _provider = new Mock<VisitableEntityMappingProviderBase>();
             _provider.SetupGet(p => p.EntityType).Returns(type);
             _provider.SetupGet(p => p.Properties).Returns(new[] { CreatePropertyMappingProvider(type.GetProperty(propertyName)) });
             _provider.SetupGet(p => p.Classes).Returns(new List<IClassMappingProvider>());
@@ -65,15 +65,15 @@ namespace RomanticWeb.Tests.Mapping
 
         private IPropertyMappingProvider CreatePropertyMappingProvider(PropertyInfo property)
         {
-            var expando=New.ExpandoObject();
-            expando.PropertyInfo=property;
+            var expando = New.ExpandoObject();
+            expando.PropertyInfo = property;
 
-            expando.Accept=new Action<IMappingProviderVisitor>(visitor => Accept(Impromptu.ActLike<IPropertyMappingProvider>(expando),visitor));
+            expando.Accept = new Action<IMappingProviderVisitor>(visitor => Accept(Impromptu.ActLike<IPropertyMappingProvider>(expando), visitor));
 
             return Impromptu.ActLike<IPropertyMappingProvider>(expando);
         }
 
-        private void Accept(IPropertyMappingProvider provider,IMappingProviderVisitor mappingProviderVisitor)
+        private void Accept(IPropertyMappingProvider provider, IMappingProviderVisitor mappingProviderVisitor)
         {
             mappingProviderVisitor.Visit(provider);
         }

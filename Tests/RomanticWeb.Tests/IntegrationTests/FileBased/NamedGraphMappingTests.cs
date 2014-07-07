@@ -1,26 +1,25 @@
-using FluentAssertions;
 using System;
 using System.IO;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Tests.Helpers;
-using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
     [TestFixture]
-    public class NamedGraphMappingTests:NamedGraphMappingTestsBase
+    public class NamedGraphMappingTests : NamedGraphMappingTestsBase
     {
         private FileTripleStore _store;
-        private string filePath=null;
+        private string filePath;
 
         protected FileTripleStore Store
         {
             get
             {
-                if (_store==null)
+                if (_store == null)
                 {
-                    _store=new FileTripleStore(filePath);
+                    _store = new FileTripleStore(filePath);
                 }
 
                 return _store;
@@ -30,7 +29,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         protected override void ChildSetup()
         {
             base.ChildSetup();
-            filePath=Path.Combine(AppDomain.CurrentDomain.GetApplicationStoragePath(),"test.trig");
+            filePath = Path.Combine(AppDomain.CurrentDomain.GetApplicationStoragePath(), "test.trig");
             if (!Directory.Exists(AppDomain.CurrentDomain.GetApplicationStoragePath()))
             {
                 Directory.CreateDirectory(AppDomain.CurrentDomain.GetApplicationStoragePath());
@@ -46,7 +45,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
 
         protected override void LoadTestFile(string fileName)
         {
-            Console.WriteLine("Reading dataset file '{0}'",fileName);
+            Console.WriteLine("Reading dataset file '{0}'", fileName);
             Store.LoadTestFile(fileName);
         }
 
@@ -57,13 +56,13 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
 
         protected override void ChildTeardown()
         {
-            _store=null;
+            _store = null;
         }
 
         protected override void AsserGraphIntDataSource(Uri graphUri)
         {
-            File.ReadAllText(filePath).Should().MatchRegex(System.String.Format("<{0}> {{(.|\n)*}}",graphUri));
-            File.ReadAllText(filePath).Should().MatchRegex(System.String.Format("<{0}> <http://xmlns.com/foaf/0.1/primaryTopic> <{0}>",graphUri));
+            File.ReadAllText(filePath).Should().MatchRegex(System.String.Format("<{0}> {{(.|\n)*}}", graphUri));
+            File.ReadAllText(filePath).Should().MatchRegex(System.String.Format("<{0}> <http://xmlns.com/foaf/0.1/primaryTopic> <{0}>", graphUri));
         }
     }
 }

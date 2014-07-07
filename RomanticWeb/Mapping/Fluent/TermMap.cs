@@ -20,8 +20,8 @@ namespace RomanticWeb.Mapping.Fluent
 
         internal void SetQName(string prefix, string termName)
         {
-            NamespacePrefix=prefix;
-            TermName=termName;
+            NamespacePrefix = prefix;
+            TermName = termName;
         }
     }
 }

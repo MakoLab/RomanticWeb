@@ -5,12 +5,12 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converter for GUID literal nodes.</summary>
-    public class GuidConverter:INodeConverter
+    public class GuidConverter : INodeConverter
     {
-        private static readonly Regex UrnUuidRegex=new Regex(@"^urn:uuid:",RegexOptions.IgnoreCase);
+        private static readonly Regex UrnUuidRegex = new Regex(@"^urn:uuid:", RegexOptions.IgnoreCase);
 
         /// <inheritdoc />
-        public object Convert(Node objectNode,IEntityContext context)
+        public object Convert(Node objectNode, IEntityContext context)
         {
             if (objectNode.IsLiteral)
             {
@@ -26,7 +26,7 @@ namespace RomanticWeb.Converters
                 }
             }
 
-            throw new ArgumentException(string.Format("Cannot convert node '{0}' to guid",objectNode),"objectNode");
+            throw new ArgumentException(string.Format("Cannot convert node '{0}' to guid", objectNode), "objectNode");
         }
 
         /// <inheritdoc />
@@ -38,12 +38,12 @@ namespace RomanticWeb.Converters
         /// <inheritdoc />
         public LiteralConversionMatch CanConvert(Node literalNode)
         {
-            var result=new LiteralConversionMatch { DatatypeMatches=MatchResult.DontCare };
+            var result = new LiteralConversionMatch { DatatypeMatches = MatchResult.DontCare };
 
             Guid value;
-            if (Guid.TryParse(literalNode.Literal,out value))
+            if (Guid.TryParse(literalNode.Literal, out value))
             {
-                result.LiteralFormatMatches=MatchResult.ExactMatch;
+                result.LiteralFormatMatches = MatchResult.ExactMatch;
             }
 
             return result;

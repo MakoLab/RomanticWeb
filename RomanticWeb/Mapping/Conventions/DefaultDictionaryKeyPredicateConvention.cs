@@ -8,13 +8,13 @@ namespace RomanticWeb.Mapping.Conventions
     /// Convention to ensure <see cref="IDictionary{TKey,TValue}"/> properties
     /// have the key predicate set
     /// </summary>
-    public class DefaultDictionaryKeyPredicateConvention:IDictionaryConvention
+    public class DefaultDictionaryKeyPredicateConvention : IDictionaryConvention
     {
         /// <inheritdoc/>
         /// <returns>true if <see cref="IDictionaryMappingProvider.Key"/> doesn't map to a URI</returns>
         public bool ShouldApply(IDictionaryMappingProvider target)
         {
-            return target.Key.GetTerm==null;
+            return target.Key.GetTerm == null;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace RomanticWeb.Mapping.Conventions
         /// </summary>
         public void Apply(IDictionaryMappingProvider target)
         {
-            target.Key.GetTerm=provider => Rdf.predicate;
+            target.Key.GetTerm = provider => Rdf.predicate;
         }
     }
 }

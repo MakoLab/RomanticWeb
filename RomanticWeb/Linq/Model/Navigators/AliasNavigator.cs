@@ -3,12 +3,13 @@
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates an alias.</summary>
-    internal class AliasNavigator:QueryComponentNavigatorBase
+    internal class AliasNavigator : QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated alias.</summary>
         /// <param name="alias">Nagivated alias.</param>
-        internal AliasNavigator(Alias alias):base(alias)
+        internal AliasNavigator(Alias alias)
+            : base(alias)
         {
         }
         #endregion
@@ -24,7 +25,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component can be added, otherwise <b>false</b>.</returns>
         public override bool CanAddComponent(IQueryComponent component)
         {
-            return ((component is Identifier)&&(NavigatedComponent.Name==null))||(NavigatedComponent.Component==null);
+            return ((component is Identifier) && (NavigatedComponent.Name == null)) || (NavigatedComponent.Component == null);
         }
 
         /// <summary>Determines if the given component contains another component as a child.</summary>
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (NavigatedComponent.Name==component)||(NavigatedComponent.Component==component);
+            return (NavigatedComponent.Name == component) || (NavigatedComponent.Component == component);
         }
 
         /// <summary>Adds component as a child of another component.</summary>
@@ -41,32 +42,32 @@ namespace RomanticWeb.Linq.Model.Navigators
         {
             if (component is Identifier)
             {
-                if (NavigatedComponent.Name==null)
+                if (NavigatedComponent.Name == null)
                 {
-                    NavigatedComponent.Name=(Identifier)component;
+                    NavigatedComponent.Name = (Identifier)component;
                 }
             }
-            else if (NavigatedComponent.Component==null)
+            else if (NavigatedComponent.Component == null)
             {
-                NavigatedComponent.Component=component;
+                NavigatedComponent.Component = component;
             }
         }
 
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        public override void ReplaceComponent(IQueryComponent component, IQueryComponent replacement)
         {
-            if ((component is Identifier)&&(replacement is Identifier))
+            if ((component is Identifier) && (replacement is Identifier))
             {
-                if (NavigatedComponent.Name==(Identifier)component)
+                if (NavigatedComponent.Name == (Identifier)component)
                 {
-                    NavigatedComponent.Name=(Identifier)replacement;
+                    NavigatedComponent.Name = (Identifier)replacement;
                 }
             }
-            else if (NavigatedComponent.Component==component)
+            else if (NavigatedComponent.Component == component)
             {
-                NavigatedComponent.Component=replacement;
+                NavigatedComponent.Component = replacement;
             }
         }
 
@@ -74,13 +75,13 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()
         {
-            List<IQueryComponent> result=new List<IQueryComponent>();
-            if (NavigatedComponent.Name!=null)
+            List<IQueryComponent> result = new List<IQueryComponent>();
+            if (NavigatedComponent.Name != null)
             {
                 result.Add(NavigatedComponent.Name);
             }
 
-            if (NavigatedComponent.Component!=null)
+            if (NavigatedComponent.Component != null)
             {
                 result.Add(NavigatedComponent.Component);
             }

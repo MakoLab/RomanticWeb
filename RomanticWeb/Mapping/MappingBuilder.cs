@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Sources;
 
@@ -15,7 +14,7 @@ namespace RomanticWeb.Mapping
 
         internal MappingBuilder(MappingsRepository mappingsRepository)
         {
-            _mappingsRepository=mappingsRepository;
+            _mappingsRepository = mappingsRepository;
         }
 
         /// <summary>
@@ -49,16 +48,19 @@ namespace RomanticWeb.Mapping
             Attributes.FromAssemblyOf<T>();
         }
 
+        /// <summary>
+        /// Registers both fluent and attrbiute mappings from an assembly
+        /// </summary>
         public void FromAssembly(Assembly assembly)
         {
             Fluent.FromAssembly(assembly);
             Attributes.FromAssembly(assembly);
         }
 
-        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly,TMappingRepository mappingsRepository)
-            where TMappingRepository:IMappingProviderSource
+        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingsRepository)
+            where TMappingRepository : IMappingProviderSource
         {
-            _mappingsRepository.AddSource(mappingAssembly,mappingsRepository);
+            _mappingsRepository.AddSource(mappingAssembly, mappingsRepository);
         }
     }
 }

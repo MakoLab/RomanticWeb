@@ -11,7 +11,7 @@ namespace RomanticWeb
 
         internal DefaultUriBuilder(BaseUriSelectorBuilder baseUriSelectorBuilder)
         {
-            _baseUriSelectorBuilder=baseUriSelectorBuilder;
+            _baseUriSelectorBuilder = baseUriSelectorBuilder;
         }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace RomanticWeb
         /// </summary>
         public void Is(Uri defaultBaseUri)
         {
-            _baseUriSelectorBuilder.DefaultBaseUri=defaultBaseUri;
+            _baseUriSelectorBuilder.DefaultBaseUri = defaultBaseUri;
         }
     }
 }

@@ -9,21 +9,21 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converts XSD numeric types to numbers.</summary>
-    public class IntegerConverter:XsdConverterBase
+    public class IntegerConverter : XsdConverterBase
     {
-        private static readonly Dictionary<Type,IList<Uri>> IntegerTypes;
+        private static readonly Dictionary<Type, IList<Uri>> IntegerTypes;
 
         static IntegerConverter()
         {
-            IntegerTypes=new Dictionary<Type,IList<Uri>>();
-            IntegerTypes[typeof(int)]=new[] { Xsd.Int };
-            IntegerTypes[typeof(uint)]=new[] { Xsd.UnsignedInt };
-            IntegerTypes[typeof(short)]=new[] { Xsd.Short };
-            IntegerTypes[typeof(ushort)]=new[] { Xsd.UnsignedShort };
-            IntegerTypes[typeof(sbyte)]=new[] { Xsd.Byte };
-            IntegerTypes[typeof(byte)]=new[] { Xsd.UnsignedByte };
-            IntegerTypes[typeof(long)]=new[] { Xsd.Long,Xsd.Integer,Xsd.NonPositiveInteger,Xsd.NegativeInteger };
-            IntegerTypes[typeof(ulong)]=new[] { Xsd.UnsignedLong,Xsd.NonNegativeInteger,Xsd.PositiveInteger };
+            IntegerTypes = new Dictionary<Type, IList<Uri>>();
+            IntegerTypes[typeof(int)] = new[] { Xsd.Int };
+            IntegerTypes[typeof(uint)] = new[] { Xsd.UnsignedInt };
+            IntegerTypes[typeof(short)] = new[] { Xsd.Short };
+            IntegerTypes[typeof(ushort)] = new[] { Xsd.UnsignedShort };
+            IntegerTypes[typeof(sbyte)] = new[] { Xsd.Byte };
+            IntegerTypes[typeof(byte)] = new[] { Xsd.UnsignedByte };
+            IntegerTypes[typeof(long)] = new[] { Xsd.Long, Xsd.Integer, Xsd.NonPositiveInteger, Xsd.NegativeInteger };
+            IntegerTypes[typeof(ulong)] = new[] { Xsd.UnsignedLong, Xsd.NonNegativeInteger, Xsd.PositiveInteger };
         }
 
         /// <summary>Gets the supported .NET types.</summary>
@@ -35,15 +35,15 @@ namespace RomanticWeb.Converters
         /// <inheritdoc/>
         public override Node ConvertBack(object value)
         {
-            return Node.ForLiteral(XmlConvert.ToString((dynamic)value),IntegerTypes[value.GetType()].First());
+            return Node.ForLiteral(XmlConvert.ToString((dynamic)value), IntegerTypes[value.GetType()].First());
         }
 
         /// <inheritdoc />
         [return: AllowNull]
         public override Uri CanConvertBack(Type type)
         {
-            IList<Uri> result=null;
-            if (IntegerTypes.TryGetValue(type,out result))
+            IList<Uri> result = null;
+            if (IntegerTypes.TryGetValue(type, out result))
             {
                 return result[0];
             }
@@ -54,13 +54,13 @@ namespace RomanticWeb.Converters
         /// <summary>Converts xsd:int (and subtypes) into <see cref="long"/>.</summary>
         protected override object ConvertInternal(Node objectNode)
         {
-            var returnType=typeof(Int64);
-            if (objectNode.DataType!=null)
+            var returnType = typeof(Int64);
+            if (objectNode.DataType != null)
             {
-                returnType=IntegerTypes.Single(pair => pair.Value.Contains(objectNode.DataType,AbsoluteUriComparer.Default)).Key;
+                returnType = IntegerTypes.Single(pair => pair.Value.Contains(objectNode.DataType, AbsoluteUriComparer.Default)).Key;
             }
 
-            return System.Convert.ChangeType(objectNode.Literal,returnType);
+            return System.Convert.ChangeType(objectNode.Literal, returnType);
         }
     }
 }

@@ -3,12 +3,13 @@
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates a list.</summary>
-    internal class ListNavigator:QueryComponentNavigatorBase
+    internal class ListNavigator : QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated list.</summary>
         /// <param name="list">Nagivated list.</param>
-        internal ListNavigator(List list):base(list)
+        internal ListNavigator(List list)
+            : base(list)
         {
         }
         #endregion
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (component is IExpression?NavigatedComponent.Values.Contains((IExpression)component):false);
+            return (component is IExpression ? NavigatedComponent.Values.Contains((IExpression)component) : false);
         }
 
         /// <summary>Adds component as a child of another component.</summary>
@@ -48,15 +49,15 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        public override void ReplaceComponent(IQueryComponent component, IQueryComponent replacement)
         {
-            if ((component is IExpression)&&(replacement is IExpression))
+            if ((component is IExpression) && (replacement is IExpression))
             {
-                int indexOf=NavigatedComponent.Values.IndexOf((IExpression)component);
-                if (indexOf!=-1)
+                int indexOf = NavigatedComponent.Values.IndexOf((IExpression)component);
+                if (indexOf != -1)
                 {
                     NavigatedComponent.Values.RemoveAt(indexOf);
-                    NavigatedComponent.Values.Insert(indexOf,(IExpression)replacement);
+                    NavigatedComponent.Values.Insert(indexOf, (IExpression)replacement);
                 }
             }
         }

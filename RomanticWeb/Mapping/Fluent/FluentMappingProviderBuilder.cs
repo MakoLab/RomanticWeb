@@ -6,24 +6,24 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Fluent
 {
-    internal class FluentMappingProviderBuilder:IFluentMapsVisitor
+    internal class FluentMappingProviderBuilder : IFluentMapsVisitor
     {
         private Type _currentType;
 
         public IEntityMappingProvider Visit(EntityMap entityMap)
         {
-            _currentType=entityMap.Type;
-            return new EntityMappingProvider(entityMap.Type,GetClasses(entityMap),GetProperties(entityMap));
+            _currentType = entityMap.Type;
+            return new EntityMappingProvider(entityMap.Type, GetClasses(entityMap), GetProperties(entityMap));
         }
 
         public IClassMappingProvider Visit(ClassMap classMap)
         {
             if (classMap.TermUri != null)
             {
-                return new ClassMappingProvider(_currentType,classMap.TermUri);
+                return new ClassMappingProvider(_currentType, classMap.TermUri);
             }
 
-            return new ClassMappingProvider(_currentType,classMap.NamespacePrefix,classMap.TermName);
+            return new ClassMappingProvider(_currentType, classMap.NamespacePrefix, classMap.TermName);
         }
 
         public IPropertyMappingProvider Visit(PropertyMap propertyMap)
@@ -31,18 +31,18 @@ namespace RomanticWeb.Mapping.Fluent
             return CreatePropertyMapping(propertyMap);
         }
 
-        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap,ITermMappingProvider key,ITermMappingProvider value)
+        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value)
         {
-            var propertyMapping=CreatePropertyMapping(dictionaryMap);
-            return new DictionaryMappingProvider(propertyMapping,key,value);
+            var propertyMapping = CreatePropertyMapping(dictionaryMap);
+            return new DictionaryMappingProvider(propertyMapping, key, value);
         }
 
         public IPropertyMappingProvider Visit(CollectionMap collectionMap)
         {
-            var result=new CollectionMappingProvider(CreatePropertyMapping(collectionMap),collectionMap.StorageStrategy);
-            if (collectionMap.ElementConverterType!=null)
+            var result = new CollectionMappingProvider(CreatePropertyMapping(collectionMap), collectionMap.StorageStrategy);
+            if (collectionMap.ElementConverterType != null)
             {
-                result.ElementConverterType=collectionMap.ElementConverterType;
+                result.ElementConverterType = collectionMap.ElementConverterType;
             }
 
             return result;
@@ -50,14 +50,14 @@ namespace RomanticWeb.Mapping.Fluent
 
         public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)
         {
-            if (keyMap.TermUri!=null)
+            if (keyMap.TermUri != null)
             {
                 return new KeyMappingProvider(keyMap.TermUri);
             }
-            
+
             if (keyMap.NamespacePrefix != null && keyMap.TermName != null)
             {
-                return new KeyMappingProvider(keyMap.NamespacePrefix,keyMap.TermName);
+                return new KeyMappingProvider(keyMap.NamespacePrefix, keyMap.TermName);
             }
 
             return new KeyMappingProvider();
@@ -72,7 +72,7 @@ namespace RomanticWeb.Mapping.Fluent
 
             if (valueMap.NamespacePrefix != null && valueMap.TermName != null)
             {
-                return new ValueMappingProvider(valueMap.NamespacePrefix,valueMap.TermName);
+                return new ValueMappingProvider(valueMap.NamespacePrefix, valueMap.TermName);
             }
 
             return new ValueMappingProvider();
@@ -81,18 +81,18 @@ namespace RomanticWeb.Mapping.Fluent
         private static PropertyMappingProvider CreatePropertyMapping(PropertyMapBase propertyMap)
         {
             PropertyMappingProvider propertyMappingProvider;
-            if (propertyMap.TermUri!=null)
+            if (propertyMap.TermUri != null)
             {
-                propertyMappingProvider=new PropertyMappingProvider(propertyMap.TermUri,propertyMap.PropertyInfo);
+                propertyMappingProvider = new PropertyMappingProvider(propertyMap.TermUri, propertyMap.PropertyInfo);
             }
             else
             {
-                propertyMappingProvider=new PropertyMappingProvider(propertyMap.NamespacePrefix,propertyMap.TermName,propertyMap.PropertyInfo);
+                propertyMappingProvider = new PropertyMappingProvider(propertyMap.NamespacePrefix, propertyMap.TermName, propertyMap.PropertyInfo);
             }
 
-            if (propertyMap.ConverterType!=null)
+            if (propertyMap.ConverterType != null)
             {
-                propertyMappingProvider.ConverterType=propertyMap.ConverterType;
+                propertyMappingProvider.ConverterType = propertyMap.ConverterType;
             }
 
             return propertyMappingProvider;

@@ -10,10 +10,10 @@ namespace RomanticWeb.Ontologies
     public sealed class NamespaceSpecification
     {
         /// <summary>Creates a new insance of <see cref="NamespaceSpecification"/>.</summary>
-        public NamespaceSpecification(string prefix,Uri baseUri)
+        public NamespaceSpecification(string prefix, Uri baseUri)
         {
-            Prefix=prefix;
-            BaseUri=baseUri;
+            Prefix = prefix;
+            BaseUri = baseUri;
         }
 
         /// <summary>Gets the namespace URI.</summary>
@@ -25,24 +25,24 @@ namespace RomanticWeb.Ontologies
 #pragma warning disable 1591
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null,obj)) { return false; }
-            if (ReferenceEquals(this,obj)) { return true; }
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
 
-            return obj is NamespaceSpecification&&Equals((NamespaceSpecification)obj);
+            return obj is NamespaceSpecification && Equals((NamespaceSpecification)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (BaseUri.GetHashCode() * 397)^Prefix.GetHashCode();
+                return (BaseUri.GetHashCode() * 397) ^ Prefix.GetHashCode();
             }
         }
 #pragma warning restore
 
         private bool Equals(NamespaceSpecification other)
         {
-            return BaseUri.Equals(other.BaseUri)&&string.Equals(Prefix,other.Prefix);
+            return BaseUri.Equals(other.BaseUri) && string.Equals(Prefix, other.Prefix);
         }
     }
 }

@@ -10,16 +10,16 @@ using RomanticWeb.TestEntities.Animals;
 namespace RomanticWeb.Tests.Mapping
 {
     [TestFixture]
-    public abstract class MappingSourceTests:MappingRepositoryTestBase
+    public abstract class MappingSourceTests : MappingRepositoryTestBase
     {
         [Test]
         public void Mapped_type_should_have_mapped_class()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<ICarnivore>();
+            var mapping = MappingsRepository.MappingFor<ICarnivore>();
 
             // when
-            var classMappings=mapping.Classes.ToList();
+            var classMappings = mapping.Classes.ToList();
 
             // then
             classMappings.Should().HaveCount(2);
@@ -33,49 +33,49 @@ namespace RomanticWeb.Tests.Mapping
         public void Mapped_type_should_contain_declared_properties()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IAnimal>();
+            var mapping = MappingsRepository.MappingFor<IAnimal>();
 
             // when
-            var propertyMapping=mapping.PropertyFor("Name");
+            var propertyMapping = mapping.PropertyFor("Name");
 
             // then
-            Assert.That(propertyMapping.Name,Is.EqualTo("Name"));
-            Assert.That(propertyMapping.Uri,Is.EqualTo(new Uri("http://example/livingThings#name")));
+            Assert.That(propertyMapping.Name, Is.EqualTo("Name"));
+            Assert.That(propertyMapping.Uri, Is.EqualTo(new Uri("http://example/livingThings#name")));
         }
 
         [Test]
         public void Type_can_be_mapped_without_rdf_type()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IUntypedAnimal>();
+            var mapping = MappingsRepository.MappingFor<IUntypedAnimal>();
 
             // then
-            Assert.That(mapping.Classes,Is.Empty);
-            Assert.That(mapping.PropertyFor("Name"),Is.Not.Null);
+            Assert.That(mapping.Classes, Is.Empty);
+            Assert.That(mapping.PropertyFor("Name"), Is.Not.Null);
         }
 
         [Test]
         public void Mapped_type_should_contain_inherited_properties()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<ICarnivore>();
+            var mapping = MappingsRepository.MappingFor<ICarnivore>();
 
             // when
-            var propertyMapping=mapping.PropertyFor("Name");
+            var propertyMapping = mapping.PropertyFor("Name");
 
             // then
-            Assert.That(propertyMapping.Name,Is.EqualTo("Name"));
-            Assert.That(propertyMapping.Uri,Is.EqualTo(new Uri("http://example/livingThings#name")));
+            Assert.That(propertyMapping.Name, Is.EqualTo("Name"));
+            Assert.That(propertyMapping.Uri, Is.EqualTo(new Uri("http://example/livingThings#name")));
         }
 
         [Test]
         public void Subclass_should_inherit_parent_Class_mappings()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IHuman>();
+            var mapping = MappingsRepository.MappingFor<IHuman>();
 
             // when
-            var classMappings=mapping.Classes;
+            var classMappings = mapping.Classes;
 
             // then
             classMappings.Should().HaveCount(4);
@@ -85,42 +85,42 @@ namespace RomanticWeb.Tests.Mapping
         public void Mapping_should_allow_dictionary_with_default_key_value()
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IEntityWithDictionary>();
+            var mapping = MappingsRepository.MappingFor<IEntityWithDictionary>();
 
             // then
-            var propertyMapping=mapping.PropertyFor("SettingsDefault");
+            var propertyMapping = mapping.PropertyFor("SettingsDefault");
             propertyMapping.Should().BeAssignableTo<IDictionaryMapping>();
             propertyMapping.As<IDictionaryMapping>().KeyPredicate.Should().Be(Vocabularies.Rdf.predicate);
             propertyMapping.As<IDictionaryMapping>().ValuePredicate.Should().Be(Vocabularies.Rdf.@object);
         }
 
-        [TestCase("DefaultListMapping",StoreAs.RdfList)]
-        [TestCase("DefaultEnumerableMapping",StoreAs.SimpleCollection)]
-        [TestCase("DefaultCollectionMapping",StoreAs.SimpleCollection)]
+        [TestCase("DefaultListMapping", StoreAs.RdfList)]
+        [TestCase("DefaultEnumerableMapping", StoreAs.SimpleCollection)]
+        [TestCase("DefaultCollectionMapping", StoreAs.SimpleCollection)]
         public void Default_setting_for_collection_should_be_replaced_by_conventions(
-            string propertyName,StoreAs asExpected)
+            string propertyName, StoreAs asExpected)
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IEntityWithCollections>();
+            var mapping = MappingsRepository.MappingFor<IEntityWithCollections>();
 
             // when
-            var property=(ICollectionMapping)mapping.PropertyFor(propertyName);
+            var property = (ICollectionMapping)mapping.PropertyFor(propertyName);
 
             // then
             property.StoreAs.Should().Be(asExpected);
         }
 
-        [TestCase("OverridenListMapping",StoreAs.SimpleCollection)]
-        [TestCase("OverridenEnumerableMapping",StoreAs.RdfList)]
-        [TestCase("OverridenCollectionMapping",StoreAs.RdfList)]
+        [TestCase("OverridenListMapping", StoreAs.SimpleCollection)]
+        [TestCase("OverridenEnumerableMapping", StoreAs.RdfList)]
+        [TestCase("OverridenCollectionMapping", StoreAs.RdfList)]
         public void Explicit_setting_for_collection_should_not_be_replaced_by_conventions(
-            string propertyName,StoreAs asExpected)
+            string propertyName, StoreAs asExpected)
         {
             // given
-            var mapping=MappingsRepository.MappingFor<IEntityWithCollections>();
+            var mapping = MappingsRepository.MappingFor<IEntityWithCollections>();
 
             // when
-            var property=(ICollectionMapping)mapping.PropertyFor(propertyName);
+            var property = (ICollectionMapping)mapping.PropertyFor(propertyName);
 
             // then
             property.StoreAs.Should().Be(asExpected);
@@ -156,11 +156,11 @@ namespace RomanticWeb.Tests.Mapping
         public void Multimapping_should_not_throw_when_getting_derived_properties()
         {
             // given
-            IEntityMapping herbivoreMapping=MappingsRepository.MappingFor<IHerbivore>();
-            IEntityMapping carnivoreMapping=MappingsRepository.MappingFor<ICarnivore>();
+            IEntityMapping herbivoreMapping = MappingsRepository.MappingFor<IHerbivore>();
+            IEntityMapping carnivoreMapping = MappingsRepository.MappingFor<ICarnivore>();
 
             // when
-            var multiMapping=new MultiMapping(herbivoreMapping,carnivoreMapping);
+            var multiMapping = new MultiMapping(herbivoreMapping, carnivoreMapping);
 
             // then
             Assert.DoesNotThrow(() => multiMapping.PropertyFor("Name"));

@@ -13,9 +13,9 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Mapping.Sources
 {
-    internal class GeneratedListMappingSource:IMappingProviderVisitor,IMappingProviderSource
+    internal class GeneratedListMappingSource : IMappingProviderVisitor, IMappingProviderSource
     {
-        private readonly IFluentMapsVisitor _visitor=new FluentMappingProviderBuilder();
+        private readonly IFluentMapsVisitor _visitor = new FluentMappingProviderBuilder();
         private readonly IList<EntityMap> _entryMaps = new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
 
@@ -23,7 +23,7 @@ namespace RomanticWeb.Mapping.Sources
 
         public GeneratedListMappingSource(IOntologyProvider ontologyProvider)
         {
-            _ontologyProvider=ontologyProvider;
+            _ontologyProvider = ontologyProvider;
         }
 
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()
@@ -33,7 +33,7 @@ namespace RomanticWeb.Mapping.Sources
 
         public void Visit(ICollectionMappingProvider collectionMappingProvider)
         {
-            if (collectionMappingProvider.StoreAs==Model.StoreAs.RdfList)
+            if (collectionMappingProvider.StoreAs == Model.StoreAs.RdfList)
             {
                 _entryMaps.Add(CreateListOwnerMapping(collectionMappingProvider));
                 _entryMaps.Add(CreateListEntryMapping(collectionMappingProvider));
@@ -54,19 +54,19 @@ namespace RomanticWeb.Mapping.Sources
 
         public void Visit(IEntityMappingProvider entityMappingProvider)
         {
-            _currentEntityType=entityMappingProvider.EntityType;
+            _currentEntityType = entityMappingProvider.EntityType;
         }
 
         private EntityMap CreateListOwnerMapping(ICollectionMappingProvider map)
         {
             var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicListMappings");
-            var ownerTypeName=GetOwnerTypeName(map);
+            var ownerTypeName = GetOwnerTypeName(map);
 
             var mapType = defineDynamicModule.GetOrEmitType(ownerTypeName + "Map", moduleBuilder => EmitOwnerMappingType(map, moduleBuilder, ownerTypeName));
             return (EntityMap)Activator.CreateInstance(mapType);
         }
 
-        private TypeBuilder EmitOwnerMappingType(IPropertyMappingProvider map,ModuleBuilder defineDynamicModule,string ownerTypeName)
+        private TypeBuilder EmitOwnerMappingType(IPropertyMappingProvider map, ModuleBuilder defineDynamicModule, string ownerTypeName)
         {
             var owner = defineDynamicModule.DefineType(
                     ownerTypeName,
@@ -98,12 +98,12 @@ namespace RomanticWeb.Mapping.Sources
             var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicListMappings");
             var nodeTypeName = GetNodeTypeName(map);
 
-            var mapType=defineDynamicModule.GetOrEmitType(nodeTypeName + "Map",builder => EmitNodeMappingType(builder,map,nodeTypeName));
+            var mapType = defineDynamicModule.GetOrEmitType(nodeTypeName + "Map", builder => EmitNodeMappingType(builder, map, nodeTypeName));
 
             return (EntityMap)Activator.CreateInstance(mapType);
         }
 
-        private TypeBuilder EmitNodeMappingType(ModuleBuilder builder,ICollectionMappingProvider map,string nodeTypeName)
+        private TypeBuilder EmitNodeMappingType(ModuleBuilder builder, ICollectionMappingProvider map, string nodeTypeName)
         {
             var elementType = map.PropertyInfo.PropertyType.FindItemType();
             var nodeType = builder.DefineType(
@@ -111,10 +111,10 @@ namespace RomanticWeb.Mapping.Sources
                    TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract,
                    null,
                    new[] { typeof(IRdfListNode<>).MakeGenericType(elementType) }).CreateType();
-            var converterType=map.ElementConverterType??map.ConverterType;
-            var ownerMapType=typeof(ListEntryMap<,,>).MakeGenericType(nodeType,elementType,converterType);
+            var converterType = map.ElementConverterType ?? map.ConverterType;
+            var ownerMapType = typeof(ListEntryMap<,,>).MakeGenericType(nodeType, elementType, converterType);
 
-            return builder.DefineType(nodeTypeName+"Map",TypeAttributes.Public,ownerMapType);
+            return builder.DefineType(nodeTypeName + "Map", TypeAttributes.Public, ownerMapType);
         }
 
         private string GetOwnerTypeName(ICollectionMappingProvider map)

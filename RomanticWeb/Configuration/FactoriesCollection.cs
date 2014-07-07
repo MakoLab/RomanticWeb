@@ -6,7 +6,7 @@ namespace RomanticWeb.Configuration
     /// <summary>
     /// A collection of factory configuration elements
     /// </summary>
-    public class FactoriesCollection:ConfigurationElementCollection
+    public class FactoriesCollection : ConfigurationElementCollection
     {
         /// <summary>
         /// Gets the <see cref="FactoryElement"/> with the specified name.
@@ -15,7 +15,7 @@ namespace RomanticWeb.Configuration
         {
             get
             {
-                return this.OfType<FactoryElement>().Single(e => e.Name==factoryName);
+                return this.OfType<FactoryElement>().Single(e => e.Name == factoryName);
             }
         }
 

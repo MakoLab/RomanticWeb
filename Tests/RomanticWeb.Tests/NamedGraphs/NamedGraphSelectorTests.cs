@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests.NamedGraphs
         [SetUp]
         public void Setup()
         {
-            _namedGraphSelector=new NamedGraphSelector();
+            _namedGraphSelector = new NamedGraphSelector();
         }
 
         [TearDown]

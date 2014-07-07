@@ -8,40 +8,41 @@ using RomanticWeb.Mapping.Visitors;
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>Base class for fluently defining entity mappings.</summary>
-    public abstract class EntityMap<TEntity>:EntityMap
+    public abstract class EntityMap<TEntity> : EntityMap
     {
         /// <summary>Initializes a new instance of the <see cref="EntityMap{TEntity}"/> class.</summary>
-        protected EntityMap():base(typeof(TEntity))
+        protected EntityMap()
+            : base(typeof(TEntity))
         {
         }
 
         /// <summary>Gets a builder for mapping a property.</summary>
-        protected IPropertyMap Property<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
+        protected IPropertyMap Property<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
         {
-            var propertyMap=new PropertyMap(prop.ExtractPropertyInfo());
+            var propertyMap = new PropertyMap(prop.ExtractPropertyInfo());
             MappedProperties.Add(propertyMap);
             return propertyMap;
         }
 
         /// <summary>Gets a builder for mapping a collection property.</summary>
-        protected ICollectionMap Collection<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
+        protected ICollectionMap Collection<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
         {
-            var propertyMap=new CollectionMap(prop.ExtractPropertyInfo());
+            var propertyMap = new CollectionMap(prop.ExtractPropertyInfo());
             MappedProperties.Add(propertyMap);
             return propertyMap;
         }
 
         /// <summary>Gets a builder for mapping a dictionary property.</summary>
-        protected IDictionaryMap Dictionary<TReturnType>(Expression<Func<TEntity,TReturnType>> prop)
+        protected IDictionaryMap Dictionary<TReturnType>(Expression<Func<TEntity, TReturnType>> prop)
         {
-            var dictionaryMap=new DictionaryMap(prop.ExtractPropertyInfo());
+            var dictionaryMap = new DictionaryMap(prop.ExtractPropertyInfo());
             MappedProperties.Add(dictionaryMap);
             return dictionaryMap;
         }
     }
 
     /// <summary>Base class for fluently defining entity entityMappings.</summary>
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules","SA1402:FileMayOnlyContainASingleClass",Justification="Generic and non-generic flavour of same class.")]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Generic and non-generic flavour of same class.")]
     public abstract class EntityMap
     {
         private readonly Type _type;
@@ -52,9 +53,9 @@ namespace RomanticWeb.Mapping.Fluent
         /// <param name="type">The mapped type.</param>
         protected EntityMap(Type type)
         {
-            _type=type;
-            _mappedProperties=new List<PropertyMapBase>();
-            _classes=new List<ClassMap>();
+            _type = type;
+            _mappedProperties = new List<PropertyMapBase>();
+            _classes = new List<ClassMap>();
         }
 
         internal Type Type { get { return _type; } }
@@ -70,7 +71,7 @@ namespace RomanticWeb.Mapping.Fluent
         {
             get
             {
-                var classMap=new ClassMap();
+                var classMap = new ClassMap();
                 _classes.Add(classMap);
                 return classMap;
             }

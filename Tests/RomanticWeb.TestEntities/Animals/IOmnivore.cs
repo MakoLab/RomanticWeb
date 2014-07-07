@@ -3,8 +3,7 @@
 namespace RomanticWeb.TestEntities.Animals
 {
     [Class("life", "Omnivore")]
-    public interface IOmnivore:ICarnivore,IHerbivore
+    public interface IOmnivore : ICarnivore, IHerbivore
     {
-        
     }
 }

@@ -13,12 +13,12 @@ namespace RomanticWeb.Entities
     [NullGuard(ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class Entity:DynamicObject,IEntity
+    public class Entity : DynamicObject, IEntity
     {
         #region Fields
         private readonly IEntityContext _context;
         private readonly EntityId _entityId;
-        private readonly IDictionary<string,OntologyAccessor> _ontologyAccessors;
+        private readonly IDictionary<string, OntologyAccessor> _ontologyAccessors;
         private bool _isInitialized;
         #endregion
 
@@ -33,16 +33,17 @@ namespace RomanticWeb.Entities
                 throw new ArgumentException("The identifier must be an absolute URI", "entityId");
             }
 
-            _entityId=entityId;
-            _ontologyAccessors=new ConcurrentDictionary<string,OntologyAccessor>();
+            _entityId = entityId;
+            _ontologyAccessors = new ConcurrentDictionary<string, OntologyAccessor>();
         }
 
         /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
         /// <param name="entityId">IRI of the entity.</param>
         /// <param name="context">Entity context to be attached to this entity.</param>
-        internal Entity(EntityId entityId,IEntityContext context):this(entityId)
+        internal Entity(EntityId entityId, IEntityContext context)
+            : this(entityId)
         {
-            _context=context;
+            _context = context;
         }
         #endregion
 
@@ -64,7 +65,7 @@ namespace RomanticWeb.Entities
         {
             get
             {
-                return (_entityId is BlankId)||_isInitialized;
+                return (_entityId is BlankId) || _isInitialized;
             }
         }
 
@@ -96,14 +97,14 @@ namespace RomanticWeb.Entities
 
             internal set
             {
-                var accessor=value as OntologyAccessor;
-                if (accessor!=null)
+                var accessor = value as OntologyAccessor;
+                if (accessor != null)
                 {
-                    _ontologyAccessors.Add(member,accessor);
+                    _ontologyAccessors.Add(member, accessor);
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("value","Must be OntologyAccessor");
+                    throw new ArgumentOutOfRangeException("value", "Must be OntologyAccessor");
                 }
             }
         }
@@ -114,18 +115,18 @@ namespace RomanticWeb.Entities
         /// <param name="left">Left operand of the check.</param>
         /// <param name="right">Right operand of the check.</param>
         /// <returns><b>True</b> if entities has equal IRI's, otherwise <b>false</b>.</returns>
-        public static bool operator==(Entity left,IEntity right)
+        public static bool operator ==(Entity left, IEntity right)
         {
-            return Equals(left,right);
+            return Equals(left, right);
         }
 
         /// <summary>Checks for inequality between two entities.</summary>
         /// <param name="left">Left operand of the check.</param>
         /// <param name="right">Right operand of the check.</param>
         /// <returns><b>False</b> if entities has equal IRI's, otherwise <b>true</b>.</returns>
-        public static bool operator!=(Entity left,IEntity right)
+        public static bool operator !=(Entity left, IEntity right)
         {
-            return !(left==right);
+            return !(left == right);
         }
         #endregion
 
@@ -138,16 +139,16 @@ namespace RomanticWeb.Entities
         /// <param name="binder">Binder context with details on which member is going to be resolved.</param>
         /// <param name="result">Result of the member resolution.</param>
         /// <returns><b>True</b> if the member was resolved sucessfuly, otherwise <b>false</b>.</returns>
-        public override bool TryGetMember(GetMemberBinder binder,out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             EnsureIsInitialized();
-            bool gettingMemberSucceeded=TryGetOntologyAccessor(binder,out result);
+            bool gettingMemberSucceeded = TryGetOntologyAccessor(binder, out result);
             if (gettingMemberSucceeded)
             {
                 return true;
             }
 
-            if (TryGetPropertyFromOntologies(binder,out result))
+            if (TryGetPropertyFromOntologies(binder, out result))
             {
                 return true;
             }
@@ -158,7 +159,7 @@ namespace RomanticWeb.Entities
         /// <summary>Transforms given entity into a strongly typed interface.</summary>
         /// <typeparam name="TInterface">Strongly typed interface to be transformed into.</typeparam>
         /// <returns>Proxy beeing a dynamic implementation of a given interface.</returns>
-        public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
+        public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
         {
             return _context.EntityAs<TInterface>(this);
         }
@@ -178,14 +179,14 @@ namespace RomanticWeb.Entities
         public override bool Equals(object obj)
         {
             var entity = obj as IEntity;
-            if (entity==null) { return false; }
+            if (entity == null) { return false; }
             return Id.Equals(entity.Id);
         }
 
 #pragma warning disable
         public override string ToString()
         {
-            return string.Format("<{0}>",Id);
+            return string.Format("<{0}>", Id);
         }
 #pragma warning restore
 
@@ -195,52 +196,52 @@ namespace RomanticWeb.Entities
         /// <summary>Ensures the entity is initialized and filled with data.</summary>
         internal void EnsureIsInitialized()
         {
-            if ((Context!=null)&&!IsInitialized)
+            if ((Context != null) && !IsInitialized)
             {
                 _context.InitializeEnitity(this);
-                _isInitialized=true;
+                _isInitialized = true;
             }
         }
 
         internal void MarkAsInitialized()
         {
-            _isInitialized=true;
+            _isInitialized = true;
         }
 
-        private bool TryGetOntologyAccessor(GetMemberBinder binder,out object result)
+        private bool TryGetOntologyAccessor(GetMemberBinder binder, out object result)
         {
             if (_ontologyAccessors.ContainsKey(binder.Name))
             {
-                result=_ontologyAccessors[binder.Name];
+                result = _ontologyAccessors[binder.Name];
                 return true;
             }
 
-            result=null;
+            result = null;
             return false;
         }
 
-        private bool TryGetPropertyFromOntologies(GetMemberBinder binder,out object result)
+        private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
         {
-            var matchingPredicates=(from accessor in _ontologyAccessors.Values
-                                    let property=accessor.GetProperty(binder.Name)
-                                    where property!=null
-                                    select new { accessor,property }).ToList();
+            var matchingPredicates = (from accessor in _ontologyAccessors.Values
+                                      let property = accessor.GetProperty(binder.Name)
+                                      where property != null
+                                      select new { accessor, property }).ToList();
 
-            if (matchingPredicates.Count==1)
+            if (matchingPredicates.Count == 1)
             {
-                var singleMatch=matchingPredicates.Single();
-                result=singleMatch.accessor.GetObjects(Id,singleMatch.property,new DynamicPropertyAggregate(binder.Name));
-                return result!=null;
+                var singleMatch = matchingPredicates.Single();
+                result = singleMatch.accessor.GetObjects(Id, singleMatch.property, new DynamicPropertyAggregate(binder.Name));
+                return result != null;
             }
 
-            if (matchingPredicates.Count==0)
+            if (matchingPredicates.Count == 0)
             {
-                result=null;
+                result = null;
                 return false;
             }
 
-            var matchedPropertiesQNames=matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
-            throw new AmbiguousPropertyException(binder.Name,matchedPropertiesQNames);
+            var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
+            throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
         }
         #endregion
 
@@ -250,7 +251,7 @@ namespace RomanticWeb.Entities
 
             public DebuggerDisplayProxy(Entity entity)
             {
-                _entity=entity;
+                _entity = entity;
             }
 
             public EntityId Id

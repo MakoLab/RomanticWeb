@@ -32,9 +32,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             get
             {
-                if (_entityContext==null)
+                if (_entityContext == null)
                 {
-                    _entityContext=Factory.CreateContext();
+                    _entityContext = Factory.CreateContext();
                 }
 
                 return _entityContext;
@@ -48,10 +48,10 @@ namespace RomanticWeb.Tests.IntegrationTests
         [SetUp]
         public void Setup()
         {
-            Mappings=SetupMappings();
-            _entityStore=new EntityStore();
+            Mappings = SetupMappings();
+            _entityStore = new EntityStore();
 
-            _factory=new EntityContextFactory().WithEntitySource(CreateEntitySource)
+            _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
                                                .WithOntology(new DefaultOntologiesProvider())
                                                .WithOntology(new LifeOntology())
                                                .WithOntology(new TestOntologyProvider(IncludeFoaf))
@@ -66,13 +66,13 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Teardown()
         {
             ChildTeardown();
-            _entityContext=null;
+            _entityContext = null;
         }
 
         protected virtual void BuildMappings(MappingBuilder m)
         {
             m.FromAssemblyOf<IAnimal>();
-            m.AddMapping(GetType().Assembly,Mappings);
+            m.AddMapping(GetType().Assembly, Mappings);
         }
 
         protected virtual void ChildTeardown()
@@ -92,42 +92,42 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected abstract IEntitySource CreateEntitySource();
 
-        public class LifeOntology:IOntologyProvider
+        public class LifeOntology : IOntologyProvider
         {
             public IEnumerable<Ontology> Ontologies
             {
                 get
                 {
-                    yield return new Ontology("life",new Uri("http://example/livingThings#"));
+                    yield return new Ontology("life", new Uri("http://example/livingThings#"));
                 }
             }
 
-            public Uri ResolveUri(string prefix,string rdfTermName)
+            public Uri ResolveUri(string prefix, string rdfTermName)
             {
-                if (prefix=="life")
+                if (prefix == "life")
                 {
-                    return new Uri("http://example/livingThings#"+rdfTermName);
+                    return new Uri("http://example/livingThings#" + rdfTermName);
                 }
 
                 return null;
             }
         }
 
-        public class ChemOntology:IOntologyProvider
+        public class ChemOntology : IOntologyProvider
         {
             public IEnumerable<Ontology> Ontologies
             {
                 get
                 {
-                    yield return new Ontology("chem",new Uri("http://chem.com/vocab/"));
+                    yield return new Ontology("chem", new Uri("http://chem.com/vocab/"));
                 }
             }
 
-            public Uri ResolveUri(string prefix,string rdfTermName)
+            public Uri ResolveUri(string prefix, string rdfTermName)
             {
-                if (prefix=="chem")
+                if (prefix == "chem")
                 {
-                    return new Uri("http://chem.com/vocab/"+rdfTermName);
+                    return new Uri("http://chem.com/vocab/" + rdfTermName);
                 }
 
                 return null;

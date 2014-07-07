@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RomanticWeb.Linq
 {
     /// <summary>Creates camelCase variable names.</summary>
-    public class CamelCaseVariableNamingConvention:IVariableNamingConvention
+    public class CamelCaseVariableNamingConvention : IVariableNamingConvention
     {
         /// <inheritdoc />
         public string GetIdentifierForName(string name)

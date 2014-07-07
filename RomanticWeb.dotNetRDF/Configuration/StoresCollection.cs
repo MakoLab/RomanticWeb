@@ -8,14 +8,14 @@ namespace RomanticWeb.DotNetRDF.Configuration
     /// <summary>
     /// Configuration elements for dotNetRDF triple stores
     /// </summary>
-    public class StoresCollection:ConfigurationElementCollection,IEnumerable<StoreElement>
+    public class StoresCollection : ConfigurationElementCollection, IEnumerable<StoreElement>
     {
         private static readonly IDictionary<string, Func<StoresCollection, StoreElement>> StoreElementFactories;
         private readonly StoresConfigurationSection _parent;
 
         static StoresCollection()
         {
-            StoreElementFactories=new Dictionary<string,Func<StoresCollection,StoreElement>>();
+            StoreElementFactories = new Dictionary<string, Func<StoresCollection, StoreElement>>();
             StoreElementFactories["inMemory"] = self => new InMemoryStoreElement();
             StoreElementFactories["persistent"] = self => new PersistentStoreElement();
             StoreElementFactories["external"] = self => new ExternallyConfiguredStoreElement(self._parent);
@@ -63,11 +63,11 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// <summary>
         /// Tries to deserialize a store element node
         /// </summary>
-        protected override bool OnDeserializeUnrecognizedElement(string elementName,XmlReader reader)
+        protected override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
         {
             if (StoreElementFactories.ContainsKey(elementName))
             {
-                StoreElement storeElement=StoreElementFactories[elementName].Invoke(this);
+                StoreElement storeElement = StoreElementFactories[elementName].Invoke(this);
                 storeElement.DeserializeElementForConfig(reader, false);
                 BaseAdd(storeElement);
                 return true;

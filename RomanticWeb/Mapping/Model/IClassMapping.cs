@@ -34,5 +34,5 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         /// <param name="mappingModelVisitor">The mapping model visitor.</param>
         void Accept(IMappingModelVisitor mappingModelVisitor);
-	}
+    }
 }

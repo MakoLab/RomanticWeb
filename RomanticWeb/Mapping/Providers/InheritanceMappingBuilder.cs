@@ -10,18 +10,18 @@ namespace RomanticWeb.Mapping.Providers
 
         public InheritanceMappingBuilder(IList<IEntityMappingProvider> originalMappings)
         {
-            _originalMappings=originalMappings;
+            _originalMappings = originalMappings;
         }
 
         public IEnumerable<IEntityMappingProvider> CombineInheritingMappings()
         {
             foreach (var mapping in _originalMappings)
             {
-                var parentTypesMappings=GetParentMappings(mapping).ToList();
+                var parentTypesMappings = GetParentMappings(mapping).ToList();
 
                 if (parentTypesMappings.Any())
                 {
-                    yield return new InheritanceTreeProvider(mapping,parentTypesMappings);
+                    yield return new InheritanceTreeProvider(mapping, parentTypesMappings);
                 }
                 else
                 {
@@ -30,13 +30,13 @@ namespace RomanticWeb.Mapping.Providers
             }
         }
 
-        private static bool IsDerivedFrom(Type child,Type parent)
+        private static bool IsDerivedFrom(Type child, Type parent)
         {
-            var interfaceDerivesFromParent=from iface in child.GetInterfaces()
-                                           where iface.IsGenericType
-                                           let genericDefinition = iface.GetGenericTypeDefinition()
-                                           where genericDefinition==parent
-                                           select iface;
+            var interfaceDerivesFromParent = from iface in child.GetInterfaces()
+                                             where iface.IsGenericType
+                                             let genericDefinition = iface.GetGenericTypeDefinition()
+                                             where genericDefinition == parent
+                                             select iface;
 
             return parent.IsAssignableFrom(child) || interfaceDerivesFromParent.Any();
         }
@@ -45,7 +45,7 @@ namespace RomanticWeb.Mapping.Providers
         {
             return from m in _originalMappings
                    where m.EntityType != childMapping.EntityType
-                   where IsDerivedFrom(childMapping.EntityType,m.EntityType)
+                   where IsDerivedFrom(childMapping.EntityType, m.EntityType)
                    select m;
         }
     }

@@ -11,10 +11,10 @@ namespace RomanticWeb.Mapping
     /// Implementation of <see cref="IRdfTypeCache"/>, 
     /// which built by visiting <see cref="IEntityMapping"/>s
     /// </summary>
-    public class RdfTypeCache:IRdfTypeCache,Visitors.IMappingModelVisitor
+    public class RdfTypeCache : IRdfTypeCache, Visitors.IMappingModelVisitor
     {
-        private readonly IDictionary<Type,IList<IClassMapping>> _classMappings;
-        private readonly IDictionary<Type,ISet<Type>> _directlyDerivingTypes;
+        private readonly IDictionary<Type, IList<IClassMapping>> _classMappings;
+        private readonly IDictionary<Type, ISet<Type>> _directlyDerivingTypes;
         private IList<IClassMapping> _currentClasses;
 
         /// <summary>
@@ -22,28 +22,28 @@ namespace RomanticWeb.Mapping
         /// </summary>
         public RdfTypeCache()
         {
-            _classMappings=new Dictionary<Type,IList<IClassMapping>>();
+            _classMappings = new Dictionary<Type, IList<IClassMapping>>();
             _directlyDerivingTypes = new Dictionary<Type, ISet<Type>>();
         }
 
         /// <inheridoc/>
         [return: AllowNull]
-        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity,Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType)
         {
-            if (requestedType==typeof(ITypedEntity))
+            if (requestedType == typeof(ITypedEntity))
             {
                 return new[] { typeof(ITypedEntity) };
             }
 
-            ISet<Type> selectedTypes=new HashSet<Type> { requestedType };
-            var types=entity.AsEntity<ITypedEntity>().Types.Select(t => t.Uri).ToList();
+            ISet<Type> selectedTypes = new HashSet<Type> { requestedType };
+            var types = entity.AsEntity<ITypedEntity>().Types.Select(t => t.Uri).ToList();
 
-            if (types.Any()&&_directlyDerivingTypes.ContainsKey(requestedType))
+            if (types.Any() && _directlyDerivingTypes.ContainsKey(requestedType))
             {
-                var childTypesToCheck=new Queue<Type>(_directlyDerivingTypes[requestedType]);
+                var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
                 while (childTypesToCheck.Any())
                 {
-                    Type potentialMatch=childTypesToCheck.Dequeue();
+                    Type potentialMatch = childTypesToCheck.Dequeue();
 
                     if (_directlyDerivingTypes.ContainsKey(potentialMatch))
                     {
@@ -77,12 +77,12 @@ namespace RomanticWeb.Mapping
         {
             if (!_classMappings.ContainsKey(entityMapping.EntityType))
             {
-                _classMappings.Add(entityMapping.EntityType,new List<IClassMapping>());
+                _classMappings.Add(entityMapping.EntityType, new List<IClassMapping>());
             }
 
             AddAsChildOfParentTypes(entityMapping.EntityType);
 
-            _currentClasses=_classMappings[entityMapping.EntityType];
+            _currentClasses = _classMappings[entityMapping.EntityType];
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace RomanticWeb.Mapping
             {
                 if (!_directlyDerivingTypes.ContainsKey(parentType))
                 {
-                    _directlyDerivingTypes.Add(parentType,new HashSet<Type>());
+                    _directlyDerivingTypes.Add(parentType, new HashSet<Type>());
                 }
 
                 _directlyDerivingTypes[parentType].Add(entityType);

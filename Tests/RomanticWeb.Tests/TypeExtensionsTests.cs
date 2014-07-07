@@ -17,10 +17,10 @@ namespace RomanticWeb.Tests
         public void GetImmediateParents_should_find_directly_implemented_interfaces()
         {
             // given
-            Type type=typeof(IDerivedLevel2);
+            Type type = typeof(IDerivedLevel2);
 
             // when
-            var immediateParents=type.GetImmediateParents().ToList();
+            var immediateParents = type.GetImmediateParents().ToList();
 
             // then
             immediateParents.Should().HaveCount(1);
@@ -58,10 +58,10 @@ namespace RomanticWeb.Tests
         public void GetImmediateParents_should_include_concrete_base_type()
         {
             // given
-            Type type=typeof(FluentNoIEntityInnerMapChild);
+            Type type = typeof(FluentNoIEntityInnerMapChild);
 
             // when
-            var immediateParents=type.GetImmediateParents().ToList();
+            var immediateParents = type.GetImmediateParents().ToList();
 
             // then
             immediateParents.Should().Contain(typeof(FluentNoIEntityInnerMapParent));
@@ -71,10 +71,10 @@ namespace RomanticWeb.Tests
         public void GetImmediateParents_of_open_generic_should_not_return_itself()
         {
             // given
-            Type type=typeof(IGenericParent<>);
+            Type type = typeof(IGenericParent<>);
 
             // when
-            var immediateParents=type.GetImmediateParents().ToList();
+            var immediateParents = type.GetImmediateParents().ToList();
 
             // then
             immediateParents.Should().BeEmpty();
@@ -84,7 +84,7 @@ namespace RomanticWeb.Tests
         public void GetMostDerivedTypes_should_exclude_base_types(ICollection<Type> types)
         {
             // when
-            var mostDerivedTypes=types.GetMostDerivedTypes().ToList();
+            var mostDerivedTypes = types.GetMostDerivedTypes().ToList();
 
             // then
             mostDerivedTypes.Should().HaveCount(3);

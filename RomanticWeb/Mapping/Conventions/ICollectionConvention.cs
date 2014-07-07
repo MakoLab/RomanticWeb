@@ -5,7 +5,7 @@ namespace RomanticWeb.Mapping.Conventions
     /// <summary>
     /// A contract for implementing collection conventions
     /// </summary>
-    public interface ICollectionConvention:IConvention<ICollectionMappingProvider>
+    public interface ICollectionConvention : IConvention<ICollectionMappingProvider>
     {
     }
 }

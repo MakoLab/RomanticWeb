@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.Inheritance
 {
-    public class FluentChildMap:EntityMap<IFluentChild>
+    public class FluentChildMap : EntityMap<IFluentChild>
     {
         public FluentChildMap()
         {

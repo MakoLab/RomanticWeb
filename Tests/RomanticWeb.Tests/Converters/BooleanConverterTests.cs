@@ -24,7 +24,7 @@ namespace RomanticWeb.Tests.Converters
         [TestCase("0", false)]
         public void Should_convert_valid_booleans(string literal, bool expected)
         {
-            Assert.That(Converter.Convert(Node.ForLiteral(literal), new Mock<IEntityContext>().Object),Is.EqualTo(expected));
+            Assert.That(Converter.Convert(Node.ForLiteral(literal), new Mock<IEntityContext>().Object), Is.EqualTo(expected));
         }
     }
 }

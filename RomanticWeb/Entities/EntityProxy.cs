@@ -12,10 +12,10 @@ using RomanticWeb.NamedGraphs;
 namespace RomanticWeb.Entities
 {
     /// <summary>Proxy for exposing mapped entity members.</summary>
-    [NullGuard(ValidationFlags.All^ValidationFlags.OutValues)]
+    [NullGuard(ValidationFlags.All ^ ValidationFlags.OutValues)]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerDisplayProxy))]
-    public class EntityProxy:DynamicObject,IEntity,IEntityProxy
+    public class EntityProxy : DynamicObject, IEntity, IEntityProxy
     {
         #region Fields
         private readonly IEntityStore _store;
@@ -23,7 +23,7 @@ namespace RomanticWeb.Entities
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
         private ISourceGraphSelectionOverride _overrideSourceGraph;
-        private IDictionary<int,object> _memberCache=new Dictionary<int,object>();
+        private IDictionary<int, object> _memberCache = new Dictionary<int, object>();
         #endregion
 
         #region Constructors
@@ -34,12 +34,12 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
-        public EntityProxy(Entity entity,IEntityMapping entityMapping,IResultTransformerCatalog resultTransformers)
+        public EntityProxy(Entity entity, IEntityMapping entityMapping, IResultTransformerCatalog resultTransformers)
         {
-            _store=entity.Context.Store;
-            _entity=entity;
-            _entityMapping=entityMapping;
-            _resultTransformers=resultTransformers;
+            _store = entity.Context.Store;
+            _entity = entity;
+            _entityMapping = entityMapping;
+            _resultTransformers = resultTransformers;
         }
 
         #endregion
@@ -73,78 +73,78 @@ namespace RomanticWeb.Entities
 
         #region Public methods
         /// <inheritdoc />
-        public override bool TryGetMember(GetMemberBinder binder,out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var property=_entityMapping.PropertyFor(binder.Name);
+            var property = _entityMapping.PropertyFor(binder.Name);
             try
             {
                 _entity.EnsureIsInitialized();
-                var graph=SelectNamedGraph(property);
-                int key=_entity.Id.GetHashCode()^property.Uri.AbsoluteUri.GetHashCode()^(graph!=null?graph.AbsoluteUri.GetHashCode():0);
-                if (!_memberCache.TryGetValue(key,out result))
+                var graph = SelectNamedGraph(property);
+                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0);
+                if (!_memberCache.TryGetValue(key, out result))
                 {
-                    LogTo.Trace("Reading property {0} from graph {1}",property.Uri,graph);
+                    LogTo.Trace("Reading property {0} from graph {1}", property.Uri, graph);
 
-                    IEnumerable<Node> objects=_store.GetObjectsForPredicate(_entity.Id,property.Uri,graph);
-                    var resultTransformer=_resultTransformers.GetTransformer(property);
-                    result=resultTransformer.FromNodes(this,property,Context,objects);
+                    IEnumerable<Node> objects = _store.GetObjectsForPredicate(_entity.Id, property.Uri, graph);
+                    var resultTransformer = _resultTransformers.GetTransformer(property);
+                    result = resultTransformer.FromNodes(this, property, Context, objects);
 
                     if (result is IEntity)
                     {
-                        var entityProxy=((IEntity)result).UnwrapProxy() as IEntityProxy;
+                        var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
 
-                        if (entityProxy!=null)
+                        if (entityProxy != null)
                         {
-                            SetNamedGraphOverride(entityProxy,property);
+                            SetNamedGraphOverride(entityProxy, property);
                         }
                     }
 
-                    _memberCache[key]=result;
+                    _memberCache[key] = result;
                 }
 
                 return true;
             }
             catch (Exception e)
             {
-                LogTo.Fatal("An error occured when getting value for property {0}#{1}",_entityMapping.EntityType.FullName,binder.Name);
+                LogTo.Fatal("An error occured when getting value for property {0}#{1}", _entityMapping.EntityType.FullName, binder.Name);
                 LogTo.Fatal(e.Message);
                 throw;
             }
         }
 
         /// <inheritdoc />
-        public override bool TrySetMember(SetMemberBinder binder,[AllowNull]object value)
+        public override bool TrySetMember(SetMemberBinder binder, [AllowNull]object value)
         {
-            if ((_entity.Id is BlankId)&&(((BlankId)_entity.Id).RootEntityId==null))
+            if ((_entity.Id is BlankId) && (((BlankId)_entity.Id).RootEntityId == null))
             {
-                throw new InvalidOperationException(System.String.Format("Entity <'{0}'> is a blank node not attached to any non-blank node resource and is in a read-only mode.",_entity.Id));
+                throw new InvalidOperationException(System.String.Format("Entity <'{0}'> is a blank node not attached to any non-blank node resource and is in a read-only mode.", _entity.Id));
             }
 
             try
             {
                 _entity.EnsureIsInitialized();
-                var property=_entityMapping.PropertyFor(binder.Name);
-                var graph=SelectNamedGraph(property);
-                int key=_entity.Id.GetHashCode()^property.Uri.AbsoluteUri.GetHashCode()^(graph!=null?graph.AbsoluteUri.GetHashCode():0);
+                var property = _entityMapping.PropertyFor(binder.Name);
+                var graph = SelectNamedGraph(property);
+                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0);
                 _memberCache.Remove(key);
 
-                LogTo.Trace("Setting property {0}",property.Uri);
+                LogTo.Trace("Setting property {0}", property.Uri);
 
-                var propertyUri=Node.ForUri(property.Uri);
-                var resultTransformer=_resultTransformers.GetTransformer(property);
+                var propertyUri = Node.ForUri(property.Uri);
+                var resultTransformer = _resultTransformers.GetTransformer(property);
 
-                Func<IEnumerable<Node>> newValues=() => new Node[0];
-                if (value!=null)
+                Func<IEnumerable<Node>> newValues = () => new Node[0];
+                if (value != null)
                 {
-                    newValues=() => resultTransformer.ToNodes(value,this,property,Context);
+                    newValues = () => resultTransformer.ToNodes(value, this, property, Context);
                 }
 
-                _store.ReplacePredicateValues(Id,propertyUri,newValues,graph);
+                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
                 return true;
             }
             catch
             {
-                LogTo.Fatal("An error occured when setting value for property {0}#{1}",_entityMapping.EntityType.FullName,binder.Name);
+                LogTo.Fatal("An error occured when setting value for property {0}#{1}", _entityMapping.EntityType.FullName, binder.Name);
                 throw;
             }
         }
@@ -152,9 +152,9 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var proxy=obj as EntityProxy;
-            IEntity entity=proxy!=null?proxy._entity:obj as IEntity;
-            if (entity==null) { return false; }
+            var proxy = obj as EntityProxy;
+            IEntity entity = proxy != null ? proxy._entity : obj as IEntity;
+            if (entity == null) { return false; }
 
             return _entity.Equals(entity);
         }
@@ -174,7 +174,7 @@ namespace RomanticWeb.Entities
         /// <summary>
         /// Gets the underlying wrapper as another type of entity.
         /// </summary>
-        public TInterface AsEntity<TInterface>() where TInterface:class,IEntity
+        public TInterface AsEntity<TInterface>() where TInterface : class, IEntity
         {
             return _entity.AsEntity<TInterface>();
         }
@@ -193,17 +193,17 @@ namespace RomanticWeb.Entities
         /// <param name="parametersOverride">The parameters override.</param>
         public void OverrideGraphSelection(ISourceGraphSelectionOverride parametersOverride)
         {
-            _overrideSourceGraph=parametersOverride;
+            _overrideSourceGraph = parametersOverride;
         }
         #endregion
 
         #region Private methods
-        private void SetNamedGraphOverride(IEntityProxy proxy,IPropertyMapping property)
+        private void SetNamedGraphOverride(IEntityProxy proxy, IPropertyMapping property)
         {
-            var paremeters=GraphSelectionOverride??new OverridingGraphSelector(Id,_entityMapping,property);
-            if (proxy!=null)
+            var paremeters = GraphSelectionOverride ?? new OverridingGraphSelector(Id, _entityMapping, property);
+            if (proxy != null)
             {
-                if ((proxy.Id is BlankId)||(typeof(IRdfListNode<>).IsAssignableFromSpecificGeneric(proxy.EntityMapping.EntityType)))
+                if ((proxy.Id is BlankId) || (typeof(IRdfListNode<>).IsAssignableFromSpecificGeneric(proxy.EntityMapping.EntityType)))
                 {
                     proxy.OverrideGraphSelection(paremeters);
                 }
@@ -213,12 +213,12 @@ namespace RomanticWeb.Entities
         [return: AllowNull]
         private Uri SelectNamedGraph(IPropertyMapping property)
         {
-            if (_overrideSourceGraph!=null)
+            if (_overrideSourceGraph != null)
             {
                 return _overrideSourceGraph.SelectGraph(Context.GraphSelector);
             }
 
-            return Context.GraphSelector.SelectGraph(Id,_entityMapping,property);
+            return Context.GraphSelector.SelectGraph(Id, _entityMapping, property);
         }
         #endregion
 
@@ -228,7 +228,7 @@ namespace RomanticWeb.Entities
 
             public DebuggerDisplayProxy(EntityProxy proxy)
             {
-                _proxy=proxy;
+                _proxy = proxy;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]

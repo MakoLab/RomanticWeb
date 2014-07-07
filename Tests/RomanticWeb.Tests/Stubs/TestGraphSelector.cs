@@ -6,17 +6,17 @@ using RomanticWeb.NamedGraphs;
 namespace RomanticWeb.Tests.Stubs
 {
     [Obsolete("Use configuration on ContextFactory when implemented")]
-    public class TestGraphSelector:INamedGraphSelector
+    public class TestGraphSelector : INamedGraphSelector
     {
-        public Uri SelectGraph(EntityId entityId,IEntityMapping entityMapping,IPropertyMapping predicate)
+        public Uri SelectGraph(EntityId entityId, IEntityMapping entityMapping, IPropertyMapping predicate)
         {
-            EntityId nonBlankId=entityId;
+            EntityId nonBlankId = entityId;
             if (nonBlankId is BlankId)
             {
-                nonBlankId=((BlankId)nonBlankId).RootEntityId;
+                nonBlankId = ((BlankId)nonBlankId).RootEntityId;
             }
 
-            return new Uri(System.Text.RegularExpressions.Regex.Replace((nonBlankId!=null?nonBlankId.Uri.AbsoluteUri:((BlankId)entityId).Graph.AbsoluteUri),"((?<!data.)magi)","data.magi"));
+            return new Uri(System.Text.RegularExpressions.Regex.Replace((nonBlankId != null ? nonBlankId.Uri.AbsoluteUri : ((BlankId)entityId).Graph.AbsoluteUri), "((?<!data.)magi)", "data.magi"));
         }
     }
 }

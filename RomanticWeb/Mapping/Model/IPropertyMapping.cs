@@ -8,7 +8,7 @@ namespace RomanticWeb.Mapping.Model
     /// Mapping for an Entity's property
     /// </summary>
     public interface IPropertyMapping
-	{
+    {
         /// <summary>
         /// Gets the entity mapping.
         /// </summary>
@@ -17,7 +17,7 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>
         /// Gets the RDF predicate URI
         /// </summary>
-		Uri Uri { get; }
+        Uri Uri { get; }
 
         /// <summary>
         /// Gets the property name
@@ -44,5 +44,5 @@ namespace RomanticWeb.Mapping.Model
         /// </summary>
         /// <param name="mappingModelVisitor">The mapping model visitor.</param>
         void Accept(IMappingModelVisitor mappingModelVisitor);
-	}
+    }
 }

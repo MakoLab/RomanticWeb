@@ -11,12 +11,13 @@ namespace RomanticWeb.Mapping.Sources
     /// <summary>
     /// Mappings repository, which reads mapping attributes from an assembly
     /// </summary>
-    public sealed class AttributeMappingsSource:AssemblyMappingsSource
+    public sealed class AttributeMappingsSource : AssemblyMappingsSource
     {
         /// <summary>
         /// Creates a new instance of <see cref="AttributeMappingsSource"/>
         /// </summary>
-        public AttributeMappingsSource(Assembly assembly):base(assembly)
+        public AttributeMappingsSource(Assembly assembly)
+            : base(assembly)
         {
             LogTo.Trace("Created attribute mappings repository for assembly {0}", assembly);
         }
@@ -26,7 +27,7 @@ namespace RomanticWeb.Mapping.Sources
         /// </summary>
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
-            var builder=new AttributeMappingProviderBuilder();
+            var builder = new AttributeMappingProviderBuilder();
             return from type in Assembly.GetTypes()
                    where typeof(IEntity).IsAssignableFrom(type)
                    select builder.Visit(type);

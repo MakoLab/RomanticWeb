@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal class EntityMappingProvider:VisitableEntityMappingProviderBase
+    internal class EntityMappingProvider : VisitableEntityMappingProviderBase
     {
         private readonly IEnumerable<IClassMappingProvider> _classes;
         private readonly IEnumerable<IPropertyMappingProvider> _properties;
@@ -14,9 +14,9 @@ namespace RomanticWeb.Mapping.Providers
             IEnumerable<IClassMappingProvider> classes,
             IEnumerable<IPropertyMappingProvider> properties)
         {
-            _entityType=entityType;
-            _classes=classes;
-            _properties=properties;
+            _entityType = entityType;
+            _classes = classes;
+            _properties = properties;
         }
 
         public override Type EntityType

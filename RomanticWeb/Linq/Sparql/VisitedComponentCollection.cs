@@ -10,39 +10,39 @@ namespace RomanticWeb.Linq.Sparql
 {
     internal sealed class VisitedComponentCollection
     {
-        private IList<Index<IQueryComponent>> _list=new List<Index<IQueryComponent>>();
+        private IList<Index<IQueryComponent>> _list = new List<Index<IQueryComponent>>();
         private StringBuilder _stringBuilder;
 
         internal VisitedComponentCollection(StringBuilder stringBuilder)
         {
-            _stringBuilder=stringBuilder;
+            _stringBuilder = stringBuilder;
         }
 
         internal int Count { get { return _list.Count; } }
 
         internal bool Contains(IQueryComponent key)
         {
-            return _list.Any(item => Object.Equals(key,item.Key));
+            return _list.Any(item => Object.Equals(key, item.Key));
         }
 
-        internal void Add(IQueryComponent key,int startAt,int length)
+        internal void Add(IQueryComponent key, int startAt, int length)
         {
-            _list.Add(new Index<IQueryComponent>(_list.Count-1,key,startAt,length));
+            _list.Add(new Index<IQueryComponent>(_list.Count - 1, key, startAt, length));
         }
 
         internal void Remove(IQueryComponent key)
         {
-            int totalChange=0;
+            int totalChange = 0;
             foreach (Index<IQueryComponent> index in _list)
             {
-                if (!Object.Equals(index.Key,key))
+                if (!Object.Equals(index.Key, key))
                 {
-                    index.StartAt-=totalChange;
+                    index.StartAt -= totalChange;
                 }
                 else
                 {
-                    _stringBuilder=_stringBuilder.Remove(index.StartAt,index.Length);
-                    totalChange+=index.Length;
+                    _stringBuilder = _stringBuilder.Remove(index.StartAt, index.Length);
+                    totalChange += index.Length;
                 }
             }
         }
@@ -52,13 +52,13 @@ namespace RomanticWeb.Linq.Sparql
             _list.Clear();
         }
 
-        internal void Update(int startAt,int length)
+        internal void Update(int startAt, int length)
         {
             foreach (Index<IQueryComponent> index in _list)
             {
-                if (index.StartAt>=startAt)
+                if (index.StartAt >= startAt)
                 {
-                    index.Length+=length;
+                    index.Length += length;
                 }
             }
         }

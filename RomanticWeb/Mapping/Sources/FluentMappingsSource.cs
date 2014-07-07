@@ -11,14 +11,15 @@ namespace RomanticWeb.Mapping.Sources
     /// <summary>
     /// Mapping repository, which scans an assembly for fluent mapping classes 
     /// </summary>
-    public sealed class FluentMappingsSource:AssemblyMappingsSource
+    public sealed class FluentMappingsSource : AssemblyMappingsSource
     {
         /// <summary>
         /// Creates a new instance of <see cref="FluentMappingsSource"/>
         /// </summary>
-        public FluentMappingsSource(Assembly assembly):base(assembly)
+        public FluentMappingsSource(Assembly assembly)
+            : base(assembly)
         {
-            LogTo.Trace("Created fluent mappings repository for assembly {0}",assembly);
+            LogTo.Trace("Created fluent mappings repository for assembly {0}", assembly);
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace RomanticWeb.Mapping.Sources
             Visitors.IFluentMapsVisitor visitor = new FluentMappingProviderBuilder();
             var maps = (from type in Assembly.GetTypes()
                         where type.IsConstructableEntityMap()
-                        let map=(EntityMap)Activator.CreateInstance(type,true)
+                        let map = (EntityMap)Activator.CreateInstance(type, true)
                         select map.Accept(visitor));
 
             return maps;

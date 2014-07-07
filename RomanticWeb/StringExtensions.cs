@@ -11,16 +11,16 @@ namespace RomanticWeb
         /// <param name="indentation">Depth of the indentation.</param>
         /// <remarks>This method removes all occurances of a carriage return characters and replaces all occurances of a new line character with a environment specific new line string and indentation.</remarks>
         /// <returns>Text with indentation.</returns>
-        public static string Indent(this string text,int indentation)
+        public static string Indent(this string text, int indentation)
         {
-            string result=null;
-            if (text!=null)
+            string result = null;
+            if (text != null)
             {
-                result=text;
-                if (indentation>0)
+                result = text;
+                if (indentation > 0)
                 {
-                    string indent=new String('\t',indentation);
-                    result=indent+result.Replace("\r",System.String.Empty).Replace("\n",System.Environment.NewLine+indent);
+                    string indent = new String('\t', indentation);
+                    result = indent + result.Replace("\r", System.String.Empty).Replace("\n", System.Environment.NewLine + indent);
                 }
             }
 
@@ -37,8 +37,8 @@ namespace RomanticWeb
                 return text;
             }
 
-            string result=text.PascalCase();
-            return Char.ToLower(result[0])+result.Substring(1);
+            string result = text.PascalCase();
+            return Char.ToLower(result[0]) + result.Substring(1);
         }
 
         /// <summary>Converts given text to pascal case string.</summary>
@@ -51,7 +51,7 @@ namespace RomanticWeb
                 return text;
             }
 
-            return Regex.Replace(Regex.Replace(text,"[^a-zA-Z0-9_]","_")," [a-z]",match => match.Value.Substring(1).ToUpper());
+            return Regex.Replace(Regex.Replace(text, "[^a-zA-Z0-9_]", "_"), " [a-z]", match => match.Value.Substring(1).ToUpper());
         }
     }
 }

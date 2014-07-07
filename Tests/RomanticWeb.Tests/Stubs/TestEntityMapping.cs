@@ -9,10 +9,10 @@ using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Tests.Stubs
 {
-    public class TestEntityMapping<TEntity>:IEntityMapping
+    public class TestEntityMapping<TEntity> : IEntityMapping
     {
         private readonly IList<IClassMapping> _classes = new List<IClassMapping>();
-        private readonly IList<IPropertyMapping> _properties = new List<IPropertyMapping>(); 
+        private readonly IList<IPropertyMapping> _properties = new List<IPropertyMapping>();
 
         public Type EntityType
         {
@@ -40,7 +40,7 @@ namespace RomanticWeb.Tests.Stubs
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            return _properties.FirstOrDefault(p => p.Name==propertyName);
+            return _properties.FirstOrDefault(p => p.Name == propertyName);
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)
@@ -63,19 +63,19 @@ namespace RomanticWeb.Tests.Stubs
             _classes.Add(new { Uris = new[] { clazz }, Uri = clazz }.ActLike<IQueryableClassMapping>());
         }
 
-        protected void Property(string name,Uri predicate,Type returnType,INodeConverter converter)
+        protected void Property(string name, Uri predicate, Type returnType, INodeConverter converter)
         {
             _properties.Add(new
                                 {
-                                    Name=name,
-                                    Uri=predicate,
-                                    ReturnType=returnType,
-                                    Converter=converter,
-                                    EntityMapping=this
+                                    Name = name,
+                                    Uri = predicate,
+                                    ReturnType = returnType,
+                                    Converter = converter,
+                                    EntityMapping = this
                                 }.ActLike<IPropertyMapping>());
         }
 
-        protected void Collection(string name,Uri predicate,Type returnType,INodeConverter converter)
+        protected void Collection(string name, Uri predicate, Type returnType, INodeConverter converter)
         {
             _properties.Add(new
             {
@@ -89,7 +89,7 @@ namespace RomanticWeb.Tests.Stubs
             }.ActLike<ICollectionMapping>());
         }
 
-        protected void RdfList(string name,Uri predicate,Type returnType)
+        protected void RdfList(string name, Uri predicate, Type returnType)
         {
             _properties.Add(new
             {

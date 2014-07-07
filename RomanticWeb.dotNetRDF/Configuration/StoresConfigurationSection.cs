@@ -8,7 +8,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
     /// <summary>
     /// Configuration section for triple stores
     /// </summary>
-    public class StoresConfigurationSection:ConfigurationSection
+    public class StoresConfigurationSection : ConfigurationSection
     {
         private const string StoresCollectionElementName = "stores";
         private const string ConfigurationFilesElementName = "dnrConfigurationFiles";
@@ -21,7 +21,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
             get
             {
                 return (StoresConfigurationSection)ConfigurationManager.GetSection("romanticWeb.dotNetRDF")
-                       ??new StoresConfigurationSection();
+                       ?? new StoresConfigurationSection();
             }
         }
 
@@ -46,19 +46,19 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// </summary>
         public ITripleStore CreateStore(string name)
         {
-            return Stores.Single(store => store.Name==name).CreateTripleStore();
+            return Stores.Single(store => store.Name == name).CreateTripleStore();
         }
 
         internal IConfigurationLoader OpenConfiguration(string name)
         {
-            var configurationFile=ConfigurationFiles.Cast<ConfigurationFileElement>().FirstOrDefault(c => c.Name==name);
+            var configurationFile = ConfigurationFiles.Cast<ConfigurationFileElement>().FirstOrDefault(c => c.Name == name);
 
             if (configurationFile != null)
             {
                 return new ConfigurationLoader(configurationFile.Path, configurationFile.AutoConfigure);
             }
 
-            throw new ConfigurationErrorsException(string.Format("Configuration '{0}' wasn't found",name));
+            throw new ConfigurationErrorsException(string.Format("Configuration '{0}' wasn't found", name));
         }
 
         /// <summary>
@@ -66,11 +66,11 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// </summary>
         protected override bool OnDeserializeUnrecognizedElement(string elementName, System.Xml.XmlReader reader)
         {
-            if (elementName==StoresCollectionElementName)
+            if (elementName == StoresCollectionElementName)
             {
-                var storesCollection=new StoresCollection(this);
+                var storesCollection = new StoresCollection(this);
                 storesCollection.Deserialize(reader);
-                Stores=storesCollection;
+                Stores = storesCollection;
                 return true;
             }
 

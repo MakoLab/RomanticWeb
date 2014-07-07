@@ -10,7 +10,7 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Provides details about entity accessor.</summary>
     [QueryComponentNavigator(typeof(UnspecifiedEntityAccessorNavigator))]
-    public class UnspecifiedEntityAccessor:StrongEntityAccessor
+    public class UnspecifiedEntityAccessor : StrongEntityAccessor
     {
         #region Fields
         private StrongEntityAccessor _entityAccessor;
@@ -20,18 +20,20 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Default constructor with aboutness assuming that a source is a variable.</summary>
         /// <param name="about">Points to the primary topic of given entity accessor.</param>
         /// <param name="entityAccessor">Strong entity accessor.</param>
-        internal UnspecifiedEntityAccessor(Identifier about,StrongEntityAccessor entityAccessor):base(about)
+        internal UnspecifiedEntityAccessor(Identifier about, StrongEntityAccessor entityAccessor)
+            : base(about)
         {
-            _entityAccessor=entityAccessor;
+            _entityAccessor = entityAccessor;
         }
 
         /// <summary>Default constructor with aboutness and its source passed.</summary>
         /// <param name="about">Specifies an entity identifier given accesor uses.</param>
         /// <param name="sourceExpression">Source of this entity accessor.</param>
         /// <param name="entityAccessor">Strong entity accessor.</param>
-        internal UnspecifiedEntityAccessor(Identifier about,Remotion.Linq.Clauses.FromClauseBase sourceExpression,StrongEntityAccessor entityAccessor):base(about,sourceExpression)
+        internal UnspecifiedEntityAccessor(Identifier about, Remotion.Linq.Clauses.FromClauseBase sourceExpression, StrongEntityAccessor entityAccessor)
+            : base(about, sourceExpression)
         {
-            _entityAccessor=entityAccessor;
+            _entityAccessor = entityAccessor;
         }
         #endregion
 
@@ -49,8 +51,8 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                base.OwnerQuery=value;
-                _entityAccessor.OwnerQuery=value;
+                base.OwnerQuery = value;
+                _entityAccessor.OwnerQuery = value;
             }
         }
         #endregion
@@ -60,20 +62,20 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this graph.</returns>
         public override string ToString()
         {
-            IEnumerable<string> elements=Elements.Select(item => 
-                    (item is StrongEntityAccessor?(About!=null?item.ToString().Replace("?s ",About.ToString()):(_entityAccessor.About!=null?_entityAccessor.About.ToString():item.ToString())):
+            IEnumerable<string> elements = Elements.Select(item =>
+                    (item is StrongEntityAccessor ? (About != null ? item.ToString().Replace("?s ", About.ToString()) : (_entityAccessor.About != null ? _entityAccessor.About.ToString() : item.ToString())) :
                     item.ToString()));
-            string strongEntityAccessor=_entityAccessor.ToString();
+            string strongEntityAccessor = _entityAccessor.ToString();
             foreach (IQueryComponent component in Elements)
             {
-                strongEntityAccessor=strongEntityAccessor.Replace(component.ToString(),System.String.Empty);
+                strongEntityAccessor = strongEntityAccessor.Replace(component.ToString(), System.String.Empty);
             }
 
             return System.String.Format(
                 "{3} UNION {{{0}GRAPH G{1} {0}{{{0}{2}{0}}}{0}GRAPH ?meta {{{0}G{1} foaf:primaryTopic {1} .}}{0}}}{0}",
                 Environment.NewLine,
-                (About!=null?About.ToString():(_entityAccessor.About!=null?_entityAccessor.About.ToString():System.String.Empty)),
-                System.String.Join(Environment.NewLine,elements),
+                (About != null ? About.ToString() : (_entityAccessor.About != null ? _entityAccessor.About.ToString() : System.String.Empty)),
+                System.String.Join(Environment.NewLine, elements),
                 strongEntityAccessor);
         }
 
@@ -84,12 +86,12 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            if (Object.Equals(operand,null)) { return false; }
-            if (operand.GetType()!=typeof(UnspecifiedEntityAccessor)) { return false; }
-            UnspecifiedEntityAccessor accessor=(UnspecifiedEntityAccessor)operand;
-            return (About!=null?About.Equals(accessor.About):Object.Equals(accessor.About,null))&&
-                (SourceExpression!=null?SourceExpression.Equals(accessor.SourceExpression):Object.Equals(accessor.SourceExpression,null))&&
-                (Source==accessor.Source)&&(_entityAccessor.Equals(accessor._entityAccessor));
+            if (Object.Equals(operand, null)) { return false; }
+            if (operand.GetType() != typeof(UnspecifiedEntityAccessor)) { return false; }
+            UnspecifiedEntityAccessor accessor = (UnspecifiedEntityAccessor)operand;
+            return (About != null ? About.Equals(accessor.About) : Object.Equals(accessor.About, null)) &&
+                (SourceExpression != null ? SourceExpression.Equals(accessor.SourceExpression) : Object.Equals(accessor.SourceExpression, null)) &&
+                (Source == accessor.Source) && (_entityAccessor.Equals(accessor._entityAccessor));
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -97,8 +99,8 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(UnspecifiedEntityAccessor).FullName.GetHashCode()^(About!=null?About.GetHashCode():0)^
-                (SourceExpression!=null?SourceExpression.GetHashCode():0)^Source.GetHashCode()^_entityAccessor.GetHashCode();
+            return typeof(UnspecifiedEntityAccessor).FullName.GetHashCode() ^ (About != null ? About.GetHashCode() : 0) ^
+                (SourceExpression != null ? SourceExpression.GetHashCode() : 0) ^ Source.GetHashCode() ^ _entityAccessor.GetHashCode();
         }
         #endregion
     }

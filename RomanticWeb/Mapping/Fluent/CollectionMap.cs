@@ -9,16 +9,17 @@ using RomanticWeb.Mapping.Visitors;
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <inheritdoc/>
-    public sealed class CollectionMap:PropertyMapBase,ICollectionMap
+    public sealed class CollectionMap : PropertyMapBase, ICollectionMap
     {
         private ITermPart<ICollectionMap> _term;
         private StorageStrategyPart _storeAs;
-        private Type _elementConverterType=null;
+        private Type _elementConverterType = null;
 
-        internal CollectionMap(PropertyInfo propertyInfo):base(propertyInfo)
+        internal CollectionMap(PropertyInfo propertyInfo)
+            : base(propertyInfo)
         {
-            _term=new TermPart<CollectionMap>(this);
-            _storeAs=new StorageStrategyPart(this);
+            _term = new TermPart<CollectionMap>(this);
+            _storeAs = new StorageStrategyPart(this);
         }
 
         /// <inheritdoc/>
@@ -31,15 +32,16 @@ namespace RomanticWeb.Mapping.Fluent
         public override Type ConverterType
         {
             [return: AllowNull]
-            get { return (StorageStrategy==Model.StoreAs.SimpleCollection?_elementConverterType??base.ConverterType:base.ConverterType); }
-            internal set { base.ConverterType=value; }
+            get { return (StorageStrategy == Model.StoreAs.SimpleCollection ? _elementConverterType ?? base.ConverterType : base.ConverterType); }
+            internal set { base.ConverterType = value; }
         }
 
         /// <summary>Gets or sets an element converter type.</summary>
         public Type ElementConverterType
         {
-            [return: AllowNull] get { return (StorageStrategy==Model.StoreAs.SimpleCollection?_elementConverterType??base.ConverterType:_elementConverterType); }
-            internal set { _elementConverterType=value; }
+            [return: AllowNull]
+            get { return (StorageStrategy == Model.StoreAs.SimpleCollection ? _elementConverterType ?? base.ConverterType : _elementConverterType); }
+            internal set { _elementConverterType = value; }
         }
 
         /// <summary>Gets or sets the value, which indicates how the collection's triples will be stored.</summary>
@@ -52,9 +54,9 @@ namespace RomanticWeb.Mapping.Fluent
         }
 
         /// <inheritdoc />
-        public ICollectionMap ConvertElementsWith<TConverter>() where TConverter:INodeConverter
+        public ICollectionMap ConvertElementsWith<TConverter>() where TConverter : INodeConverter
         {
-            _elementConverterType=typeof(TConverter);
+            _elementConverterType = typeof(TConverter);
             return this;
         }
     }

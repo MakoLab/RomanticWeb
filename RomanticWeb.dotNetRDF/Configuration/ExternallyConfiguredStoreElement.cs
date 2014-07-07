@@ -10,7 +10,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
     /// <summary>
     /// Configuration element for a triple store configured in a dotNetRDF configuration file
     /// </summary>
-    public class ExternallyConfiguredStoreElement:StoreElement
+    public class ExternallyConfiguredStoreElement : StoreElement
     {
         private const string BnodeIdAttributeName = "blankNode";
         private const string UriAttributeName = "uri";
@@ -24,7 +24,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// </summary>
         public ExternallyConfiguredStoreElement(StoresConfigurationSection stores)
         {
-            _stores=stores;
+            _stores = stores;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
         [UriValidator]
         public Uri ObjectUri
         {
-            [return:AllowNull]
+            [return: AllowNull]
             get { return (Uri)this[UriAttributeName]; }
             set { this[UriAttributeName] = value; }
         }
@@ -63,9 +63,9 @@ namespace RomanticWeb.DotNetRDF.Configuration
         {
             get
             {
-                if (_configurationLoader==null)
+                if (_configurationLoader == null)
                 {
-                    _configurationLoader=_stores.OpenConfiguration(ConfigurationName);
+                    _configurationLoader = _stores.OpenConfiguration(ConfigurationName);
                 }
 
                 return _configurationLoader;
@@ -73,7 +73,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
 
             set
             {
-                _configurationLoader=value;
+                _configurationLoader = value;
             }
         }
 
@@ -82,15 +82,15 @@ namespace RomanticWeb.DotNetRDF.Configuration
         /// </summary>
         public override ITripleStore CreateTripleStore()
         {
-            bool isUriSet=ObjectUri!=null;
-            bool isBnodeSet=!string.IsNullOrWhiteSpace(BlankNodeIdentifier);
+            bool isUriSet = ObjectUri != null;
+            bool isBnodeSet = !string.IsNullOrWhiteSpace(BlankNodeIdentifier);
 
-            if (isUriSet&&isBnodeSet)
+            if (isUriSet && isBnodeSet)
             {
                 throw new ConfigurationErrorsException("Cannot set both blank node and uri");
             }
 
-            if (!(isBnodeSet||isUriSet))
+            if (!(isBnodeSet || isUriSet))
             {
                 throw new ConfigurationErrorsException("Either blank node or uri must be set");
             }

@@ -8,11 +8,12 @@ namespace RomanticWeb.Mapping.Model
 {
     [NullGuard(ValidationFlags.All)]
     [DebuggerDisplay("Collection {Name}")]
-    internal class CollectionMapping:PropertyMapping,ICollectionMapping
+    internal class CollectionMapping : PropertyMapping, ICollectionMapping
     {
-        public CollectionMapping(Type declaringType,Type returnType,string name,Uri predicateUri,StoreAs storageStrategy):base(declaringType,returnType,name,predicateUri)
+        public CollectionMapping(Type declaringType, Type returnType, string name, Uri predicateUri, StoreAs storageStrategy)
+            : base(declaringType, returnType, name, predicateUri)
         {
-            StoreAs=storageStrategy;
+            StoreAs = storageStrategy;
         }
 
         public StoreAs StoreAs { get; private set; }

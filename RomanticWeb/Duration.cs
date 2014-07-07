@@ -14,7 +14,7 @@ namespace System
     public struct Duration
     {
         #region Fields
-        private const uint NegativeBit=0x80000000;
+        private const uint NegativeBit = 0x80000000;
         private int years;
         private int months;
         private int days;
@@ -26,259 +26,261 @@ namespace System
 
         #region Constructors
         /// <summary>Construct an Duration from time parts.</summary> 
-        public Duration(int hours,int minutes,int seconds,int nanoseconds)
+        public Duration(int hours, int minutes, int seconds, int nanoseconds)
         {
-            if (minutes<0)
+            if (minutes < 0)
             {
                 throw new ArgumentOutOfRangeException("minutes");
             }
 
-            if (seconds<0)
+            if (seconds < 0)
             {
                 throw new ArgumentOutOfRangeException("seconds");
             }
 
-            if ((nanoseconds<0)||(nanoseconds>999999999))
+            if ((nanoseconds < 0) || (nanoseconds > 999999999))
             {
                 throw new ArgumentOutOfRangeException("nanoseconds");
             }
 
-            this.years=0;
-            this.months=0;
-            this.days=0;
-            this.hours=Math.Abs(hours);
-            this.minutes=minutes;
-            this.seconds=seconds;
-            this.nanoseconds=(uint)nanoseconds;
-            if (hours<0)
+            this.years = 0;
+            this.months = 0;
+            this.days = 0;
+            this.hours = Math.Abs(hours);
+            this.minutes = minutes;
+            this.seconds = seconds;
+            this.nanoseconds = (uint)nanoseconds;
+            if (hours < 0)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
         }
 
         /// <summary>Construct an Duration from time parts.</summary> 
-        public Duration(bool isNegative,int hours,int minutes,int seconds,int nanoseconds)
+        public Duration(bool isNegative, int hours, int minutes, int seconds, int nanoseconds)
         {
-            if (hours<0)
+            if (hours < 0)
             {
                 throw new ArgumentOutOfRangeException("hours");
             }
 
-            if (minutes<0)
+            if (minutes < 0)
             {
                 throw new ArgumentOutOfRangeException("minutes");
             }
 
-            if (seconds<0)
+            if (seconds < 0)
             {
                 throw new ArgumentOutOfRangeException("seconds");
             }
 
-            if ((nanoseconds<0)||(nanoseconds>999999999))
+            if ((nanoseconds < 0) || (nanoseconds > 999999999))
             {
                 throw new ArgumentOutOfRangeException("nanoseconds");
             }
 
-            this.years=0;
-            this.months=0;
-            this.days=0;
-            this.hours=hours;
-            this.minutes=minutes;
-            this.seconds=seconds;
-            this.nanoseconds=(uint)nanoseconds;
+            this.years = 0;
+            this.months = 0;
+            this.days = 0;
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
+            this.nanoseconds = (uint)nanoseconds;
             if (isNegative)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
         }
 
         /// <summary>Construct an Duration from date parts.</summary> 
-        public Duration(int years,int months,int days)
+        public Duration(int years, int months, int days)
         {
-            if (months<0)
+            if (months < 0)
             {
                 throw new ArgumentOutOfRangeException("months");
             }
 
-            if (days<0)
+            if (days < 0)
             {
                 throw new ArgumentOutOfRangeException("days");
             }
 
-            this.years=Math.Abs(years);
-            this.months=months;
-            this.days=days;
-            this.hours=0;
-            this.minutes=0;
-            this.seconds=0;
-            this.nanoseconds=(uint)0;
-            if (years<0)
+            this.years = Math.Abs(years);
+            this.months = months;
+            this.days = days;
+            this.hours = 0;
+            this.minutes = 0;
+            this.seconds = 0;
+            this.nanoseconds = (uint)0;
+            if (years < 0)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
         }
 
         /// <summary>Construct an Duration from date parts.</summary> 
-        public Duration(bool isNegative,int years,int months,int days)
+        public Duration(bool isNegative, int years, int months, int days)
         {
-            if (years<0)
+            if (years < 0)
             {
                 throw new ArgumentOutOfRangeException("years");
             }
 
-            if (months<0)
+            if (months < 0)
             {
                 throw new ArgumentOutOfRangeException("months");
             }
 
-            if (days<0)
+            if (days < 0)
             {
                 throw new ArgumentOutOfRangeException("days");
             }
 
-            this.years=years;
-            this.months=months;
-            this.days=days;
-            this.hours=0;
-            this.minutes=0;
-            this.seconds=0;
-            this.nanoseconds=(uint)0;
+            this.years = years;
+            this.months = months;
+            this.days = days;
+            this.hours = 0;
+            this.minutes = 0;
+            this.seconds = 0;
+            this.nanoseconds = (uint)0;
             if (isNegative)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
         }
 
         /// <summary>Construct an Duration from component parts.</summary> 
-        public Duration(bool isNegative,int years,int months,int days,int hours,int minutes,int seconds,int nanoseconds)
+        public Duration(bool isNegative, int years, int months, int days, int hours, int minutes, int seconds, int nanoseconds)
         {
-            if (years<0)
+            if (years < 0)
             {
                 throw new ArgumentOutOfRangeException("years");
             }
 
-            if (months<0)
+            if (months < 0)
             {
                 throw new ArgumentOutOfRangeException("months");
             }
 
-            if (days<0)
+            if (days < 0)
             {
                 throw new ArgumentOutOfRangeException("days");
             }
 
-            if (hours<0)
+            if (hours < 0)
             {
                 throw new ArgumentOutOfRangeException("hours");
             }
 
-            if (minutes<0)
+            if (minutes < 0)
             {
                 throw new ArgumentOutOfRangeException("minutes");
             }
 
-            if (seconds<0)
+            if (seconds < 0)
             {
                 throw new ArgumentOutOfRangeException("seconds");
             }
 
-            if ((nanoseconds<0)||(nanoseconds>999999999))
+            if ((nanoseconds < 0) || (nanoseconds > 999999999))
             {
                 throw new ArgumentOutOfRangeException("nanoseconds");
             }
 
-            this.years=years;
-            this.months=months;
-            this.days=days;
-            this.hours=hours;
-            this.minutes=minutes;
-            this.seconds=seconds;
-            this.nanoseconds=(uint)nanoseconds;
+            this.years = years;
+            this.months = months;
+            this.days = days;
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
+            this.nanoseconds = (uint)nanoseconds;
             if (isNegative)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
         }
 
         /// <summary>Construct an Duration from a TimeSpan value.</summary> 
-        public Duration(TimeSpan timeSpan):this(timeSpan,DurationType.Duration)
+        public Duration(TimeSpan timeSpan)
+            : this(timeSpan, DurationType.Duration)
         {
         }
 
         /// <summary>Constructs an Duration from a string in the xsd:duration format. Components are stored with loss of fidelity (except in the case of overflow).</summary> 
-        public Duration(string duration):this(duration,DurationType.Duration)
+        public Duration(string duration)
+            : this(duration, DurationType.Duration)
         {
         }
 
         /// <summary>Constructs an Duration from a string in the xsd:duration format. Components are stored without loss of fidelity (except in the case of overflow).</summary>
-        public Duration(string duration,DurationType durationType)
+        public Duration(string duration, DurationType durationType)
         {
             Duration result;
-            Exception exception=TryParse(duration,durationType,out result);
-            if (exception!=null)
+            Exception exception = TryParse(duration, durationType, out result);
+            if (exception != null)
             {
                 throw exception;
             }
 
-            this.years=result.Years;
-            this.months=result.Months;
-            this.days=result.Days;
-            this.hours=result.Hours;
-            this.minutes=result.Minutes;
-            this.seconds=result.Seconds;
-            this.nanoseconds=(uint)result.Nanoseconds;
+            this.years = result.Years;
+            this.months = result.Months;
+            this.days = result.Days;
+            this.hours = result.Hours;
+            this.minutes = result.Minutes;
+            this.seconds = result.Seconds;
+            this.nanoseconds = (uint)result.Nanoseconds;
             if (result.IsNegative)
             {
-                this.nanoseconds|=NegativeBit;
+                this.nanoseconds |= NegativeBit;
             }
 
             return;
         }
 
         /// <summary>Construct an Duration from a TimeSpan value that represents an xsd:duration, an xdt:dayTimeDuration, or an xdt:yearMonthDuration.</summary> 
-        internal Duration(TimeSpan timeSpan,DurationType durationType)
+        internal Duration(TimeSpan timeSpan, DurationType durationType)
         {
-            long ticks=timeSpan.Ticks;
+            long ticks = timeSpan.Ticks;
             ulong ticksPos;
             bool isNegative;
 
-            if (ticks<0)
+            if (ticks < 0)
             {
-                isNegative=true;
-                ticksPos=(ulong)-ticks;
+                isNegative = true;
+                ticksPos = (ulong)-ticks;
             }
             else
             {
-                isNegative=false;
-                ticksPos=(ulong)ticks;
+                isNegative = false;
+                ticksPos = (ulong)ticks;
             }
 
-            if (durationType==DurationType.YearMonthDuration)
+            if (durationType == DurationType.YearMonthDuration)
             {
-                int years=(int)(ticksPos/((ulong)TimeSpan.TicksPerDay*365));
-                int months=(int)((ticksPos%((ulong)TimeSpan.TicksPerDay*365))/((ulong)TimeSpan.TicksPerDay*30));
-                if (months==12)
+                int years = (int)(ticksPos / ((ulong)TimeSpan.TicksPerDay * 365));
+                int months = (int)((ticksPos % ((ulong)TimeSpan.TicksPerDay * 365)) / ((ulong)TimeSpan.TicksPerDay * 30));
+                if (months == 12)
                 {
                     years++;
-                    months=0;
+                    months = 0;
                 }
 
-                this=new Duration(isNegative,years,months,0,0,0,0,0);
+                this = new Duration(isNegative, years, months, 0, 0, 0, 0, 0);
             }
             else
             {
-                this.nanoseconds=(uint)(ticksPos%10000000)*100;
+                this.nanoseconds = (uint)(ticksPos % 10000000) * 100;
                 if (isNegative)
                 {
-                    this.nanoseconds|=NegativeBit;
+                    this.nanoseconds |= NegativeBit;
                 }
 
-                this.years=0;
-                this.months=0;
-                this.days=(int)(ticksPos/(ulong)TimeSpan.TicksPerDay);
-                this.hours=(int)((ticksPos/(ulong)TimeSpan.TicksPerHour)%24);
-                this.minutes=(int)((ticksPos/(ulong)TimeSpan.TicksPerMinute)%60);
-                this.seconds=(int)((ticksPos/(ulong)TimeSpan.TicksPerSecond)%60);
+                this.years = 0;
+                this.months = 0;
+                this.days = (int)(ticksPos / (ulong)TimeSpan.TicksPerDay);
+                this.hours = (int)((ticksPos / (ulong)TimeSpan.TicksPerHour) % 24);
+                this.minutes = (int)((ticksPos / (ulong)TimeSpan.TicksPerMinute) % 60);
+                this.seconds = (int)((ticksPos / (ulong)TimeSpan.TicksPerSecond) % 60);
             }
         }
         #endregion
@@ -299,19 +301,19 @@ namespace System
 
         private enum Parts
         {
-            HasNone=0,
-            HasYears=1,
-            HasMonths=2,
-            HasDays=4,
-            HasHours=8,
-            HasMinutes=16,
-            HasSeconds=32,
+            HasNone = 0,
+            HasYears = 1,
+            HasMonths = 2,
+            HasDays = 4,
+            HasHours = 8,
+            HasMinutes = 16,
+            HasSeconds = 32,
         }
         #endregion
 
         #region Properties
         /// <summary>Return true if this duration is negative.</summary> 
-        public bool IsNegative { get { return (this.nanoseconds&NegativeBit)!=0; } }
+        public bool IsNegative { get { return (this.nanoseconds & NegativeBit) != 0; } }
 
         /// <summary>Return number of years in this duration (stored in 31 bits).</summary> 
         public int Years { get { return this.years; } }
@@ -332,13 +334,13 @@ namespace System
         public int Seconds { get { return this.seconds; } }
 
         /// <summary>Return number of nanoseconds in this duration.</summary> 
-        public int Nanoseconds { get { return (int)(this.nanoseconds&~NegativeBit); } }
+        public int Nanoseconds { get { return (int)(this.nanoseconds & ~NegativeBit); } }
 
         /// <summary>Return number of microseconds in this duration.</summary>
-        public int Microseconds { get { return Nanoseconds/1000; } }
+        public int Microseconds { get { return Nanoseconds / 1000; } }
 
         /// <summary>Return number of milliseconds in this duration.</summary> 
-        public int Milliseconds { get { return Nanoseconds/1000000; } }
+        public int Milliseconds { get { return Nanoseconds / 1000000; } }
         #endregion
 
         #region Public methods
@@ -346,24 +348,24 @@ namespace System
         /// <param name="operandA">Left operand.</param>
         /// <param name="operandB">Right operand.</param>
         /// <returns><b>true</b> if all duration components are equal, otherwise <b>false</b>.</returns>
-        public static bool operator==(Duration operandA,Duration operandB)
+        public static bool operator ==(Duration operandA, Duration operandB)
         {
-            return (operandA.years==operandB.years)&&
-                (operandA.months==operandB.months)&&
-                (operandA.days==operandB.days)&&
-                (operandA.hours==operandB.hours)&&
-                (operandA.minutes==operandB.minutes)&&
-                (operandA.seconds==operandB.seconds)&&
-                (operandA.nanoseconds==operandB.nanoseconds);
+            return (operandA.years == operandB.years) &&
+                (operandA.months == operandB.months) &&
+                (operandA.days == operandB.days) &&
+                (operandA.hours == operandB.hours) &&
+                (operandA.minutes == operandB.minutes) &&
+                (operandA.seconds == operandB.seconds) &&
+                (operandA.nanoseconds == operandB.nanoseconds);
         }
 
         /// <summary>Compares two durations for inequality.</summary>
         /// <param name="operandA">Left operand.</param>
         /// <param name="operandB">Right operand.</param>
         /// <returns><b>true</b> if any of the duration components is different, otherwise <b>false</b>.</returns>
-        public static bool operator!=(Duration operandA,Duration operandB)
+        public static bool operator !=(Duration operandA, Duration operandB)
         {
-            return !(operandA==operandB);
+            return !(operandA == operandB);
         }
 
         /// <summary>Parses given string into a duration.</summary>
@@ -372,8 +374,8 @@ namespace System
         public static Duration Parse(string duration)
         {
             Duration result;
-            Exception exception=TryParse(duration,DurationType.Duration,out result);
-            if (exception!=null)
+            Exception exception = TryParse(duration, DurationType.Duration, out result);
+            if (exception != null)
             {
                 throw exception;
             }
@@ -385,47 +387,47 @@ namespace System
         /// <param name="duration">String with duration to be parsed.</param>
         /// <param name="result">Output value.</param>
         /// <returns><b>true</b> if the parsing was completed successfuly, otherwise <b>false</b>.</returns>
-        public static bool TryParse(string duration,out Duration result)
+        public static bool TryParse(string duration, out Duration result)
         {
-            Exception exception=TryParse(duration,DurationType.Duration,out result);
-            return (exception==null);
+            Exception exception = TryParse(duration, DurationType.Duration, out result);
+            return (exception == null);
         }
 
         /// <summary>Normalize year-month part and day-time part so that month &lt; 12, hour &lt; 24, minute &lt; 60, and second &lt; 60.</summary> 
         public Duration Normalize()
         {
-            int years=Years;
-            int months=Months;
-            int days=Days;
-            int hours=Hours;
-            int minutes=Minutes;
-            int seconds=Seconds;
+            int years = Years;
+            int months = Months;
+            int days = Days;
+            int hours = Hours;
+            int minutes = Minutes;
+            int seconds = Seconds;
             try
             {
                 checked
                 {
-                    if (months>=12)
+                    if (months >= 12)
                     {
-                        years+=months/12;
-                        months%=12;
+                        years += months / 12;
+                        months %= 12;
                     }
 
-                    if (seconds>=60)
+                    if (seconds >= 60)
                     {
-                        minutes+=seconds/60;
-                        seconds%=60;
+                        minutes += seconds / 60;
+                        seconds %= 60;
                     }
 
-                    if (minutes>=60)
+                    if (minutes >= 60)
                     {
-                        hours+=minutes/60;
-                        minutes%=60;
+                        hours += minutes / 60;
+                        minutes %= 60;
                     }
 
-                    if (hours>=24)
+                    if (hours >= 24)
                     {
-                        days+=hours/24;
-                        hours%=24;
+                        days += hours / 24;
+                        hours %= 24;
                     }
                 }
             }
@@ -434,7 +436,7 @@ namespace System
                 throw new OverflowException();
             }
 
-            return new Duration(IsNegative,years,months,days,hours,minutes,seconds,Nanoseconds);
+            return new Duration(IsNegative, years, months, days, hours, minutes, seconds, Nanoseconds);
         }
 
         /// <summary>Return the string representation of this duration.</summary> 
@@ -454,7 +456,7 @@ namespace System
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return years.GetHashCode()^months.GetHashCode()^days.GetHashCode()^hours.GetHashCode()^minutes.GetHashCode()^seconds.GetHashCode()^nanoseconds.GetHashCode();
+            return years.GetHashCode() ^ months.GetHashCode() ^ days.GetHashCode() ^ hours.GetHashCode() ^ minutes.GetHashCode() ^ seconds.GetHashCode() ^ nanoseconds.GetHashCode();
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -464,291 +466,291 @@ namespace System
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals(object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand is Duration)&&(this==(Duration)operand);
+            return (!Object.Equals(operand, null)) && (operand is Duration) && (this == (Duration)operand);
         }
         #endregion
 
         #region Non-public methods
-        internal static Exception TryParse(string s,DurationType durationType,out Duration result)
+        internal static Exception TryParse(string s, DurationType durationType, out Duration result)
         {
             string errorCode;
             int length;
-            int value,pos,numDigits;
-            Parts parts=Parts.HasNone;
-            result=new Duration();
-            s=s.Trim();
-            length=s.Length;
-            pos=0;
-            numDigits=0;
-            if (pos>=length)
+            int value, pos, numDigits;
+            Parts parts = Parts.HasNone;
+            result = new Duration();
+            s = s.Trim();
+            length = s.Length;
+            pos = 0;
+            numDigits = 0;
+            if (pos >= length)
             {
                 goto InvalidFormat;
             }
 
-            if (s[pos]=='-')
+            if (s[pos] == '-')
             {
                 pos++;
-                result.nanoseconds=NegativeBit;
+                result.nanoseconds = NegativeBit;
             }
             else
             {
-                result.nanoseconds=0;
+                result.nanoseconds = 0;
             }
 
-            if (pos>=length)
+            if (pos >= length)
             {
                 goto InvalidFormat;
             }
 
-            if (s[pos++]!='P')
+            if (s[pos++] != 'P')
             {
                 goto InvalidFormat;
             }
 
-            errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-            if (errorCode!=null)
+            errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+            if (errorCode != null)
             {
                 goto Error;
             }
 
-            if (pos>=length)
+            if (pos >= length)
             {
                 goto InvalidFormat;
             }
 
-            if (s[pos]=='Y')
+            if (s[pos] == 'Y')
             {
-                if (numDigits==0)
+                if (numDigits == 0)
                 {
                     goto InvalidFormat;
                 }
 
-                parts|=Parts.HasYears;
-                result.years=value;
-                if (++pos==length)
+                parts |= Parts.HasYears;
+                result.years = value;
+                if (++pos == length)
                 {
                     goto Done;
                 }
 
-                errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                if (errorCode!=null)
+                errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                if (errorCode != null)
                 {
                     goto Error;
                 }
 
-                if (pos>=length)
+                if (pos >= length)
                 {
                     goto InvalidFormat;
                 }
             }
 
-            if (s[pos]=='M')
+            if (s[pos] == 'M')
             {
-                if (numDigits==0)
+                if (numDigits == 0)
                 {
                     goto InvalidFormat;
                 }
 
-                parts|=Parts.HasMonths;
-                result.months=value;
-                if (++pos==length)
+                parts |= Parts.HasMonths;
+                result.months = value;
+                if (++pos == length)
                 {
                     goto Done;
                 }
 
-                errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                if (errorCode!=null)
+                errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                if (errorCode != null)
                 {
                     goto Error;
                 }
 
-                if (pos>=length)
+                if (pos >= length)
                 {
                     goto InvalidFormat;
                 }
             }
 
-            if (s[pos]=='D')
+            if (s[pos] == 'D')
             {
-                if (numDigits==0)
+                if (numDigits == 0)
                 {
                     goto InvalidFormat;
                 }
 
-                parts|=Parts.HasDays;
-                result.days=value;
-                if (++pos==length)
+                parts |= Parts.HasDays;
+                result.days = value;
+                if (++pos == length)
                 {
                     goto Done;
                 }
 
-                errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                if (errorCode!=null)
+                errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                if (errorCode != null)
                 {
                     goto Error;
                 }
 
-                if (pos>=length)
+                if (pos >= length)
                 {
                     goto InvalidFormat;
                 }
             }
 
-            if (s[pos]=='T')
+            if (s[pos] == 'T')
             {
-                if (numDigits!=0)
+                if (numDigits != 0)
                 {
                     goto InvalidFormat;
                 }
 
                 pos++;
-                errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                if (errorCode!=null)
+                errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                if (errorCode != null)
                 {
                     goto Error;
                 }
 
-                if (pos>=length)
+                if (pos >= length)
                 {
                     goto InvalidFormat;
                 }
 
-                if (s[pos]=='H')
+                if (s[pos] == 'H')
                 {
-                    if (numDigits==0)
+                    if (numDigits == 0)
                     {
                         goto InvalidFormat;
                     }
 
-                    parts|=Parts.HasHours;
-                    result.hours=value;
-                    if (++pos==length)
+                    parts |= Parts.HasHours;
+                    result.hours = value;
+                    if (++pos == length)
                     {
                         goto Done;
                     }
 
-                    errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                    if (errorCode!=null)
+                    errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                    if (errorCode != null)
                     {
                         goto Error;
                     }
 
-                    if (pos>=length)
+                    if (pos >= length)
                     {
                         goto InvalidFormat;
                     }
                 }
 
-                if (s[pos]=='M')
+                if (s[pos] == 'M')
                 {
-                    if (numDigits==0)
+                    if (numDigits == 0)
                     {
                         goto InvalidFormat;
                     }
 
-                    parts|=Parts.HasMinutes;
-                    result.minutes=value;
-                    if (++pos==length)
+                    parts |= Parts.HasMinutes;
+                    result.minutes = value;
+                    if (++pos == length)
                     {
                         goto Done;
                     }
 
-                    errorCode=TryParseDigits(s,ref pos,false,out value,out numDigits);
-                    if (errorCode!=null)
+                    errorCode = TryParseDigits(s, ref pos, false, out value, out numDigits);
+                    if (errorCode != null)
                     {
                         goto Error;
                     }
 
-                    if (pos>=length)
+                    if (pos >= length)
                     {
                         goto InvalidFormat;
                     }
                 }
 
-                if (s[pos]=='.')
+                if (s[pos] == '.')
                 {
                     pos++;
-                    parts|=Parts.HasSeconds;
-                    result.seconds=value;
-                    errorCode=TryParseDigits(s,ref pos,true,out value,out numDigits);
-                    if (errorCode!=null)
+                    parts |= Parts.HasSeconds;
+                    result.seconds = value;
+                    errorCode = TryParseDigits(s, ref pos, true, out value, out numDigits);
+                    if (errorCode != null)
                     {
                         goto Error;
                     }
 
-                    if (numDigits==0)
+                    if (numDigits == 0)
                     {
-                        value=0;
+                        value = 0;
                     }
 
-                    for (; numDigits>9; numDigits--)
+                    for (; numDigits > 9; numDigits--)
                     {
-                        value/=10;
+                        value /= 10;
                     }
 
-                    for (; numDigits<9; numDigits++)
+                    for (; numDigits < 9; numDigits++)
                     {
-                        value*=10;
+                        value *= 10;
                     }
 
-                    result.nanoseconds|=(uint)value;
-                    if (pos>=length)
-                    {
-                        goto InvalidFormat;
-                    }
-
-                    if (s[pos]!='S')
+                    result.nanoseconds |= (uint)value;
+                    if (pos >= length)
                     {
                         goto InvalidFormat;
                     }
 
-                    if (++pos==length)
+                    if (s[pos] != 'S')
+                    {
+                        goto InvalidFormat;
+                    }
+
+                    if (++pos == length)
                     {
                         goto Done;
                     }
                 }
-                else if (s[pos]=='S')
+                else if (s[pos] == 'S')
                 {
-                    if (numDigits==0)
+                    if (numDigits == 0)
                     {
                         goto InvalidFormat;
                     }
 
-                    parts|=Parts.HasSeconds;
-                    result.seconds=value;
-                    if (++pos==length)
+                    parts |= Parts.HasSeconds;
+                    result.seconds = value;
+                    if (++pos == length)
                     {
                         goto Done;
                     }
                 }
             }
 
-            if (numDigits!=0)
+            if (numDigits != 0)
             {
                 goto InvalidFormat;
             }
 
-            if (pos!=length)
+            if (pos != length)
             {
                 goto InvalidFormat;
             }
 
         Done:
-            if (parts==Parts.HasNone)
+            if (parts == Parts.HasNone)
             {
                 goto InvalidFormat;
             }
 
-            if (durationType==DurationType.DayTimeDuration)
+            if (durationType == DurationType.DayTimeDuration)
             {
-                if ((parts&(Parts.HasYears|Parts.HasMonths))!=0)
+                if ((parts & (Parts.HasYears | Parts.HasMonths)) != 0)
                 {
                     goto InvalidFormat;
                 }
             }
-            else if (durationType==DurationType.YearMonthDuration)
+            else if (durationType == DurationType.YearMonthDuration)
             {
-                if ((parts&~(Duration.Parts.HasYears|Duration.Parts.HasMonths))!=0)
+                if ((parts & ~(Duration.Parts.HasYears | Duration.Parts.HasMonths)) != 0)
                 {
                     goto InvalidFormat;
                 }
@@ -765,8 +767,8 @@ namespace System
         internal TimeSpan ToTimeSpan(DurationType durationType)
         {
             TimeSpan result;
-            Exception exception=TryToTimeSpan(durationType,out result);
-            if (exception!=null)
+            Exception exception = TryToTimeSpan(durationType, out result);
+            if (exception != null)
             {
                 throw exception;
             }
@@ -776,54 +778,54 @@ namespace System
 
         internal Exception TryToTimeSpan(out TimeSpan result)
         {
-            return TryToTimeSpan(DurationType.Duration,out result);
+            return TryToTimeSpan(DurationType.Duration, out result);
         }
 
-        internal Exception TryToTimeSpan(DurationType durationType,out TimeSpan result)
+        internal Exception TryToTimeSpan(DurationType durationType, out TimeSpan result)
         {
-            Exception exception=null;
-            ulong ticks=0;
+            Exception exception = null;
+            ulong ticks = 0;
             try
             {
                 checked
                 {
-                    if (durationType!=DurationType.DayTimeDuration)
+                    if (durationType != DurationType.DayTimeDuration)
                     {
-                        ticks+=((ulong)this.years+((ulong)this.months/12))*365;
-                        ticks+=((ulong)this.months%12)*30;
+                        ticks += ((ulong)this.years + ((ulong)this.months / 12)) * 365;
+                        ticks += ((ulong)this.months % 12) * 30;
                     }
 
-                    if (durationType!=DurationType.YearMonthDuration)
+                    if (durationType != DurationType.YearMonthDuration)
                     {
-                        ticks+=(ulong)this.days;
-                        ticks*=24;
-                        ticks+=(ulong)this.hours;
-                        ticks*=60;
-                        ticks+=(ulong)this.minutes;
-                        ticks*=60;
-                        ticks+=(ulong)this.seconds;
-                        ticks*=(ulong)TimeSpan.TicksPerSecond;
-                        ticks+=(ulong)Nanoseconds/100;
+                        ticks += (ulong)this.days;
+                        ticks *= 24;
+                        ticks += (ulong)this.hours;
+                        ticks *= 60;
+                        ticks += (ulong)this.minutes;
+                        ticks *= 60;
+                        ticks += (ulong)this.seconds;
+                        ticks *= (ulong)TimeSpan.TicksPerSecond;
+                        ticks += (ulong)Nanoseconds / 100;
                     }
                     else
                     {
-                        ticks*=(ulong)TimeSpan.TicksPerDay;
+                        ticks *= (ulong)TimeSpan.TicksPerDay;
                     }
 
                     if (IsNegative)
                     {
-                        if (ticks==(ulong)Int64.MaxValue+1)
+                        if (ticks == (ulong)Int64.MaxValue + 1)
                         {
-                            result=new TimeSpan(Int64.MinValue);
+                            result = new TimeSpan(Int64.MinValue);
                         }
                         else
                         {
-                            result=new TimeSpan(-((long)ticks));
+                            result = new TimeSpan(-((long)ticks));
                         }
                     }
                     else
                     {
-                        result=new TimeSpan((long)ticks);
+                        result = new TimeSpan((long)ticks);
                     }
 
                     return null;
@@ -831,8 +833,8 @@ namespace System
             }
             catch (OverflowException)
             {
-                result=TimeSpan.MinValue;
-                exception=new OverflowException();
+                result = TimeSpan.MinValue;
+                exception = new OverflowException();
             }
 
             return exception;
@@ -841,90 +843,90 @@ namespace System
         /// <summary>Return the string representation according to xsd:duration rules, xdt:dayTimeDuration rules, or xdt:yearMonthDuration rules.</summary>
         internal string ToString(DurationType durationType)
         {
-            StringBuilder sb=new StringBuilder(20);
-            int nanoseconds,digit,zeroIdx,len;
+            StringBuilder sb = new StringBuilder(20);
+            int nanoseconds, digit, zeroIdx, len;
             if (IsNegative)
             {
                 sb.Append('-');
             }
 
             sb.Append('P');
-            if (durationType!=DurationType.DayTimeDuration)
+            if (durationType != DurationType.DayTimeDuration)
             {
-                if (this.years!=0)
+                if (this.years != 0)
                 {
                     sb.Append(XmlConvert.ToString(this.years));
                     sb.Append('Y');
                 }
 
-                if (this.months!=0)
+                if (this.months != 0)
                 {
                     sb.Append(XmlConvert.ToString(this.months));
                     sb.Append('M');
                 }
             }
 
-            if (durationType!=DurationType.YearMonthDuration)
+            if (durationType != DurationType.YearMonthDuration)
             {
-                if (this.days!=0)
+                if (this.days != 0)
                 {
                     sb.Append(XmlConvert.ToString(this.days));
                     sb.Append('D');
                 }
 
-                if ((this.hours!=0)||(this.minutes!=0)||(this.seconds!=0)||(Nanoseconds!=0))
+                if ((this.hours != 0) || (this.minutes != 0) || (this.seconds != 0) || (Nanoseconds != 0))
                 {
                     sb.Append('T');
-                    if (this.hours!=0)
+                    if (this.hours != 0)
                     {
                         sb.Append(XmlConvert.ToString(this.hours));
                         sb.Append('H');
                     }
 
-                    if (this.minutes!=0)
+                    if (this.minutes != 0)
                     {
                         sb.Append(XmlConvert.ToString(this.minutes));
                         sb.Append('M');
                     }
 
-                    nanoseconds=Nanoseconds;
-                    if ((this.seconds!=0)||(nanoseconds!=0))
+                    nanoseconds = Nanoseconds;
+                    if ((this.seconds != 0) || (nanoseconds != 0))
                     {
                         sb.Append(XmlConvert.ToString(this.seconds));
-                        if (nanoseconds!=0)
+                        if (nanoseconds != 0)
                         {
                             sb.Append('.');
-                            len=sb.Length;
-                            sb.Length+=9;
-                            zeroIdx=sb.Length-1;
+                            len = sb.Length;
+                            sb.Length += 9;
+                            zeroIdx = sb.Length - 1;
 
-                            for (int idx=zeroIdx; idx>=len; idx--)
+                            for (int idx = zeroIdx; idx >= len; idx--)
                             {
-                                digit=nanoseconds%10;
-                                sb[idx]=(char)(digit+'0');
-                                if (zeroIdx==idx&&digit==0)
+                                digit = nanoseconds % 10;
+                                sb[idx] = (char)(digit + '0');
+                                if (zeroIdx == idx && digit == 0)
                                 {
                                     zeroIdx--;
                                 }
 
-                                nanoseconds/=10;
+                                nanoseconds /= 10;
                             }
 
-                            sb.Length=zeroIdx+1;
+                            sb.Length = zeroIdx + 1;
                         }
 
                         sb.Append('S');
                     }
                 }
 
-                if (sb[sb.Length-1]=='P')
+                if (sb[sb.Length - 1] == 'P')
                 {
                     sb.Append("T0S");
                 }
             }
             else
             {
-                if (sb[sb.Length-1]=='P')
+                if (sb[sb.Length - 1] == 'P')
                 {
                     sb.Append("0M");
                 }
@@ -933,25 +935,25 @@ namespace System
             return sb.ToString();
         }
 
-        private static string TryParseDigits(string s,ref int offset,bool eatDigits,out int result,out int numDigits)
+        private static string TryParseDigits(string s, ref int offset, bool eatDigits, out int result, out int numDigits)
         {
-            int offsetStart=offset;
-            int offsetEnd=s.Length;
+            int offsetStart = offset;
+            int offsetEnd = s.Length;
             int digit;
-            result=0;
-            numDigits=0;
-            while (offset<offsetEnd&&s[offset]>='0'&&s[offset]<='9')
+            result = 0;
+            numDigits = 0;
+            while (offset < offsetEnd && s[offset] >= '0' && s[offset] <= '9')
             {
-                digit=s[offset]-'0';
-                if (result>(Int32.MaxValue-digit)/10)
+                digit = s[offset] - '0';
+                if (result > (Int32.MaxValue - digit) / 10)
                 {
                     if (!eatDigits)
                     {
                         return "XmlConvert_Overflow";
                     }
 
-                    numDigits=offset-offsetStart;
-                    while (offset<offsetEnd&&s[offset]>='0'&&s[offset]<='9')
+                    numDigits = offset - offsetStart;
+                    while (offset < offsetEnd && s[offset] >= '0' && s[offset] <= '9')
                     {
                         offset++;
                     }
@@ -959,11 +961,11 @@ namespace System
                     return null;
                 }
 
-                result=(result*10)+digit;
+                result = (result * 10) + digit;
                 offset++;
             }
 
-            numDigits=offset-offsetStart;
+            numDigits = offset - offsetStart;
             return null;
         }
         #endregion

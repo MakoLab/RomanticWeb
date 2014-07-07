@@ -5,11 +5,11 @@ using RomanticWeb.Linq.Model;
 namespace RomanticWeb.Linq
 {
     /// <summary>Provides constistent and non-coliding names for identifiers.</summary>
-    internal class UniqueVariableNamingStrategy:IVariableNamingStrategy
+    internal class UniqueVariableNamingStrategy : IVariableNamingStrategy
     {
         #region Fields
-        private static Dictionary<Query,Dictionary<string,int>> NextIdentifiers=new Dictionary<Query,Dictionary<string,int>>();
-        private static object _lock=new object();
+        private static readonly Dictionary<Query, Dictionary<string, int>> NextIdentifiers = new Dictionary<Query, Dictionary<string, int>>();
+        private static object _lock = new object();
         private Query _context;
         #endregion
 
@@ -18,7 +18,7 @@ namespace RomanticWeb.Linq
         /// <param name="context">Query context to be used as name distinction mechanism.</param>
         internal UniqueVariableNamingStrategy(Query context)
         {
-            _context=context;
+            _context = context;
         }
         #endregion
 
@@ -38,30 +38,30 @@ namespace RomanticWeb.Linq
         /// <returns>Name of the variale coresponding for given identifier.</returns>
         public string GetNameForIdentifier(string identifier)
         {
-            if (identifier.Length==0)
+            if (identifier.Length == 0)
             {
                 throw new InvalidOperationException("Cannot create a variable name for empty identifier.");
             }
 
-            if (Char.IsNumber(identifier[identifier.Length-1]))
+            if (Char.IsNumber(identifier[identifier.Length - 1]))
             {
-                identifier+='_';
+                identifier += '_';
             }
 
-            string result=identifier;
+            string result = identifier;
             lock (_lock)
             {
                 if (!NextIdentifiers.ContainsKey(_context))
                 {
-                    NextIdentifiers[_context]=new Dictionary<string,int>();
+                    NextIdentifiers[_context] = new Dictionary<string, int>();
                 }
 
                 if (!NextIdentifiers[_context].ContainsKey(identifier))
                 {
-                    NextIdentifiers[_context][identifier]=0;
+                    NextIdentifiers[_context][identifier] = 0;
                 }
 
-                result+=(NextIdentifiers[_context][identifier]++).ToString();
+                result += (NextIdentifiers[_context][identifier]++).ToString();
             }
 
             return result;
@@ -72,13 +72,13 @@ namespace RomanticWeb.Linq
         /// <returns>Identifier that was passed to create a given variable name.</returns>
         public string ResolveNameToIdentifier(string name)
         {
-            if (name.Length==0)
+            if (name.Length == 0)
             {
                 throw new InvalidOperationException("Cannot resolve an identifier for empty variable name.");
             }
 
-            string result=name.TrimEnd('0','1','2','3','4','5','6','7','8','9');
-            if ((result.Length>1)&&(result[result.Length-1]=='_')&&(Char.IsNumber(result[result.Length-2])))
+            string result = name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+            if ((result.Length > 1) && (result[result.Length - 1] == '_') && (Char.IsNumber(result[result.Length - 2])))
             {
                 return result.TrimEnd('_');
             }

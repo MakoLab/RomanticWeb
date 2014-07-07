@@ -3,7 +3,7 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.FluentMappings
 {
-    public class EntityWithDictionaryMap:EntityMap<IEntityWithDictionary>
+    public class EntityWithDictionaryMap : EntityMap<IEntityWithDictionary>
     {
         public EntityWithDictionaryMap()
         {
@@ -19,12 +19,12 @@ namespace RomanticWeb.TestEntities.FluentMappings
 
         private void MapDefaultQNameMappedDictionary()
         {
-            Dictionary(e => e.SettingsDefault).Term.Is("magi","setting");
+            Dictionary(e => e.SettingsDefault).Term.Is("magi", "setting");
         }
 
         private void MapDefaultUriMappedDictionary()
         {
-            var dictionaryMap=Dictionary(e => e.StringIntDictionary);
+            var dictionaryMap = Dictionary(e => e.StringIntDictionary);
             dictionaryMap.Term.Is(new Uri("urn:dictionary:property"));
         }
 
@@ -32,7 +32,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
         {
             Dictionary(e => e.CustomQNameKeyDictionary)
                 .Term.Is(new Uri("urn:dictionary:customKey"))
-                .KeyPredicate.Is("magi","key");
+                .KeyPredicate.Is("magi", "key");
         }
 
         private void MapCustomUriKeyDictionary()
@@ -46,7 +46,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
         {
             Dictionary(e => e.CustomQNameValueDictionary)
                 .Term.Is(new Uri("urn:dictionary:customValue"))
-                .ValuePredicate.Is("magi","value");
+                .ValuePredicate.Is("magi", "value");
         }
 
         private void MapCustomUriValueDictionary()
@@ -60,8 +60,8 @@ namespace RomanticWeb.TestEntities.FluentMappings
         {
             Dictionary(e => e.CustomKeyValueQNameDictionary)
                 .Term.Is(new Uri("urn:dictionary:customKeyValue"))
-                .KeyPredicate.Is("magi","key")
-                .ValuePredicate.Is("magi","value");
+                .KeyPredicate.Is("magi", "key")
+                .ValuePredicate.Is("magi", "value");
         }
 
         private void MapCustomKeyValueUriDictionary()

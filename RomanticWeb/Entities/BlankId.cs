@@ -11,7 +11,7 @@ namespace RomanticWeb.Entities
     /// <remarks>Internally it is stored as a node:// URI, similarily to the Virtuoso way</remarks>
     [DebuggerDisplay("_:{_identifier,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class BlankId:EntityId
+    public sealed class BlankId : EntityId
     {
         private readonly string _identifier;
         private readonly Uri _graph;
@@ -21,20 +21,22 @@ namespace RomanticWeb.Entities
         /// <param name="identifier">Internal identifier.</param>
         /// <param name="root">Optional owning <see cref="IEntity" />'s identifier.</param>
         /// <param name="graphUri">Optional graph Uri.</param>
-        public BlankId(string identifier,EntityId root=null,Uri graphUri=null):this(CreateBlankNodeUri(identifier,graphUri),root)
+        public BlankId(string identifier, EntityId root = null, Uri graphUri = null)
+            : this(CreateBlankNodeUri(identifier, graphUri), root)
         {
-            _identifier=identifier;
-            _graph=graphUri;
+            _identifier = identifier;
+            _graph = graphUri;
         }
 
-        private BlankId(Uri blankNodeUri,EntityId root):base(blankNodeUri)
+        private BlankId(Uri blankNodeUri, EntityId root)
+            : base(blankNodeUri)
         {
             while (root is BlankId)
             {
-                root=((BlankId)root).RootEntityId;
+                root = ((BlankId)root).RootEntityId;
             }
 
-            _root=root;
+            _root = root;
         }
 
         /// <summary>Gets the identifier of a root non-blank entity.</summary>
@@ -48,14 +50,14 @@ namespace RomanticWeb.Entities
         [AllowNull]
         public Uri Graph { get { return _graph; } }
 
-        internal static Uri CreateBlankNodeUri(string blankNodeId,Uri graphUri)
+        internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
         {
-            return new Uri(System.String.Format("node://{0}/{1}",blankNodeId,graphUri));
+            return new Uri(String.Format("node://{0}/{1}", blankNodeId, graphUri));
         }
 
         internal Node ToNode()
         {
-            return Node.ForBlank(_identifier,RootEntityId,_graph);
+            return Node.ForBlank(_identifier, RootEntityId, _graph);
         }
 
         private class DebuggerViewProxy
@@ -64,7 +66,7 @@ namespace RomanticWeb.Entities
 
             public DebuggerViewProxy(BlankId entityId)
             {
-                _entityId=entityId;
+                _entityId = entityId;
             }
 
             public string Identifier

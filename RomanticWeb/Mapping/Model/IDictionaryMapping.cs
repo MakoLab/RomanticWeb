@@ -5,7 +5,7 @@ namespace RomanticWeb.Mapping.Model
     /// <summary>
     /// Represents a dictionary property mapping
     /// </summary>
-    public interface IDictionaryMapping:IPropertyMapping
+    public interface IDictionaryMapping : IPropertyMapping
     {
         /// <summary>
         /// Gets the key predicate mapping.

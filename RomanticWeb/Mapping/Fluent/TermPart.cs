@@ -2,26 +2,26 @@
 
 namespace RomanticWeb.Mapping.Fluent
 {
-	internal sealed class TermPart<TParentMap>:ITermPart<TParentMap>
-        where TParentMap:TermMap
-	{
+    internal sealed class TermPart<TParentMap> : ITermPart<TParentMap>
+        where TParentMap : TermMap
+    {
         private readonly TParentMap _propertyMap;
 
         internal TermPart(TParentMap propertyMap)
-		{
-			_propertyMap = propertyMap;
-		}
+        {
+            _propertyMap = propertyMap;
+        }
 
         public TParentMap Is(Uri uri)
         {
             _propertyMap.SetUri(uri);
-			return _propertyMap;
-		}
+            return _propertyMap;
+        }
 
-        public TParentMap Is(string prefix,string predicateName)
+        public TParentMap Is(string prefix, string predicateName)
         {
-            _propertyMap.SetQName(prefix,predicateName);
-	        return _propertyMap;
-	    }
-	}
+            _propertyMap.SetQName(prefix, predicateName);
+            return _propertyMap;
+        }
+    }
 }

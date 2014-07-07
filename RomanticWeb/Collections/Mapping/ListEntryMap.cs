@@ -8,9 +8,9 @@ namespace RomanticWeb.Collections.Mapping
     /// <typeparam name="TListNode">Type of entity, which contains the list.</typeparam>
     /// <typeparam name="T">The type of the dictionary value.</typeparam>
     /// <typeparam name="TConverter">converter type for list elements</typeparam>
-    public abstract class ListEntryMap<TListNode,T,TConverter>:EntityMap<TListNode>
-        where TListNode:IRdfListNode<T> 
-        where TConverter:INodeConverter
+    public abstract class ListEntryMap<TListNode, T, TConverter> : EntityMap<TListNode>
+        where TListNode : IRdfListNode<T>
+        where TConverter : INodeConverter
     {
         /// <summary>Initializes a new instance of the <see cref="ListEntryMap{TEntity,T,TConverter}"/> class.</summary>
         protected ListEntryMap()

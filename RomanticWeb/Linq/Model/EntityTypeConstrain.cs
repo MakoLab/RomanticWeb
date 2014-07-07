@@ -9,16 +9,17 @@ namespace RomanticWeb.Linq.Model
 {
     /// <summary>Represents an entity type constrain.</summary>
     [QueryComponentNavigator(typeof(EntityTypeConstrainNavigator))]
-    public class EntityTypeConstrain:EntityConstrain
+    public class EntityTypeConstrain : EntityConstrain
     {
         #region Fields
-        private static Literal TypePredicate=new Literal(RomanticWeb.Vocabularies.Rdf.type);
-        private IEnumerable<Literal> _inheritedTypes=new Literal[0];
+        private static readonly Literal TypePredicate = new Literal(RomanticWeb.Vocabularies.Rdf.type);
+        private IEnumerable<Literal> _inheritedTypes = new Literal[0];
         #endregion
 
         #region Constructors
         /// <summary>Default parameterles constructor.</summary>
-        public EntityTypeConstrain():base()
+        public EntityTypeConstrain()
+            : base()
         {
         }
 
@@ -26,9 +27,10 @@ namespace RomanticWeb.Linq.Model
         /// <param name="type">Entity type</param>
         /// <param name="targetExpression">Target expression that was source of this constrain.</param>
         /// <param name="inheritedTypes">Optional inherited types of the entity.</param>
-        public EntityTypeConstrain(Uri type,Expression targetExpression,params Uri[] inheritedTypes):base(TypePredicate,new Literal(type),targetExpression)
+        public EntityTypeConstrain(Uri type, Expression targetExpression, params Uri[] inheritedTypes)
+            : base(TypePredicate, new Literal(type), targetExpression)
         {
-            _inheritedTypes=inheritedTypes.Select(item => new Literal(item));
+            _inheritedTypes = inheritedTypes.Select(item => new Literal(item));
         }
         #endregion
 
@@ -51,16 +53,16 @@ namespace RomanticWeb.Linq.Model
 
             set
             {
-                if (value!=null)
+                if (value != null)
                 {
-                    if ((value is Literal)&&(((Literal)value).Value is Uri))
+                    if ((value is Literal) && (((Literal)value).Value is Uri))
                     {
-                        base.Value=value;
+                        base.Value = value;
                     }
                 }
                 else
                 {
-                    base.Value=null;
+                    base.Value = null;
                 }
             }
         }
@@ -74,7 +76,7 @@ namespace RomanticWeb.Linq.Model
         /// <returns>String representation of this entity type constrain.</returns>
         public override string ToString()
         {
-            return System.String.Format("?s {0} {1}",TypePredicate,(Value!=null?Value.ToString():"?o"));
+            return System.String.Format("?s {0} {1}", TypePredicate, (Value != null ? Value.ToString() : "?o"));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -84,8 +86,8 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand,null))&&(operand.GetType()==typeof(EntityTypeConstrain))&&
-                (Value!=null?Value.Equals(((EntityTypeConstrain)operand).Value):((EntityTypeConstrain)operand).Value==null);
+            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(EntityTypeConstrain)) &&
+                (Value != null ? Value.Equals(((EntityTypeConstrain)operand).Value) : ((EntityTypeConstrain)operand).Value == null);
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -93,7 +95,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(EntityTypeConstrain).FullName.GetHashCode()^(Value!=null?Value.GetHashCode():0);
+            return typeof(EntityTypeConstrain).FullName.GetHashCode() ^ (Value != null ? Value.GetHashCode() : 0);
         }
         #endregion
     }

@@ -111,13 +111,13 @@ namespace RomanticWeb
         /// </summary>
         public static EntityContextFactory FromConfiguration(string factoryName)
         {
-            var configuration=ConfigurationSectionHandler.Default.Factories[factoryName];
-            var ontologies=from element in configuration.Ontologies.Cast<OntologyElement>()
-                           select new Ontology(element.Prefix,element.Uri);
-            var mappingAssemblies=from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
-                                  select Assembly.Load(element.Assembly);
+            var configuration = ConfigurationSectionHandler.Default.Factories[factoryName];
+            var ontologies = from element in configuration.Ontologies.Cast<OntologyElement>()
+                             select new Ontology(element.Prefix, element.Uri);
+            var mappingAssemblies = from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
+                                    select Assembly.Load(element.Assembly);
 
-            var entityContextFactory=new EntityContextFactory().WithOntology(new OntologyProviderBase(ontologies)).WithMappings(m =>
+            var entityContextFactory = new EntityContextFactory().WithOntology(new OntologyProviderBase(ontologies)).WithMappings(m =>
                 {
                     foreach (var mappingAssembly in mappingAssemblies)
                     {
@@ -125,7 +125,7 @@ namespace RomanticWeb
                         m.Attributes.FromAssembly(mappingAssembly);
                     }
                 }).WithMetaGraphUri(configuration.MetaGraphUri);
-            if (configuration.BaseUris.Default!=null)
+            if (configuration.BaseUris.Default != null)
             {
                 entityContextFactory.WithBaseUri(b => b.Default.Is(configuration.BaseUris.Default));
             }
@@ -140,10 +140,10 @@ namespace RomanticWeb
 
             EnsureComplete();
             EnsureInitialized();
-            _mappingContext=new MappingContext(_actualOntologyProvider);
+            _mappingContext = new MappingContext(_actualOntologyProvider);
 
-            var entitySource=_entitySourceFactory();
-            entitySource.MetaGraphUri=_metaGraphUri;
+            var entitySource = _entitySourceFactory();
+            entitySource.MetaGraphUri = _metaGraphUri;
 
             return new EntityContext(
                 this,
@@ -220,7 +220,7 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
-            _metaGraphUri=metaGraphUri;
+            _metaGraphUri = metaGraphUri;
             return this;
         }
 

@@ -9,9 +9,9 @@ namespace RomanticWeb.Collections.Mapping
     /// <typeparam name="TPair">The type of the key/value pair.</typeparam>
     /// <typeparam name="TKey">The type of the dictionary key.</typeparam>
     /// <typeparam name="TValue">The type of the dictionary value.</typeparam>
-    public abstract class DictionaryOwnerMap<T,TPair,TKey,TValue>:EntityMap<T>
-        where T:IDictionaryOwner<TPair,TKey,TValue>
-        where TPair:IDictionaryEntry<TKey,TValue>
+    public abstract class DictionaryOwnerMap<T, TPair, TKey, TValue> : EntityMap<T>
+        where T : IDictionaryOwner<TPair, TKey, TValue>
+        where TPair : IDictionaryEntry<TKey, TValue>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryOwnerMap{T, TPair, TKey, TValue}"/> class.

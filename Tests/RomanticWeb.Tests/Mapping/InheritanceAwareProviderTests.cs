@@ -16,7 +16,7 @@ namespace RomanticWeb.Tests.Mapping
         [SetUp]
         public void Setup()
         {
-            _provider=new TestingInheritanceTreeProvider();
+            _provider = new TestingInheritanceTreeProvider();
         }
 
         [Test]
@@ -29,10 +29,10 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_map_to_uri_set_in_child_map()
         {
             // given
-            var provider=_provider.Properties.Single(p => p.PropertyInfo.Name=="InParent3");
+            var provider = _provider.Properties.Single(p => p.PropertyInfo.Name == "InParent3");
 
             // when
-            var term=provider.GetTerm(_ontologyProvider);
+            var term = provider.GetTerm(_ontologyProvider);
 
             // then
             term.ToString().Should().Be("urn:override:parent3");

@@ -7,7 +7,7 @@ namespace RomanticWeb.Mapping.Sources
     /// <summary>
     /// Base class for implementations of <see cref="IMappingProviderSource" />, which scan an <see cref="Assembly" />
     /// </summary>
-    public abstract class AssemblyMappingsSource:IMappingProviderSource
+    public abstract class AssemblyMappingsSource : IMappingProviderSource
     {
         private readonly Assembly _assembly;
 
@@ -15,11 +15,17 @@ namespace RomanticWeb.Mapping.Sources
         /// <param name="assembly">The assembly.</param>
         protected AssemblyMappingsSource(Assembly assembly)
         {
-            _assembly=assembly;
+            _assembly = assembly;
         }
 
         /// <summary>Gets the source <see cref="System.Reflection.Assembly"/>.</summary>
-        protected Assembly Assembly { get { return _assembly; } }
+        protected Assembly Assembly
+        {
+            get
+            {
+                return _assembly;
+            }
+        }
 
         /// <summary>
         /// Gets the mapping providers from the <see cref="AssemblyMappingsSource.Assembly"/>.

@@ -3,12 +3,13 @@
 namespace RomanticWeb.Linq.Model.Navigators
 {
     /// <summary>Navigates optional patterns.</summary>
-    internal class OptionalPatternNavigator:QueryComponentNavigatorBase
+    internal class OptionalPatternNavigator : QueryComponentNavigatorBase
     {
         #region Constructors
         /// <summary>Default constructor with nagivated optional patterns.</summary>
         /// <param name="optionalPattern">Nagivated optional patterns.</param>
-        internal OptionalPatternNavigator(OptionalPattern optionalPattern):base(optionalPattern)
+        internal OptionalPatternNavigator(OptionalPattern optionalPattern)
+            : base(optionalPattern)
         {
         }
         #endregion
@@ -32,7 +33,7 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (component is EntityConstrain?NavigatedComponent.Patterns.Contains((EntityConstrain)component):false);
+            return (component is EntityConstrain ? NavigatedComponent.Patterns.Contains((EntityConstrain)component) : false);
         }
 
         /// <summary>Adds component as a child of another component.</summary>
@@ -48,15 +49,15 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <summary>Replaces given component with another component.</summary>
         /// <param name="component">Component to be replaced.</param>
         /// <param name="replacement">Component to be put instead.</param>
-        public override void ReplaceComponent(IQueryComponent component,IQueryComponent replacement)
+        public override void ReplaceComponent(IQueryComponent component, IQueryComponent replacement)
         {
-            if ((component is EntityConstrain)&&(replacement is EntityConstrain))
+            if ((component is EntityConstrain) && (replacement is EntityConstrain))
             {
-                int indexOf=NavigatedComponent.Patterns.IndexOf((EntityConstrain)component);
-                if (indexOf!=-1)
+                int indexOf = NavigatedComponent.Patterns.IndexOf((EntityConstrain)component);
+                if (indexOf != -1)
                 {
                     NavigatedComponent.Patterns.RemoveAt(indexOf);
-                    NavigatedComponent.Patterns.Insert(indexOf,(EntityConstrain)replacement);
+                    NavigatedComponent.Patterns.Insert(indexOf, (EntityConstrain)replacement);
                 }
             }
         }

@@ -2,7 +2,7 @@
 
 namespace RomanticWeb.TestEntities.MixedMappings
 {
-    public interface IHidesMember:IGenericParent<int>
+    public interface IHidesMember : IGenericParent<int>
     {
         [Property("urn:hidden:mapping")]
         new int MappedProperty1 { get; }

@@ -12,56 +12,56 @@ namespace RomanticWeb.Entities
     /// <summary>Provides useful extensions methods for entities.</summary>
     public static class EntityExtensions
     {
-        private static readonly FallbackNodeConverter FallbackNodeConverter=new FallbackNodeConverter();
+        private static readonly FallbackNodeConverter FallbackNodeConverter = new FallbackNodeConverter();
 
         /// <summary>Gets the entity as a dynamic object.</summary>
         /// <param name="entity">Target entity to be converted to dynamic.</param>
         public static dynamic AsDynamic(this IEntity entity)
         {
             dynamic result;
-            entity=UnwrapProxy(entity);
+            entity = UnwrapProxy(entity);
 
             if (entity is Entity)
             {
-                result=((Entity)entity).AsDynamic();
+                result = ((Entity)entity).AsDynamic();
             }
             else if (entity is EntityProxy)
             {
-                result=((EntityProxy)entity).AsDynamic();
+                result = ((EntityProxy)entity).AsDynamic();
             }
             else if (entity is IActLikeProxy)
             {
-                result=((IActLikeProxy)entity).Original;
+                result = ((IActLikeProxy)entity).Original;
             }
             else
             {
-                result=entity;
+                result = entity;
             }
 
             return result;
         }
 
         /// <summary>Wraps the entity as a given statically typed type.</summary>
-        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface:class,IEntity
+        public static TInterface AsEntity<TInterface>(this IEntity entity) where TInterface : class, IEntity
         {
             TInterface result;
-            entity=UnwrapProxy(entity);
+            entity = UnwrapProxy(entity);
 
             if (entity is TInterface)
             {
-                result=(TInterface)entity;
+                result = (TInterface)entity;
             }
             else if (entity is Entity)
             {
-                result=((Entity)entity).AsEntity<TInterface>();
+                result = ((Entity)entity).AsEntity<TInterface>();
             }
             else if (entity is EntityProxy)
             {
-                result=((EntityProxy)entity).AsEntity<TInterface>();
+                result = ((EntityProxy)entity).AsEntity<TInterface>();
             }
             else
             {
-                result=Impromptu.ActLike<TInterface>(entity.AsDynamic());
+                result = Impromptu.ActLike<TInterface>(entity.AsDynamic());
             }
 
             return result;
@@ -72,14 +72,14 @@ namespace RomanticWeb.Entities
         /// <returns>Returns an enumeration of RDF types for given entity.</returns>
         public static IEnumerable<EntityId> GetTypes(this IEntity entity)
         {
-            return (entity!=null?entity.AsEntity<ITypedEntity>().Types.Union(new[] { new EntityId(Vocabularies.Owl.Thing) }):new EntityId[0]);
+            return (entity != null ? entity.AsEntity<ITypedEntity>().Types.Union(new[] { new EntityId(Vocabularies.Owl.Thing) }) : new EntityId[0]);
         }
 
         /// <summary>Determines if a given entity is of the given type provided.</summary>
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="type">Types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity,Uri type)
+        public static bool Is(this IEntity entity, Uri type)
         {
             return entity.Is(new[] { type });
         }
@@ -88,7 +88,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="types">Enumeration of types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity,IEnumerable<Uri> types)
+        public static bool Is(this IEntity entity, IEnumerable<Uri> types)
         {
             return entity.Is(types.Select(item => new EntityId(item)));
         }
@@ -97,7 +97,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="type">Types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity,EntityId type)
+        public static bool Is(this IEntity entity, EntityId type)
         {
             return entity.Is(new[] { type });
         }
@@ -106,9 +106,9 @@ namespace RomanticWeb.Entities
         /// <param name="entity">Entity to operate on.</param>
         /// <param name="types">Enumeration of types to check against.</param>
         /// <returns><b>true</b> if an entity is of any of the given types; othewise <b>false</b>.</returns>
-        public static bool Is(this IEntity entity,IEnumerable<EntityId> types)
+        public static bool Is(this IEntity entity, IEnumerable<EntityId> types)
         {
-            return ((entity!=null)&&(types!=null)&&entity.GetTypes().Join(types,item => item,item => item,(left,right) => left).Any());
+            return ((entity != null) && (types != null) && entity.GetTypes().Join(types, item => item, item => item, (left, right) => left).Any());
         }
 
         /// <summary>Gets an enumeration of all entity predicats that are currently set.</summary>
@@ -116,10 +116,10 @@ namespace RomanticWeb.Entities
         /// <returns>Enumeration of predicate Uri's.</returns>
         public static IEnumerable<Uri> Predicates(this IEntity entity)
         {
-            IEnumerable<Uri> result=new Uri[0];
-            if (entity!=null)
+            IEnumerable<Uri> result = new Uri[0];
+            if (entity != null)
             {
-                result=entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Predicate.Uri);
+                result = entity.Context.Store.Quads.WhereQuadDescribesEntity(entity).Select(item => item.Predicate.Uri);
             }
 
             return result;
@@ -131,30 +131,30 @@ namespace RomanticWeb.Entities
         /// <remarks>This method returns strongly typed values as defined in the mappings.</remarks>
         /// <returns>Value of the given predicate or <b>null</b>.</returns>
         [return: AllowNull]
-        public static object Predicate(this IEntity entity,Uri predicate)
+        public static object Predicate(this IEntity entity, Uri predicate)
         {
-            object result=null;
-            Node @object=
+            object result = null;
+            Node @object =
                 entity.Context.Store.Quads.WhereQuadDescribesEntity(entity)
-                      .Where(item => item.Predicate.Uri.AbsoluteUri==predicate.AbsoluteUri)
+                      .Where(item => item.Predicate.Uri.AbsoluteUri == predicate.AbsoluteUri)
                       .Select(item => item.Object)
                       .FirstOrDefault();
-            if (@object!=null)
+            if (@object != null)
             {
-                if ((@object.IsUri)||(@object.IsBlank))
+                if ((@object.IsUri) || (@object.IsBlank))
                 {
-                    result=entity.Context.Load<IEntity>(@object.ToEntityId());
+                    result = entity.Context.Load<IEntity>(@object.ToEntityId());
                 }
                 else
                 {
-                    IPropertyMapping propertyMapping=entity.Context.Mappings.MappingForProperty(predicate);
-                    if (propertyMapping!=null)
+                    IPropertyMapping propertyMapping = entity.Context.Mappings.MappingForProperty(predicate);
+                    if (propertyMapping != null)
                     {
-                        result=Impromptu.InvokeGet(entity,propertyMapping.Name);
+                        result = Impromptu.InvokeGet(entity, propertyMapping.Name);
                     }
                     else
                     {
-                        result=FallbackNodeConverter.Convert(@object,entity.Context);
+                        result = FallbackNodeConverter.Convert(@object, entity.Context);
                     }
                 }
             }
@@ -165,7 +165,7 @@ namespace RomanticWeb.Entities
         /// <summary>Forces lazy initialization of <paramref name="entity"/>.</summary>
         public static void ForceInitialize(this IEntity entity)
         {
-            entity=UnwrapProxy(entity);
+            entity = UnwrapProxy(entity);
 
             if (entity is Entity)
             {
@@ -183,13 +183,13 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The root entity.</param>
         public static BlankId CreateBlankId(this IEntity entity)
         {
-            var blankIdGenerator=entity.Context.BlankIdGenerator;
-            return new BlankId(blankIdGenerator.Generate(),entity.Id);
+            var blankIdGenerator = entity.Context.BlankIdGenerator;
+            return new BlankId(blankIdGenerator.Generate(), entity.Id);
         }
 
         internal static IEntity UnwrapProxy(this IEntity entity)
         {
-            if ((entity is IActLikeProxy)&&(((IActLikeProxy)entity).Original is IEntity))
+            if ((entity is IActLikeProxy) && (((IActLikeProxy)entity).Original is IEntity))
             {
                 return ((IActLikeProxy)entity).Original;
             }
@@ -197,11 +197,11 @@ namespace RomanticWeb.Entities
             return entity;
         }
 
-        private static IEnumerable<EntityQuad> WhereQuadDescribesEntity(this IEnumerable<EntityQuad> quads,IEntity entity)
+        private static IEnumerable<EntityQuad> WhereQuadDescribesEntity(this IEnumerable<EntityQuad> quads, IEntity entity)
         {
-            return quads.Where(item => (item.EntityId==entity.Id)&&
-                (((item.Subject.IsUri)&&(!(entity.Id is BlankId))&&(item.Subject.Uri.AbsoluteUri==entity.Id.Uri.AbsoluteUri))||
-                ((item.Subject.IsBlank)&&(entity.Id is BlankId)&&(item.Subject.BlankNode==((BlankId)entity.Id).Identifier))));
+            return quads.Where(item => (item.EntityId == entity.Id) &&
+                (((item.Subject.IsUri) && (!(entity.Id is BlankId)) && (item.Subject.Uri.AbsoluteUri == entity.Id.Uri.AbsoluteUri)) ||
+                ((item.Subject.IsBlank) && (entity.Id is BlankId) && (item.Subject.BlankNode == ((BlankId)entity.Id).Identifier))));
         }
     }
 }

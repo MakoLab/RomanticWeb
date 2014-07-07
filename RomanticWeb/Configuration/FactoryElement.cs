@@ -7,22 +7,22 @@ namespace RomanticWeb.Configuration
     /// <summary>
     /// Configuration of a ecntity context factory
     /// </summary>
-    public class FactoryElement:ConfigurationElement
+    public class FactoryElement : ConfigurationElement
     {
-        private const string NameAttributeName="name";
-        private const string MetaGraphUriAttributeName="metaGraphUri";
-        private const string BaseUrisName="baseUris";
-        private const string MappingAssembliesElementName="mappingAssemblies";
-        private const string OntologiesElementName="ontologies";
+        private const string NameAttributeName = "name";
+        private const string MetaGraphUriAttributeName = "metaGraphUri";
+        private const string BaseUrisName = "baseUris";
+        private const string MappingAssembliesElementName = "mappingAssemblies";
+        private const string OntologiesElementName = "ontologies";
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
-        [ConfigurationProperty(NameAttributeName,IsKey=true,IsRequired=true)]
+        [ConfigurationProperty(NameAttributeName, IsKey = true, IsRequired = true)]
         public string Name
         {
             get { return (string)this[NameAttributeName]; }
-            set { this[NameAttributeName]=value; }
+            set { this[NameAttributeName] = value; }
         }
 
         /// <summary>

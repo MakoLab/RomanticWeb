@@ -1,0 +1,37 @@
+﻿PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+
+SELECT ?s ?p ?o ?Gperson0 ?person0 
+WHERE 
+{ 
+	GRAPH ?Gperson0 
+	{ 
+		?s ?p ?o . 
+		?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+		?person0 <http://xmlns.com/foaf/0.1/friends> ?friend0 . 
+		
+		FILTER (EXISTS 
+		{ 
+			SELECT ?friend0 
+			WHERE 
+			{ 
+				GRAPH ?Gfriend0 
+				{ 
+					?friend0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . 
+					?friend0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . 
+					
+					FILTER (?firstName0 = \"Karol\"^^xsd:string) 
+				} 
+				
+				GRAPH <http://app.magi/graphs> 
+				{ 
+					?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . 
+				} 
+			} 
+		} ) 
+	} 
+	
+	GRAPH <http://app.magi/graphs> 
+	{ 
+		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
+	} 
+}

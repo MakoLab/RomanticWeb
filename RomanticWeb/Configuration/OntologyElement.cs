@@ -6,10 +6,10 @@ namespace RomanticWeb.Configuration
     /// <summary>
     /// An ontology configuration element
     /// </summary>
-    public class OntologyElement:ConfigurationElement
+    public class OntologyElement : ConfigurationElement
     {
-        private const string PrefixAttributeName="prefix";
-        private const string UriAttributeName="uri";
+        private const string PrefixAttributeName = "prefix";
+        private const string UriAttributeName = "uri";
 
         /// <summary>
         /// Gets or sets the ontology prefix.

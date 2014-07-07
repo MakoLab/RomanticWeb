@@ -3,7 +3,7 @@ using RomanticWeb.TestEntities.Animals;
 
 namespace RomanticWeb.TestEntities.FluentMappings
 {
-    public class HumanMap:EntityMap<IHuman>
+    public class HumanMap : EntityMap<IHuman>
     {
     }
 }

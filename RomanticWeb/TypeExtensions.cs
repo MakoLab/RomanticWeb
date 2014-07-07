@@ -15,7 +15,7 @@ namespace System
         /// <returns><b>true</b> if the type is <see cref="System.Array" /> or is assignable to <see cref="IEnumerable" /> (except <see cref="System.String" />); otherwise <b>false</b>.</returns>
         public static bool IsEnumerable(this Type type)
         {
-            return (type!=null&&((type.IsArray)||((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))));
+            return (type != null && ((type.IsArray) || ((typeof(IEnumerable).IsAssignableFrom(type)) && (type != typeof(string)))));
         }
 
         /// <summary>Tries to resolve item type of complex types.</summary>
@@ -23,26 +23,26 @@ namespace System
         /// <returns>Collection item type or <b>null</b>.</returns>
         public static Type FindItemType(this Type type)
         {
-            Type result=type;
-            if (type!=null)
+            Type result = type;
+            if (type != null)
             {
                 if (type.IsArray)
                 {
-                    result=type.GetElementType();
+                    result = type.GetElementType();
                 }
                 else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    result=type.GenericTypeArguments.Single();
+                    result = type.GenericTypeArguments.Single();
                 }
-                else if ((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))
+                else if ((typeof(IEnumerable).IsAssignableFrom(type)) && (type != typeof(string)))
                 {
                     if (type.IsGenericType)
                     {
-                        result=type.GetGenericArguments()[0];
+                        result = type.GetGenericArguments()[0];
                     }
                     else
                     {
-                        result=typeof(object);
+                        result = typeof(object);
                     }
                 }
             }
@@ -54,11 +54,11 @@ namespace System
         /// <param name="type">Type to assign to.</param>
         /// <param name="instanceType">Type to be assigned.</param>
         /// <returns><b>true</b> if specific generic type can be assigned to a generi type definition; otherwse <b>false</b>.</returns>
-        public static bool IsAssignableFromSpecificGeneric(this Type type,[AllowNull] Type instanceType)
+        public static bool IsAssignableFromSpecificGeneric(this Type type, [AllowNull] Type instanceType)
         {
-            return (type!=null)&&(instanceType!=null)&&(instanceType!=typeof(object))&&
-                (((instanceType.IsGenericType)&&(instanceType.GetGenericTypeDefinition()==type))||
-                (type.IsAssignableFromSpecificGeneric(instanceType.BaseType))||
+            return (type != null) && (instanceType != null) && (instanceType != typeof(object)) &&
+                (((instanceType.IsGenericType) && (instanceType.GetGenericTypeDefinition() == type)) ||
+                (type.IsAssignableFromSpecificGeneric(instanceType.BaseType)) ||
                 instanceType.GetInterfaces().Any(type.IsAssignableFromSpecificGeneric));
         }
 
@@ -66,18 +66,18 @@ namespace System
         /// <param name="type">Generic type definition to be checked against.</param>
         /// <param name="instanceType">Specific generic type to be analyzed.</param>
         /// <returns>Array of <see cref="Type" /> with generic type arguments of given specific generic type in context of a generic type definition.</returns>
-        public static Type[] GetGenericArgumentsFor(this Type type,[AllowNull] Type instanceType)
+        public static Type[] GetGenericArgumentsFor(this Type type, [AllowNull] Type instanceType)
         {
-            var result=new Type[0];
-            if ((type!=null)&&(instanceType!=null)&&(instanceType!=typeof(object)))
+            var result = new Type[0];
+            if ((type != null) && (instanceType != null) && (instanceType != typeof(object)))
             {
-                if ((instanceType.IsGenericType)&&(instanceType.GetGenericTypeDefinition()==type))
+                if ((instanceType.IsGenericType) && (instanceType.GetGenericTypeDefinition() == type))
                 {
-                    result=instanceType.GetGenericArguments();
+                    result = instanceType.GetGenericArguments();
                 }
-                else if (!instanceType.GetInterfaces().Any(interfaceType => (result=type.GetGenericArgumentsFor(interfaceType)).Length>0))
+                else if (!instanceType.GetInterfaces().Any(interfaceType => (result = type.GetGenericArgumentsFor(interfaceType)).Length > 0))
                 {
-                    result=type.GetGenericArgumentsFor(instanceType.BaseType);
+                    result = type.GetGenericArgumentsFor(instanceType.BaseType);
                 }
             }
 
@@ -88,18 +88,18 @@ namespace System
         /// <param name="type">Enumerable type to change item type in.</param>
         /// <param name="newItemType">New item type.</param>
         /// <returns>New type with changed item type.</returns>
-        public static Type ChangeItemType(this Type type,Type newItemType)
+        public static Type ChangeItemType(this Type type, Type newItemType)
         {
-            Type result=type;
-            if (type!=null)
+            Type result = type;
+            if (type != null)
             {
                 if (type.IsArray)
                 {
-                    result=Array.CreateInstance(newItemType,0).GetType();
+                    result = Array.CreateInstance(newItemType, 0).GetType();
                 }
-                else if (((typeof(IEnumerable).IsAssignableFrom(type))&&(type!=typeof(string)))&&(type.IsGenericType))
+                else if (((typeof(IEnumerable).IsAssignableFrom(type)) && (type != typeof(string))) && (type.IsGenericType))
                 {
-                    result=type.GetGenericTypeDefinition().MakeGenericType(new[] { newItemType }.Union(type.GetGenericArguments().Skip(1)).ToArray());
+                    result = type.GetGenericTypeDefinition().MakeGenericType(new[] { newItemType }.Union(type.GetGenericArguments().Skip(1)).ToArray());
                 }
             }
 
@@ -109,17 +109,17 @@ namespace System
         /// <summary>
         /// Gets the direct parents of a type.
         /// </summary>
-        internal static IEnumerable<Type> GetImmediateParents(this Type type,bool excludeIEntity=true)
+        internal static IEnumerable<Type> GetImmediateParents(this Type type, bool excludeIEntity = true)
         {
-            if (type.BaseType!=null)
+            if (type.BaseType != null)
             {
                 yield return type.BaseType;
             }
 
-            var allInterfaces=type.GetInterfaces();
+            var allInterfaces = type.GetInterfaces();
             foreach (var iface in allInterfaces.Except(allInterfaces.SelectMany(i => i.GetInterfaces())))
             {
-                if (iface==typeof(IEntity)&&excludeIEntity)
+                if (iface == typeof(IEntity) && excludeIEntity)
                 {
                     continue;
                 }
@@ -129,9 +129,9 @@ namespace System
 
             if (type.IsGenericType)
             {
-                var genericTypeDefinition=type.GetGenericTypeDefinition();
+                var genericTypeDefinition = type.GetGenericTypeDefinition();
 
-                if (genericTypeDefinition!=type)
+                if (genericTypeDefinition != type)
                 {
                     yield return genericTypeDefinition;
                 }
@@ -140,7 +140,7 @@ namespace System
 
         internal static IEnumerable<Type> GetMostDerivedTypes(this ICollection<Type> types)
         {
-            var result=new List<Type>(types.Count);
+            var result = new List<Type>(types.Count);
 
             foreach (var type in types.Where(type => !result.Any(type.IsAssignableFrom)))
             {
@@ -149,6 +149,6 @@ namespace System
             }
 
             return result;
-        } 
+        }
     }
 }

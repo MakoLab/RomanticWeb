@@ -4,16 +4,16 @@ using RomanticWeb.Mapping.Fluent;
 
 namespace RomanticWeb.TestEntities.Inheritance.Specialized
 {
-    [Class("owl","Thing")]
-    public interface IInterface:RomanticWeb.TestEntities.Inheritance.IInterface
+    [Class("owl", "Thing")]
+    public interface IInterface : Inheritance.IInterface
     {
     }
 
-    public class InterfaceMap:EntityMap<IInterface>
+    public class InterfaceMap : EntityMap<IInterface>
     {
-        public InterfaceMap():base()
+        public InterfaceMap()
         {
-            Property(instance => instance.Description).Term.Is(new Uri(RomanticWeb.Vocabularies.Owl.Thing.AbsoluteUri.Replace("#","/")+"#test"));
+            Property(instance => instance.Description).Term.Is(new Uri(Vocabularies.Owl.Thing.AbsoluteUri.Replace("#", "/") + "#test"));
         }
     }
 }

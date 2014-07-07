@@ -15,13 +15,14 @@ namespace RomanticWeb
             IEnumerable<EntityQuad> entitiesReconstructed,
             IEnumerable<EntityId> entitiesRemoved)
         {
-            QuadsAdded=quadsAdded;
-            QuadsRemoved=quadsRemoved;
-            EntitiesReconstructed=entitiesReconstructed;
-            EntitiesRemoved=entitiesRemoved;
+            QuadsAdded = quadsAdded;
+            QuadsRemoved = quadsRemoved;
+            EntitiesReconstructed = entitiesReconstructed;
+            EntitiesRemoved = entitiesRemoved;
         }
 
-        internal DatasetChanges():this(new EntityQuad[0],new EntityQuad[0],new EntityQuad[0],new EntityId[0])
+        internal DatasetChanges()
+            : this(new EntityQuad[0], new EntityQuad[0], new EntityQuad[0], new EntityId[0])
         {
         }
 
@@ -42,6 +43,6 @@ namespace RomanticWeb
         public IEnumerable<EntityId> EntitiesRemoved { get; private set; }
 
         /// <summary>Gets a value indicating whether there are any changes.</summary>
-        public bool Any { get { return (QuadsAdded.Any())||(QuadsRemoved.Any())||(EntitiesReconstructed.Any())||(EntitiesRemoved.Any()); } }
+        public bool Any { get { return (QuadsAdded.Any()) || (QuadsRemoved.Any()) || (EntitiesReconstructed.Any()) || (EntitiesRemoved.Any()); } }
     }
 }

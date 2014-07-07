@@ -7,7 +7,7 @@ namespace RomanticWeb.TestEntities.FluentMappings
     {
         public OmnivoreMap()
         {
-            Class.Is("life","Omnivore");
+            Class.Is("life", "Omnivore");
             Collection(p => p.Diet).Term.Is("life", "plantEaten");
         }
     }

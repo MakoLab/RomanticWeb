@@ -18,8 +18,8 @@ namespace RomanticWeb.Tests.Helpers
 
         public static void LoadTestFile(this ITripleStore store, string fileName, Uri graphUri)
         {
-            var graph=new Graph();
-            graph.BaseUri=graphUri;
+            var graph = new Graph();
+            graph.BaseUri = graphUri;
             graph.LoadTestFile(fileName);
             store.Add(graph);
         }

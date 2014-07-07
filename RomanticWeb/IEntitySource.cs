@@ -13,7 +13,7 @@ namespace RomanticWeb
         Uri MetaGraphUri { get; set; }
 
         /// <summary>Loads an entity into the given <see cref="IEntityStore"/></summary>
-        void LoadEntity(IEntityStore store,EntityId entityId);
+        void LoadEntity(IEntityStore store, EntityId entityId);
 
         /// <summary>Checks if an Entity with a given Id exists</summary>
         bool EntityExist(EntityId entityId);

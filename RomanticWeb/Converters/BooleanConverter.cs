@@ -8,7 +8,7 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Converters
 {
     /// <summary>Converter for xsd:boolean.</summary>
-    public class BooleanConverter:XsdConverterBase
+    public class BooleanConverter : XsdConverterBase
     {
         /// <summary>Gets Uri of xsd:boolean.</summary>
         protected override IEnumerable<Uri> SupportedDataTypes { get { yield return Xsd.Boolean; } }
@@ -16,14 +16,14 @@ namespace RomanticWeb.Converters
         /// <summary>Converts a bool value to it's XML string representation.</summary>
         public override Node ConvertBack(object value)
         {
-            return Node.ForLiteral(XmlConvert.ToString((bool)value),Xsd.Boolean);
+            return Node.ForLiteral(XmlConvert.ToString((bool)value), Xsd.Boolean);
         }
 
         /// <inheritdoc />
         [return: AllowNull]
         public override Uri CanConvertBack(Type type)
         {
-            return (type==typeof(bool)?Xsd.Boolean:null);
+            return (type == typeof(bool) ? Xsd.Boolean : null);
         }
 
         /// <summary>Converts xsd:boolean to <see cref="bool"/>.</summary>

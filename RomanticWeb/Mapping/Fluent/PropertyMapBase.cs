@@ -7,7 +7,7 @@ using RomanticWeb.Mapping.Visitors;
 namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>A base mapping definition for properties and collections.</summary>
-    public abstract class PropertyMapBase:TermMap
+    public abstract class PropertyMapBase : TermMap
     {
         private readonly PropertyInfo _propertyInfo;
 
@@ -15,7 +15,7 @@ namespace RomanticWeb.Mapping.Fluent
         /// <param name="propertyInfo">The property.</param>
         protected PropertyMapBase(PropertyInfo propertyInfo)
         {
-            _propertyInfo=propertyInfo;
+            _propertyInfo = propertyInfo;
         }
 
         /// <summary>Gets the converter type.</summary>

@@ -6,7 +6,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// Mapping provider for RDF class
     /// </summary>
-    public class ClassMappingProvider:TermMappingProviderBase,IClassMappingProvider
+    public class ClassMappingProvider : TermMappingProviderBase, IClassMappingProvider
     {
         private readonly Type _entityType;
 
@@ -15,10 +15,10 @@ namespace RomanticWeb.Mapping.Providers
         /// </summary>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="uri">The URI.</param>
-        public ClassMappingProvider(Type entityType,Uri uri)
-            :base(uri)
+        public ClassMappingProvider(Type entityType, Uri uri)
+            : base(uri)
         {
-            _entityType=entityType;
+            _entityType = entityType;
         }
 
         /// <summary>
@@ -27,10 +27,10 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="prefix">The QName prefix.</param>
         /// <param name="term">The QName term.</param>
-        public ClassMappingProvider(Type entityType,string prefix,string term)
-            :base(prefix,term)
+        public ClassMappingProvider(Type entityType, string prefix, string term)
+            : base(prefix, term)
         {
-            _entityType=entityType;
+            _entityType = entityType;
         }
 
         /// <inheritdoc/>

@@ -2,10 +2,10 @@
 
 namespace RomanticWeb.Dynamic
 {
-    internal class TypeDictionaryEntityNames:DictionaryEntityNames
+    internal class TypeDictionaryEntityNames : DictionaryEntityNames
     {
         public TypeDictionaryEntityNames(PropertyInfo property)
-            :base(
+            : base(
                 property.DeclaringType.Namespace,
                 property.DeclaringType.Name,
                 property.Name,

@@ -32,7 +32,7 @@ namespace RomanticWeb.ComponentModel.Composition
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
                     from type in assembly.GetTypes()
-                    where (type!=@interface)&&(@interface.IsAssignableFrom(type))&&(type.IsInterface)
+                    where (type != @interface) && (@interface.IsAssignableFrom(type)) && (type.IsInterface)
                     select type);
         }
 
@@ -56,11 +56,11 @@ namespace RomanticWeb.ComponentModel.Composition
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
                     from type in assembly.GetTypes()
-                    where (type!=typeof(T))&&(!type.IsGenericTypeDefinition)&&(typeof(T).IsAssignableFrom(type))&&(!type.IsAbstract)
-                    from constructor in type.GetConstructors(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance)
-                    let parameters=constructor.GetParameters()
-                    where ((arguments==null)||((parameters.Length==arguments.Length)&&(parameters.Where(
-                        (parameter,index) => (arguments[index]==null)||(parameter.ParameterType.IsAssignableFrom(arguments[index].GetType()))).Count()==parameters.Length)))
+                    where (type != typeof(T)) && (!type.IsGenericTypeDefinition) && (typeof(T).IsAssignableFrom(type)) && (!type.IsAbstract)
+                    from constructor in type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    let parameters = constructor.GetParameters()
+                    where ((arguments == null) || ((parameters.Length == arguments.Length) && (parameters.Where(
+                        (parameter, index) => (arguments[index] == null) || (parameter.ParameterType.IsAssignableFrom(arguments[index].GetType()))).Count() == parameters.Length)))
                     select constructor);
         }
 
@@ -78,8 +78,8 @@ namespace RomanticWeb.ComponentModel.Composition
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
                     from type in assembly.GetTypes()
-                    let attributes=type.GetCustomAttributes(typeof(T),true)
-                    where (attributes.Length>0)
+                    let attributes = type.GetCustomAttributes(typeof(T), true)
+                    where (attributes.Length > 0)
                     select type);
         }
         #endregion

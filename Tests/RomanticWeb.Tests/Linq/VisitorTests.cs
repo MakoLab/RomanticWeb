@@ -100,8 +100,9 @@ namespace RomanticWeb.Tests.Linq
             });
 
             query.Item1.Any();
-            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
-            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
+            computedCommandText = Regex.Replace(computedCommandText, @"\s+", string.Empty).Trim();
+            var expectedText = Regex.Replace(query.Item2, @"\s+", string.Empty).Trim();
+            Assert.That(computedCommandText, Is.EqualTo(expectedText));
         }
 
         private void Test_correctness_of_scalar_query(int queryIndex)
@@ -115,8 +116,9 @@ namespace RomanticWeb.Tests.Linq
             });
 
             query.Item1.Count();
-            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
-            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
+            computedCommandText = Regex.Replace(computedCommandText, @"\s+", string.Empty).Trim();
+            var expectedText = Regex.Replace(query.Item2, @"\s+", string.Empty).Trim();
+            Assert.That(computedCommandText, Is.EqualTo(expectedText));
         }
 
         private void Test_correctness_of_query(int queryIndex)

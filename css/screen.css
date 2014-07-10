@@ -6,7 +6,7 @@
 
 body {
   padding-top: 50px;
-  background-image:url("images/bg_03.gif");
+  background-image:url("../images/bg_03.gif");
   font-family: 'Web_Serveroff';
 }
 
@@ -37,7 +37,7 @@ body {
 	margin-top: -180px;
 }
 .navbar-nav li  {
-	background-image:url("images/mb.png");
+	background-image:url("../images/mb.png");
 	background-size: 120px;
 	width:120px;
 	margin-left: 1%;
@@ -55,28 +55,28 @@ body {
 	background-position: 14px 4px;
 }
 .ahome {
-	background-image:url("images/home.png");
+	background-image:url("../images/home.png");
 }
 .ahome:hover {
-	background-image:url("images/home_over.png");
+	background-image:url("../images/home_over.png");
 }
 .aabout {
-	background-image:url("images/about.png");
+	background-image:url("../images/about.png");
 }
 .aabout:hover {
-	background-image:url("images/about_over.png");
+	background-image:url("../images/about_over.png");
 }
 .aform {
-	background-image:url("images/form.png");
+	background-image:url("../images/form.png");
 }
 .aform:hover  {
-	background-image:url("images/form_over.png");
+	background-image:url("../images/form_over.png");
 }
 .acontact {
-	background-image:url("images/contact.png");
+	background-image:url("../images/contact.png");
 }
 .acontact:hover  {
-	background-image:url("images/contact_over.png");
+	background-image:url("../images/contact_over.png");
 }
 .brand {
 	height: 100%;
@@ -137,7 +137,7 @@ body {
 	padding: 0px;
 }
 .navbar-nav li  {
-	background-image:url("images/mb.png");
+	background-image:url("../images/mb.png");
 	width:133px;
 	margin-left: 3%;
 	margin-right: 3%;
@@ -154,28 +154,28 @@ body {
 	background-position: 16px 7px;
 }
 .ahome {
-	background-image:url("images/home.png");
+	background-image:url("../images/home.png");
 }
 .ahome:hover {
-	background-image:url("images/home_over.png");
+	background-image:url("../images/home_over.png");
 }
 .aabout {
-	background-image:url("images/about.png");
+	background-image:url("../images/about.png");
 }
 .aabout:hover {
-	background-image:url("images/about_over.png");
+	background-image:url("../images/about_over.png");
 }
 .aform {
-	background-image:url("images/form.png");
+	background-image:url("../images/form.png");
 }
 .aform:hover  {
-	background-image:url("images/form_over.png");
+	background-image:url("../images/form_over.png");
 }
 .acontact {
-	background-image:url("images/contact.png");
+	background-image:url("../images/contact.png");
 }
 .acontact:hover  {
-	background-image:url("images/contact_over.png");
+	background-image:url("../images/contact_over.png");
 }
 .brand {
 	height: 100%;
@@ -186,7 +186,7 @@ body {
 	margin-left:10px;
 }
 .search {
-	background-image:url("images/mb.png");
+	background-image:url("../images/mb.png");
 	width: 63px;
 	height: 100%;
 	float: right;
@@ -245,7 +245,7 @@ body {
 	padding: 0px;
 }
 .navbar-nav li  {
-	background-image:url("images/mb.png");
+	background-image:url("../images/mb.png");
 	width:133px;
 	margin-left: 2px;
 	padding-top: 2px;
@@ -262,28 +262,28 @@ body {
 	background-position: 16px 7px;
 }
 .ahome {
-	background-image:url("images/home.png");
+	background-image:url("../images/home.png");
 }
 .ahome:hover {
-	background-image:url("images/home_over.png");
+	background-image:url("../images/home_over.png");
 }
 .aabout {
-	background-image:url("images/about.png");
+	background-image:url("../images/about.png");
 }
 .aabout:hover {
-	background-image:url("images/about_over.png");
+	background-image:url("../images/about_over.png");
 }
 .aform {
-	background-image:url("images/form.png");
+	background-image:url("../images/form.png");
 }
 .aform:hover  {
-	background-image:url("images/form_over.png");
+	background-image:url("../images/form_over.png");
 }
 .acontact {
-	background-image:url("images/contact.png");
+	background-image:url("../images/contact.png");
 }
 .acontact:hover  {
-	background-image:url("images/contact_over.png");
+	background-image:url("../images/contact_over.png");
 }
 .brand {
 	height: 100%;
@@ -294,7 +294,7 @@ body {
 	margin-left:10px;
 }
 .search {
-	background-image:url("images/mb.png");
+	background-image:url("../images/mb.png");
 	width: 63px;
 	height: 100%;
 	float: right;

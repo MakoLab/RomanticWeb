@@ -16,7 +16,7 @@ Console must be run as admin.
 
     cinst ruby
 
-2. Download the matching Ruby DevKit downloaded from [Ruby installer page](http://rubyinstaller.org/downloads/. 
+2. Download the matching Ruby DevKit downloaded from [Ruby installer page](http://rubyinstaller.org/downloads/). 
 3. Unpack it to c:\devkit
 4. **For 64bit** edit the file dk.rb and replace a similar part with
 
@@ -56,4 +56,4 @@ Console must be run as admin.
     
 ### Preview the pages locally
 
-    http://localhost:4000/RomanticWeb/
+    [http://localhost:4000/RomanticWeb/]

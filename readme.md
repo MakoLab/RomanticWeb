@@ -56,4 +56,4 @@ Console must be run as admin.
     
 ### Preview the pages locally
 
-    [http://localhost:4000/RomanticWeb/]
+    Browse to http://localhost:4000/RomanticWeb/

@@ -10,6 +10,17 @@ body {
   font-family: 'Web_Serveroff';
 }
 
+.search {
+    background-image:url("../images/mb.png");
+    width: 63px;
+    height: 100%;
+    float: right;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    margin-right: 20px;
+    font-size: 32pt;
+    color: #056778
+}
 
 @media (max-width: 767px) {
 .nav {
@@ -126,8 +137,6 @@ body {
 }
 }
 
-
-
 @media (min-width: 768px) and (max-width: 991px) {
 .nav {
 	float: right;	
@@ -189,13 +198,6 @@ body {
 	margin-left:10px;
 }
 .search {
-	background-image:url("../images/mb.png");
-	width: 63px;
-	height: 100%;
-	float: right;
-	padding-left: 18px;
-	padding-top: 15px;
-	padding-bottom: 30px;
 	margin-right: 0px;
 }
 .left {
@@ -231,15 +233,6 @@ body {
 	display: none;
 }
 }
-
-
-
-
-
-
-
-
-
 
 @media (min-width: 992px) {
 .nav {
@@ -299,16 +292,6 @@ body {
 }
 .brand  img{
 	margin-left:10px;
-}
-.search {
-	background-image:url("../images/mb.png");
-	width: 63px;
-	height: 100%;
-	float: right;
-	padding-left: 18px;
-	padding-top: 15px;
-	padding-bottom: 30px;
-	margin-right: 20px;
 }
 .left {
 	float: left;

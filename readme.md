@@ -1,4 +1,4 @@
-# GitHub pages site for [RomanticWeb](http://gibhub.org/MakoLab/RomanticWeb) project
+# GitHub page for [RomanticWeb](http://gibhub.org/MakoLab/RomanticWeb) project
 
 ## About
 
@@ -12,7 +12,7 @@ Console must be run as admin.
 
 ### Ruby 2 and Ruby DevKit
 
-1. Install Ruby 2.0
+1. Install Ruby 2.0 with [Chocolatey](http://chocolatey.org)
 
     cinst ruby
 
@@ -29,22 +29,22 @@ Console must be run as admin.
 5. Open the console 
 
     cd c:\devkit
-	ruby dk.rb init
-	ruby dk.rb install
+    ruby dk.rb init
+    ruby dk.rb install
 	
 ### Install Jekyll gem
 
     gem install jekyll --all
     gem install jekyll --version 1.4.2
-	gem uninstall pygments.rb --all
-	gem install pygments.rb --version 0.5.0
+    gem uninstall pygments.rb --all
+    gem install pygments.rb --version 0.5.0
 	
-### Install pygments
+### Install pygments with [Chocolatey](http://chocolatey.org)
 
-	cinst python2
-	cinst easy.install
-	cinst pip
-	pip install pygments
+    cinst python2
+    cinst easy.install
+    cinst pip
+    pip install pygments
 	
 ### **OPTIONAL** install WDM to enable file watch
 

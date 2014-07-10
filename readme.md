@@ -53,3 +53,7 @@ Console must be run as admin.
 ### Run jekyll
 
     jekyll serve --watch
+    
+### Preview the pages locally
+
+    http://localhost:4000/RomanticWeb/

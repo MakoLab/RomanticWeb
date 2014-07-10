@@ -1,8 +1,8 @@
-/*@font-face {
+@font-face {
   font-family: 'Web_Serveroff';
   src: url('dist/fonts/Web_Serveroff.eot');
   src: url('dist/fonts/Web_Serveroff.otf') format('opentype');
-}*/
+}
 
 body {
   padding-top: 50px;
@@ -111,6 +111,9 @@ body {
 .main {
 	float: left;
 }
+.main p {
+	font-family: Arial;
+}
 .main h2 {
 	margin-top:0px;
 }
@@ -216,6 +219,10 @@ body {
 	padding-top:0px;
 	margin-top:0px;
 }
+.main p {
+	font-family: Arial;
+}
+
 .item {
 	padding-left:25px;
 	padding-right:25px;
@@ -322,6 +329,10 @@ body {
 .main {
 	padding-top:0px;
 }
+.main p {
+	font-family: Arial;
+}
+
 .item {
 	padding-left:15px;
 	padding-right:15px;

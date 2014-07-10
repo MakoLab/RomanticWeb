@@ -1,3 +1,4 @@
-name: Your New Jekyll Site
+name: RomanticWeb project page
 markdown: redcarpet
 pygments: true
+baseurl: /RomanticWeb

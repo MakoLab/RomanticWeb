@@ -64,6 +64,7 @@ body {
 	padding-bottom: 20px;
 	background-repeat: no-repeat;
 	background-position: 14px 4px;
+	font-size: 20px;
 }
 .ahome {
 	background-image:url("../images/home.png");
@@ -107,7 +108,7 @@ body {
 	padding-bottom: 10px;
 	margin-bottom:0px;
 	margin-top:5px;
-	font-size: 16px;
+	font-size: 22px;
 	font-weight: bold;
 	float: left;
 	width: 100%;
@@ -119,7 +120,18 @@ body {
 .leftcolor2 {
 	color: #a1a1a1;
 }
-
+.right {
+	padding-left:55px;
+	padding-right:15px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom:0px;
+	margin-top:5px;
+	font-size: 22px;
+	font-weight: bold;
+	float: right;
+	width: 30%;
+}
 .main {
 	float: left;
 }
@@ -165,6 +177,7 @@ body {
 	padding-bottom: 20px;
 	background-repeat: no-repeat;
 	background-position: 16px 7px;
+	font-size: 20px;
 }
 .ahome {
 	background-image:url("../images/home.png");
@@ -222,10 +235,10 @@ body {
 	padding-bottom: 10px;
 	margin-bottom:0px;
 	margin-top:5px;
-	font-size: 16px;
+	font-size: 22px;
 	font-weight: bold;
 	float: right;
-	width: 20%;
+	width: 30%;
 }
 .main {
 	padding-top:0px;
@@ -330,10 +343,10 @@ body {
 	padding-bottom: 10px;
 	margin-bottom:0px;
 	margin-top:5px;
-	font-size: 16px;
+	font-size: 22px;
 	font-weight: bold;
 	float: right;
-	width: 20%;
+	width: 30%;
 }
 .main {
 	padding-top:0px;

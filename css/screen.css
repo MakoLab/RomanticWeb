@@ -381,6 +381,7 @@ background-image: url(../images/mb2.png);
 .img-main {
 	/*display: none;*/
 	padding-top: 10px;
+	margin-top: 20px;
 }
 .footer {
 	border-top: 1px solid #000000;

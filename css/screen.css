@@ -366,6 +366,7 @@ background-image: url(../images/mb2.png);
 .main {
 	padding-top: 0px;
 	background-color: #ffffff;
+	float: left;
 	
 }
 .main p {

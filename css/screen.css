@@ -130,7 +130,7 @@ body {
 	font-size: 16px;
 	font-weight: bold;
 	float: right;
-	width: 30%;
+	
 }
 .main {
 	float: left;
@@ -241,7 +241,7 @@ body {
 	font-size: 22px;
 	font-weight: bold;
 	float: right;
-	width: 30%;
+	
 }
 .main {
 	padding-top:0px;
@@ -352,7 +352,7 @@ body {
 	font-size: 22px;
 	font-weight: bold;
 	float: right;
-	width: 30%;
+	
 }
 .back {
 background-image: url(../images/mb2.png);

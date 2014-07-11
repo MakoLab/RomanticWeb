@@ -7,7 +7,7 @@
 body {
     padding-top: 50px;
     background-image: url("../images/bg_03.gif");
-    font-family: 'Web_Serveroff';
+    font-family: 'Web_Serveroff',sans-serif;
 }
 
 .search {
@@ -35,25 +35,23 @@ body {
 @media (max-width: 767px) {
     .nav {
         float: left;
-        margin: 0px;
-        padding: 0px;
-        margin-left: 35px;
+        padding: 0;
+        margin: 0 0 0 35px;
         max-width: 270px;
     }
 
     .navbar-default {
         background-color: transparent;
-        border-color: #000000;
-        border: 0px;
-        padding: 0px;
+        border: 0 #000000;
+        padding: 0;
     }
 
     .navbar-collapse {
-        border-top: 0px;
+        border-top: 0;
     }
 
     .navbar-toggle {
-        right: 0px;
+        right: 0;
         top: -45px;
         position: absolute;
     }
@@ -74,12 +72,8 @@ body {
     }
 
     .navbar-nav li a {
-        padding-left: 55px;
-        padding-right: 35px;
-        padding-top: 7px;
-        padding-bottom: 20px;
-        background-repeat: no-repeat;
-        background-position: 14px 4px;
+        padding: 7px 35px 20px 55px;
+        background: no-repeat 14px 4px;
         font-size: 20px;
     }
 
@@ -131,7 +125,7 @@ body {
 
     .left {
         padding-left: 55px;
-        margin-bottom: 0px;
+        margin-bottom: 0;
         margin-top: 5px;
         font-size: 22px;
         font-weight: bold;
@@ -153,11 +147,8 @@ body {
     }
 
     .right {
-        padding-left: 0px;
-        padding-right: 15px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        margin-bottom: 0px;
+        padding: 10px 15px 10px 0;
+        margin-bottom: 0;
         margin-top: 5px;
         font-size: 16px;
         font-weight: bold;
@@ -170,11 +161,11 @@ body {
     }
 
     .main p {
-        font-family: Arial;
+        font-family: Arial,sans-serif;
     }
 
     .main h2 {
-        margin-top: 0px;
+        margin-top: 0;
     }
 
     .item {
@@ -195,9 +186,8 @@ body {
 
     .navbar-default {
         background-color: transparent;
-        border-color: #000000;
-        border: 0px;
-        padding: 0px;
+        border: 0 #000000;
+        padding: 0;
     }
 
     .navbar-nav li {
@@ -211,12 +201,8 @@ body {
     }
 
     .navbar-nav li a {
-        padding-left: 55px;
-        padding-right: 35px;
-        padding-top: 10px;
-        padding-bottom: 20px;
-        background-repeat: no-repeat;
-        background-position: 16px 7px;
+        padding: 10px 35px 20px 55px;
+        background: no-repeat 16px 7px;
         font-size: 20px;
     }
 
@@ -263,14 +249,11 @@ body {
     }
 
     .search {
-        margin-right: 0px;
+        margin-right: 0;
     }
 
     .left {
-        padding-left: 35px;
-        padding-right: 15px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding: 10px 15px 10px 35px;
         font-size: 24px;
     }
 
@@ -288,11 +271,8 @@ body {
     }
 
     .right {
-        padding-left: 55px;
-        padding-right: 15px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        margin-bottom: 0px;
+        padding: 10px 15px 10px 55px;
+        margin-bottom: 0;
         margin-top: 5px;
         font-size: 22px;
         font-weight: bold;
@@ -301,16 +281,16 @@ body {
     }
 
     .main {
-        padding-top: 0px;
+        padding-top: 0;
     }
 
     .main h2 {
-        padding-top: 0px;
-        margin-top: 0px;
+        padding-top: 0;
+        margin-top: 0;
     }
 
     .main p {
-        font-family: Arial;
+        font-family: Arial,sans-serif;
     }
 
     .item {
@@ -331,9 +311,8 @@ body {
 
     .navbar-default {
         background-color: transparent;
-        border-color: #000000;
-        border: 0px;
-        padding: 0px;
+        border: 0 #000000;
+        padding: 0;
     }
 
     .navbar-nav li {
@@ -346,12 +325,8 @@ body {
     }
 
     .navbar-nav li a {
-        padding-left: 55px;
-        padding-right: 35px;
-        padding-top: 10px;
-        padding-bottom: 20px;
-        background-repeat: no-repeat;
-        background-position: 16px 7px;
+        padding: 10px 35px 20px 55px;
+        background: no-repeat 16px 7px;
         font-size: 20px;
     }
 
@@ -419,11 +394,8 @@ body {
     }
 
     .right {
-        padding-left: 55px;
-        padding-right: 15px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        margin-bottom: 0px;
+        padding: 10px 15px 10px 55px;
+        margin-bottom: 0;
         margin-top: 5px;
         font-size: 22px;
         font-weight: bold;
@@ -432,9 +404,7 @@ body {
     }
 
     .back {
-        background-image: url(../images/mb2.png);
-        background-position: bottom;
-        background-repeat: no-repeat;
+        background: url(../images/mb2.png) no-repeat bottom;
         padding-bottom: 20px;
         margin-bottom: 10px;
         background-size: 100%;
@@ -442,21 +412,18 @@ body {
     }
 
     .main {
-        padding-top: 0px;
+        padding-top: 0;
         background-color: #ffffff;
         float: left;
 
     }
 
     .main p {
-        font-family: Arial;
+        font-family: Arial,sans-serif;
     }
 
     .item {
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        padding: 5px 15px;
     }
 
     .img-main {

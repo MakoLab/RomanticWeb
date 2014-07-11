@@ -281,7 +281,6 @@ body {
 	background-image:url("../images/mb.png");
 	width:133px;
 	margin-left: 2px;
-	padding-top: 2px;
 	padding-bottom: 10px;
 	padding-top: 10px;
 	float: left;
@@ -357,7 +356,8 @@ body {
 }
 .main {
 	padding-top:0px;
-	background-image:url("../images/mb.png");
+	background-color: #ffffff;
+	
 }
 .main p {
 	font-family: Arial;

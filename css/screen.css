@@ -354,8 +354,15 @@ body {
 	float: right;
 	width: 30%;
 }
+.back {
+background-image: url(../images/mb2.png);
+	background-position: bottom;
+	background-repeat: no-repeat;
+	padding-bottom: 20px;
+	margin-bottom: 10px;
+	background-size: 100%;}
 .main {
-	padding-top:0px;
+	padding-top: 0px;
 	background-color: #ffffff;
 	
 }
@@ -371,6 +378,7 @@ body {
 }
 .img-main {
 	/*display: none;*/
+	padding-top: 10px;
 }
 .footer {
 	border-top: 1px solid #000000;

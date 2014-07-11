@@ -1,4 +1,4 @@
-# GitHub page for [RomanticWeb](http://gibhub.org/MakoLab/RomanticWeb) project
+# GitHub page for [RomanticWeb](http://github.org/MakoLab/RomanticWeb) project
 
 ## About
 

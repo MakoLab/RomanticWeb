@@ -2,3 +2,4 @@ name: RomanticWeb project page
 markdown: redcarpet
 pygments: true
 baseurl: /RomanticWeb
+permalink: /:categories/:title

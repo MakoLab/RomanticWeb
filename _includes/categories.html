@@ -1,0 +1,10 @@
+<div>
+    {{ include.header }}
+<ul>
+    {% for post in include.posts %}
+    <li>
+        <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+</div>

@@ -32,6 +32,20 @@ body {
     padding-left: 15px;
 }
 
+.navbar-nav li {
+    text-align: center;
+}
+
+.navbar-nav li a {
+    background: no-repeat 16px 7px;
+    font-size: 20px;
+    padding-top: 10px;
+}
+
+.main p, .post p {
+    font-family: Arial,sans-serif;
+}
+
 @media (max-width: 767px) {
     .nav {
         float: left;
@@ -66,15 +80,18 @@ body {
         width: 120px;
         margin-left: 1%;
         margin-right: 1%;
-        padding-top: 10px;
-        padding-bottom: 10px;
         float: left;
+        margin-top: 10px;
+        padding-bottom: 10px;
     }
 
     .navbar-nav li a {
-        padding: 7px 35px 20px 55px;
         background: no-repeat 14px 4px;
-        font-size: 20px;
+        text-align: left;
+    }
+
+    .navbar-nav li a .fa-stack {
+        font-size:16px
     }
 
     .ahome {
@@ -160,10 +177,6 @@ body {
         float: left;
     }
 
-    .main p {
-        font-family: Arial,sans-serif;
-    }
-
     .main h2 {
         margin-top: 0;
     }
@@ -195,15 +208,7 @@ body {
         width: 133px;
         margin-left: 3%;
         margin-right: 3%;
-        padding-top: 10px;
-        padding-bottom: 10px;
         float: left;
-    }
-
-    .navbar-nav li a {
-        padding: 10px 35px 20px 55px;
-        background: no-repeat 16px 7px;
-        font-size: 20px;
     }
 
     .ahome {
@@ -289,10 +294,6 @@ body {
         margin-top: 0;
     }
 
-    .main p {
-        font-family: Arial,sans-serif;
-    }
-
     .item {
         padding-left: 25px;
         padding-right: 25px;
@@ -319,15 +320,7 @@ body {
         background-image: url("../images/mb.png");
         width: 133px;
         margin-left: 2px;
-        padding-bottom: 10px;
-        padding-top: 10px;
         float: left;
-    }
-
-    .navbar-nav li a {
-        padding: 10px 35px 20px 55px;
-        background: no-repeat 16px 7px;
-        font-size: 20px;
     }
 
     .ahome {
@@ -381,7 +374,7 @@ body {
     }
 
     .subheader {
-        top: -30px;
+        top: -25px;
     }
 
     .leftcolor {
@@ -416,10 +409,6 @@ body {
         background-color: #ffffff;
         float: left;
 
-    }
-
-    .main p {
-        font-family: Arial,sans-serif;
     }
 
     .item {

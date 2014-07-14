@@ -1,0 +1,44 @@
+---
+layout: tutorial
+title:  "Installation"
+date:   2014-07-03 15:07:22
+categories: docs getting-started
+---
+
+# Installation
+
+## Main package
+
+RomanticWeb is available on [NuGet][nuget]. The easiest way to include it in your project is to execute
+
+    install-package RomanticWeb
+
+in the Package Manager Console.
+
+Alternatively you could install the package using the Manage Packages screen.
+
+## Storage backend
+
+RomanticWeb is not tightly coupled to any storage backend to potentially allow implementing customized data access
+layers. Currently the only implemented storage is using [dotNetRDF][dotNetRDF] and it is available as a separate
+NuGet package.
+
+    install-package RomanticWeb.dotNetRDF
+
+Thanks to dotNetRDF it is possible to use a single component to access a wide variety of supported triple stores such as [Virtuoso][Virtuoso], [Allegro Graph][allegro] or [Stardog][[stardog]]. For a full list please refer to the project's [wiki pages][dnr storage].
+
+## JSON-LD
+
+Last but not least Romantic Web comes with its own [JSON-LD][jsonld] processor implementation for .NET.
+
+    install-package RomanticWeb.JsonLd
+
+Please not that JSON-LD support is not currently complete.
+
+[nuget]: http://nuget.org
+[dotNetRDF]: http://dotnetrdf.org
+[jsonld]: http://json-ld.org
+[dnr storage]: https://bitbucket.org/dotnetrdf/dotnetrdf/wiki/UserGuide/Storage%20API
+[Virtuoso]: http://virtuoso.openlinksw.com/
+[allegro]: http://franz.com/agraph/allegrograph/
+[stardog]: http://stardog.com/

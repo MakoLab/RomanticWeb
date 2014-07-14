@@ -2,7 +2,7 @@
 layout: tutorial
 title:  "Introduction"
 date:   2014-07-03 15:07:22
-categories: getting-started
+categories: docs getting-started
 ---
 
 # Romantic Web

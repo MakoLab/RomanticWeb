@@ -12,7 +12,7 @@
     <AssemblyName>RomanticWeb</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>    
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
@@ -148,6 +148,7 @@
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
+    <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\GenericQueryOptimizer.cs" />
     <Compile Include="Linq\IQueryOptimizer.cs" />
     <Compile Include="Linq\IQueryVisitor.cs" />

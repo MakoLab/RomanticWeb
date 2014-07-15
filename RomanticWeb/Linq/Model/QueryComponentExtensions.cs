@@ -168,6 +168,21 @@ namespace RomanticWeb.Linq.Model
             return result;
         }
 
+        internal static bool ShouldBeOptional(this EntityConstrain constrain, IEnumerable<IQueryComponentNavigator> currentQueryComponentStack)
+        {
+            bool result = false;
+            foreach (IQueryComponentNavigator navigator in currentQueryComponentStack)
+            {
+                if ((navigator.NavigatedComponent is BinaryOperator) && (((BinaryOperator)navigator.NavigatedComponent).Member == MethodNames.Or))
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         private static IEnumerable<T> FindAllComponents<T>(this IQueryComponentNavigator queryComponentNavigator, IList<Query> searchedQueries) where T : IQueryComponent
         {
             List<T> result = new List<T>();

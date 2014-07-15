@@ -526,9 +526,6 @@ namespace RomanticWeb.Linq
                 _currentComponent = currentComponent;
                 HandleComponent(queryModelVisitor.Result);
                 _lastComponent = queryModelVisitor.Result;
-                foreach (var anyResultOperator in expression.QueryModel.ResultOperators.OfType<Remotion.Linq.Clauses.ResultOperators.AnyResultOperator>())
-                {
-                }
             }
 
             return expression;
@@ -611,7 +608,7 @@ namespace RomanticWeb.Linq
             Identifier memberIdentifier = null;
             EntityConstrain constrain = _query.FindAllComponents<EntityConstrain>()
                 .Where(item => item.GetType() == typeof(EntityConstrain))
-                .FirstOrDefault(item => item.TargetExpression == expression.Expression);
+                .FirstOrDefault(item => item.TargetExpression.EqualsTo(expression.Expression));
             if (constrain == null)
             {
                 memberIdentifier = (_query.FindAllComponents<StrongEntityAccessor>()
@@ -625,6 +622,14 @@ namespace RomanticWeb.Linq
             }
             else
             {
+                if (constrain.ShouldBeOptional(_currentComponent))
+                {
+                    entityAccessor.Elements.Remove(constrain);
+                    OptionalPattern optional = new OptionalPattern();
+                    optional.Patterns.Add(constrain);
+                    entityAccessor.Elements.Add(optional);
+                }
+
                 memberIdentifier = (Identifier)constrain.Value;
             }
 

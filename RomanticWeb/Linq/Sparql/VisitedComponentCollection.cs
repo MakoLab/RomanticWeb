@@ -33,8 +33,9 @@ namespace RomanticWeb.Linq.Sparql
         internal void Remove(IQueryComponent key)
         {
             int totalChange = 0;
-            foreach (Index<IQueryComponent> index in _list)
+            for (int itemIndex = _list.Count - 1; itemIndex >= 0; itemIndex--)
             {
+                Index<IQueryComponent> index = _list[itemIndex];
                 if (!Object.Equals(index.Key, key))
                 {
                     index.StartAt -= totalChange;
@@ -43,6 +44,7 @@ namespace RomanticWeb.Linq.Sparql
                 {
                     _stringBuilder = _stringBuilder.Remove(index.StartAt, index.Length);
                     totalChange += index.Length;
+                    _list.RemoveAt(itemIndex);
                 }
             }
         }

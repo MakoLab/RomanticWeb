@@ -615,21 +615,24 @@ namespace RomanticWeb.Linq.Sparql
                 _commandText.Append(" ");
                 if ((binaryOperator.RightOperand is Literal) && (((Literal)binaryOperator.RightOperand).Value == null))
                 {
-                    entityConstrain = _currentEntityAccessor.Peek().Elements.OfType<EntityConstrain>().Where(item => item.Value == binaryOperator.LeftOperand).First();
+                    entityConstrain = _currentEntityAccessor.Peek().FindAllComponents<EntityConstrain>().Where(item => item.Value == binaryOperator.LeftOperand).First();
                     VisitComponent(entityConstrain.Predicate);
                     _commandText.Append(" ");
                     VisitComponent(binaryOperator.LeftOperand);
                 }
                 else
                 {
-                    entityConstrain = _currentEntityAccessor.Peek().Elements.OfType<EntityConstrain>().Where(item => item.Value == binaryOperator.RightOperand).First();
+                    entityConstrain = _currentEntityAccessor.Peek().FindAllComponents<EntityConstrain>().Where(item => item.Value == binaryOperator.RightOperand).First();
                     VisitComponent(entityConstrain.Predicate);
                     _commandText.Append(" ");
                     VisitComponent(binaryOperator.RightOperand);
                 }
 
                 _commandText.Append("}");
-                _visitedComponents.Remove(entityConstrain);
+                if (_currentEntityAccessor.Peek().Elements.IndexOf(entityConstrain) != -1)
+                {
+                    _visitedComponents.Remove(entityConstrain);
+                }
             }
             else
             {

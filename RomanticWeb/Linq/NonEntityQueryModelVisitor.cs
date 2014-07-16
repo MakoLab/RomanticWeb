@@ -8,6 +8,7 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
+using RomanticWeb.Linq.Expressions;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
 
@@ -22,6 +23,7 @@ namespace RomanticWeb.Linq
         private QueryComponent _from;
         private IExpression _mainFromComponent;
         private IList<QueryComponent> _bodies;
+        private System.Linq.Expressions.MemberExpression _fromExpression;
         #endregion
 
         #region Constructors
@@ -64,6 +66,16 @@ namespace RomanticWeb.Linq
             }
 
             string currentItemNameOverride = _visitor.ItemNameOverride;
+            QuerySourceReferenceExpression selector = (QuerySourceReferenceExpression)selectClause.Selector;
+            if (selector.ReferencedQuerySource is MainFromClause)
+            {
+                MainFromClause mainFrom = (MainFromClause)selector.ReferencedQuerySource;
+                if (mainFrom.FromExpression is System.Linq.Expressions.MemberExpression)
+                {
+                    _fromExpression = (System.Linq.Expressions.MemberExpression)mainFrom.FromExpression;
+                }
+            }
+
             _visitor.ItemNameOverride = ((QuerySourceReferenceExpression)selectClause.Selector).ReferencedQuerySource.ItemName;
             queryModel.MainFromClause.Accept(this, queryModel);
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
@@ -200,7 +212,7 @@ namespace RomanticWeb.Linq
                                                    let identifier = constrain.Value as Identifier
                                                    where identifier != null
                                                    let identifierString = _visitor.Query.RetrieveIdentifier(identifier.Name)
-                                                   where identifierString == targetIdentifierString
+                                                   where (identifierString == targetIdentifierString) || ((_fromExpression != null) && (constrain.TargetExpression.EqualsTo(_fromExpression)))
                                                    where (entityConstrains = constrains.Where(item =>
                                                        (item.Predicate is Literal) && (((Uri)((Literal)item.Predicate).Value).AbsoluteUri == predicateUri.AbsoluteUri)).ToList()).Count > 0
                                                    select accessor).FirstOrDefault();

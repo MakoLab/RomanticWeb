@@ -20,8 +20,6 @@ We start off with a `EntityContextFactory` instance.
 using RomanticWeb;
 
 var contextFactory = new EntityContextFactory();
-        .WithMetaGraphUri(new Uri("http://example.com/data/"))
-        .WithEntitySource(() => new);
 ```
 
 ## Configure an RDF storage

@@ -24,16 +24,10 @@ var contextFactory = new EntityContextFactory();
         .WithEntitySource(() => new);
 ```
 
-## Configure a meta graph URI
-
-As described on the [concepts][concepts] page, the RDF data accessed and modified by RomanticWeb is actually partitioned
-into Named Graphs and there is an additional Named Graph, which describes the former graphs.
-
-``` java
-contextFactory.WithMetaGraphUri(new Uri("http://example.com/data/"));
-```
-
 ## Configure an RDF storage
+
+It is of course necessary to link our entity context factory to an actual RDF data backend. Currently there is a [dotNetRDF][dnr]
+backend. The example below shows how to use an in-memory triple store.
 
 ``` java
 using RomanticWeb;
@@ -43,7 +37,20 @@ var dnrTripleStore = new VDS.RDF.TripleStore();
 contextFactory.WithEntitySource(() => new TripleStoreAdapter(dnrTripleStore));
 ```
 
+## Configure a meta graph URI
+
+As described on the [concepts][concepts] page, the RDF data accessed and modified by RomanticWeb is actually partitioned
+into Named Graphs and there is an additional Named Graph, which describes the former graphs.
+
+Because there is no good default for that setting we decided that this must be always set up explicitly rather than using
+some fallback value. This way users must consciously shape their triple store.
+
+``` java
+contextFactory.WithMetaGraphUri(new Uri("http://example.com/data/"));
+```
+
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/
 [fnh]: http://www.fluentnhibernate.org/
 [concepts]: ../../getting-started/concepts
+[dnr]: http://dotnetrdf.org

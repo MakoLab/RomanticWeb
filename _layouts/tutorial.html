@@ -4,11 +4,14 @@ layout: default
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-            {% include categories.html posts=site.categories.getting-started header='Getting started' %}
-        </div>
-        <div class="main col-md-9">
+        <aside class="col-md-3">
+            {% include categories.html category='getting-started' header='Getting started' %}
+            {% include categories.html category='basic-usage' header='Basic usage' %}
+        </aside>
+        <article class="main col-md-9">
+            {% include prevnext.html %}
             {{ content }}
-        </div>
+            {% include prevnext.html %}
+        </article>
     </div>
 </div>

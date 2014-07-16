@@ -1,0 +1,49 @@
+---
+layout: tutorial
+title:  "Entity Context Factory"
+permalink: 'contextfactory/'
+prev: 'docs/basic-usage/contextfactory/'
+categories: ['docs', 'basic-usage']
+---
+
+# Entity context factory
+
+## Create context factory
+
+Next step is to create an entity context factory. Here we'll show how it is done in code. This method is,
+much like the fluent mapping API, inspired by [Fluent NHibernate][fnh]. It is also possible to define the configuration
+in a `app.config`/`web.config` file. Please refer to the relevant doc page.
+
+We start off with a `EntityContextFactory` instance.
+
+``` java
+using RomanticWeb;
+
+var contextFactory = new EntityContextFactory();
+        .WithMetaGraphUri(new Uri("http://example.com/data/"))
+        .WithEntitySource(() => new);
+```
+
+## Configure a meta graph URI
+
+As described on the [concepts][concepts] page, the RDF data accessed and modified by RomanticWeb is actually partitioned
+into Named Graphs and there is an additional Named Graph, which describes the former graphs.
+
+``` java
+contextFactory.WithMetaGraphUri(new Uri("http://example.com/data/"));
+```
+
+## Configure an RDF storage
+
+``` java
+using RomanticWeb;
+using RomanticWeb.DotNetRDF;
+
+var dnrTripleStore = new VDS.RDF.TripleStore();
+contextFactory.WithEntitySource(() => new TripleStoreAdapter(dnrTripleStore));
+```
+
+[foaf]: http://www.foaf-project.org/
+[foaf-doc]: http://xmlns.com/foaf/spec/
+[fnh]: http://www.fluentnhibernate.org/
+[concepts]: ../../getting-started/concepts

@@ -1,0 +1,99 @@
+---
+layout: tutorial
+title:  "Basic entity mapping"
+permalink: 'mapping/'
+prev: 'docs/getting-started/concepts/'
+next: 'docs/basic-usage/contextfactory/'
+categories: ['docs', 'basic-usage']
+---
+
+# Your first entity
+
+## Creating an entity type
+
+Each entity type must be an interface derived from `IEntity`. For example if we want to use an entity representing people, we could create an `IPerson` interface
+
+``` java
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    string Name { get; set; }
+
+    string LastName { get; set; }
+
+    ICollection<IPerson> Friends { get; set; }
+}
+```
+
+## Mapping to RDF terms
+
+The entity type above is not yet complete. In order to use it to manipulate RDF data it has to be mapped to RDF classes
+and properties. In this example let's use the [Friend of a Friend][foaf] vocabulary, or _foaf_. Foaf defines various
+terms, which describe people and their relationships. Please refer to the [project's documentation][foaf-doc] for
+more information.
+
+The three properties declared by the `IPerson` type each have a foaf counterpart: `foaf:givenName`, `foaf:familyName`
+and `foaf:knows`. Now we need a way to define that a given property corresponds to an RDF property. This can be done
+in two ways. One is by using attributes and the other is by using a fluent interface.
+
+<ul class="nav nav-tabs" role="tablist"  id="mytab">
+  <li class="active"><a href="#attrs" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane active" id="attrs">
+
+``` java
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    [Property("http://xmlns.com/foaf/0.1/givenName")]
+    string Name { get; set; }
+
+    [Property("http://xmlns.com/foaf/0.1/familyName")]
+    string LastName { get; set; }
+
+    [Property("http://xmlns.com/foaf/0.1/knows")]
+    ICollection<IPerson> Friends { get; set; }
+}
+```
+
+  </div>
+  <div class="tab-pane" id="fluent">
+
+``` java
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Property(p => p.Name).Term.Is(new Uri("http://xmlns.com/foaf/0.1/givenName"));
+        Property(p => p.LastName).Term.Is(new Uri("http://xmlns.com/foaf/0.1/familyName"));
+        Collection(p => p.Friends).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows"));
+    }
+}
+```
+
+  </div>
+</dd>
+
+The above examples show how to map the `IPerson`'s properties to RDF predicates.
+Note that absolute URIs are used. Later in this tutorial you'll learn how to use prefixed names (aka QNames).
+
+Attributes are a simpler way to define mapping, but their disadvantage is that they have to be static.
+Fluent mappings on the other hand can be dynamic. Term names can be computed at runtime. You will also want to use
+fluent mappings if the mapped types are defined in another assembly.
+
+**_NOTE_**
+It is possible to mix both mapping styles, even for a single type.
+
+Please click the link on the left to read more about to learn more about different mapping options.
+
+[foaf]: http://www.foaf-project.org/
+[foaf-doc]: http://xmlns.com/foaf/spec/
+[fnh]: http://www.fluentnhibernate.org/

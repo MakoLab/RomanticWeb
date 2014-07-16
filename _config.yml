@@ -3,3 +3,4 @@ markdown: redcarpet
 pygments: true
 baseurl: /RomanticWeb
 permalink: /:categories/:title
+docs-categories: [getting-started]

@@ -1,0 +1,101 @@
+---
+layout: tutorial
+title:  "Concepts"
+permalink: 'concepts/'
+prev: 'docs/getting-started/installation/'
+next: 'docs/basic-usage/mapping/'
+categories: ['docs', 'getting-started']
+---
+
+# Basic concepts
+
+## Entity
+
+The core concept is the entity, which represents a single RDF resource. All entities must inherit the `IEntity` interface.
+
+``` java
+public interface IEntity
+{
+    EntityId Id { get; }
+
+    IEntityContext Context { get; }
+}
+```
+
+For example person entity could be defined as an `IPerson` interface.
+
+``` java
+public interface IPerson : IEntity
+{
+    string Name { get; set; }
+
+    string LastName { get; set; }
+
+    IList<IPerson> Friends { get; set; }
+}
+```
+
+Currently all entities must be interfaces. This is because unlike C#, RDF allows multiple inheritance. Another reason
+is the [open-world assumption][owa], which at its core states that what is not explicitly said cannot be denied. This
+means that any entity can potentially represent other data structures. In statically-typed languages C# it is not
+possible to freely cast an object from one type to another. However it can be achieved with the use of interfaces
+and some dynamic typing.
+
+## Entity context
+
+One downside of entities being interfaces is that instances cannot be created using the `new` keyword. To create
+instances of entity types the `IEntityContext` must be used. The entity context is similar to` ObjectContext` or
+`DbContext` from [Entity Framework][ef] or the `ISession` from [NHibernate][nh].
+
+Entity Context contains multiple methods related to creating, retrieving, querying and deleting entities.
+
+All the functionalities of entity context are described throughout the documentation.
+
+## Entity context factory
+
+While entities are created and managed by entity context, the latter is in turn created by entity context factory.
+It is used to configure various aspects of how entities and data is handled, most notably the data source.
+
+## Named graphs and meta graph
+
+RDF in itself is a fabulous, flexible yet simple data format. However with most examples out there, usually small data
+sets are shown. Usually they span a few (hundred) triples, which are all part of a single graph. However in real-life
+data is not all put into a single container, all mixed.
+
+Thus with RomanticWeb we decided that each entity's will be stored in a separate Named Graph. This is based on the idea
+described in the [Linked Data Patterns book][pattern]. Additionally a meta graph is maintained, which keeps information
+about the other named graphs. Below is how this looks in TriG, given an example entity.
+
+``` css
+<http://meta.example.com>
+{
+    <http://data.example.com/about_the_entity>
+        foaf:primaryTopic <http://example.com/the_entity> ;
+        rdfs:comment "Created in the UI".
+    <http://data.example.com/also_the_entity>
+        foaf:primaryTopic <http://example.com/the_entity> ;
+        rdfs:comment "Created in the UI"..
+}
+
+<http://data.example.com/about_the_entity>
+{
+    <http://example.com/the_entity> rdfs:label "The entity" .
+}
+
+<http://data.example.com/also_the_entity>
+{
+    <http://example.com/the_entity> rdfs:comment "Created as an example" .
+}
+```
+
+Although not yet fully supported by Romantic Web, this way has the potential for managing multiple graphs per entity
+and additional metadata about named graphs such as provenance.
+
+# Where do you want to go today &#63;
+
+The subsequent pages linked on the left will give you a detailed description of how to use Romantic Web.
+
+[owa]: http://wiki.opensemanticframework.org/index.php/Overview_of_the_Open_World_Assumption
+[ef]: https://entityframework.codeplex.com/
+[nh]: http://nhforge.org
+[pattern]: http://patterns.dataincubator.org/book/named-graphs.html

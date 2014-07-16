@@ -1,8 +1,10 @@
 ---
 layout: tutorial
 title:  "Installation"
-date:   2014-07-03 15:07:22
-categories: docs getting-started
+permalink: 'installation/'
+next: 'docs/getting-started/concepts/'
+prev: 'docs/getting-started/introduction/'
+categories: ['docs', 'getting-started']
 ---
 
 # Installation

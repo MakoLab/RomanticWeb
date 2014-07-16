@@ -32,6 +32,10 @@ body {
     padding-left: 15px;
 }
 
+.navbar-nav {
+    float: right;
+}
+
 .navbar-nav li {
     text-align: center;
 }
@@ -43,6 +47,18 @@ body {
 }
 
 .main p, .post p {
+    font-family: Arial,sans-serif;
+}
+
+div.tab-pane {
+    display: none;
+}
+
+div.tab-pane.active {
+    display: block;
+}
+
+.nav-tabs {
     font-family: Arial,sans-serif;
 }
 
@@ -192,7 +208,7 @@ body {
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-    .nav {
+    .navbar-nav {
         float: right;
         width: 100%;
     }
@@ -306,10 +322,6 @@ body {
 }
 
 @media (min-width: 992px) {
-    .nav {
-        float: right;
-    }
-
     .navbar-default {
         background-color: transparent;
         border: 0 #000000;

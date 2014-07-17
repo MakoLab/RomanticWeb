@@ -1,6 +1,6 @@
 ---
 layout: tutorial
-title:  "Entity Context Factory"
+title:  "Working with entities"
 permalink: 'entities/'
 prev: 'docs/basic-usage/context-factory/'
 categories: ['docs', 'basic-usage']

@@ -37,13 +37,13 @@ The three properties declared by the `IPerson` type each have a foaf counterpart
 and `foaf:knows`. Now we need a way to define that a given property corresponds to an RDF property. This can be done
 in two ways. One is by using attributes and the other is by using a fluent interface.
 
-<ul class="nav nav-tabs" role="tablist"  id="mytab">
+<ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#attrs" role="tab" data-toggle="tab">Attributes</a></li>
   <li><a href="#fluent" role="tab" data-toggle="tab">Fluent</a></li>
 </ul>
 
 <dd class="tab-content">
-  <div class="tab-pane active" id="attrs">
+  <div class="tab-pane fade in active" id="attrs">
 
 ``` java
 using RomanticWeb.Mapping.Attributes;
@@ -63,7 +63,7 @@ public interface IPerson : IEntity
 ```
 
   </div>
-  <div class="tab-pane" id="fluent">
+  <div class="tab-pane fade" id="fluent">
 
 ``` java
 using RomanticWeb.Mapping.Fluent;

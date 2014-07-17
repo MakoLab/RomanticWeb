@@ -1,8 +1,9 @@
 ---
 layout: tutorial
-title:  "Entity Context Factory"
-permalink: 'contextfactory/'
-prev: 'docs/basic-usage/contextfactory/'
+title:  "Working with entities"
+permalink: 'context-factory/'
+prev: 'docs/basic-usage/mapping/'
+next: 'docs/basic-usage/entities/'
 categories: ['docs', 'basic-usage']
 ---
 

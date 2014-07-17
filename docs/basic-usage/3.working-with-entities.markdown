@@ -1,0 +1,89 @@
+---
+layout: tutorial
+title:  "Entity Context Factory"
+permalink: 'entities/'
+prev: 'docs/basic-usage/context-factory/'
+categories: ['docs', 'basic-usage']
+---
+
+# Create entity context
+
+Now that we have a entity context factory created in the previous step it is time to create an entity context. It is as
+simple as calling one method.
+
+``` java
+var context = contextFactory.CreateContext();
+```
+
+## Creating entities
+
+We are now ready to start creating some data. Here's how we create a new entity and populate it with some data
+
+``` java
+// create an entity
+var tim = context.Create<IPerson>(new Uri("Tim-Berners-Lee"));
+
+// set some properties
+tim.Name = "Tim";
+tim.LastName = "Berners-Lee";
+
+// commit data to store
+context.Commit();
+```
+
+This will create some triples describing sir Tim Berners-Lee (assuming mappings from the previous page)
+
+``` css
+<Tim-Berners-Lee>
+    foaf:givenName "Tim" ;
+    foaf:LastName "Berners-Lee" .
+```
+
+You may notice that for simplicity relative URIs are used. This is totally supported by Romantic Web, but requires
+configuration. Please read more on the detailed page about entity context factory configuration.
+
+## Loading entities
+
+The entity context is also used to retrieve entities. Its interface exposes a generic `Load` method, which creates an
+instance of the given entity type.
+
+For example later on we may want to associate sir Tim Berners-Lee with another person we create.
+
+``` java
+var norman = context.Create<IPerson>(new Uri("Norman-Walsh"));
+var tim = context.Load<IPerson>(new Uri("Tim-Berners-Lee"));
+
+tim.Knows.Add(norman);
+
+context.Commit();
+```
+
+This would assert the following triple in the store
+
+``` css
+<Tim-Berners-Lee> foaf:knows <Norman-Walsh> .
+```
+
+## Deleting entities
+
+Lastly of course there is a `Delete` method, which removes all triples about a given entity. Because entity data is
+partitioned in Named Graphs, deletion simply removes whole graphs. This means that there are no blank nodes orphaned if
+the resource had any in its representation. The usage is a s simple as
+
+``` java
+EntityId identifier = new Uri("Tim-Berners-Lee");
+context.Delete(identifier);
+```
+
+And if you have an entity instance you'd do
+
+``` java
+IPerson tim = //...
+context.Delete(tim.Id);
+```
+
+[foaf]: http://www.foaf-project.org/
+[foaf-doc]: http://xmlns.com/foaf/spec/
+[fnh]: http://www.fluentnhibernate.org/
+[concepts]: ../../getting-started/concepts
+[dnr]: http://dotnetrdf.org

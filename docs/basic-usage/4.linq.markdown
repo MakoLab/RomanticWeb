@@ -1,0 +1,164 @@
+---
+layout: tutorial
+title:  "LINQ"
+permalink: 'linq/'
+prev: 'docs/basic-usage/entities/'
+categories: ['docs', 'basic-usage']
+---
+
+# Language integrated queries
+
+[Language Integrated Query][linq], or LINQ, has become a de-facto standard for accessing various data sources in .NET.
+By combining concepts of functional programming and a simple yet powerful syntax inspired by SQL LINQ allows programmers
+to query data in a very expressive manner.
+
+Hence we decided to attempt to implement a LINQ provider for Romantic Web. Each query in Romantic Web is transformed to
+a SPARQL query and executed against the underlying triple store.
+
+Below examples show how to begin querying RDF with LINQ and what the queries look like. All examples assume that the
+meta graph URI is `urn:meta:graph`.
+
+It is important to note that this is still a work in progress. The shape of the SPARQL queries could change, shall we
+discover a more efficient way to transform LINQ. Also because implementing a LINQ provider is a fairly complex task,
+the full list of available functionality is likely to be expanding over time.
+
+## Supported LINQ constructs
+
+Here's a list of supported features
+
+* Select
+* SelectMany
+* Subqueries
+* Where
+* Skip/Take (?)
+* Ordering
+* First/FirstOrDefault & Single/SingleOrDefault
+* Any/All
+* Count
+
+## Querying with LINQ
+
+To start querying with Romantic Web the `IEntityContext` exposes the `AsQuerable` method. It comes in two forms
+
+{% highlight java linenos=table %}
+IQueryable<IEntity> untypedQuery = context.AsQueryable();
+IQueryable<IPerson> typedQuery = context.AsQueryable<IPerson>();
+{% endhighlight %}
+
+Th first can be used to query any resource type. The second narrows the initial data set to instances of a given entity
+type (based on mapped RDF types). Here's an equivalent of the second query with use of the non-generic method.
+
+{% highlight c# linenos=table %}
+IQueryable<IEntity> untypedQuery = from entity in context.AsQueryable()
+                                   where entity is IPerson
+                                   select entity;
+{% endhighlight %}
+
+All further examples will use the generic overload.
+
+## Examples
+
+All examples assume the following mappings
+
+{% highlight java linenos=table %}
+[Class("foaf", "Person")]
+public interface IPerson
+{
+    [Property("foaf", "givenName")]
+    string Name { get; set; }
+}
+{% endhighlight %}
+
+### Bare select
+
+A simplest query possible is just a select.
+
+<ul class="nav nav-tabs" role="tablist" id="mytab">
+  <li class="active"><a href="#select-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#select-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="select-linq">
+
+{% highlight c# linenos=table %}
+from person in context.AsQueryable<IPerson>()
+select person;
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="select-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gresources0 ?resources0
+WHERE
+{
+    GRAPH ?Gresources0
+    {
+        ?s ?p ?o .
+        ?resources0 a foaf:Person .
+    }
+
+    GRAPH <urn:meta:graph>
+    {
+        ?Gresources0 foaf:primaryTopic ?resources0 .
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+There are a number of important facts about the above SPARQL query.
+
+1. The meta graph is used to limit the search to relevant Named Graphs
+2. Entire graphs are retrieved with an `?s ?p ?o` pattern. This is to ensure a complete representation is always loaded
+3. Along the graph contents its URI and entity identifier are retrieved to keep track of where any given triple
+comes from. This is necessary, because SPARQL doesn't allow `CONSTRUCT` queries, which return named graphs.
+
+### Filtering
+
+The next simplest query is to use a where clause. The where clause transforms to an equivalent FILTER pattern in SPARQL.
+
+<ul class="nav nav-tabs" role="tablist" id="mytab">
+  <li class="active"><a href="#where-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#where-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="where-linq">
+
+{% highlight c# linenos=table %}
+from person in context.AsQueryable<IPerson>()
+where person.Name == "Tim"
+select person;
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="where-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gresources0 ?resources0
+WHERE
+{
+    GRAPH ?Gresources0
+    {
+        ?s ?p ?o .
+        ?resources0 a foaf:Person .
+        ?resources0 foaf:givenName ?firstName0 .
+
+        FILTER (?firstName0 = "Tim"^^xsd:string)
+    }
+
+    GRAPH <urn:meta:graph>
+    {
+        ?Gresources0 foaf:primaryTopic ?resources0 .
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+
+[linq]: http://en.wikipedia.org/wiki/Language_Integrated_Query

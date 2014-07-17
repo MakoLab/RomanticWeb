@@ -66,6 +66,9 @@ public interface IPerson
 {
     [Property("foaf", "givenName")]
     string Name { get; set; }
+
+    [Property("foaf", "familyName")]
+    string LastName { get; set; }
 }
 {% endhighlight %}
 
@@ -160,5 +163,54 @@ WHERE
   </div>
 </dd>
 
+A number of SPARQL operators are currently supported and more will be addded over time. Here'a more complex example of
+filtering the entities.
+
+See how it is also possible to include the `IEntity#Id` property in the filtering rules.
+
+<ul class="nav nav-tabs" role="tablist" id="mytab">
+  <li class="active"><a href="#complex-where-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#complex-where-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="complex-where-linq">
+
+{% highlight c# linenos=table %}
+from person in context.AsQueryable<IPerson>()
+where person.Name == "Tim" || person.Name == "Tom"
+where person.LastName.ToLower().StartsWith("berners")
+where person.Id != new Uri("http://example.com/Other-Tim")
+select person;
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="complex-where-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gperson0 ?person0 
+WHERE 
+{ 
+    GRAPH ?Gperson0 
+    { 
+        ?s ?p ?o . 
+        ?person0 a foaf:Person . 
+        ?person0 foaf:givenName ?firstName0 .
+        ?person0 foaf:familyName ?surname0 .
+
+        FILTER (?firstName0 = "Tim"^^xsd:string || ?firstName0 = "Tom"^^xsd:string)
+        FILTER (CONTAINS(LCASE(?surname0),"lee"^^xsd:string))
+        FILTER (?person0 != <http://example.com/Other-Tim>)
+    }
+
+    GRAPH <urn:meta:graph>
+    {
+        ?Gperson0 foaf:primaryTopic ?person0 .
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
 
 [linq]: http://en.wikipedia.org/wiki/Language_Integrated_Query

@@ -3,7 +3,7 @@ layout: tutorial
 title:  "Basic entity mapping"
 permalink: 'mapping/'
 prev: 'docs/getting-started/concepts/'
-next: 'docs/basic-usage/contextfactory/'
+next: 'docs/basic-usage/context-factory/'
 categories: ['docs', 'basic-usage']
 ---
 

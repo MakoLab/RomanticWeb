@@ -17,24 +17,24 @@ in a `app.config`/`web.config` file. Please refer to the relevant doc page.
 
 We start off with a `EntityContextFactory` instance.
 
-``` java
+{% highlight java linenos=table %}
 using RomanticWeb;
 
 var contextFactory = new EntityContextFactory();
-```
+{% endhighlight %}
 
 ## Configure an RDF storage
 
 It is of course necessary to link our entity context factory to an actual RDF data backend. Currently there is a [dotNetRDF][dnr]
 backend. The example below shows how to use an in-memory triple store.
 
-``` java
+{% highlight java linenos=table %}
 using RomanticWeb;
 using RomanticWeb.DotNetRDF;
 
 var dnrTripleStore = new VDS.RDF.TripleStore();
 contextFactory.WithEntitySource(() => new TripleStoreAdapter(dnrTripleStore));
-```
+{% endhighlight %}
 
 ## Configure a meta graph URI
 
@@ -44,9 +44,9 @@ into Named Graphs and there is an additional Named Graph, which describes the fo
 Because there is no good default for that setting we decided that this must be always set up explicitly rather than using
 some fallback value. This way users must consciously shape their triple store.
 
-``` java
+{% highlight java linenos=table %}
 contextFactory.WithMetaGraphUri(new Uri("http://example.com/data/"));
-```
+{% endhighlight %}
 
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/

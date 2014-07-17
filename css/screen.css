@@ -62,6 +62,15 @@ div.tab-pane.active {
     font-family: Arial,sans-serif;
 }
 
+table.highlighttable {
+    width: 100%;
+}
+
+table.highlighttable td.linenos {
+    width: 42px;
+    text-align: right;
+}
+
 @media (max-width: 767px) {
     .navbar-nav {
         float: left;

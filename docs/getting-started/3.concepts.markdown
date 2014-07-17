@@ -13,18 +13,18 @@ categories: ['docs', 'getting-started']
 
 The core concept is the entity, which represents a single RDF resource. All entities must inherit the `IEntity` interface.
 
-``` java
+{% highlight java linenos=table %}
 public interface IEntity
 {
     EntityId Id { get; }
 
     IEntityContext Context { get; }
 }
-```
+{% endhighlight %}
 
 For example person entity could be defined as an `IPerson` interface.
 
-``` java
+{% highlight java linenos=table %}
 public interface IPerson : IEntity
 {
     string Name { get; set; }
@@ -33,7 +33,7 @@ public interface IPerson : IEntity
 
     IList<IPerson> Friends { get; set; }
 }
-```
+{% endhighlight %}
 
 Currently all entities must be interfaces. This is because unlike C#, RDF allows multiple inheritance. Another reason
 is the [open-world assumption][owa], which at its core states that what is not explicitly said cannot be denied. This
@@ -66,7 +66,7 @@ Thus with RomanticWeb we decided that each entity's will be stored in a separate
 described in the [Linked Data Patterns book][pattern]. Additionally a meta graph is maintained, which keeps information
 about the other named graphs. Below is how this looks in TriG, given an example entity.
 
-``` css
+{% highlight css linenos=table %}
 <http://meta.example.com>
 {
     <http://data.example.com/about_the_entity>
@@ -86,7 +86,7 @@ about the other named graphs. Below is how this looks in TriG, given an example 
 {
     <http://example.com/the_entity> rdfs:comment "Created as an example" .
 }
-```
+{% endhighlight %}
 
 Although not yet fully supported by Romantic Web, this way has the potential for managing multiple graphs per entity
 and additional metadata about named graphs such as provenance.

@@ -3,6 +3,7 @@ layout: tutorial
 title:  "Working with entities"
 permalink: 'entities/'
 prev: 'docs/basic-usage/context-factory/'
+next: 'docs/basic-usage/linq/'
 categories: ['docs', 'basic-usage']
 ---
 
@@ -11,15 +12,15 @@ categories: ['docs', 'basic-usage']
 Now that we have a entity context factory created in the previous step it is time to create an entity context. It is as
 simple as calling one method.
 
-``` java
+{% highlight java linenos=table %}
 var context = contextFactory.CreateContext();
-```
+{% endhighlight %}
 
 ## Creating entities
 
 We are now ready to start creating some data. Here's how we create a new entity and populate it with some data
 
-``` java
+{% highlight java linenos=table %}
 // create an entity
 var tim = context.Create<IPerson>(new Uri("Tim-Berners-Lee"));
 
@@ -29,15 +30,15 @@ tim.LastName = "Berners-Lee";
 
 // commit data to store
 context.Commit();
-```
+{% endhighlight %}
 
 This will create some triples describing sir Tim Berners-Lee (assuming mappings from the previous page)
 
-``` css
+{% highlight css linenos=table %}
 <Tim-Berners-Lee>
     foaf:givenName "Tim" ;
     foaf:LastName "Berners-Lee" .
-```
+{% endhighlight %}
 
 You may notice that for simplicity relative URIs are used. This is totally supported by Romantic Web, but requires
 configuration. Please read more on the detailed page about entity context factory configuration.
@@ -49,20 +50,20 @@ instance of the given entity type.
 
 For example later on we may want to associate sir Tim Berners-Lee with another person we create.
 
-``` java
+{% highlight java linenos=table %}
 var norman = context.Create<IPerson>(new Uri("Norman-Walsh"));
 var tim = context.Load<IPerson>(new Uri("Tim-Berners-Lee"));
 
 tim.Knows.Add(norman);
 
 context.Commit();
-```
+{% endhighlight %}
 
 This would assert the following triple in the store
 
-``` css
+{% highlight css linenos=table %}
 <Tim-Berners-Lee> foaf:knows <Norman-Walsh> .
-```
+{% endhighlight %}
 
 ## Deleting entities
 
@@ -70,17 +71,17 @@ Lastly of course there is a `Delete` method, which removes all triples about a g
 partitioned in Named Graphs, deletion simply removes whole graphs. This means that there are no blank nodes orphaned if
 the resource had any in its representation. The usage is a s simple as
 
-``` java
+{% highlight java linenos=table %}
 EntityId identifier = new Uri("Tim-Berners-Lee");
 context.Delete(identifier);
-```
+{% endhighlight %}
 
 And if you have an entity instance you'd do
 
-``` java
+{% highlight java linenos=table %}
 IPerson tim = //...
 context.Delete(tim.Id);
-```
+{% endhighlight %}
 
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/

@@ -13,7 +13,7 @@ categories: ['docs', 'basic-usage']
 
 Each entity type must be an interface derived from `IEntity`. For example if we want to use an entity representing people, we could create an `IPerson` interface
 
-``` java
+{% highlight java linenos=table %}
 using RomanticWeb.Mapping.Model;
 
 public interface IPerson : IEntity
@@ -24,7 +24,7 @@ public interface IPerson : IEntity
 
     ICollection<IPerson> Friends { get; set; }
 }
-```
+{% endhighlight %}
 
 ## Mapping to RDF terms
 
@@ -45,7 +45,7 @@ in two ways. One is by using attributes and the other is by using a fluent inter
 <dd class="tab-content">
   <div class="tab-pane fade in active" id="attrs">
 
-``` java
+{% highlight java linenos=table %}
 using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 
@@ -60,12 +60,12 @@ public interface IPerson : IEntity
     [Property("http://xmlns.com/foaf/0.1/knows")]
     ICollection<IPerson> Friends { get; set; }
 }
-```
+{% endhighlight %}
 
   </div>
   <div class="tab-pane fade" id="fluent">
 
-``` java
+{% highlight java linenos=table %}
 using RomanticWeb.Mapping.Fluent;
 
 public class PersonMap : EntityMap<IPerson>
@@ -77,7 +77,7 @@ public class PersonMap : EntityMap<IPerson>
         Collection(p => p.Friends).Term.Is(new Uri("http://xmlns.com/foaf/0.1/knows"));
     }
 }
-```
+{% endhighlight %}
 
   </div>
 </dd>

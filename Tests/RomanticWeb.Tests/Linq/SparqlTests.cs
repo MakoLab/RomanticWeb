@@ -343,10 +343,33 @@ namespace RomanticWeb.Tests.Linq
         {
             Uri searched = new Uri("http://magi/people/Tomasz");
             IEnumerable<IPerson> persons = from person in _entityContext.AsQueryable<IPerson>()
-                                           from known in person.Knows
-                                           where known.Id.Uri == searched
-                                           select person;
+                                           from friend in person.Knows
+                                           where friend.Id.Uri == searched
+                                           select friend;
             Assert.That(persons.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Select_elements_of_collection()
+        {
+            IEnumerable<IPerson> persons = (from person in _entityContext.AsQueryable<IPerson>()
+                                            from friend in person.Knows
+                                            where person.Id == "http://magi/people/Gniewoslaw"
+                                            where friend.FirstName == "Tomasz"
+                                            select friend);
+
+            Assert.That(persons.Single().Id, Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
+        }
+
+        [Test]
+        public void Select_filter_by_collection_elements()
+        {
+            IEnumerable<IPerson> persons = (from person in _entityContext.AsQueryable<IPerson>()
+                                            from friend in person.Knows
+                                            where friend.FirstName == "Tomasz"
+                                            select person).ToList();
+            
+            Assert.That(persons.Count(), Is.EqualTo(2));
         }
 
         private class TestPersonMap : TestEntityMapping<IPerson>

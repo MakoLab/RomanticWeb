@@ -407,4 +407,11 @@ WHERE
   </div>
 </dd>
 
+## Limitations
+
+Not all features of LINQ are implemented such as
+
+* anonymous return types
+* returning new instances of other types
+
 [linq]: http://en.wikipedia.org/wiki/Language_Integrated_Query

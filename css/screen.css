@@ -344,6 +344,14 @@ table.highlighttable td.linenos {
 }
 
 @media (min-width: 992px) {
+    .content {
+        padding-right: 15px;
+    }
+
+    footer {
+        padding-right: 15px;
+    }
+
     .navbar-default {
         background-color: transparent;
         border: 0 #000000;

@@ -30,7 +30,7 @@ Here's a list of supported features
 * SelectMany
 * Subqueries
 * Where
-* Skip/Take (?)
+* Skip/Take
 * Ordering
 * First/FirstOrDefault & Single/SingleOrDefault
 * Any/All
@@ -69,6 +69,12 @@ public interface IPerson
 
     [Property("foaf", "familyName")]
     string LastName { get; set; }
+
+    [Collection("foaf", "nick")]
+    ICollection<string> Nicknames { get; set; }
+
+    [Collection("foaf", "knows")]
+    ICollection<IPerson> Friends { get; set; }
 }
 {% endhighlight %}
 
@@ -76,7 +82,7 @@ public interface IPerson
 
 A simplest query possible is just a select.
 
-<ul class="nav nav-tabs" role="tablist" id="mytab">
+<ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#select-linq" role="tab" data-toggle="tab">LINQ</a></li>
   <li><a href="#select-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
 </ul>
@@ -123,7 +129,7 @@ comes from. This is necessary, because SPARQL doesn't allow `CONSTRUCT` queries,
 
 The next simplest query is to use a where clause. The where clause transforms to an equivalent FILTER pattern in SPARQL.
 
-<ul class="nav nav-tabs" role="tablist" id="mytab">
+<ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#where-linq" role="tab" data-toggle="tab">LINQ</a></li>
   <li><a href="#where-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
 </ul>
@@ -168,7 +174,7 @@ filtering the entities.
 
 See how it is also possible to include the `IEntity#Id` property in the filtering rules.
 
-<ul class="nav nav-tabs" role="tablist" id="mytab">
+<ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#complex-where-linq" role="tab" data-toggle="tab">LINQ</a></li>
   <li><a href="#complex-where-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
 </ul>
@@ -208,6 +214,194 @@ WHERE
         ?Gperson0 foaf:primaryTopic ?person0 .
     }
 }
+{% endhighlight %}
+
+  </div>
+</dd>
+
+### Ordering and slicing
+
+Romantic Web's LINQ provider supports ordering and slicing (the `Skip` and `Take` methods).
+
+Ordering results in a subselect query, which selects identifiers and the the main query returns all Named Graphs'
+contents for each of those entities.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#order-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#order-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="order-linq">
+
+{% highlight c# linenos=table %}
+(from person in context.AsQueryable<IPerson>()
+ orderby person.Name descending
+ select person).Skip(10).Take(5);
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="order-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gperson0 ?person0 
+WHERE 
+{ 
+	{ 
+		SELECT DISTINCT ?person0_sub 
+		WHERE 
+		{ 
+			GRAPH ?Gperson0_sub 
+			{ 
+				?person0_sub a foaf:Person .
+				?person0_sub foaf:givenName ?firstName0_sub . 
+				?person0_sub foaf:familyName ?surname0_sub . 
+			} 
+			
+			GRAPH <urn:meta:graph>
+			{ 
+				?Gperson0_sub foaf:primaryTopic ?person0_sub . 
+			} 
+		} 
+		ORDER BY DESC(?firstName0_sub) ?surname0_sub 
+		OFFSET 10 LIMIT 5 
+	} 
+	
+	FILTER (?person0_sub=?person0) 
+	
+	GRAPH ?Gperson0 
+	{ 
+		?s ?p ?o . 
+		?person0 a foaf:Person .
+		?person0 foaf:givenName ?firstName0 . 
+		?person0 foaf:familyName ?surname0 . 
+	} 
+	
+	GRAPH <urn:meta:graph>
+	{ 
+		?Gperson0 foaf:primaryTopic ?person0 . 
+	} 
+} 
+ORDER BY DESC(?firstName0) ?surname0
+{% endhighlight %}
+
+  </div>
+</dd>
+
+### Subqueries
+
+Subqueries can come in multiple forms in the LINQ syntax and Romantic Web allows various kinds of queries including
+multiple `select` clauses to select elements from subcollections and the use of `Any`/`All` methods.
+
+The next query returns all persons, whose name is Henry and who are befriended by other persons.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#multiselect-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#multiselect-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="multiselect-linq">
+
+{% highlight c# linenos=table %}
+from person in context.AsQueryable<IPerson>()
+from friend in person.Friends
+where friend.Name == "Marc"
+select friend;
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="multiselect-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gfriend0 ?friend0
+WHERE 
+{ 
+	GRAPH ?Gperson0 
+	{ 
+		?person0 a foaf:Person .
+		?person0 foaf:knows ?knows0 . 
+	} 
+	
+	GRAPH <urn:meta:graph> 
+	{
+		?Gperson0 foaf:primaryTopic ?person0 . 
+	} 
+	
+	GRAPH ?Gfriend0 
+	{ 
+		?s ?p ?o .
+		?friend0 a foaf:Person .
+		?friend0 foaf:givenName ?firstName0 . 
+		
+		FILTER (?firstName0 = "Marc"^^xsd:string)
+	} 
+	
+	GRAPH <urn:meta:graph>
+	{ 
+		?Gfriend0 foaf:primaryTopic ?friend0 . 
+	} 
+} 
+{% endhighlight %}
+
+  </div>
+</dd>
+
+And here's an example of using `Any`, which can yield similar result but with a different SPARQL query.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#any-linq" role="tab" data-toggle="tab">LINQ</a></li>
+  <li><a href="#any-sparql" role="tab" data-toggle="tab">SPARQL</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="any-linq">
+
+{% highlight c# linenos=table %}
+from person in _entityContext.AsQueryable<IPerson>()
+where person.Knows.Any(friend => friend.FirstName == "Marc")
+select person
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="any-sparql">
+
+{% highlight sql linenos=table %}
+SELECT ?s ?p ?o ?Gperson0 ?person0 
+WHERE 
+{ 
+    GRAPH ?Gperson0 
+    { 
+        ?s ?p ?o . 
+        ?person0 a foaf:Person . 
+        ?person0 foaf:knows ?friend0 . 
+	
+        FILTER (EXISTS 
+        { 
+            SELECT ?friend0 
+            WHERE 
+            { 
+                GRAPH ?Gfriend0 
+                { 
+                    ?friend0 a foaf:Person . 
+                    ?friend0 foaf:givenName ?firstName0 . 
+		  
+                    FILTER (?firstName0 = "Tomasz"^^xsd:string) 
+                } 
+		
+                GRAPH <urn:meta:graph> 
+                { 
+                    ?Gfriend0 foaf:primaryTopic ?friend0 . 
+                } 
+            } 
+        }) 
+    } 
+  
+    GRAPH <urn:meta:graph> 
+    { 
+        ?Gperson0 foaf:primaryTopic ?person0 . 
+    } 
+} 
 {% endhighlight %}
 
   </div>

@@ -104,6 +104,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
+
             // given
             LoadTestFile("LargeDataset.nq");
             DateTime startedAt = DateTime.Now;
@@ -122,6 +123,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
+           
             // given
             LoadTestFile("LargeDataset.nq");
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();

@@ -119,12 +119,21 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add((QueryElement)queryComponent);
                 }
             }
-            else if (!_mainFromComponent.Elements.Contains(queryComponent))
+            else
             {
                 Filter filter = new Filter((IExpression)queryComponent);
-                if (!_mainFromComponent.Elements.Contains(filter))
+                StrongEntityAccessor targetEntityAccessor = _mainFromComponent;
+                int indexOf = queryModel.BodyClauses.IndexOf(whereClause);
+                if (indexOf > 0)
                 {
-                    _mainFromComponent.Elements.Add(filter);
+                    targetEntityAccessor = _query.FindAllComponents<StrongEntityAccessor>()
+                        .Where(item => item.SourceExpression == queryModel.BodyClauses[indexOf - 1])
+                        .FirstOrDefault() ?? targetEntityAccessor;
+                }
+
+                if ((!targetEntityAccessor.Elements.Contains(queryComponent)) && (!targetEntityAccessor.Elements.Contains(filter)))
+                {
+                    targetEntityAccessor.Elements.Add(filter);
                 }
             }
 

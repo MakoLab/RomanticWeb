@@ -143,8 +143,9 @@ namespace RomanticWeb.Tests.Linq
             });
 
             query.Item1.ToList();
-            computedCommandText = Regex.Replace(Regex.Replace(computedCommandText.Replace("\r", string.Empty), "[\n\t]", " "), " {2,}", " ").Trim();
-            Assert.That(computedCommandText, Is.EqualTo(query.Item2));
+            computedCommandText = Regex.Replace(computedCommandText, @"\s+", string.Empty).Trim();
+            var expectedText = Regex.Replace(query.Item2, @"\s+", string.Empty).Trim();
+            Assert.That(computedCommandText, Is.EqualTo(expectedText));
             Assert.That(computedMetaGraphVariableName, Is.EqualTo(query.Item3));
             Assert.That(computedEntityVariableName, Is.EqualTo(query.Item4));
             Assert.That(computedSubjectVariableName, Is.EqualTo(query.Item5));

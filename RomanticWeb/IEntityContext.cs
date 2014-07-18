@@ -70,7 +70,8 @@ namespace RomanticWeb
         /// <summary>Loads an existing typed entity.</summary>
         /// <typeparam name="T">Type to be used when returning a typed entity.</typeparam>
         /// <param name="entityId">Entity identifier</param>
-        /// <returns>Typed instance of an entity wih given identifier or null.</returns>
+        /// <returns>Typed instance of an entity wih given identifier.</returns>
+        /// <remarks>Does not return null, if the entity doesn't exist</remarks>
         T Load<T>(EntityId entityId) where T : class, IEntity;
 
         /// <summary>Creates a new typed entity.</summary>

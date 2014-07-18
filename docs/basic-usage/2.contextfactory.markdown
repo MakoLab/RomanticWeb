@@ -17,10 +17,24 @@ in a `app.config`/`web.config` file. Please refer to the relevant doc page.
 
 We start off with a `EntityContextFactory` instance.
 
-{% highlight java linenos=table %}
+{% highlight c# linenos=table %}
 using RomanticWeb;
 
 var contextFactory = new EntityContextFactory();
+{% endhighlight %}
+
+## Add entity mappings
+
+The `MappingBuilder` type contains a number of methods, with which it's possible to add Fluent/Attribute/both mappings
+from selected assemblies.
+
+Here's how to add all mappings _from assembly of_ type `IPerson`.
+
+{% highlight java linenos=table %}
+contextFactory.WithMappings((MappingBuilder builder) =>
+               {
+                   builder.FromAssemblyOf<IPerson>();
+               });
 {% endhighlight %}
 
 ## Configure an RDF storage
@@ -28,7 +42,7 @@ var contextFactory = new EntityContextFactory();
 It is of course necessary to link our entity context factory to an actual RDF data backend. Currently there is a [dotNetRDF][dnr]
 backend. The example below shows how to use an in-memory triple store.
 
-{% highlight java linenos=table %}
+{% highlight c# linenos=table %}
 using RomanticWeb;
 using RomanticWeb.DotNetRDF;
 

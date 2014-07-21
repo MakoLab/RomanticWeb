@@ -3,6 +3,7 @@ layout: tutorial
 title:  "LINQ"
 permalink: 'linq/'
 prev: 'docs/basic-usage/entities/'
+next: 'docs/advanced-topics/xml-config/'
 categories: ['docs', 'basic-usage']
 ---
 

@@ -1,5 +1,5 @@
 name: RomanticWeb project page
-markdown: redcarpet
+markdown: kramdown
 pygments: true
 baseurl: /RomanticWeb
 permalink: /:categories/:title

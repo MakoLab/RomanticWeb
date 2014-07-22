@@ -84,6 +84,10 @@ table.highlighttable td.linenos {
     padding-left: 0;
 }
 
+.nav-tabs {
+    border: none;
+}
+
 @media (max-width: 767px) {
     .navbar-nav {
         float: left;

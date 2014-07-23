@@ -49,11 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+    <Compile Include="..\.build\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Build\RomanticWebAssemblyInfo.cs">
-      <Link>Properties\RomanticWebAssemblyInfo.cs</Link>
+    <Compile Include="..\.build\VersionAssemblyInfo.cs">
+      <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Context.cs" />
     <Compile Include="ContextExtensions.cs" />

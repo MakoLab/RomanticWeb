@@ -2,9 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NugetPackaging", "NugetPackaging\NugetPackaging.csproj", "{6C884EBC-D4F3-4ED4-B3C2-428B13AAFED3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4A3688AE-E29D-468E-806C-61D6447CC039} = {4A3688AE-E29D-468E-806C-61D6447CC039}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanticWeb", "RomanticWeb\RomanticWeb.csproj", "{0EE621E3-4A27-44B5-AEA9-04B43E730D46}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -49,6 +46,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanticWeb.Tests", "Tests\RomanticWeb.Tests\RomanticWeb.Tests.csproj", "{BB89FC1F-FA9C-4D6D-BD12-0A0297692863}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F04E013B-0C40-4811-9AF1-4197D086D7CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{5510EA69-7EEB-4D7D-86BD-6A3C4A31C4E1}"
+	ProjectSection(SolutionItems) = preProject
+		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
+		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+		NuGetBuild\NugetBuild.targets = NuGetBuild\NugetBuild.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,6 +3,7 @@ Tools
 packages
 [Oo]bj
 [Bb]in
+.build/VersionAssemblyInfo.cs
 
 # NuGet packaging artifacts
 NuGetBuild/**/*.dll

@@ -99,11 +99,11 @@ namespace RomanticWeb.Tests.Configuration
             var allegro = typeof(VDS.RDF.Storage.AllegroGraphConnector);
             yield return new TestCaseData("allegro-baseUri-storeID", allegro)
                 .SetDescription("Allegro with two parameters");
-            yield return new TestCaseData("allegro-baseUri-cataologID-storeID", allegro)
+            yield return new TestCaseData("allegro-baseUri-catologID-storeID", allegro)
                 .SetDescription("Allegro with three parameters");
             yield return new TestCaseData("allegro-baseUri-storeID-user", allegro)
                 .SetDescription("Allegro with four parameters");
-            yield return new TestCaseData("allegro-baseUri-cataologID-storeID-user", allegro)
+            yield return new TestCaseData("allegro-baseUri-catologID-storeID-user", allegro)
                 .SetDescription("Allegro with five parameters");
         }
     }

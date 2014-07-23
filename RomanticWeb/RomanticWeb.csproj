@@ -39,17 +39,20 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Release\RomanticWeb.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\.build</MSBuildCommunityTasksPath>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Content Include="FodyWeavers.xml" />
     <EmbeddedResource Include="Ontologies\GEO.rdf" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+    <Compile Include="..\.build\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Build\RomanticWebAssemblyInfo.cs">
-      <Link>Properties\RomanticWebAssemblyInfo.cs</Link>
+    <Compile Include="..\.build\VersionAssemblyInfo.cs">
+      <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\RomanticWeb.Fody\Dictionaries\DictionaryEntityNames.cs">
       <Link>Dynamic\DictionaryEntityNames.cs</Link>
@@ -550,5 +553,19 @@
     <Error Condition="!Exists('..\packages\Fody.1.24.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.24.0\build\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
-  <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />  
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
+  <Target Name="Version" BeforeTargets="PrepareForBuild">
+    <Version Major="0" Minor="1" BuildType="Automatic" RevisionType="Automatic" >
+           <Output TaskParameter="Major" PropertyName="Major" />
+           <Output TaskParameter="Minor" PropertyName="Minor" />
+           <Output TaskParameter="Build" PropertyName="Build" />
+           <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(SolutionDir)\.build\VersionAssemblyInfo.cs"
+                  AssemblyVersion="$(Major).$(Minor).0.0"
+                  AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)"/>
+    <Message Text="##teamcity[buildNumber '$(Major).$(Minor).$(Build).$(Revision)']" />
+  </Target>
 </Project>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TeamCityBuild>false</TeamCityBuild>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\.build</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TEAMCITY_BUILD_PROPERTIES_FILE)' != ''">
+    <TeamCityBuild>true</TeamCityBuild>
+  </PropertyGroup>
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
+  <Target Name="Version" BeforeTargets="PrepareForBuild">
+    <Version Major="0" Minor="1" BuildType="Automatic" RevisionType="Automatic" >
+      <Output TaskParameter="Major" PropertyName="Major" />
+      <Output TaskParameter="Minor" PropertyName="Minor" />
+      <Output TaskParameter="Build" PropertyName="Build" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(SolutionDir)\.build\VersionAssemblyInfo.cs"
+                  AssemblyVersion="$(Major).$(Minor).0.0"
+                  AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)"/>
+    <Message Condition="'$(TeamCityBuild)' == 'true'" Text="##teamcity[buildNumber '$(Major).$(Minor).$(Build).$(Revision)']" />
+  </Target>
+</Project>

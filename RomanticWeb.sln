@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NugetPackaging", "NugetPackaging\NugetPackaging.csproj", "{6C884EBC-D4F3-4ED4-B3C2-428B13AAFED3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A3688AE-E29D-468E-806C-61D6447CC039} = {4A3688AE-E29D-468E-806C-61D6447CC039}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanticWeb", "RomanticWeb\RomanticWeb.csproj", "{0EE621E3-4A27-44B5-AEA9-04B43E730D46}"
 	ProjectSection(ProjectDependencies) = postProject

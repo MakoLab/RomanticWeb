@@ -2,7 +2,7 @@
 layout: tutorial
 title:  "XML Configuration"
 permalink: 'xml-config/'
-prev: 'docs/basic-usage/linq/'
+prev: 'docs/advanced-topics/conventions/'
 categories: ['docs', 'advanced-topics']
 ---
 
@@ -16,7 +16,7 @@ applies to both RomanticWeb and RomanticWeb.DotNetRDF assemblies.
 Here's an example configuration file (excerpt), which defines a named entity context factory together with namespace
 prefixes, mapping assemblies and base URI.
 
-``` xml
+{% highlight xml linenos=table %}
 <configSections>
   <section name="romanticWeb"
            type="RomanticWeb.Configuration.ConfigurationSectionHandler, RomanticWeb"/>
@@ -37,14 +37,14 @@ prefixes, mapping assemblies and base URI.
     </factory>
   </factories>
 </romanticWeb>
-```
+{% endhighlight %}
 
 The XML configuration allows to define multiple entity context factories. Each `<factory>` element must contain the
 `name` attribute. The name is then used to select the factory to create in code.
 
-``` java
+{% highlight java linenos=table %}
 var factory = EntityContextFactory.FromConfiguration("the-factory");
-```
+{% endhighlight %}
 
 ## Configuring triple stores
 
@@ -53,19 +53,19 @@ supported by dotNetRDF.
 
 First a section must be added
 
-``` xml
+{% highlight xml linenos=table %}
 <section name="romanticWeb.dotNetRDF"
          type="RomanticWeb.DotNetRDF.Configuration.StoresConfigurationSection,
                RomanticWeb.DotNetRDF"/>
-```
+{% endhighlight %}
 
 ### Creating store instances
 
 When a store is defined an instance is created simply running
 
-``` java
+{% highlight java linenos=table %}
 ITripleStore store = StoresConfigurationSection.Default.CreateStore("store name");
-```
+{% endhighlight %}
 
 The following sections explain how to configure various dotNetRDF triple stores.
 
@@ -73,14 +73,14 @@ The following sections explain how to configure various dotNetRDF triple stores.
 
 The simplest possible store is the native in-memory implementation, which is defined using its dedicated XML node
 
-``` xml
+{% highlight xml linenos=table %}
 <romanticWeb.dotNetRDF>
   <stores>
     <inMemory name="memory" threadSafe="false" />
     <inMemory name="threadsafe" />
   </stores>
 </romanticWeb.dotNetRDF>
-```
+{% endhighlight %}
 
 By default a thread safe store is created unless the `threadSafe` attribute is set to false.
 
@@ -95,7 +95,7 @@ name and constructor parameters.
 Virtuoso can be configured using a connection string, connection string name or by supplying the parameters as
 attributes. Here are examples of various way this can be done
 
-``` xml
+{% highlight xml linenos=table %}
 <romanticWeb.dotNetRDF>
   <stores>
     <persistent name="virtuoso-connectionString">
@@ -121,14 +121,14 @@ attributes. Here are examples of various way this can be done
     </persistent>
   </stores>
 </romanticWeb.dotNetRDF>
-```
+{% endhighlight %}
 
 #### AllegroGraph
 
 Similarly to Virtuoso, Allegro has its dedicated configuration node, which allows setting various combinations of
 valid parameters.
 
-``` xml
+{% highlight xml linenos=table %}
 <romanticWeb.dotNetRDF>
   <stores>
     <persistent name="allegro-baseUri-storeID">
@@ -148,7 +148,7 @@ valid parameters.
     </persistent>
   </stores>
 </romanticWeb.dotNetRDF>
-```
+{% endhighlight %}
 
 #### Custom storage managers
 
@@ -157,7 +157,7 @@ section level. The section will throw as soon as possible if a required paramete
 Currently other stores don't have their specialized configuration node bit there is a way to configure any dotNetRDF
 storage manager, by supplying its type name and constructor parameters.
 
-``` xml
+{% highlight xml linenos=table %}
 <romanticWeb.dotNetRDF>
   <stores>
     <persistent name="allegro-manual">
@@ -170,7 +170,7 @@ storage manager, by supplying its type name and constructor parameters.
     </persistent>
   </stores>
 </romanticWeb.dotNetRDF>
-```
+{% endhighlight %}
 
 __NOTE__ Constructor parameters are matched by name.
 
@@ -180,7 +180,7 @@ Lastly it is possible to configure the triple stores in [dotNetRDF's configurati
 Romantic Web configuration. To do that the configuration must include path to the configuration file and relevant node
 name.
 
-``` xml
+{% highlight xml linenos=table %}
 <romanticWeb.dotNetRDF>
   <dnrConfigurationFiles>
     <add name="default" path="config.ttl"/>
@@ -190,7 +190,7 @@ name.
     <external name="external-uri" dnrConfigurationfile="default" uri="urn:some:store" />
   </stores>
 </romanticWeb.dotNetRDF>
-```
+{% endhighlight %}
 
 The `<external>` node is used to reference a triple store connection defined in a dotNetRDF configuration file. It is
 possible to reference both URIs and blank nodes. Note the `dnrConfigurationfile` attribute. It allows to use multiple

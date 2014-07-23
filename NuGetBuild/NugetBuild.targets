@@ -22,6 +22,8 @@
   <Target Name="PepitaPackage" AfterTargets="CopyNugetBinaries" Condition="'$(BuildNuGetPackage)' != 'false'">
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)" 
                                      MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
+  </Target>
+  <Target Name="MovePackages" AfterTargets="PepitaPackage">
     <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
   </Target>
   

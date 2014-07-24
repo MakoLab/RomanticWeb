@@ -48,7 +48,7 @@
     <Compile Include="..\.build\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\.build\VersionAssemblyInfo.cs">
+    <Compile Include="..\.build\VersionAssemblyInfo.cs" Condition="Exists('..\.build\VersionAssemblyInfo.cs')">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\RomanticWeb.Fody\Dictionaries\DictionaryEntityNames.cs">

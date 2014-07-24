@@ -1,4 +1,4 @@
-# RomanticWeb [![NuGet Version](http://ci.t-code.pl/app/rest/builds/buildType:bt10/statusIcon)](http://ci.t-code.pl/viewType.html?buildTypeId=bt10&guest=1) 
+# RomanticWeb [![NuGet Version](http://ci.t-code.pl/app/rest/builds/buildType:bt12/statusIcon)](http://ci.t-code.pl/viewType.html?buildTypeId=bt12&guest=1) 
 
 ## Relational Object Model for SemanticWeb in .net!
 

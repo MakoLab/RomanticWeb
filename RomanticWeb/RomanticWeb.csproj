@@ -48,7 +48,7 @@
     <Compile Include="..\.build\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\.build\VersionAssemblyInfo.cs">
+    <Compile Include="..\.build\VersionAssemblyInfo.cs" Condition="Exists('..\.build\VersionAssemblyInfo.cs')">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\RomanticWeb.Fody\Dictionaries\DictionaryEntityNames.cs">
@@ -551,5 +551,4 @@
   </Target>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
   <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
-  <Import Project="$(SolutionDir)\.build\AssemblyVersion.targets" />
 </Project>

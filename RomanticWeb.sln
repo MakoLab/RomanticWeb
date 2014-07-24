@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{AEA90D
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
-		NuGetBuild\NugetBuild.targets = NuGetBuild\NugetBuild.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanticWeb.dotNetRDF", "RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.csproj", "{B1C2726C-C24A-4DAF-AEFA-A812E3C3D145}"
@@ -49,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F04E013B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{5510EA69-7EEB-4D7D-86BD-6A3C4A31C4E1}"
 	ProjectSection(SolutionItems) = preProject
-		.build\AssemblyVersion.targets = .build\AssemblyVersion.targets
+		before.RomanticWeb.sln.targets = before.RomanticWeb.sln.targets
 		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
 		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
 		NuGetBuild\NugetBuild.targets = NuGetBuild\NugetBuild.targets

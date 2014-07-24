@@ -1,0 +1,11 @@
+---
+layout: tutorial
+title:  "Conventions"
+permalink: 'conventions/'
+prev: 'docs/advanced-topics/collections/'
+next: 'docs/advanced-topics/xml-config/'
+categories: ['docs', 'advanced-topics']
+---
+
+# Conventions
+

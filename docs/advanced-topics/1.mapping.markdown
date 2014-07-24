@@ -1,0 +1,85 @@
+---
+layout: tutorial
+title:  "Mappings"
+permalink: 'mapping/'
+prev: 'docs/basic-usage/linq/'
+next: 'docs/advanced-topics/collections/'
+categories: ['docs', 'advanced-topics']
+---
+
+# Advanced mappings
+
+## Prefixed names
+
+It is error prone and cumbersome to map all of entities with absolute URIs. It is also a lot of work. With RDF it is
+common to shorten URIs to what's called QNames or prefixed names. Romantic Web naturally allows to use prefixed names
+so that the example we saw earlier can be rewritten to increase brevity.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    [Property("foaf", "givenName")]
+    string Name { get; set; }
+
+    [Property("foaf", "familyName")]
+    string LastName { get; set; }
+
+    [Property("foaf", "knows")]
+    ICollection<IPerson> Friends { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Property(p => p.Name).Term.Is("foaf", "givenName");
+        Property(p => p.LastName).Term.Is("foaf", "familyName");
+        Collection(p => p.Friends).Term.Is("foaf", "knows"));
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+But how does Romantic Web understand that `foaf` is a prefix for the `http://xmlns.com/foaf/0.1/` namespace and not
+something else?
+
+### Built-in namespace prefixes
+
+Romantic Web comes with a significant number of common names prefixes included like `rdf`, `rdfs`, `foaf` or schema.org.
+For a full list of prefixes please have a look at `RomanticWeb.Ontologies.BuiltInOntologies` enumeration.
+
+### Custom namespace prefixes
+
+__NOTE__ The current API is likely to change in the future.
+
+Custom namespace prefix can be added like in the code below.
+
+{% highlight java linenos=table %}
+using RomanticWeb.Ontologies;
+
+var ontology = new Ontology("ex", new Uri("http://example.com"));
+var provider = new OntologyProviderBase(new [] { ontology });
+
+contextFactory.WithOntology(provider);
+{% endhighlight %}
+

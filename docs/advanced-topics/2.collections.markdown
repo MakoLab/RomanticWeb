@@ -1,0 +1,231 @@
+---
+layout: tutorial
+title:  "Collections"
+permalink: 'collections/'
+prev: 'docs/advanced-topics/mapping/'
+next: 'docs/advanced-topics/conventions/'
+categories: ['docs', 'advanced-topics']
+---
+
+# Collections
+
+RDF supports a number of ways to represent a collection of child elements:
+
+ - predicate with multiple objects
+   - unordered
+   - unique elements
+ - [RDF List][rdflists] (rdf:List)
+   - ordered
+   - allows duplicates
+ - [RDF Containers][containers] (rdf:Seq, rdf:Bag, rdf:Alt)
+   - all three syntactically equal
+   - rdf:Seq ordered by convention
+   - allow duplicates
+
+## Multiple objects
+
+The simplest way to associate one resource with multiple other resource is to simply use them as objects of a common
+property. Romantic Web calls that a simple collection. Such collection is a semantically an unordered bag. In NTriples
+it simply means to repeat the subject and predicate for each child element:
+
+{% highlight css linenos=table %}
+<tim-berners-lee> dbpedia-owl:award dbpedia:Order_of_the_British_Empire .
+<tim-berners-lee> dbpedia-owl:award dbpedia:Royal_Designers_for_Industry .
+<tim-berners-lee> dbpedia-owl:award dbpedia:Order_of_Merit .
+<tim-berners-lee> dbpedia-owl:award dbpedia:Fellow_of_the_Royal_Society .
+<tim-berners-lee> dbpedia-owl:award dbpedia:Royal_Academy_of_Engineering .
+{% endhighlight %}
+
+Turtle introduces a shorthand syntax, where comma is used to separate values and the subject/predicate aren't repeated:
+
+{% highlight css linenos=table %}
+<tim-berners-lee> dbpedia-owl:award dbpedia:Order_of_the_British_Empire ,
+                                    dbpedia:Royal_Designers_for_Industry ,
+                                    dbpedia:Order_of_Merit ,
+                                    dbpedia:Fellow_of_the_Royal_Society ,
+                                    dbpedia:Royal_Academy_of_Engineering .
+{% endhighlight %}
+
+This is sufficient to represent .NET's equivalent of `IEnumerable` or `ICollection` and is the default structure when
+mapping entity types. It can also be stated explicitly in mapping code.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs-coll" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent-coll" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs-coll">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    [Property("dbpedia-owl", "award", StoreAs = StoreAs.SimpleCollection)]
+    ICollection<Uri> Awards { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent-coll">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Collection(p => p.Awards)
+            .Term.Is("dbpedia-owl", "award"))
+            .StoreAs.SimpleCollection();
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+## RDF collections
+
+RDF collections are linked lists and thus they introduce intermediate list nodes, which connect subsequent elements.
+For this reason rdf:Lists have limited use but they are the common means to represent stable ordered sets. List nodes
+are connected using the `rdf:rest` predicate and `rdf:first` predicate points to the current list element. Each list
+node is usually a blank node, though it is not necessary. Here's an example in NTriples:
+
+{% highlight css linenos=table %}
+<tim-berners-lee> dbpedia-owl:award _:listNode1
+_:listNode1 rdf:first dbpedia:Order_of_the_British_Empire .
+_:listNode1 rdf:rest _:listNode2 .
+_:listNode2 rdf:first dbpedia:Royal_Designers_for_Industry .
+_:listNode2 rdf:rest _:listNode3 .
+_:listNode3 rdf:first dbpedia:Order_of_Merit .
+_:listNode3 rdf:rest _:listNode4 .
+_:listNode4 rdf:first dbpedia:Fellow_of_the_Royal_Society .
+_:listNode4 rdf:rest _:listNode5 .
+_:listNode5 rdf:first dbpedia:Royal_Academy_of_Engineering .
+_:listNode5 rdf:rest rdf:nil .
+{% endhighlight %}
+
+Again Turtle offers a more keyboard-friendly syntax for lists, which uses `(` `)`
+
+{% highlight css linenos=table %}
+<tim-berners-lee> dbpedia-owl:award
+(
+    dbpedia:Order_of_the_British_Empire
+    dbpedia:Royal_Designers_for_Industry
+    dbpedia:Order_of_Merit
+    dbpedia:Fellow_of_the_Royal_Society
+    dbpedia:Royal_Academy_of_Engineering
+) .
+{% endhighlight %}
+
+Mapping a .NET collection to an RDF collection is done similarly as with simple collection.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs-list" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent-list" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs-list">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    [Property("dbpedia-owl", "award", StoreAs = StoreAs.RdfList)]
+    ICollection<Uri> Awards { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent-list">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Collection(p => p.Awards)
+            .Term.Is("dbpedia-owl", "award"))
+            .StoreAs.RdfList();
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+## RDF containers
+
+RDF containers are currently not supported.
+
+# Dictionaries
+
+RDF doesn't include an established way to represent dictionaries as we know from .NET (aka hash maps). Romantic Web
+represents them as blank nodes, each having a key and value property. It is thus a simple collection of dictionary
+nodes.
+
+{% highlight css linenos=table %}
+<app> ex:settings [
+                      ex:key "host", ex:value "127.6.6.6"
+                  ],
+                  [
+                      ex:key "port", ex:value "1337"
+                  ]
+{% endhighlight %}
+
+Because there is no guideline of what the `ex:key` and `ex:value` should be, Romantic Web allows users to map them to
+any properties desired.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs-dict" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent-dict" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs-dict">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IApp : IEntity
+{
+    [Dictionary("ex", "settings")]
+    [Key("ex", "key")]
+    [Value("ex", "value")]
+    IDictionary<string, string> Settings { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent-dict">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class AppMap : EntityMap<IApp>
+{
+    public AppMap()
+    {
+        Dictionary(p => p.Settings)
+            .Term.Is("ex", "setting"))
+            .KeyPredicate.Is("ex", "key"))
+            .ValuePredicate.Is("ex", "value"));
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+[rdflists]: http://www.w3.org/TR/rdf-schema/#ch_collectionvocab
+[containers]: http://www.w3.org/TR/rdf-schema/#ch_containervocab

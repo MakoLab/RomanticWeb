@@ -94,6 +94,50 @@ It is possible to mix both mapping styles, even for a single type.
 
 Please click the link on the left to read more about to learn more about different mapping options.
 
+## RDF classes
+
+An entity type can optionally be mapped to an RDF class.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs-class" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent-class" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs-class">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+[Class("foaf", "Person")]
+public interface IPerson : IEntity
+{
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent-class">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Class.Is("foaf", "Person");
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+When an entity type is mapped to an RDF class and `rdf:type` triple will be added whenever its type is changed. Please
+find out more on the [entity context page][ec].
+
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/
 [fnh]: http://www.fluentnhibernate.org/
+[ec]: ../entities/

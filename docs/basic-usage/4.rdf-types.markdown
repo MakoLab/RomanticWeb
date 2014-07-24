@@ -1,0 +1,87 @@
+---
+layout: tutorial
+title:  "RDF types"
+permalink: 'rdf-types/'
+prev: 'docs/basic-usage/entities/'
+next: 'docs/basic-usage/linq/'
+categories: ['docs', 'basic-usage']
+---
+
+# Entities' RDF types
+
+## Asserting rdf:type
+
+Entities in the previous examples were not mapped to any RDF classes. If an entity type is [mapped with an RDF type][mappings],
+that type is asserted whenever the `IEntityContext#AsEntity()`, `IEntityContext#Load()` and `IEntityContext#Create()`
+methods are called.
+
+This means that given an updated mapping for `IPerson` and `IEmployee`, whenever it's created an `rdf:type` triple is
+asserted.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#usage" role="tab" data-toggle="tab">Usage</a></li>
+  <li><a href="#person" role="tab" data-toggle="tab">Person entity</a></li>
+  <li><a href="#employee" role="tab" data-toggle="tab">Employee entity</a></li>
+  <li><a href="#triples" role="tab" data-toggle="tab">Result triples</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="usage">
+
+{% highlight java linenos=table %}
+using RomanticWeb;
+
+IEntityContext context = // ...
+Uri personUri = new Uri("http://example.org/ThePerson");
+
+var person = context.Create<IPerson>(personUri);
+person.Name = "John";
+person.LastName = "Doe";
+
+var employee = person.AsEntity<IEmployee>();
+employee.Salary = 2000;
+employee.EmployerName = "cool soft inc";
+
+context.Commit();
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="person">
+
+{% highlight java linenos=table %}
+[Class("foaf", "Person")]
+public interface IPerson : IEntity
+{
+    /* ... */
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="employee">
+
+{% highlight java linenos=table %}
+[Class("ex", "Employee")]
+public interface IEmployee : IEntity
+{
+    /* ... */
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="triples">
+
+{% highlight css linenos=table %}
+
+<http://example.org/ThePerson>
+    foaf:givenName "John"^^xsd:string ;
+    foaf:familyName "Doe"^^xsd:string ;
+    ex:salary 2000 ;
+    ex:employer "cool soft inc"^^xsd:string ;
+    rdf:type foaf:Person, ex:Employee .
+
+{% endhighlight %}
+
+  </div>
+</dd>
+
+[mappings]: ../mapping

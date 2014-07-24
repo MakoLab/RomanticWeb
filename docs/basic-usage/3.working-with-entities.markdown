@@ -3,7 +3,7 @@ layout: tutorial
 title:  "Working with entities"
 permalink: 'entities/'
 prev: 'docs/basic-usage/context-factory/'
-next: 'docs/basic-usage/linq/'
+next: 'docs/basic-usage/rdf-types/'
 categories: ['docs', 'basic-usage']
 ---
 
@@ -83,8 +83,97 @@ IPerson tim = //...
 context.Delete(tim.Id);
 {% endhighlight %}
 
+## Transforming entities
+
+One consequence of [open-world assumption][owa] is that each resource can be an instance of many types at the same time.
+It poses a challenge to the statically typed languages like C# where an instance cannot change its type at will.
+
+In Romantic Web each entity is a proxy to the underlying triples and it is possible to change the object from one type
+to another without any restrictions on the types.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#usage" role="tab" data-toggle="tab">Usage</a></li>
+  <li><a href="#person" role="tab" data-toggle="tab">Person entity</a></li>
+  <li><a href="#employee" role="tab" data-toggle="tab">Employee entity</a></li>
+  <li><a href="#triples" role="tab" data-toggle="tab">Result triples</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="usage">
+
+{% highlight java linenos=table %}
+using RomanticWeb;
+
+IEntityContext context = // ...
+Uri personUri = new Uri("http://example.org/ThePerson");
+
+var person = context.Create<IPerson>(personUri);
+person.Name = "John";
+person.LastName = "Doe";
+
+var employee = person.AsEntity<IEmployee>();
+employee.Salary = 2000;
+employee.EmployerName = "cool soft inc";
+
+context.Commit();
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="person">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IPerson : IEntity
+{
+    [Property("foaf", "givenName")]
+    string Name { get; set; }
+
+    [Property("foaf", "familyName")]
+    string LastName { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="employee">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+public interface IEmployee : IEntity
+{
+    [Property("ex", "salary")]
+    int Salary { get; set; }
+
+    [Property("ex", "employer")]
+    string EmployerName { get; set; }
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="triples">
+
+{% highlight css linenos=table %}
+
+<http://example.org/ThePerson>
+    foaf:givenName "John"^^xsd:string ;
+    foaf:familyName "Doe"^^xsd:string ;
+    ex:salary 2000 ;
+    ex:employer "cool soft inc"^^xsd:string .
+
+{% endhighlight %}
+
+  </div>
+</dd>
+
+As the example shows, the resource representation contains all triples that are part of the person and employee
+representations.
+
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/
 [fnh]: http://www.fluentnhibernate.org/
 [concepts]: ../../getting-started/concepts
 [dnr]: http://dotnetrdf.org
+[owa]: http://wiki.opensemanticframework.org/index.php/Overview_of_the_Open_World_Assumption

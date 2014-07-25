@@ -98,7 +98,10 @@ namespace RomanticWeb.Linq.Model
                 if (entityAccessor == null)
                 {
                     EntityTypeConstrain constrain = visitor.CreateTypeConstrain(sourceExpression);
-                    Identifier identifier = new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName), sourceExpression.ItemType.FindEntityType());
+                    Identifier identifier = visitor.Query.FindAllComponents<EntityConstrain>()
+                        .Where(item => (item.TargetExpression == sourceExpression.FromExpression) && (item.Value is Identifier))
+                        .Select(item => (Identifier)item.Value)
+                        .FirstOrDefault() ?? new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName), sourceExpression.ItemType.FindEntityType());
                     entityAccessor = new StrongEntityAccessor(identifier, sourceExpression);
                     if ((constrain != null) && (!entityAccessor.Elements.Contains(constrain)))
                     {

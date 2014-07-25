@@ -549,12 +549,35 @@ namespace RomanticWeb.Linq
             }
             else
             {
-                _lastComponent = (from entityConstrain in entityAccessor.Elements.OfType<EntityConstrain>()
-                                  where entityConstrain.Value is Identifier
-                                  let identifier = (Identifier)entityConstrain.Value
-                                  let property = (PropertyInfo)((System.Linq.Expressions.MemberExpression)expression.Expression).Member
-                                  where (_query.RetrieveIdentifier(identifier.Name) == _query.CreateIdentifier(property.Name)) && (identifier.NativeType == property.PropertyType)
-                                  select identifier).FirstOrDefault();
+                foreach (var entityConstrain in entityAccessor.Elements.OfType<EntityConstrain>())
+                {
+                    if (entityConstrain.Value is Identifier)
+                    {
+                        Identifier identifier = (Identifier)entityConstrain.Value;
+                        string constrainIdentifier = _query.RetrieveIdentifier(identifier.Name);
+                        string propertyIdentifier = null;
+                        Type propertyType = null;
+                        if (expression.Expression is System.Linq.Expressions.MemberExpression)
+                        {
+                            PropertyInfo propertyInfo = (PropertyInfo)((System.Linq.Expressions.MemberExpression)expression.Expression).Member;
+                            propertyIdentifier = _query.CreateIdentifier(propertyInfo.Name);
+                            propertyType = propertyInfo.PropertyType;
+                        }
+                        else if (expression.Expression is Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)
+                        {
+                            Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression querySource = (Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)expression.Expression;
+                            propertyIdentifier = querySource.ReferencedQuerySource.ItemName;
+                            propertyType = querySource.ReferencedQuerySource.ItemType;
+                        }
+
+                        if ((constrainIdentifier == propertyIdentifier) && (identifier.NativeType == propertyType))
+                        {
+                            _lastComponent = identifier;
+                            break;
+                        }
+                    }
+                }
+
                 if (_lastComponent == null)
                 {
                     _lastComponent = entityAccessor.About;
@@ -574,7 +597,7 @@ namespace RomanticWeb.Linq
             if ((_currentComponent.Count > 0) && (_currentComponent.Peek() is BinaryOperatorNavigator))
             {
                 StrongEntityAccessor entityAccessor = this.GetEntityAccessor(expression.Target);
-                HandleComponent(_query.Subject);
+                HandleComponent(entityAccessor.About);
                 BinaryOperator binaryOperator = ((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
                 Filter filter = new Filter(binaryOperator);
                 if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))

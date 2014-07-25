@@ -89,7 +89,23 @@ namespace RomanticWeb.Linq.Model
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object operand)
         {
-            return (!Object.Equals(operand, null)) && (operand.GetType() == typeof(Literal)) && (_value != null ? _value.Equals(((Literal)operand)._value) : Object.Equals(((Literal)operand)._value, null));
+            if (Object.Equals(operand, null)) { return false; }
+            if (operand.GetType() != typeof(Literal)) { return false; }
+            if (_value != null)
+            {
+                if (_value is Uri)
+                {
+                    return AbsoluteUriComparer.Default.Equals((Uri)_value, (Uri)((Literal)operand)._value);
+                }
+                else
+                {
+                    return _value.Equals(((Literal)operand)._value);
+                }
+            }
+            else
+            {
+                return Object.Equals(((Literal)operand)._value, null);
+            }
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -97,7 +113,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return typeof(Literal).FullName.GetHashCode() ^ (_value != null ? _value.GetHashCode() : 0);
+            return typeof(Literal).FullName.GetHashCode() ^ (_value != null ? (_value is Uri ? _value.ToString().GetHashCode() : _value.GetHashCode()) : 0);
         }
         #endregion
     }

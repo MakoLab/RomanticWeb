@@ -76,6 +76,7 @@ namespace RomanticWeb.Linq
         /// <param name="queryModel">Query model containing given select clause.</param>
         public override void VisitSelectClause(SelectClause selectClause, Remotion.Linq.QueryModel queryModel)
         {
+            queryModel.MainFromClause.Accept(this, queryModel);
             QuerySourceReferenceExpression querySource = FindQuerySource(selectClause.Selector);
             _visitor.VisitExpression(selectClause.Selector);
             QueryComponent component = _visitor.RetrieveComponent();
@@ -90,7 +91,6 @@ namespace RomanticWeb.Linq
             }
 
             _subject = _query.Subject;
-            queryModel.MainFromClause.Accept(this, queryModel);
             _query.Select.Add(_mainFromComponent);
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
             VisitResultOperators(queryModel.ResultOperators, queryModel);
@@ -119,7 +119,7 @@ namespace RomanticWeb.Linq
                     _query.Elements.Add((QueryElement)queryComponent);
                 }
             }
-            else
+            else if (!_query.FindAllComponents<Filter>().Any(item => item.Expression == queryComponent))
             {
                 Filter filter = new Filter((IExpression)queryComponent);
                 StrongEntityAccessor targetEntityAccessor = _mainFromComponent;
@@ -254,7 +254,11 @@ namespace RomanticWeb.Linq
                 (fromClause.FromExpression.Type.GetGenericArguments().Length > 0) &&
                 (fromClause.FromExpression.Type.GetGenericArguments()[0] != typeof(IEntity)))
             {
-                this.GetEntityAccessor(fromClause);
+                StrongEntityAccessor entityAccessor = this.GetEntityAccessor(fromClause);
+                if (_mainFromComponent == null)
+                {
+                    _query.Elements.Add(_mainFromComponent = entityAccessor);
+                }
             }
         }
 

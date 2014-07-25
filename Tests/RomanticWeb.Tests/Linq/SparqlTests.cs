@@ -369,7 +369,7 @@ namespace RomanticWeb.Tests.Linq
                                             where friend.FirstName == "Tomasz"
                                             select person).ToList();
             
-            Assert.That(persons.Count(), Is.EqualTo(2));
+            Assert.That(persons.Count(), Is.EqualTo(1));
         }
 
         private class TestPersonMap : TestEntityMapping<IPerson>

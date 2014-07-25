@@ -55,6 +55,8 @@ namespace RomanticWeb.Vocabularies
         public static readonly Uri String = new Uri(BaseUri + "string");
 
         public static readonly Uri Base64Binary = new Uri(BaseUri + "base64Binary");
+
+        public static readonly Uri NCName = new Uri(BaseUri + "NCName");
 #pragma warning restore 1591
     }
 }

@@ -368,7 +368,7 @@ namespace RomanticWeb.Linq.Sparql
                         valueString = String.Format(CultureInfo.InvariantCulture, "{0}", literal.Value);
                         break;
                     case "System.DateTime":
-                        valueString = String.Format(CultureInfo.InvariantCulture, "\"{0}\"^^xsd:dateTime", literal.Value);
+                        valueString = String.Format(CultureInfo.InvariantCulture, "\"{0:s}\"^^xsd:dateTime", literal.Value);
                         break;
                     case "System.Uri":
                         valueString = String.Format("<{0}>", literal.Value);

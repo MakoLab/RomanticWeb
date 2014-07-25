@@ -259,9 +259,9 @@ namespace RomanticWeb.Tests.Linq
         public void Selecting_by_dates()
         {
             IList<IPerson> persons = (from person in _entityContext.AsQueryable<IPerson>()
-                                      where person.CreatedOn <= DateTime.Now
+                                      where person.CreatedOn <= new DateTime(2014, 04, 20)
                                       select person).ToList();
-            Assert.That(persons.Count, Is.EqualTo(2));
+            Assert.That(persons.Count, Is.EqualTo(1));
         }
 
         [Test]

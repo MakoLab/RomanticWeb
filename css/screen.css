@@ -112,6 +112,14 @@ table.highlighttable td.linenos {
 	border-top: 1px solid white;
 	border-bottom: 1px solid white;
 	width: 95%;
+	list-style: none;
+}
+.menu ul li {
+	margin-left: -40px;
+	padding-left: 20px;
+}
+.menu ul li .active {
+	background-color: white;
 }
 
 

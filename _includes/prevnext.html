@@ -1,14 +1,16 @@
+<div class="nav-links">
 {% if page.prev %}
-<p>
+<p class="nav-links-prev">
 	<a href="{{ site.baseurl }}/{{ page.prev }}">
 		Previous
 	</a>
 </p>
 {% endif %}
 {% if page.next %}
-<p>
+<p class="nav-links-next">
 	<a href="{{ site.baseurl }}/{{ page.next }}">
 		Next
 	</a>
 </p>
 {% endif %}
+</div>

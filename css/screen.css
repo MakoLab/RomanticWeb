@@ -145,7 +145,7 @@ table.highlighttable td.linenos {
 	height: 100%;
 	background-color: white;
 	padding: 10px;
-	
+	float: left;
 	font-size: 14px;
 	font-family: Arial,sans-serif;
 }

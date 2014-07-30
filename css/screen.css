@@ -117,8 +117,10 @@ table.highlighttable td.linenos {
 .menu ul li {
 	margin-left: -40px;
 	padding-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
-.menu ul li .active {
+.menu ul li.active {
 	background-color: white;
 }
 

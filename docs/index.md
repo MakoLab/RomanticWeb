@@ -2,5 +2,4 @@
 layout: tutorial
 title:  "Tutorial"
 ---
-
-Choose from the menu on the left
+<h1>Choose from the menu on the left</h1>

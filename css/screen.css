@@ -98,7 +98,7 @@ table.highlighttable td.linenos {
 }
 
 .menu {
-	width: 100%;
+	width: 95%;
 	height: 100%;
 	background-color: #f2f7f8;
 	padding-left: 10px;
@@ -394,10 +394,6 @@ table.highlighttable td.linenos {
 }
 
 @media (min-width: 992px) {
-    .content {
-        padding-right: 15px;
-    }
-
     footer {
         padding-right: 15px;
     }

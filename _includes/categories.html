@@ -1,11 +1,11 @@
 
 <div class="dropdown">
-	<span class="btn btn-default dropdown-toggle" style="padding-left: 25px; padding-right: 25px; float: left;" type="button" id="dropdownMenu1" data-toggle="dropdown">
+	<span style="padding-left: 25px; padding-right: 25px; float: left;" type="button" id="dropdownMenu1" data-toggle="dropdown">
 		{% for cat in site.docs-categories %}
 		{{ include.header }}
 		<span class="caret"></span>
 	</span>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <ul class="dropdown-menu" style="clear: both;"	role="menu" aria-labelledby="dropdownMenu1">
         {% for link in site.pages | sort: 'title' %}
             {% for pageCategory in link.categories %}
                 {% if pageCategory == include.category %}

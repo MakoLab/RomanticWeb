@@ -133,7 +133,7 @@ table.highlighttable td.linenos {
 
 .content-back {
 	background: url(../images/mc.png) no-repeat bottom;
-	padding-bottom: 24px;
+	padding-bottom: 30px;
 	margin-bottom: 10px;
 	background-size: 100%;
 	float: left;
@@ -144,8 +144,8 @@ table.highlighttable td.linenos {
 	width: 100%;
 	height: 100%;
 	background-color: white;
-	padding-left: 10px;
-	padding-top: 10px;
+	padding: 10px;
+	
 	font-size: 14px;
 	font-family: Arial,sans-serif;
 }

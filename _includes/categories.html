@@ -1,16 +1,36 @@
-<div>
-    {% for cat in site.docs-categories %}
-    {{ include.header }}
-    <ul>
+
+
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+    Dropdown
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+   
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+  </ul>
+</div>
+
+
+<div class="dropdown">
+	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+		{% for cat in site.docs-categories %}
+		{{ include.header }}
+		<span class="caret"></span>
+	</button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
         {% for link in site.pages | sort: 'title' %}
             {% for pageCategory in link.categories %}
                 {% if pageCategory == include.category %}
                     {% if page.url contains link.url %}
-                    <li class="active" >
+                    <li class="active" role="presentation" >
                     {% else %}
-                    <li>
+                    <li role="presentation">
                     {% endif %}
-                        <a href="{{ site.baseurl }}{{ link.url }}">{{ link.title }}</a>
+                        <a href="{{ site.baseurl }}{{ link.url }}" role="menuitem" tabindex="-1">{{ link.title }}</a>
                     </li>
                 {% endif %}
             {% endfor %}

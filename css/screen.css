@@ -88,6 +88,23 @@ table.highlighttable td.linenos {
     border: none;
 }
 
+.menu-back {
+	background: url(../images/mm.png) no-repeat bottom;
+	padding-bottom: 20px;
+	margin-bottom: 10px;
+	background-size: 100%;
+	float: left;
+}
+
+.menu {
+	width: 90%;
+	background-color: #f2f7f8;
+}
+
+
+
+
+
 @media (max-width: 767px) {
     .navbar-nav {
         float: left;

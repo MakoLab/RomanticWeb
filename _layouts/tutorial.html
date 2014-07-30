@@ -13,10 +13,12 @@ layout: default
 		</div>
 	</div>
 	<div class="col-md-9">
-		<div class="main">
-			{% include prevnext.html %}
-            {{ content }}
-            {% include prevnext.html %}
+		<div class="content-back">
+			<div class="content">
+				{% include prevnext.html %}
+				{{ content }}
+				{% include prevnext.html %}
+			</div>
 		</div>
 	</div>
 </div>

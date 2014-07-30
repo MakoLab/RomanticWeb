@@ -1,10 +1,10 @@
 
 <div class="dropdown">
-	<span class="btn btn-default dropdown-toggle" style="padding-left: 25px; padding-right: 25px; float: left;" type="button" id="dropdownMenu1" data-toggle="dropdown">
+	<button class="btn btn-default dropdown-toggle" style="padding-left: 25px; padding-right: 25px; float: left;" type="button" id="dropdownMenu1" data-toggle="dropdown">
 		{% for cat in site.docs-categories %}
 		{{ include.header }}
 		<span class="caret"></span>
-	</span>
+	</button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
         {% for link in site.pages | sort: 'title' %}
             {% for pageCategory in link.categories %}

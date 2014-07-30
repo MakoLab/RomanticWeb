@@ -2,17 +2,19 @@
 layout: default
 ---
 
-<div class="row back">
-    <div class="main">
-        <aside class="col-md-3">
-            {% include categories.html category='getting-started' header='Getting started' %}
+<div class="row">
+	<div class="col-md-3">
+		<div class="main">	
+			{% include categories.html category='getting-started' header='Getting started' %}
             {% include categories.html category='basic-usage' header='Basic usage' %}
             {% include categories.html category='advanced-topics' header='Advanced topics' %}
-        </aside>
-        <article class="main col-md-9">
-            {% include prevnext.html %}
+		</div>
+	</div>
+	<div class="col-md-9">
+		<div class="main">
+			{% include prevnext.html %}
             {{ content }}
             {% include prevnext.html %}
-        </article>
-    </div>
+		</div>
+	</div>
 </div>

@@ -156,11 +156,17 @@ table.highlighttable td.linenos {
 	float: left;
 }
 .nav-links-prev {
+	padding: 5px;
+	padding-right: 25px;
 	padding-left: 25px;
+	background-color: #f2f7f8;
 	float: left;
 }
 .nav-links-next {
+	padding: 5px;
 	padding-right: 25px;
+	padding-left: 25px;
+	background-color: #f2f7f8;
 	float: right;
 }
 .nav-links-prev a, .nav-links-next a{

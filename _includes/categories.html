@@ -1,21 +1,24 @@
-
-<div>
+<div class="collapse navbar-collapse" id="categories">
     {% for cat in site.docs-categories %}
-    {{ include.header }}
-    <ul>
-        {% for link in site.pages | sort: 'title' %}
-            {% for pageCategory in link.categories %}
-                {% if pageCategory == include.category %}
-                    {% if page.url contains link.url %}
-                    <li class="active" >
-                    {% else %}
-                    <li>
-                    {% endif %}
-                        <a href="{{ site.baseurl }}{{ link.url }}">{{ link.title }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
+    <ul class="nav navbar-nav" style="list-style: none; width:100%;">
+		<li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ include.header }}<span class="caret"></span></a>	
+			<ul class="dropdown-menu" role="menu">
+			{% for link in site.pages | sort: 'title' %}
+				{% for pageCategory in link.categories %}
+					{% if pageCategory == include.category %}
+						{% if page.url contains link.url %}
+						<li class="active" >
+						{% else %}
+						<li>
+						{% endif %}
+							<a href="{{ site.baseurl }}{{ link.url }}">{{ link.title }}</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+			</ul>
+		</li>
     </ul>
     {% endfor %}
 </div>

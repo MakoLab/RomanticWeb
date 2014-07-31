@@ -3,41 +3,34 @@ layout: default
 ---
 
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-md-3 col-sm-12">
 		<div class="menu-back">
 			<div class="menu">	
-			<nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
-	
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav" style="list-style: none; width:100%;">
-
-				{% include categories.html category='getting-started' header='Getting started' %}
-				{% include categories.html category='basic-usage' header='Basic usage' %}
-				{% include categories.html category='advanced-topics' header='Advanced topics' %}
-				
-					</ul>
-</div>
-
-	<!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-				
-				
-				
+				<nav class="navbar navbar-default" role="navigation">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+						  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#submenu">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						  </button>
+						</div>
+		
+						<div class="collapse navbar-collapse" id="submenu">
+							<ul class="nav navbar-nav">
+								{% include categories.html category='getting-started' header='Getting started' %}
+								{% include categories.html category='basic-usage' header='Basic usage' %}
+								{% include categories.html category='advanced-topics' header='Advanced topics' %}
+							</ul>
+						</div>
+					</div>
+				</nav>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-9">
+	<div class="col-md-9 col-sm-12">
 		<div class="content-back">
 			<div class="content">
 				{% include prevnext.html %}

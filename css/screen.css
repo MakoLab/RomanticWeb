@@ -145,6 +145,7 @@ table.highlighttable td.linenos {
 		max-width: 100%;
 		padding: 5px;
 		margin: 0px;
+		overflow: visible;
     }
 	.menu .navbar-default {
         background-color: #f2f7f8;
@@ -348,6 +349,7 @@ table.highlighttable td.linenos {
 		overflow: hidden;
 	}
 	.menu .navbar-nav {
+		overflow: visible;
     }
     .menu .navbar-default {
         background-color: #f2f7f8;

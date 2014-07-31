@@ -142,7 +142,7 @@ table.highlighttable td.linenos {
 	.menu .navbar-nav {
 		width: 100%;
 		max-width: 100%;
-		padding: 0px;
+		padding: 5px;
 		margin: 0px;
     }
 	.menu .navbar-default {
@@ -155,17 +155,17 @@ table.highlighttable td.linenos {
 		background-color: #f2f7f8;
         width: 100%;
         margin: 0px;
-        padding-top: 10px;
-		padding-bottom: 10px;
+        padding-top: 2px;
+		padding-bottom: 2px;
         float: left;
 		text-align: left;
     }
 	.menu .navbar-nav li a {
 		font-size: 16px;
 		font-weight: bold;
-		padding: 5px;
+		padding: 0px;
 		padding-left:50px;
-		background: url(../images/arrow_right.png) no-repeat 35px 5px;
+		background: url(../images/arrow_right.png) no-repeat 35px 2px;
 		background-color: #f2f7f8;
     }
 	.menu .navbar-nav li a:hover {
@@ -181,10 +181,10 @@ table.highlighttable td.linenos {
 		background-color: white;
     }
 	.menu .navbar-nav li.open  .dropdown-menu li  a{
-		color: #056778 !important;
+		color: #056778;
 		font-size: 16px;
 		font-weight: normal;
-		padding: 5px;
+		padding: 2px;
 		padding-left:75px;
 		background: none;
 		background-color: #f2f7f8;
@@ -194,6 +194,7 @@ table.highlighttable td.linenos {
     }
 	.menu .navbar-nav li.open   .dropdown-menu li.active a{
 		background-color: white;
+		color: black;
     }
 	.menu .navbar-nav li.open   .dropdown-menu li.active a:hover{
 		background-color: white;
@@ -243,49 +244,38 @@ table.highlighttable td.linenos {
     .ahome {
         background-image: url("../images/home.png");
     }
-
     .ahome:hover {
         background-image: url("../images/home_over.png");
     }
-
     .aabout {
         background-image: url("../images/about.png");
     }
-
     .aabout:hover {
         background-image: url("../images/about_over.png");
     }
-
     .aform {
         background-image: url("../images/form.png");
     }
-
     .aform:hover {
         background-image: url("../images/form_over.png");
     }
-
     .acontact {
         background-image: url("../images/contact.png");
     }
-
     .acontact:hover {
         background-image: url("../images/contact_over.png");
     }
-
     .brand {
         height: 100%;
         width: 75%;
         float: left;
     }
-
     .brand img {
         margin-left: 10px;
     }
-
     .search {
         display: none;
     }
-
     .left {
         padding-left: 55px;
         margin-bottom: 0;
@@ -295,20 +285,16 @@ table.highlighttable td.linenos {
         float: left;
         width: 100%;
     }
-
     .subheader {
         display: none;
     }
-
     .leftcolor {
         background-color: #056778;
         color: #ffffff;
     }
-
     .leftcolor2 {
         color: #a1a1a1;
     }
-
     .right {
         padding: 10px 15px 10px 0;
         margin-bottom: 0;
@@ -316,22 +302,17 @@ table.highlighttable td.linenos {
         font-size: 16px;
         font-weight: bold;
         float: right;
-
     }
-
     .main {
         float: left;
     }
-
     .main h2 {
         margin-top: 0;
     }
-
     .item {
         padding-left: 15px;
         padding-right: 15px;
     }
-
     .img-main {
         display: none;
     }
@@ -358,7 +339,6 @@ table.highlighttable td.linenos {
 		background: url(../images/mm2.png) no-repeat bottom;
 		padding-bottom: 10px;
 		background-size: 100%;
-		/*float: left;*/
 		width: 100%;
 	}
 	.menu {
@@ -366,15 +346,12 @@ table.highlighttable td.linenos {
 		height: 100%;
 	}
 	.menu .navbar-nav {
-        
     }
-
     .menu .navbar-default {
         background-color: #f2f7f8;
         border: 0px solid #000000;
         padding: 0px;
     }
-
     .menu .navbar-nav li {
 		background-color: #f2f7f8;
         width: 180px;
@@ -382,17 +359,14 @@ table.highlighttable td.linenos {
         margin-right: 0px;
         float: left;
 		text-align: left;
-		
     }
 	.menu .navbar-nav li a {
-        
 		font-size: 16px;
 		font-weight: bold;
 		padding: 18px;
 		padding-left:50px;
 		background: url(../images/arrow_right.png) no-repeat 35px 20px;
 		background-color: #f2f7f8;
-		
     }
 	.menu .navbar-nav li a:hover {
         background-color: white;
@@ -406,7 +380,6 @@ table.highlighttable td.linenos {
 	.menu .navbar-nav li.open:hover .dropdown-toggle {
 		background-color: white;
     }
-	
 	.menu .navbar-nav li  .dropdown-menu li  a{
 		color: #056778;
 		font-size: 16px;
@@ -419,8 +392,10 @@ table.highlighttable td.linenos {
 	.menu .navbar-nav li  .dropdown-menu li  a:hover{
 		background-color: white;
     }
-	
-	
+	.menu .navbar-nav li  .dropdown-menu li.active a {
+		background-color: white;
+		color: black;
+	}
 	.content-back {
 		background: none;
 		margin-bottom: 10px;
@@ -428,7 +403,6 @@ table.highlighttable td.linenos {
 		float: left;
 		width: 100%;
 	}
-
 	.content {
 		width: 100%;
 		height: 100%;
@@ -438,7 +412,6 @@ table.highlighttable td.linenos {
 		font-size: 12px;
 		font-family: Arial,sans-serif;
 	}
-	
 	.nav-links {
 		padding-top: 5px;
 		padding-bottom: 5px;
@@ -464,73 +437,55 @@ table.highlighttable td.linenos {
 		color: #056778;
 		text-decoration: none;
 	}
-	
-	
-
     .ahome {
         background-image: url("../images/home.png");
     }
-
     .ahome:hover {
         background-image: url("../images/home_over.png");
     }
-
     .aabout {
         background-image: url("../images/about.png");
     }
-
     .aabout:hover {
         background-image: url("../images/about_over.png");
     }
-
     .aform {
         background-image: url("../images/form.png");
     }
-
     .aform:hover {
         background-image: url("../images/form_over.png");
     }
-
     .acontact {
         background-image: url("../images/contact.png");
     }
-
     .acontact:hover {
         background-image: url("../images/contact_over.png");
     }
-
     .brand {
         height: 100%;
         float: left;
         margin-bottom: 20px;
     }
-
     .brand img {
         margin-left: 10px;
     }
-
     .search {
         margin-right: 0;
     }
-
     .left {
         padding: 10px 15px 10px 35px;
         font-size: 24px;
     }
-
     .subheader {
         display: none;
     }
-
     .leftcolor {
         background-color: #056778;
         color: #ffffff;
     }
-
     .leftcolor2 {
         color: #a1a1a1;
     }
-
     .right {
         padding: 10px 15px 10px 55px;
         margin-bottom: 0;
@@ -538,146 +493,38 @@ table.highlighttable td.linenos {
         font-size: 22px;
         font-weight: bold;
         float: right;
-
     }
-
     .main {
         padding-top: 0;
     }
-
     .main h2 {
         padding-top: 0;
         margin-top: 0;
     }
-
     .item {
         padding-left: 25px;
         padding-right: 25px;
     }
-
     .img-main {
         display: none;
     }
-
 }
 
 @media (min-width: 992px) {
     footer {
         padding-right: 15px;
     }
-
     .navbar-default {
         background-color: transparent;
         border: 0 #000000;
         padding: 0;
     }
-
     .navbar-nav li {
         background-image: url("../images/mb.png");
         width: 133px;
         margin-left: 2px;
         float: left;
     }
-
-    .ahome {
-        background-image: url("../images/home.png");
-    }
-
-    .ahome:hover {
-        background-image: url("../images/home_over.png");
-    }
-
-    .aabout {
-        background-image: url("../images/about.png");
-    }
-
-    .aabout:hover {
-        background-image: url("../images/about_over.png");
-    }
-
-    .aform {
-        background-image: url("../images/form.png");
-    }
-
-    .aform:hover {
-        background-image: url("../images/form_over.png");
-    }
-
-    .acontact {
-        background-image: url("../images/contact.png");
-    }
-
-    .acontact:hover {
-        background-image: url("../images/contact_over.png");
-    }
-
-    .brand {
-        height: 100%;
-        float: left;
-        padding-bottom: 10px;
-    }
-
-    .brand img {
-        margin-left: 10px;
-    }
-
-    .headline p {
-        width: 120%
-    }
-
-    .headline {
-        line-height: 56px;
-    }
-
-    .subheader {
-        top: -25px;
-    }
-
-    .leftcolor {
-        background-color: #056778;
-        color: #ffffff;
-    }
-
-    .leftcolor2 {
-        color: #a1a1a1;
-    }
-
-    .right {
-        padding: 10px 15px 10px 55px;
-        margin-bottom: 0;
-        margin-top: 5px;
-        font-size: 22px;
-        font-weight: bold;
-        float: right;
-
-    }
-
-    .back {
-        background: url(../images/mb2.png) no-repeat bottom;
-        padding-bottom: 20px;
-        margin-bottom: 10px;
-        background-size: 100%;
-        float: left;
-    }
-
-    .main {
-        padding-top: 0;
-        background-color: #ffffff;
-        float: left;
-
-    }
-
-    .item {
-        padding: 5px 15px;
-    }
-
-    .img-main {
-        /*display: none;*/
-        padding-top: 10px;
-        margin-top: 20px;
-    }
-	
-		
 	.menu-back {
 		background: url(../images/mm.png) no-repeat bottom;
 		padding-bottom: 24px;
@@ -686,41 +533,81 @@ table.highlighttable td.linenos {
 		float: left;
 		width: 100%;
 	}
-
 	.menu {
 		width: 95%;
 		height: 100%;
 		background-color: #f2f7f8;
-		padding-left: 10px;
+		padding-left: 0px;
 		padding-top: 10px;
 		font-size: 20px;
 		font-weight: bold;
 	}
-
-	.menu ul {
+	.menu .navbar-nav {
+    }
+	.menu .navbar-default {
+        background-color: #f2f7f8;
+        border: 0px solid #000000;
+        padding: 0px;
+    }
+    .menu .navbar-nav li {
+		background: none;
+		background-color: #f2f7f8;
+        width: 100%;
+        margin-left: 0px;
+        margin-right: 0px;
+        float: left;
+		text-align: left;
+    }
+	.menu .navbar-nav li a {
 		font-size: 16px;
-		border-top: 1px solid white;
-		border-bottom: 1px solid white;
-		width: 95%;
+		font-weight: bold;
+		padding: 10px;
+		padding-left:50px;
+		background: url(../images/arrow_right.png) no-repeat 35px 10px;
+		background-color: #f2f7f8;
+    }
+	.menu .navbar-nav li a:hover {
+        background-color: white;
+    }
+	.menu .navbar-nav li  ul{
+		background-color: #f2f7f8;
+		position: relative;
+		display: block;
+		float: left;
+		padding: 0px;
+		padding-left: 5px;
+		padding-right: 5px;
+		margin: 2px 0 0;
+		font-size: 14px;
 		list-style: none;
-	}
-	.menu ul li {
-		margin-left: -40px;
-		padding-left: 20px;
-		padding-top: 5px;
-		padding-bottom: 5px;
-	}
-	.menu ul li a {
-		color: #056778;
-	}
-	.menu ul li.active {
+		border: 0px solid #ccc;
+		border: 0px solid rgba(0, 0, 0, .15);
+		border-radius: 0px;
+		-webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, .175);
+		box-shadow: 0 0px 0px rgba(0, 0, 0, .175);
+    }
+	.menu .navbar-nav li.open .dropdown-toggle{
 		background-color: white;
-	}
-	.menu ul li.active a {
+    }
+	.menu .navbar-nav li.open:hover .dropdown-toggle {
+		background-color: white;
+    }
+	.menu .navbar-nav li  .dropdown-menu li  a{
+		color: #056778;
+		font-size: 16px;
+		font-weight: normal;
+		padding: 5px;
+		padding-left:50px;
+		background: none;
+		background-color: #f2f7f8;
+    }
+	.menu .navbar-nav li  .dropdown-menu li  a:hover{
+		background-color: white;
+    }
+	.menu .navbar-nav li  .dropdown-menu li.active a {
+		background-color: white;
 		color: black;
 	}
-
-
 	.content-back {
 		background: url(../images/mc.png) no-repeat bottom;
 		padding-bottom: 30px;
@@ -729,7 +616,6 @@ table.highlighttable td.linenos {
 		float: left;
 		width: 100%;
 	}
-
 	.content {
 		width: 100%;
 		height: 100%;
@@ -739,7 +625,6 @@ table.highlighttable td.linenos {
 		font-size: 14px;
 		font-family: Arial,sans-serif;
 	}
-
 	.nav-links {
 		position: relative;
 		width: 100%;
@@ -763,5 +648,80 @@ table.highlighttable td.linenos {
 		color: #056778;
 		text-decoration: none;
 	}
-
+    .ahome {
+        background-image: url("../images/home.png");
+    }
+    .ahome:hover {
+        background-image: url("../images/home_over.png");
+    }
+    .aabout {
+        background-image: url("../images/about.png");
+    }
+    .aabout:hover {
+        background-image: url("../images/about_over.png");
+    }
+    .aform {
+        background-image: url("../images/form.png");
+    }
+    .aform:hover {
+        background-image: url("../images/form_over.png");
+    }
+    .acontact {
+        background-image: url("../images/contact.png");
+    }
+    .acontact:hover {
+        background-image: url("../images/contact_over.png");
+    }
+    .brand {
+        height: 100%;
+        float: left;
+        padding-bottom: 10px;
+    }
+    .brand img {
+        margin-left: 10px;
+    }
+    .headline p {
+        width: 120%
+    }
+    .headline {
+        line-height: 56px;
+    }
+    .subheader {
+        top: -25px;
+    }
+    .leftcolor {
+        background-color: #056778;
+        color: #ffffff;
+    }
+    .leftcolor2 {
+        color: #a1a1a1;
+    }
+    .right {
+        padding: 10px 15px 10px 55px;
+        margin-bottom: 0;
+        margin-top: 5px;
+        font-size: 22px;
+        font-weight: bold;
+        float: right;
+    }
+    .back {
+        background: url(../images/mb2.png) no-repeat bottom;
+        padding-bottom: 20px;
+        margin-bottom: 10px;
+        background-size: 100%;
+        float: left;
+    }
+    .main {
+        padding-top: 0;
+        background-color: #ffffff;
+        float: left;
+    }
+    .item {
+        padding: 5px 15px;
+    }
+    .img-main {
+        /*display: none;*/
+        padding-top: 10px;
+        margin-top: 20px;
+    }
 }

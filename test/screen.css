@@ -98,27 +98,22 @@ table.highlighttable td.linenos {
         margin: 0 0 0 35px;
         max-width: 270px;
     }
-
     .navbar-default {
         background-color: transparent;
         border: 0 #000000;
         padding: 0;
     }
-
     .navbar-collapse {
         border-top: 0;
     }
-
     .navbar-toggle {
         right: 0;
         top: -45px;
         position: absolute;
     }
-
     .navbar-header {
         margin-top: -180px;
     }
-
     .navbar-nav li {
         background-image: url("../images/mb.png");
         background-size: 120px;
@@ -129,16 +124,122 @@ table.highlighttable td.linenos {
         margin-top: 10px;
         padding-bottom: 10px;
     }
-
     .navbar-nav li a {
         background: no-repeat 14px 4px;
         text-align: left;
     }
-
     .navbar-nav li a .fa-stack {
         font-size:16px
     }
-
+	.menu-back {
+		background:none;
+		width: 100%;
+	}
+	.menu {
+		width: 100%;
+		height: 100%;
+	}
+	.menu .navbar-nav {
+		width: 100%;
+		max-width: 100%;
+		padding: 0px;
+		margin: 0px;
+    }
+	.menu .navbar-default {
+        background-color: #f2f7f8;
+        border: 0px solid #000000;
+        padding: 0px;
+	}
+    .menu .navbar-nav li {
+		background: none;
+		background-color: #f2f7f8;
+        width: 100%;
+        margin: 0px;
+        padding-top: 10px;
+		padding-bottom: 10px;
+        float: left;
+		text-align: left;
+    }
+	.menu .navbar-nav li a {
+		font-size: 16px;
+		font-weight: bold;
+		padding: 5px;
+		padding-left:50px;
+		background: url(../images/arrow_right.png) no-repeat 35px 5px;
+		background-color: #f2f7f8;
+    }
+	.menu .navbar-nav li a:hover {
+        background-color: white;
+    }
+	.menu .navbar-nav li  ul{
+		background-color: #f2f7f8;
+    }
+	.menu .navbar-nav li.open .dropdown-toggle{
+		background-color: white;
+    }
+	.menu .navbar-nav li.open:hover .dropdown-toggle {
+		background-color: white;
+    }
+	.menu .navbar-nav li.open  .dropdown-menu li  a{
+		color: #056778 !important;
+		font-size: 16px;
+		font-weight: normal;
+		padding: 5px;
+		padding-left:75px;
+		background: none;
+		background-color: #f2f7f8;
+    }
+	.menu .navbar-nav li.open   .dropdown-menu li  a:hover{
+		background-color: white;
+    }
+	.menu .navbar-nav li.open   .dropdown-menu li.active a{
+		background-color: white;
+    }
+	.menu .navbar-nav li.open   .dropdown-menu li.active a:hover{
+		background-color: white;
+    }
+	.content-back {
+		background: none;
+		margin-bottom: 10px;
+		background-size: 100%;
+		float: left;
+		width: 100%;
+	}
+	.content {
+		width: 100%;
+		height: 100%;
+		padding-left: 10px;
+		padding-right: 10px;
+		float: left;
+		font-size: 12px;
+		font-family: Arial,sans-serif;
+	}
+	.nav-links {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		position: relative;
+		width: 100%;
+		float: left;
+	}
+	.nav-links-prev {
+		padding: 5px;
+		padding-right: 25px;
+		padding-left: 25px;
+		background-color: #f2f7f8;
+		float: left;
+	}
+	.nav-links-next {
+		padding: 5px;
+		padding-right: 25px;
+		padding-left: 25px;
+		background-color: #f2f7f8;
+		float: right;
+	}
+	.nav-links-prev a, .nav-links-next a{
+		color: #056778;
+		text-decoration: none;
+	}
+	
     .ahome {
         background-image: url("../images/home.png");
     }
@@ -318,6 +419,52 @@ table.highlighttable td.linenos {
 	.menu .navbar-nav li  .dropdown-menu li  a:hover{
 		background-color: white;
     }
+	
+	
+	.content-back {
+		background: none;
+		margin-bottom: 10px;
+		background-size: 100%;
+		float: left;
+		width: 100%;
+	}
+
+	.content {
+		width: 100%;
+		height: 100%;
+		padding-left: 10px;
+		padding-right: 10px;
+		float: left;
+		font-size: 12px;
+		font-family: Arial,sans-serif;
+	}
+	
+	.nav-links {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		position: relative;
+		width: 100%;
+		float: left;
+	}
+	.nav-links-prev {
+		padding: 5px;
+		padding-right: 25px;
+		padding-left: 25px;
+		background-color: #f2f7f8;
+		float: left;
+	}
+	.nav-links-next {
+		padding: 5px;
+		padding-right: 25px;
+		padding-left: 25px;
+		background-color: #f2f7f8;
+		float: right;
+	}
+	.nav-links-prev a, .nav-links-next a{
+		color: #056778;
+		text-decoration: none;
+	}
+	
 	
 
     .ahome {

@@ -107,6 +107,29 @@ namespace RomanticWeb.Linq.Model
             return result;
         }
 
+        internal static bool Contains(this IQueryComponentNavigator navigator, IQueryComponent component)
+        {
+            bool result = navigator.ContainsComponent(component);
+            if (!result)
+            {
+                foreach (IQueryComponent childComponent in navigator.GetComponents())
+                {
+                    IQueryComponentNavigator childNavigator = childComponent.GetQueryComponentNavigator();
+                    if (childNavigator != null)
+                    {
+                        bool localResult = childNavigator.Contains(component);
+                        if (localResult)
+                        {
+                            result = localResult;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private static IEnumerable<T> FindAllComponents<T>(this IQueryComponentNavigator queryComponentNavigator, IList<Query> searchedQueries) where T : IQueryComponent
         {
             List<T> result = new List<T>();

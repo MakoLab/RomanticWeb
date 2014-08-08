@@ -505,9 +505,13 @@ namespace RomanticWeb.Tests.IntegrationTests
             LoadTestFile("LargeDataset.nq");
             Uri predicateUri1 = new Uri(predicateUriString1);
             IQueryable<IProduct> query = from product in EntityContext.AsQueryable<IProduct>()
-                                         from predicateValue in product.Predicate(predicateUri1) as ICollection<IQuantitativeFloatProperty>
-                                         where predicateValue.Value > minValue1 && predicateValue.Value < maxValue1
+                                         where product.Industry == new EntityId("http://chem.com/vocab/LifeSciences")
                                          select product;
+
+            query = from product in query
+                    from predicateValue in product.Predicate(predicateUri1) as ICollection<IQuantitativeFloatProperty>
+                    where predicateValue.Value < maxValue1
+                    select product;
 
             Uri predicateUri2 = new Uri(predicateUriString2);
             query = from product in query

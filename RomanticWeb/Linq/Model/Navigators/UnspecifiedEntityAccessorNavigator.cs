@@ -33,7 +33,8 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns><b>true</b> if given component is already contained, otherwise <b>false</b>.</returns>
         public override bool ContainsComponent(IQueryComponent component)
         {
-            return (component is QueryElement ? NavigatedComponent.Elements.Contains((QueryElement)component) :
+            return (component is QueryElement ? NavigatedComponent.Elements.Contains((QueryElement)component) || 
+                NavigatedComponent.EntityAccessor.GetQueryComponentNavigator().ContainsComponent(component) :
                 (component is Identifier ? (NavigatedComponent.About == component) : false));
         }
 
@@ -68,6 +69,10 @@ namespace RomanticWeb.Linq.Model.Navigators
                     NavigatedComponent.Elements.RemoveAt(indexOf);
                     NavigatedComponent.Elements.Insert(indexOf, (QueryElement)replacement);
                 }
+                else
+                {
+                    NavigatedComponent.EntityAccessor.GetQueryComponentNavigator().ReplaceComponent(component, replacement);
+                }
             }
         }
 
@@ -75,13 +80,14 @@ namespace RomanticWeb.Linq.Model.Navigators
         /// <returns>Enumeration of all child components.</returns>
         public override IEnumerable<IQueryComponent> GetComponents()
         {
-            List<IQueryComponent> result = new List<IQueryComponent>(NavigatedComponent.EntityAccessor.Elements);
+            List<IQueryComponent> result = new List<IQueryComponent>(NavigatedComponent.Elements);
 
             if (NavigatedComponent.About != null)
             {
                 result.Add(NavigatedComponent.About);
             }
 
+            result.AddRange(NavigatedComponent.EntityAccessor.GetQueryComponentNavigator().GetComponents());
             return result.AsReadOnly();
         }
         #endregion

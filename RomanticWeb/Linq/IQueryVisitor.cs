@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Linq.Model;
+﻿using RomanticWeb.Entities;
+using RomanticWeb.Linq.Model;
 using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Linq
@@ -11,5 +12,8 @@ namespace RomanticWeb.Linq
 
         /// <summary>Gets the mappings repository.</summary>
         IMappingsRepository MappingsRepository { get; }
+
+        /// <summary>Gets the base Uri selection policy.</summary>
+        IBaseUriSelectionPolicy BaseUriSelector { get; }
     }
 }

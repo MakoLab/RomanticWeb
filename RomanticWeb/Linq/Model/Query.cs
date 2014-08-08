@@ -219,23 +219,7 @@ namespace RomanticWeb.Linq.Model
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            int result = typeof(Query).FullName.GetHashCode() ^ _variableNamingStrategy.GetHashCode() ^ _queryForm.GetHashCode() ^ (_subject != null ? _subject.GetHashCode() : 0);
-            foreach (Prefix prefix in _prefixes)
-            {
-                result ^= prefix.GetHashCode();
-            }
-
-            foreach (ISelectableQueryComponent queryComponent in _select)
-            {
-                result ^= queryComponent.GetHashCode();
-            }
-
-            foreach (IQueryComponent queryComponent in _elements)
-            {
-                result ^= queryComponent.GetHashCode();
-            }
-
-            return result;
+            return typeof(Query).FullName.GetHashCode() ^ _variableNamingStrategy.GetHashCode() ^ _queryForm.GetHashCode();
         }
         #endregion
 

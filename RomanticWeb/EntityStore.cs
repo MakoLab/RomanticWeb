@@ -79,13 +79,20 @@ namespace RomanticWeb
         public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> getNewValues, Uri graphUri)
         {
             _markedForDeletion = null;
-            var subjectNode = Node.FromEntityId(entityId);
-            RemoveTriples(entityId, subjectNode, propertyUri, graphUri);
-
-            foreach (var valueNode in getNewValues())
+            if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
             {
-                var triple = new EntityQuad(entityId, subjectNode, propertyUri, valueNode).InGraph(graphUri);
-                _entityQuads.Add(triple);
+                _entityQuads.SetEntityTypeQuads(entityId, getNewValues(), graphUri);
+            }
+            else
+            {
+                var subjectNode = Node.FromEntityId(entityId);
+                RemoveTriples(entityId, subjectNode, propertyUri, graphUri);
+
+                foreach (var valueNode in getNewValues())
+                {
+                    var triple = new EntityQuad(entityId, subjectNode, propertyUri, valueNode).InGraph(graphUri);
+                    _entityQuads.Add(triple);
+                }
             }
         }
 

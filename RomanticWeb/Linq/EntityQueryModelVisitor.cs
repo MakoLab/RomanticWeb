@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +21,10 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Linq
 {
     /// <summary>Converts LINQ query model to SPARQL abstraction.</summary>
+    //// TODO: Last changes are asking to refactorize LINQ -> SPARQL process, i.e. 
+    //// currently we're using UnspecifiedEntityAccessor for properties, while we should stick to the default graph selection policy.
+    //// The UnspecifiedEntityAccessor might disappear some day as it's current implementation makes the graph matching condition removed.
+    //// Also the filters are added to the accessor on a basis that we feel is somehow inconsistant.
     internal class EntityQueryModelVisitor : QueryModelVisitorBase, IQueryVisitor
     {
         #region Fields
@@ -56,6 +61,9 @@ namespace RomanticWeb.Linq
         /// <summary>Gets the mappings repository.</summary>
         IMappingsRepository IQueryVisitor.MappingsRepository { get { return _entityContext.Mappings; } }
 
+        /// <summary>Gets the base Uri selection policy.</summary>
+        IBaseUriSelectionPolicy IQueryVisitor.BaseUriSelector { get { return _entityContext.BaseUriSelector; } }
+
         /// <summary>Gets a resulting query.</summary>
         internal QueryComponent Result { get { return _result; } }
 
@@ -87,6 +95,7 @@ namespace RomanticWeb.Linq
                 _query.Subject = _mainFromComponent.About;
                 UnboundConstrain genericConstrain = new UnboundConstrain(new Identifier("s"), new Identifier("p"), new Identifier("o"), _mainFromComponent.SourceExpression.FromExpression);
                 _mainFromComponent.Elements.Insert(0, genericConstrain);
+                _mainFromComponent.UnboundGraphName = null;
                 _query.Select.Add(genericConstrain);
             }
 
@@ -122,21 +131,20 @@ namespace RomanticWeb.Linq
             else if (!_query.FindAllComponents<Filter>().Any(item => item.Expression == queryComponent))
             {
                 Filter filter = new Filter((IExpression)queryComponent);
-                StrongEntityAccessor targetEntityAccessor = _mainFromComponent;
-                int indexOf = queryModel.BodyClauses.IndexOf(whereClause);
-                if (indexOf > 0)
+                IEnumerable<StrongEntityAccessor> targetEntityAccessorExression = _query.Elements.OfType<StrongEntityAccessor>();
+                if ((_query.IsSubQuery) || (whereClause.Predicate is Remotion.Linq.Clauses.Expressions.SubQueryExpression))
                 {
-                    targetEntityAccessor = _query.FindAllComponents<StrongEntityAccessor>()
-                        .Where(item => item.SourceExpression == queryModel.BodyClauses[indexOf - 1])
-                        .FirstOrDefault() ?? targetEntityAccessor;
+                    targetEntityAccessorExression = targetEntityAccessorExression.Except(new StrongEntityAccessor[] { _query.Elements.OfType<StrongEntityAccessor>().LastOrDefault() });
                 }
 
+                StrongEntityAccessor targetEntityAccessor = targetEntityAccessorExression.LastOrDefault() ?? _mainFromComponent;
                 if ((!targetEntityAccessor.Elements.Contains(queryComponent)) && (!targetEntityAccessor.Elements.Contains(filter)))
                 {
                     targetEntityAccessor.Elements.Add(filter);
                 }
             }
 
+            _auxFromComponent = null;
             base.VisitWhereClause(whereClause, queryModel, index);
         }
 
@@ -150,10 +158,7 @@ namespace RomanticWeb.Linq
             StrongEntityAccessor entityAccessor = (fromClause.FromExpression is System.Linq.Expressions.ConstantExpression ? null : _visitor.GetEntityAccessor(fromClause));
             if (entityAccessor != null)
             {
-                if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))
-                {
-                    _query.Elements.Add(entityAccessor);
-                }
+                _query.AddEntityAccessor(entityAccessor);
             }
             else
             {
@@ -250,15 +255,20 @@ namespace RomanticWeb.Linq
         /// <param name="index">Index of the where clause in the query model. In case of the main from clause this value is -1.</param>
         protected virtual void VisitQuerableFromClause(FromClauseBase fromClause, Remotion.Linq.QueryModel queryModel, int index)
         {
-            if ((typeof(IQueryable).IsAssignableFrom(fromClause.FromExpression.Type)) &&
-                (fromClause.FromExpression.Type.GetGenericArguments().Length > 0) &&
-                (fromClause.FromExpression.Type.GetGenericArguments()[0] != typeof(IEntity)))
+            if (typeof(IQueryable).IsAssignableFrom(fromClause.FromExpression.Type))
             {
-                StrongEntityAccessor entityAccessor = this.GetEntityAccessor(fromClause);
-                if (_mainFromComponent == null)
+                if ((fromClause.FromExpression.Type.GetGenericArguments().Length > 0) && (fromClause.FromExpression.Type.GetGenericArguments()[0] != typeof(IEntity)))
                 {
-                    _query.Elements.Add(_mainFromComponent = entityAccessor);
+                    StrongEntityAccessor entityAccessor = this.GetEntityAccessor(fromClause);
+                    if (_mainFromComponent == null)
+                    {
+                        _query.Elements.Add(_mainFromComponent = entityAccessor);
+                    }
                 }
+            }
+            else
+            {
+                _visitor.VisitExpression(fromClause.FromExpression);
             }
         }
 
@@ -388,27 +398,32 @@ namespace RomanticWeb.Linq
 
         private void OverrideEntitySelector(Identifier identifier)
         {
-            UnboundConstrain genericConstrain = new UnboundConstrain(identifier, new Identifier(identifier.Name + "P"), new Identifier(identifier.Name + "O"), _mainFromComponent.SourceExpression.FromExpression);
-            _mainFromComponent.Elements.Add(genericConstrain);
-            _query.Select.Clear();
-            _query.Select.Add(genericConstrain);
-            UnspecifiedEntityAccessor entityAccessor = new UnspecifiedEntityAccessor(identifier, _mainFromComponent);
-            entityAccessor.Elements.Add(genericConstrain);
-            _query.Select.Add(entityAccessor);
-            int indexOf = -1;
-            if ((indexOf = _query.Elements.IndexOf(_mainFromComponent)) != -1)
+            StrongEntityAccessor entityAccessor = _query.FindAllComponents<StrongEntityAccessor>().Where(item => item.About == identifier).FirstOrDefault();
+            if (entityAccessor == null)
             {
-                _query.Elements.RemoveAt(indexOf);
-                _query.Elements.Insert(indexOf, entityAccessor);
-            }
-            else
-            {
+                entityAccessor = new StrongEntityAccessor(identifier);
                 _query.Elements.Add(entityAccessor);
             }
 
-            if (_mainFromComponent.Elements[0] is UnboundConstrain)
+            if ((entityAccessor.UnboundGraphName == null) || (entityAccessor.UnboundGraphName == entityAccessor.About))
             {
-                _mainFromComponent.Elements.RemoveAt(0);
+                entityAccessor.UnboundGraphName = (from accessor in _query.FindAllComponents<StrongEntityAccessor>()
+                                                   from constrain in accessor.Elements.OfType<EntityConstrain>()
+                                                   where (constrain.Value is Identifier) && ((Identifier)constrain.Value == identifier)
+                                                   select accessor.About).FirstOrDefault() ?? identifier;
+                UnboundConstrain genericConstrain = new UnboundConstrain();
+                genericConstrain.Subject = identifier;
+                genericConstrain.Predicate = new Identifier(identifier.Name + "P");
+                genericConstrain.Value = new Identifier(identifier.Name + "O");
+                entityAccessor.Elements.Add(genericConstrain);
+                _query.Select.Clear();
+                _query.Select.Add(genericConstrain);
+                _query.Select.Add(entityAccessor);
+
+                if (_mainFromComponent.Elements[0] is UnboundConstrain)
+                {
+                    _mainFromComponent.Elements.RemoveAt(0);
+                }
             }
         }
 

@@ -123,7 +123,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
         {
             Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
-           
+
             // given
             LoadTestFile("LargeDataset.nq");
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();
@@ -134,19 +134,19 @@ namespace RomanticWeb.Tests.IntegrationTests
             {
                 string name = product.Name;
                 string comments = product.Comments;
-                string viscosity = System.String.Join(", ", product.Viscosity.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
-                string cureSystem = (product.CureSystem != null ? product.CureSystem.Id.ToString() : System.String.Empty);
+                string viscosity = (product.Viscosity != null ? System.String.Join(", ", product.Viscosity.Viscosity.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value))) : System.String.Empty);
+                string cureSystem = (product.CureSystem != null ? product.CureSystem.ToString() : System.String.Empty);
                 string cureTemperature = System.String.Join(", ", product.CureTemperature.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
                 string cureTime = System.String.Join(", ", product.CureTime.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
-                string durometer = (product.Durometer != null ? System.String.Format("{0}{1}", product.Durometer.Unit, product.Durometer.Value) : System.String.Empty);
-                string tensile = (product.Tensile != null ? System.String.Format("{0}{1}", product.Tensile.Unit, product.Tensile.Value) : System.String.Empty);
-                string elongation = (product.Elongation != null ? System.String.Format("{0}{1}", product.Elongation.Unit, product.Elongation.Value) : System.String.Empty);
+                string durometer = System.String.Join(", ", product.Durometer.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
+                string tensile = System.String.Join(", ", product.Tensile.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
+                string elongation = System.String.Join(", ", product.Elongation.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
                 string tear = (product.Tear != null ? System.String.Format("{0}{1}", product.Tear.Unit, product.Tear.Value) : System.String.Empty);
-                string rheology = (product.Rheology != null ? System.String.Format("{0}{1}", product.Rheology.Unit, product.Rheology.Value) : System.String.Empty);
-                string specificGravity = (product.SpecificGravity != null ? product.SpecificGravity.ToString() : System.String.Empty);
+                string rheology = System.String.Join(", ", product.Rheology.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
+                string specificGravity = System.String.Join(", ", product.SpecificGravity);
                 string industry = (product.Industry ?? System.String.Empty).ToString();
-                string grade = (product.Grade ?? System.String.Empty).ToString();
-                string productCategory = (product.ProductCategory != null ? System.String.Join(", ", product.ProductCategory) : System.String.Empty);
+                string grade = System.String.Join(", ", product.Grade.Select(item => item.ToString()));
+                string productCategory = System.String.Join(", ", product.ProductCategory);
                 string msdsFile = System.String.Join(", ", product.MsdsFile.Select(item => item.Id.ToString()));
                 string function = System.String.Join(", ", product.Function.Select(item => item.ToString()));
             }
@@ -239,7 +239,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [TestCase("http://chem.com/product/R32-2186", "http://chem.com/vocab/viscosity")]
+        [TestCase("http://chem.com/product/CV1-2566", "http://chem.com/vocab/viscosityComplex")]
         public void Should_read_blank_node(string productId, string predicateUri)
         {
             // given
@@ -249,8 +249,8 @@ namespace RomanticWeb.Tests.IntegrationTests
             IProduct product = EntityContext.Load<IProduct>(new EntityId(productId));
 
             // then
-            Assert.That(product.Predicate(new Uri(predicateUri)), Is.InstanceOf<IQuantitativeFloatProperty>());
-            Assert.That(product.Viscosity.FirstOrDefault(), Is.InstanceOf<IQuantitativeFloatProperty>());
+            Assert.That(product.Predicate(new Uri(predicateUri)), Is.InstanceOf<IViscosityComplex>());
+            Assert.That(product.Tensile.FirstOrDefault(), Is.InstanceOf<IQuantitativeFloatProperty>());
         }
 
         [Test]
@@ -293,6 +293,186 @@ namespace RomanticWeb.Tests.IntegrationTests
             IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
                                             where (product.Industry == id) || (product.Industry == null)
                                             select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/tensile", 400.0, 600.0)]
+        public void Select_with_predicate_value_type_casted_to_collection_of_IQuantitativeFloatProperty(string predicateUriString, double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            let predicateValue = product.Predicate(predicateUri) as ICollection<IQuantitativeFloatProperty>
+                                            from quantitativeValue in predicateValue
+                                            where quantitativeValue.Value > minValue && quantitativeValue.Value < maxValue
+                                            select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/cureSystem", "http://chem.com/vocab/Acetoxy", "http://chem.com/vocab/Oxime")]
+        public void Select_with_predicate_value_type_casted_to_EntityId(string predicateUriString, params string[] filterValues)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            List<EntityId> filter = new List<EntityId>();
+            foreach (string filterValue in filterValues)
+            {
+                filter.Add(new EntityId(filterValue));
+            }
+
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            where filter.Contains(product.Predicate(predicateUri) as EntityId)
+                                            select product).ToList();
+
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/cureTime", 0.0, 100.0)]
+        public void Select_with_nested_where_clause(string predicateUriString, double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            from complex in product.CureComplex
+                                            from quantitativeValue in complex.Predicate(predicateUri) as ICollection<IQuantitativeFloatProperty>
+                                            where quantitativeValue.Value > minValue && quantitativeValue.Value < maxValue
+                                            select product).ToList();
+
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/tear", 0.0, 400.0)]
+        public void Select_with_predicate_value_type_casted_to_IQuantitativeFloatProperty(string predicateUriString, double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            let predicateValue = product.Predicate(predicateUri) as IQuantitativeFloatProperty
+                                            where predicateValue.Value > minValue && predicateValue.Value < maxValue
+                                            select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/specificGravity", 0.0, 400.0)]
+        public void Select_with_predicate_value_type_casted_to_collection_of_double(string predicateUriString, double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            from predicateValue in product.Predicate(predicateUri) as ICollection<double>
+                                            where predicateValue > minValue && predicateValue < maxValue
+                                            select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/viscosity", 0.0, 400.0)]
+        public void Select_with_predicate_value_type_casted_to_IViscosityComplex(string predicateUriString, double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            from predicateValue in product.Viscosity.Predicate(predicateUri) as ICollection<IQuantitativeFloatProperty>
+                                            where predicateValue.Value > minValue && predicateValue.Value < maxValue
+                                            select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/tear", 0.0, 400.0, "http://chem.com/vocab/tensile", 0.0, 400.0)]
+        public void Select_with_concatenation_of_two_predicate_casts(string predicateUriString1, double minValue1, double maxValue1, string predicateUriString2, double minValue2, double maxValue2)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri1 = new Uri(predicateUriString1);
+            IQueryable<IProduct> query = from product in EntityContext.AsQueryable<IProduct>()
+                                         from predicateValue in product.Predicate(predicateUri1) as ICollection<IQuantitativeFloatProperty>
+                                         where predicateValue.Value > minValue1 && predicateValue.Value < maxValue1
+                                         select product;
+
+            Uri predicateUri2 = new Uri(predicateUriString2);
+            query = from product in query
+                    from predicateValue in product.Predicate(predicateUri2) as ICollection<IQuantitativeFloatProperty>
+                    where predicateValue.Value > minValue2 && predicateValue.Value < maxValue2
+                    select product;
+
+            IEnumerable<IProduct> result = query.ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase(0.0, 400.0)]
+        public void Select_with_complex_type_casts_and_where_clauses(double minValue, double maxValue)
+        {
+            LoadTestFile("LargeDataset.nq");
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            where (product.Viscosity.Viscosity.Any(viscosity => (viscosity.Value >= minValue && viscosity.Value <= maxValue))) ||
+                                                  (product.Viscosity.PartA.Any(viscosityA => (viscosityA.Value >= minValue && viscosityA.Value <= maxValue))) ||
+                                                  (product.Viscosity.PartB.Any(viscosityB => (viscosityB.Value >= minValue && viscosityB.Value <= maxValue)))
+                                            select product).ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/tackFreeTime", 0.0, 400.0, "http://chem.com/vocab/mixRatio", "1 PART")]
+        public void Select_with_cross_result_of_multiple_queries(string predicateUriString1, double minValue1, double maxValue1, string predicateUriString2, params string[] filterValues)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri1 = new Uri(predicateUriString1);
+            IQueryable<IProduct> query = from product in EntityContext.AsQueryable<IProduct>()
+                                         from predicateValue in product.Predicate(predicateUri1) as ICollection<IQuantitativeFloatProperty>
+                                         where predicateValue.Value > minValue1 && predicateValue.Value < maxValue1
+                                         select product;
+
+            Uri predicateUri2 = new Uri(predicateUriString2);
+            query = from product in query
+                    from filterValue in filterValues
+                    where (product.Predicate(predicateUri2) as ICollection<string>).Contains(filterValue)
+                    select product;
+
+            IEnumerable<IProduct> result = query.ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/appearance", "Yellow")]
+        public void Select_with_regular_expression_filter(string predicateUriString, params string[] filterValues)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri = new Uri(predicateUriString);
+            string pattern = System.String.Join("|", filterValues.Select(item => System.Text.RegularExpressions.Regex.Escape(item)));
+            IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
+                                            from value in product.Predicate(predicateUri) as ICollection<string>
+                                            where System.Text.RegularExpressions.Regex.IsMatch(value, pattern)
+                                            select product).ToList();
+
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
+        [TestCase("http://chem.com/vocab/mixRatio", "1:1", "http://chem.com/vocab/cureSystem", "http://chem.com/vocab/Platinum")]
+        public void Select_with_multiple_array_of_string_filters(string predicateUriString1, string filterValue1, string predicateUriString2, string filterValue2)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri1 = new Uri(predicateUriString1);
+            string pattern = System.Text.RegularExpressions.Regex.Escape(filterValue1);
+            IQueryable<IProduct> query = from product in EntityContext.AsQueryable<IProduct>()
+                                         from value in product.Predicate(predicateUri1) as ICollection<string>
+                                         where System.Text.RegularExpressions.Regex.IsMatch(value, pattern)
+                                         select product;
+
+            Uri predicateUri2 = new Uri(predicateUriString2);
+            EntityId[] filterValues2 = new EntityId[] { new EntityId(filterValue2) };
+            query = from product in query
+                    where filterValues2.Contains(product.Predicate(predicateUri2) as EntityId)
+                    select product;
+
+            IEnumerable<IProduct> result = query.ToList();
             Assert.That(result.Count(), Is.Not.EqualTo(0));
         }
 

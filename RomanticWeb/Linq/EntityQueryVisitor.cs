@@ -49,6 +49,9 @@ namespace RomanticWeb.Linq
         /// <summary>Gets the mappings repository.</summary>
         IMappingsRepository IQueryVisitor.MappingsRepository { get { return _entityContext.Mappings; } }
 
+        /// <summary>Gets the base Uri selection policy.</summary>
+        IBaseUriSelectionPolicy IQueryVisitor.BaseUriSelector { get { return _entityContext.BaseUriSelector; } }
+
         /// <summary>Gets an associated query.</summary>
         internal Query Query { get { return _query; } }
 
@@ -88,6 +91,46 @@ namespace RomanticWeb.Linq
 
             return result;
         }
+
+        internal Remotion.Linq.Clauses.FromClauseBase GetMemberTarget(System.Linq.Expressions.MemberExpression expression)
+        {
+            Remotion.Linq.Clauses.FromClauseBase result = null;
+            System.Linq.Expressions.MemberExpression memberExpression = expression.Expression as System.Linq.Expressions.MemberExpression;
+            if ((memberExpression == null) && ((memberExpression = ((IQueryVisitor)this).TransformUnaryExpression(expression.Expression) as System.Linq.Expressions.MemberExpression) != null))
+            {
+                SafeVisitExpression(memberExpression);
+            }
+
+            if (memberExpression is System.Linq.Expressions.MemberExpression)
+            {
+                if (memberExpression.Member is PropertyInfo)
+                {
+                    PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
+                    string itemName = propertyInfo.Name.CamelCase();
+                    StrongEntityAccessor entityAccessor = _query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression.FromExpression == memberExpression).FirstOrDefault();
+                    if (entityAccessor != null)
+                    {
+                        itemName = _query.RetrieveIdentifier(entityAccessor.About.Name);
+                    }
+                    else
+                    {
+                        SafeVisitExpression(memberExpression);
+                    }
+
+                    result = new FromPropertyClause(itemName, propertyInfo.PropertyType.FindItemType(), memberExpression);
+                }
+                else
+                {
+                    throw CreateUnhandledItemException<System.Linq.Expressions.MemberExpression>(expression, "GetMemberTarget");
+                }
+            }
+            else
+            {
+                result = GetSourceExpression(expression);
+            }
+
+            return result;
+        }
         #endregion
 
         #region Protected methods
@@ -100,11 +143,7 @@ namespace RomanticWeb.Linq
             StrongEntityAccessor entityAccessor = this.GetEntityAccessor(sourceExpression);
             if (entityAccessor != null)
             {
-                if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))
-                {
-                    _query.Elements.Add(entityAccessor);
-                }
-
+                _query.AddEntityAccessor(entityAccessor);
                 _lastComponent = _query;
             }
             else
@@ -112,8 +151,8 @@ namespace RomanticWeb.Linq
                 _lastComponent = (from entityConstrain in _query.FindAllComponents<EntityConstrain>()
                                   where entityConstrain.GetType() == typeof(EntityConstrain)
                                   let identifier = entityConstrain.Value as Identifier
-                                  let targetExpression = sourceExpression.FromExpression
-                                  where (identifier != null) && (targetExpression != null) && (entityConstrain.TargetExpression == targetExpression)
+                                  let targetExpression = ((IQueryVisitor)this).TransformFromExpression(sourceExpression).FromExpression
+                                  where (identifier != null) && (targetExpression != null) && (entityConstrain.TargetExpression.EqualsTo(targetExpression))
                                   select identifier).FirstOrDefault();
                 HandleComponent(_lastComponent);
             }
@@ -172,6 +211,8 @@ namespace RomanticWeb.Linq
             System.Linq.Expressions.ExpressionType expressionType = expression.NodeType;
             switch (expression.NodeType)
             {
+                case System.Linq.Expressions.ExpressionType.TypeAs:
+                    return VisitExpression(expression.Operand);
                 default:
                     string methodName = Enum.GetNames(typeof(MethodNames)).Where(item => item == expressionType.ToString()).FirstOrDefault();
                     if (!System.String.IsNullOrEmpty(methodName))
@@ -301,13 +342,34 @@ namespace RomanticWeb.Linq
             object objectValue = ((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
             if (objectValue is Uri)
             {
-                var predicate = (Uri)objectValue;
+                Uri predicate = (Uri)objectValue;
                 if (!predicate.IsAbsoluteUri)
                 {
                     predicate = new Uri(_entityContext.BaseUriSelector.SelectBaseUri(new EntityId(predicate)), predicate.ToString());
                 }
 
-                StrongEntityAccessor entityAccessor = this.GetEntityAccessor(GetSourceExpression(expression.Arguments[0]));
+                VisitExpression(expression.Arguments[0]);
+                StrongEntityAccessor entityAccessor = null;
+                Remotion.Linq.Clauses.FromClauseBase sourceExpression = null;
+                if (expression.Arguments[0] is System.Linq.Expressions.MemberExpression)
+                {
+                    System.Linq.Expressions.MemberExpression memberExpression = (System.Linq.Expressions.MemberExpression)expression.Arguments[0];
+                    if (memberExpression.Member is PropertyInfo)
+                    {
+                        PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
+                        sourceExpression = new FromPropertyClause(propertyInfo.Name, propertyInfo.PropertyType, memberExpression);
+                        _query.AddEntityAccessor(entityAccessor = this.GetEntityAccessor(sourceExpression));
+                    }
+                    else
+                    {
+                        return base.VisitMethodCallExpression(expression);
+                    }
+                }
+                else
+                {
+                    entityAccessor = this.GetEntityAccessor(GetSourceExpression(expression.Arguments[0]));
+                }
+
                 if (entityAccessor != null)
                 {
                     Type type = null;
@@ -319,14 +381,14 @@ namespace RomanticWeb.Linq
                     }
                     else
                     {
-                        IPropertyMapping propertyMapping = _entityContext.Mappings.MappingFor(entityAccessor.SourceExpression.ItemType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
+                        IPropertyMapping propertyMapping = _entityContext.Mappings.MappingFor(expression.Arguments[0].Type).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
 
                         if (propertyMapping == null)
                         {
                             ExceptionHelper.ThrowMappingException(predicate);
                         }
 
-                        if (propertyMapping.DeclaringType != entityAccessor.SourceExpression.ItemType)
+                        if (propertyMapping.DeclaringType != expression.Arguments[0].Type)
                         {
                             propertyMapping = _entityContext.Mappings.MappingFor(propertyMapping.DeclaringType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
 
@@ -506,16 +568,11 @@ namespace RomanticWeb.Linq
             if (entityAccessor != null)
             {
                 Query query = _query.CreateSubQuery(entityAccessor.About);
-                if ((entityAccessor.OwnerQuery == null) && (!query.Elements.Contains(entityAccessor)))
-                {
-                    query.Elements.Add(entityAccessor);
-                }
-
+                query.AddEntityAccessor(entityAccessor);
                 EntityQueryModelVisitor queryModelVisitor = new EntityQueryModelVisitor(query, _entityContext);
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
-                HandleComponent(queryModelVisitor.Result);
-                CleanupComponent(_lastComponent);
                 _lastComponent = queryModelVisitor.Result;
+                HandleComponent(_lastComponent);
             }
             else
             {
@@ -524,8 +581,8 @@ namespace RomanticWeb.Linq
                 _currentComponent = new Stack<IQueryComponentNavigator>();
                 queryModelVisitor.VisitQueryModel(expression.QueryModel);
                 _currentComponent = currentComponent;
-                HandleComponent(queryModelVisitor.Result);
                 _lastComponent = queryModelVisitor.Result;
+                HandleComponent(_lastComponent);
             }
 
             return expression;
@@ -538,10 +595,7 @@ namespace RomanticWeb.Linq
         {
             bool isInSelectScenario = (_currentComponent.Count == 0);
             StrongEntityAccessor entityAccessor = (isInSelectScenario ? this.GetEntityAccessor(GetMemberTarget(expression)) : this.GetEntityAccessor(GetSourceExpression(expression)));
-            if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))
-            {
-                _query.Elements.Add(entityAccessor);
-            }
+            _query.AddEntityAccessor(entityAccessor);
 
             if (isInSelectScenario)
             {
@@ -600,11 +654,7 @@ namespace RomanticWeb.Linq
                 HandleComponent(entityAccessor.About);
                 BinaryOperator binaryOperator = ((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
                 Filter filter = new Filter(binaryOperator);
-                if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))
-                {
-                    _query.Elements.Add(entityAccessor);
-                }
-
+                _query.AddEntityAccessor(entityAccessor);
                 entityAccessor.Elements.Add(filter);
                 _currentComponent.Push(filter.GetQueryComponentNavigator());
                 _lastComponent = filter;
@@ -623,19 +673,14 @@ namespace RomanticWeb.Linq
         protected virtual System.Linq.Expressions.Expression VisitEntityProperty(EntityPropertyExpression expression)
         {
             StrongEntityAccessor entityAccessor = this.GetEntityAccessor(expression.Target);
-            if ((entityAccessor.OwnerQuery == null) && (!_query.Elements.Contains(entityAccessor)))
-            {
-                _query.Elements.Add(entityAccessor);
-            }
-
+            _query.AddEntityAccessor(entityAccessor);
             Identifier memberIdentifier = null;
             EntityConstrain constrain = _query.FindAllComponents<EntityConstrain>()
-                .Where(item => item.GetType() == typeof(EntityConstrain))
-                .FirstOrDefault(item => item.TargetExpression.EqualsTo(expression.Expression));
+                .FirstOrDefault(item => (item.GetType() == typeof(EntityConstrain) && (item.TargetExpression.EqualsTo(expression.Expression))));
             if (constrain == null)
             {
                 memberIdentifier = (_query.FindAllComponents<StrongEntityAccessor>()
-                    .Where(item => item.SourceExpression.FromExpression == expression.Expression)
+                    .Where(item => item.SourceExpression.FromExpression.EqualsTo(expression.Expression))
                     .Select(item => item.About).FirstOrDefault()) ?? (new Identifier(_query.CreateVariableName(expression.Name), expression.EntityProperty.PropertyType));
                 constrain = new EntityConstrain(new Literal(expression.PropertyMapping.Uri), memberIdentifier, expression.Expression);
                 if (!entityAccessor.Elements.Contains(constrain))
@@ -670,7 +715,7 @@ namespace RomanticWeb.Linq
             if (classMappings.Any())
             {
                 Remotion.Linq.Clauses.FromClauseBase sourceExpression = GetSourceExpression(expression.Expression);
-                StrongEntityAccessor entityAccessor = _query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression == sourceExpression).FirstOrDefault();
+                StrongEntityAccessor entityAccessor = _query.FindAllComponents<StrongEntityAccessor>().FirstOrDefault(item => item.SourceExpression == sourceExpression);
                 if (entityAccessor == null)
                 {
                     entityAccessor = this.GetEntityAccessor(sourceExpression);
@@ -747,38 +792,6 @@ namespace RomanticWeb.Linq
                     _currentComponent.Pop();
                 }
             }
-        }
-
-        private Remotion.Linq.Clauses.FromClauseBase GetMemberTarget(System.Linq.Expressions.MemberExpression expression)
-        {
-            Remotion.Linq.Clauses.FromClauseBase result = null;
-
-            if (expression.Expression is System.Linq.Expressions.MemberExpression)
-            {
-                System.Linq.Expressions.MemberExpression memberExpression = (System.Linq.Expressions.MemberExpression)expression.Expression;
-                if (memberExpression.Member is PropertyInfo)
-                {
-                    PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
-                    string itemName = propertyInfo.Name.CamelCase();
-                    StrongEntityAccessor entityAccessor = _query.FindAllComponents<StrongEntityAccessor>().Where(item => item.SourceExpression.FromExpression == memberExpression).FirstOrDefault();
-                    if (entityAccessor != null)
-                    {
-                        itemName = _query.RetrieveIdentifier(entityAccessor.About.Name);
-                    }
-
-                    result = new FromPropertyClause(itemName, propertyInfo.PropertyType.FindItemType(), memberExpression);
-                }
-                else
-                {
-                    throw CreateUnhandledItemException<System.Linq.Expressions.MemberExpression>(expression, "GetMemberTarget");
-                }
-            }
-            else
-            {
-                result = GetSourceExpression(expression);
-            }
-
-            return result;
         }
 
         private Remotion.Linq.Clauses.FromClauseBase GetSourceExpression(System.Linq.Expressions.Expression expression)
@@ -892,6 +905,16 @@ namespace RomanticWeb.Linq
             }
 
             return result;
+        }
+
+        private void SafeVisitExpression(System.Linq.Expressions.Expression expression)
+        {
+            Stack<IQueryComponentNavigator> currentStack = _currentComponent;
+            QueryComponent lastComponent = _lastComponent;
+            _currentComponent = new Stack<IQueryComponentNavigator>();
+            VisitExpression(expression);
+            _currentComponent = currentStack;
+            _lastComponent = lastComponent;
         }
         #endregion
     }

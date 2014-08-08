@@ -235,7 +235,20 @@ namespace RomanticWeb.Linq
         private void VisitContainsResultOperator(ContainsResultOperator containsResultOperator, Remotion.Linq.QueryModel queryModel, int index)
         {
             Call call = new Call(MethodNames.In);
-            call.Arguments.Add(Identifier.Current);
+            System.Linq.Expressions.Expression expression = _visitor.TransformUnaryExpression(containsResultOperator.Item);
+            Identifier targetIdentifier = Identifier.Current;
+            if (expression is System.Linq.Expressions.MemberExpression)
+            {
+                System.Linq.Expressions.MemberExpression memberExpression = (System.Linq.Expressions.MemberExpression)expression;
+                _visitor.VisitExpression(expression);
+                QueryComponent component = _visitor.RetrieveComponent();
+                if (component is Identifier)
+                {
+                    targetIdentifier = (Identifier)component;
+                }
+            }
+
+            call.Arguments.Add(targetIdentifier);
             _result = call;
         }
 

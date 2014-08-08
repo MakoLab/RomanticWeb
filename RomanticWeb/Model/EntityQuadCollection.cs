@@ -118,7 +118,7 @@ namespace RomanticWeb.Model
         {
             lock (_locker)
             {
-                int indexOf = indexOf = _quads.IndexOf(quad);
+                int indexOf = _quads.IndexOf(quad);
                 if (indexOf != -1)
                 {
                     string key = MakeSubject(quad);
@@ -225,6 +225,66 @@ namespace RomanticWeb.Model
             }
 
             return result;
+        }
+
+        internal void SetEntityTypeQuads(EntityId entityId, IEnumerable<Node> typeNodes, Uri graphUri)
+        {
+            Index<string> index = null;
+            string key = MakeSubject(entityId);
+            bool added = false;
+            lock (_locker)
+            {
+                index = _subjects[key, IndexCollection<string>.FirstPossible];
+                IList<EntityQuad> entityTypeQuads;
+                if (_entityTypeQuads.TryGetValue(key, out entityTypeQuads))
+                {
+                    foreach (EntityQuad quad in entityTypeQuads)
+                    {
+                        int indexOf = _quads.IndexOf(quad);
+                        if (indexOf != -1)
+                        {
+                            _quads.RemoveAt(indexOf);
+                            if (_subjects.Remove(key, indexOf) != null)
+                            {
+                                index = null;
+                            }
+
+                            RemoveEntity(entityId);
+                        }
+                    }
+
+                    entityTypeQuads.Clear();
+                }
+                else
+                {
+                    _entityTypeQuads[key] = entityTypeQuads = new List<EntityQuad>();
+                }
+
+                Node subjectNode = Node.FromEntityId(entityId);
+                Node predicateNode = Node.ForUri(Rdf.type);
+                foreach (var typeNode in typeNodes.Distinct())
+                {
+                    added = true;
+                    EntityQuad quad = new EntityQuad(entityId, subjectNode, predicateNode, typeNode).InGraph(graphUri);
+                    if (index == null)
+                    {
+                        index = _subjects.Add(key, _quads.Count, 1);
+                        _quads.Add(quad);
+                    }
+                    else
+                    {
+                        _quads.Insert(index.StartAt + index.Length, quad);
+                        _subjects.Set(index.ItemIndex, index.Key, index.StartAt, index.Length + 1);
+                    }
+
+                    _entityTypeQuads[index.Key].Add(quad);
+                }
+            }
+
+            if (added)
+            {
+                AddEntity(entityId);
+            }
         }
 
         internal IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
@@ -341,15 +401,7 @@ namespace RomanticWeb.Model
         {
             lock (_locker)
             {
-                if (!_entities.ContainsKey(quad.EntityId))
-                {
-                    _entities.Add(quad.EntityId, 1);
-                }
-                else
-                {
-                    _entities[quad.EntityId]++;
-                }
-
+                AddEntity(quad.EntityId);
                 if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
                 {
                     IList<EntityQuad> entityTypeQuads;
@@ -367,15 +419,7 @@ namespace RomanticWeb.Model
         {
             lock (_locker)
             {
-                if (_entities.ContainsKey(quad.EntityId))
-                {
-                    _entities[quad.EntityId]--;
-                    if (_entities[quad.EntityId] == 0)
-                    {
-                        _entities.Remove(quad.EntityId);
-                    }
-                }
-
+                RemoveEntity(quad.EntityId);
                 if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
                 {
                     IList<EntityQuad> entityTypeQuads;
@@ -383,6 +427,30 @@ namespace RomanticWeb.Model
                     {
                         _entityTypeQuads[key].Remove(quad);
                     }
+                }
+            }
+        }
+
+        private void AddEntity(EntityId entityId)
+        {
+            if (!_entities.ContainsKey(entityId))
+            {
+                _entities.Add(entityId, 1);
+            }
+            else
+            {
+                _entities[entityId]++;
+            }
+        }
+
+        private void RemoveEntity(EntityId entityId)
+        {
+            if (_entities.ContainsKey(entityId))
+            {
+                _entities[entityId]--;
+                if (_entities[entityId] == 0)
+                {
+                    _entities.Remove(entityId);
                 }
             }
         }

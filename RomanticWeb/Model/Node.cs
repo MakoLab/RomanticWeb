@@ -9,7 +9,7 @@ namespace RomanticWeb.Model
     /// <remarks>Blank nodes are not supported currently.</remarks>
     [DebuggerDisplay("{DebuggerString,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
-    public sealed class Node : IComparable, IComparable<Node>
+    public sealed class Node : IComparable, IComparable<Node>, IEquatable<Node>
     {
         #region Fields
         /// <summary>Gets a reference for node with rdf:type predicate usually shortened in Turtle syntax to 'a'.</summary>
@@ -300,6 +300,11 @@ namespace RomanticWeb.Model
 
             // Literal node is always less then URI and blanks
             return -1;
+        }
+
+        bool IEquatable<Node>.Equals(Node other)
+        {
+            return Equals(other);
         }
 
         /// <summary>Gets the string representation of a node.</summary>

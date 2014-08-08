@@ -155,8 +155,8 @@
     <Compile Include="Linq\IVariableNamingConvention.cs" />
     <Compile Include="Linq\Model\IdentifierEntityAccessor.cs" />
     <Compile Include="Linq\Model\Navigators\IdentifierEntityAccessorNavigator.cs" />
-    <Compile Include="Linq\Model\Navigators\UnspecifiedEntityAccessorNavigator.cs" />
-    <Compile Include="Linq\Model\UnspecifiedEntityAccessor.cs" />
+    <None Include="Linq\Model\Navigators\UnspecifiedEntityAccessorNavigator.cs" />
+    <None Include="Linq\Model\UnspecifiedEntityAccessor.cs" />
     <Compile Include="Linq\Model\EntityTypeConstrain.cs" />
     <Compile Include="Linq\Model\Navigators\EntityTypeConstrainNavigator.cs" />
     <Compile Include="Linq\Model\Navigators\OptionalPatternNavigator.cs" />
@@ -200,6 +200,7 @@
     <Compile Include="Linq\Model\Literal.cs" />
     <Compile Include="Linq\Model\EntityConstrain.cs" />
     <Compile Include="Linq\Model\QueryComponent.cs" />
+    <Compile Include="Linq\QueryVisitorExtensions.cs" />
     <Compile Include="Linq\Sparql\SparqlQueryVariables.cs" />
     <Compile Include="Linq\Sparql\VisitedComponentCollection.cs" />
     <Compile Include="Linq\UniqueVariableNamingStrategy.cs" />

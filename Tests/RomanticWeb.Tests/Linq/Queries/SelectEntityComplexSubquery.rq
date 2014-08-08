@@ -22,20 +22,10 @@ WHERE
 					FILTER (REGEX(?firstName0,"Ka.*"^^xsd:string)) 
 				} 
 				
-				GRAPH <http://app.magi/graphs> 
-				{ 
-					?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . 
-				} 
-				
 				GRAPH ?Gfriend1 
 				{ 
 					?friend1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . 
 					?friend1 <http://xmlns.com/foaf/0.1/friends> ?friend0 . 
-				} 
-				
-				GRAPH <http://app.magi/graphs> 
-				{ 
-					?Gfriend1 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend1 . 
 				} 
 			} 
 		} ) 

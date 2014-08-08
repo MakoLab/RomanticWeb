@@ -498,6 +498,27 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(result.Count(), Is.Not.EqualTo(0));
         }
 
+        [Test]
+        [TestCase("http://chem.com/vocab/tear", 0.0, 400.0, "http://chem.com/vocab/specificGravity", 0.0, 400.0)]
+        public void Select_with_concatenation_of_cast_and_another_cast(string predicateUriString1, double minValue1, double maxValue1, string predicateUriString2, double minValue2, double maxValue2)
+        {
+            LoadTestFile("LargeDataset.nq");
+            Uri predicateUri1 = new Uri(predicateUriString1);
+            IQueryable<IProduct> query = from product in EntityContext.AsQueryable<IProduct>()
+                                         from predicateValue in product.Predicate(predicateUri1) as ICollection<IQuantitativeFloatProperty>
+                                         where predicateValue.Value > minValue1 && predicateValue.Value < maxValue1
+                                         select product;
+
+            Uri predicateUri2 = new Uri(predicateUriString2);
+            query = from product in query
+                    from predicateValue in product.Predicate(predicateUri2) as ICollection<double>
+                    where predicateValue >= minValue2 && predicateValue <= maxValue2
+                    select product;
+
+            IEnumerable<IProduct> result = query.ToList();
+            Assert.That(result.Count(), Is.Not.EqualTo(0));
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

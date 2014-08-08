@@ -131,13 +131,26 @@ namespace RomanticWeb.Linq
             else if (!_query.FindAllComponents<Filter>().Any(item => item.Expression == queryComponent))
             {
                 Filter filter = new Filter((IExpression)queryComponent);
-                IEnumerable<StrongEntityAccessor> targetEntityAccessorExression = _query.Elements.OfType<StrongEntityAccessor>();
-                if ((_query.IsSubQuery) || (whereClause.Predicate is Remotion.Linq.Clauses.Expressions.SubQueryExpression))
+                StrongEntityAccessor targetEntityAccessor = null;
+                if ((_subject != _mainFromComponent.About) && (queryComponentNavigator.ContainsComponent(_subject)))
                 {
-                    targetEntityAccessorExression = targetEntityAccessorExression.Except(new StrongEntityAccessor[] { _query.Elements.OfType<StrongEntityAccessor>().LastOrDefault() });
+                    targetEntityAccessor = (from entityAccessor in _query.FindAllComponents<StrongEntityAccessor>()
+                                            from constrain in entityAccessor.FindAllComponents<EntityConstrain>()
+                                            where (constrain.GetType() == typeof(EntityConstrain)) && (_subject.Equals(constrain.Value))
+                                            select entityAccessor).FirstOrDefault();
                 }
 
-                StrongEntityAccessor targetEntityAccessor = targetEntityAccessorExression.LastOrDefault() ?? _mainFromComponent;
+                if (targetEntityAccessor == null)
+                {
+                    IEnumerable<StrongEntityAccessor> targetEntityAccessorExression = _query.Elements.OfType<StrongEntityAccessor>();
+                    if ((_query.IsSubQuery) || (whereClause.Predicate is Remotion.Linq.Clauses.Expressions.SubQueryExpression))
+                    {
+                        targetEntityAccessorExression = targetEntityAccessorExression.Except(new StrongEntityAccessor[] { _query.Elements.OfType<StrongEntityAccessor>().LastOrDefault() });
+                    }
+
+                    targetEntityAccessor = targetEntityAccessorExression.LastOrDefault() ?? _mainFromComponent;
+                }
+
                 if ((!targetEntityAccessor.Elements.Contains(queryComponent)) && (!targetEntityAccessor.Elements.Contains(filter)))
                 {
                     targetEntityAccessor.Elements.Add(filter);

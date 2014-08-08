@@ -132,7 +132,7 @@ namespace RomanticWeb.Linq
             {
                 Filter filter = new Filter((IExpression)queryComponent);
                 StrongEntityAccessor targetEntityAccessor = null;
-                if (_subject != _mainFromComponent.About)
+                if ((_subject != _mainFromComponent.About) && (queryComponentNavigator.Contains(_subject)))
                 {
                     targetEntityAccessor = (from entityAccessor in _query.FindAllComponents<StrongEntityAccessor>()
                                             from constrain in entityAccessor.FindAllComponents<EntityConstrain>()

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using NullGuard;
-using RomanticWeb.ComponentModel.Composition;
-using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model.Navigators;
-using RomanticWeb.Mapping;
 
 namespace RomanticWeb.Linq.Model
 {
@@ -88,87 +84,12 @@ namespace RomanticWeb.Linq.Model
             return result;
         }
 
-        internal static StrongEntityAccessor GetEntityAccessor(this IQueryVisitor visitor, Remotion.Linq.Clauses.FromClauseBase sourceExpression)
+        internal static void AddEntityAccessor(this Query query, StrongEntityAccessor entityAccessor)
         {
-            StrongEntityAccessor entityAccessor = null;
-            if (typeof(IEntity).IsAssignableFrom(sourceExpression.ItemType))
+            if ((entityAccessor != null) && (entityAccessor.OwnerQuery == null) && (!query.Elements.Contains(entityAccessor)))
             {
-                entityAccessor = visitor.Query.FindAllComponents<StrongEntityAccessor>()
-                    .Where(item => (item.SourceExpression != null) && (item.SourceExpression.FromExpression == sourceExpression.FromExpression)).FirstOrDefault();
-                if (entityAccessor == null)
-                {
-                    EntityTypeConstrain constrain = visitor.CreateTypeConstrain(sourceExpression);
-                    Identifier identifier = visitor.Query.FindAllComponents<EntityConstrain>()
-                        .Where(item => (item.TargetExpression == sourceExpression.FromExpression) && (item.Value is Identifier))
-                        .Select(item => (Identifier)item.Value)
-                        .FirstOrDefault() ?? new Identifier(visitor.Query.CreateVariableName(sourceExpression.ItemName), sourceExpression.ItemType.FindEntityType());
-                    entityAccessor = new StrongEntityAccessor(identifier, sourceExpression);
-                    if ((constrain != null) && (!entityAccessor.Elements.Contains(constrain)))
-                    {
-                        entityAccessor.Elements.Add(constrain);
-                    }
-                }
+                query.Elements.Add(entityAccessor);
             }
-
-            return entityAccessor;
-        }
-
-        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor, Remotion.Linq.Clauses.FromClauseBase sourceExpression)
-        {
-            EntityTypeConstrain result = null;
-            Type entityType = sourceExpression.ItemType.FindEntityType();
-            if ((entityType != null) && (entityType != typeof(IEntity)))
-            {
-                result = visitor.CreateTypeConstrain(entityType, sourceExpression.FromExpression);
-            }
-
-            return result;
-        }
-
-        internal static EntityTypeConstrain CreateTypeConstrain(this IQueryVisitor visitor, Type entityType, System.Linq.Expressions.Expression sourceExpression)
-        {
-            EntityTypeConstrain result = null;
-            if (entityType != null)
-            {
-                var classMappings = visitor.MappingsRepository.FindMappedClasses(entityType);
-
-                if (classMappings == null)
-                {
-                    throw new UnMappedTypeException(entityType);
-                }
-
-                if (classMappings.Any())
-                {
-                    Uri primaryTypeUri = classMappings.First();
-                    IEnumerable<Type> inheritedTypes = ContainerFactory.GetTypesImplementing(entityType);
-                    IList<Uri> inheritedTypeUris = new List<Uri>();
-                    if (inheritedTypes.Any())
-                    {
-                        foreach (Type inheritedType in inheritedTypes)
-                        {
-                            classMappings = visitor.MappingsRepository.FindMappedClasses(inheritedType);
-
-                            if (classMappings == null)
-                            {
-                                throw new UnMappedTypeException(entityType);
-                            }
-
-                            if (classMappings.Any())
-                            {
-                                Uri inheritedTypeUri = classMappings.First();
-                                if ((primaryTypeUri.AbsoluteUri != inheritedTypeUri.AbsoluteUri) && (!inheritedTypeUris.Contains(inheritedTypeUri, AbsoluteUriComparer.Default)))
-                                {
-                                    inheritedTypeUris.Add(inheritedTypeUri);
-                                }
-                            }
-                        }
-                    }
-
-                    result = new EntityTypeConstrain(primaryTypeUri, sourceExpression, inheritedTypeUris.ToArray());
-                }
-            }
-
-            return result;
         }
 
         internal static bool ShouldBeOptional(this EntityConstrain constrain, IEnumerable<IQueryComponentNavigator> currentQueryComponentStack)

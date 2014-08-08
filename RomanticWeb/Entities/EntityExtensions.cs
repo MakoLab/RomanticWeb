@@ -134,29 +134,35 @@ namespace RomanticWeb.Entities
         public static object Predicate(this IEntity entity, Uri predicate)
         {
             object result = null;
-            Node @object =
-                entity.Context.Store.Quads.WhereQuadDescribesEntity(entity)
-                      .Where(item => item.Predicate.Uri.AbsoluteUri == predicate.AbsoluteUri)
-                      .Select(item => item.Object)
-                      .FirstOrDefault();
-            if (@object != null)
+            IPropertyMapping propertyMapping = entity.Context.Mappings.MappingForProperty(predicate);
+            if (propertyMapping != null)
             {
-                if ((@object.IsUri) || (@object.IsBlank))
+                result = Impromptu.InvokeGet(entity, propertyMapping.Name);
+            }
+            else
+            {
+                ICollection<object> output = new List<object>();
+                IEnumerable<Node> objects =
+                    entity.Context.Store.Quads.WhereQuadDescribesEntity(entity)
+                          .Where(item => item.Predicate.Uri.AbsoluteUri == predicate.AbsoluteUri)
+                          .Select(item => item.Object);
+                foreach (Node @object in objects)
                 {
-                    result = entity.Context.Load<IEntity>(@object.ToEntityId());
-                }
-                else
-                {
-                    IPropertyMapping propertyMapping = entity.Context.Mappings.MappingForProperty(predicate);
-                    if (propertyMapping != null)
+                    if ((@object.IsUri) || (@object.IsBlank))
                     {
-                        result = Impromptu.InvokeGet(entity, propertyMapping.Name);
+                        output.Add(entity.Context.Load<IEntity>(@object.ToEntityId()));
                     }
                     else
                     {
-                        result = FallbackNodeConverter.Convert(@object, entity.Context);
+                        object item = FallbackNodeConverter.Convert(@object, entity.Context);
+                        if (item != null)
+                        {
+                            output.Add(item);
+                        }
                     }
                 }
+
+                result = output;
             }
 
             return result;

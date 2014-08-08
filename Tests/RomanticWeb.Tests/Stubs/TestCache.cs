@@ -14,7 +14,7 @@ namespace RomanticWeb.Tests.Stubs
             _setups = new Dictionary<Type, Type>();
         }
 
-        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEnumerable<Uri> entityTypes, Type requestedType)
         {
             if (_setups.ContainsKey(requestedType))
             {

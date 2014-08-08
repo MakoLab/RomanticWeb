@@ -12,9 +12,9 @@ namespace RomanticWeb.Mapping
         /// <summary>
         /// Gets the type of the most derived mapped.
         /// </summary>
-        /// <param name="entity">The entity.</param>
+        /// <param name="entityTypes"><see cref="System.Uri "/>s of types of given entity.</param>
         /// <param name="requestedType">Requested <see cref="IEntity"/> type.</param>
         /// <returns>the <paramref name="requestedType"/> or a type derived from it</returns>
-        IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType);
+        IEnumerable<Type> GetMostDerivedMappedTypes(IEnumerable<Uri> entityTypes, Type requestedType);
     }
 }

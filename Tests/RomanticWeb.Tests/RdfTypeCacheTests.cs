@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests
         public void Should_return_requested_type_if_not_mapped()
         {
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -43,7 +43,7 @@ namespace RomanticWeb.Tests
             Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -58,7 +58,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IPerson>();
@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IAgent>();
@@ -91,7 +91,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IPerson>();
@@ -108,7 +108,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(new Uri("urn:other:type")));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).Single();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
 
             // then
             type.Should().Be<IPerson>();
@@ -125,7 +125,7 @@ namespace RomanticWeb.Tests
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
 
             // when
-            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity, typeof(IAgent)).ToList();
+            var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).ToList();
 
             // then
             type.Should().Contain(typeof(IPerson));

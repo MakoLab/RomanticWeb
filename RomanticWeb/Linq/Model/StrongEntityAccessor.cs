@@ -39,6 +39,7 @@ namespace RomanticWeb.Linq.Model
         {
             About = about;
             _source = SourceTypes.Variable;
+            UnboundGraphName = null;
         }
 
         /// <summary>Default constructor with aboutness and its source passed.</summary>
@@ -81,6 +82,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Gets a list of entity accessor elements.</summary>
         public IList<QueryElement> Elements { get { return _elements; } }
+
+        [AllowNull]
+        public Identifier UnboundGraphName { [return: AllowNull] get; set; }
 
         /// <summary>Gets an enumeration of selectable expressions.</summary>
         IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return (_about != null ? new IExpression[] { _about } : new IExpression[0]); } }

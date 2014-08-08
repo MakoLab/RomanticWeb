@@ -13,6 +13,7 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public class RdfTypeCache : IRdfTypeCache, Visitors.IMappingModelVisitor
     {
+        private readonly IDictionary<string, IEnumerable<Type>> _cache;
         private readonly IDictionary<Type, IList<IClassMapping>> _classMappings;
         private readonly IDictionary<Type, ISet<Type>> _directlyDerivingTypes;
         private IList<IClassMapping> _currentClasses;
@@ -24,49 +25,55 @@ namespace RomanticWeb.Mapping
         {
             _classMappings = new Dictionary<Type, IList<IClassMapping>>();
             _directlyDerivingTypes = new Dictionary<Type, ISet<Type>>();
+            _cache = new Dictionary<string, IEnumerable<Type>>();
         }
 
         /// <inheridoc/>
         [return: AllowNull]
-        public IEnumerable<Type> GetMostDerivedMappedTypes(IEntity entity, Type requestedType)
+        public IEnumerable<Type> GetMostDerivedMappedTypes(IEnumerable<Uri> entityTypes, Type requestedType)
         {
+            ISet<Type> selectedTypes = new HashSet<Type> { requestedType };
             if (requestedType == typeof(ITypedEntity))
             {
-                return new[] { typeof(ITypedEntity) };
+                return selectedTypes;
             }
 
-            ISet<Type> selectedTypes = new HashSet<Type> { requestedType };
-            var types = entity.AsEntity<ITypedEntity>().Types.Select(t => t.Uri).ToList();
-
-            if (types.Any() && _directlyDerivingTypes.ContainsKey(requestedType))
+            IEnumerable<Type> cached;
+            string cacheKey = requestedType.ToString() + ";" + System.String.Join(";", entityTypes.Select(item => item.ToString()));
+            if (!_cache.TryGetValue(cacheKey, out cached))
             {
-                var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
-                while (childTypesToCheck.Any())
+                if ((entityTypes.Any()) && (_directlyDerivingTypes.ContainsKey(requestedType)))
                 {
-                    Type potentialMatch = childTypesToCheck.Dequeue();
-
-                    if (_directlyDerivingTypes.ContainsKey(potentialMatch))
+                    var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
+                    while (childTypesToCheck.Any())
                     {
-                        foreach (var child in _directlyDerivingTypes[potentialMatch])
-                        {
-                            childTypesToCheck.Enqueue(child);
-                        }
-                    }
+                        Type potentialMatch = childTypesToCheck.Dequeue();
 
-                    if (_classMappings.ContainsKey(potentialMatch))
-                    {
-                        foreach (var mapping in _classMappings[potentialMatch])
+                        if (_directlyDerivingTypes.ContainsKey(potentialMatch))
                         {
-                            if (mapping.IsMatch(types))
+                            foreach (var child in _directlyDerivingTypes[potentialMatch])
                             {
-                                selectedTypes.Add(potentialMatch);
+                                childTypesToCheck.Enqueue(child);
+                            }
+                        }
+
+                        if (_classMappings.ContainsKey(potentialMatch))
+                        {
+                            foreach (var mapping in _classMappings[potentialMatch])
+                            {
+                                if (mapping.IsMatch(entityTypes))
+                                {
+                                    selectedTypes.Add(potentialMatch);
+                                }
                             }
                         }
                     }
                 }
+
+                _cache[cacheKey] = cached = selectedTypes.GetMostDerivedTypes();
             }
 
-            return selectedTypes.GetMostDerivedTypes();
+            return cached;
         }
 
         /// <summary>

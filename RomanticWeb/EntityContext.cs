@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
@@ -170,8 +171,11 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T EntityAs<T>(IEntity entity) where T : class, IEntity
         {
-            var entityTypes = _typeCache.GetMostDerivedMappedTypes(entity, typeof(T));
-            return EntityAs((Entity)entity, typeof(T), entityTypes.ToArray());
+            Entity rootEntity = (Entity)entity;
+            rootEntity.EnsureIsInitialized();
+            IEnumerable<Uri> entityTypeUris = _entityStore.GetObjectsForPredicate(rootEntity.Id, Rdf.type, GraphSelector.SelectGraph(rootEntity.Id, null, null)).Select(item => item.Uri);
+            var entityTypes = _typeCache.GetMostDerivedMappedTypes(entityTypeUris, typeof(T));
+            return EntityAs((Entity)rootEntity, typeof(T), entityTypes.ToArray());
         }
 
         /// <inheritdoc />

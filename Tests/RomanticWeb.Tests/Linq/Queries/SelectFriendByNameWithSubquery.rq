@@ -21,11 +21,6 @@ WHERE
 					
 					FILTER (?firstName0 = "Karol"^^xsd:string) 
 				} 
-				
-				GRAPH <http://app.magi/graphs> 
-				{ 
-					?Gfriend0 <http://xmlns.com/foaf/0.1/primaryTopic> ?friend0 . 
-				} 
 			} 
 		} ) 
 	} 

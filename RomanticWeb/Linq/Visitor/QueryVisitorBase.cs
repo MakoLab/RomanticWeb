@@ -89,10 +89,6 @@ namespace RomanticWeb.Linq.Visitor
         /// <param name="entityAccessor">Identifier entity accessor to be visited.</param>
         protected abstract void VisitIdentifierEntityAccessor(IdentifierEntityAccessor entityAccessor);
 
-        /// <summary>Visit an unspecified entity accessor.</summary>
-        /// <param name="entityAccessor">Unspecified entity accessor to be visited.</param>
-        protected abstract void VisitUnspecifiedEntityAccessor(UnspecifiedEntityAccessor entityAccessor);
-
         /// <summary>Visit a strong entity accessor.</summary>
         /// <param name="entityAccessor">Strong entity accessor to be visited.</param>
         protected abstract void VisitStrongEntityAccessor(StrongEntityAccessor entityAccessor);

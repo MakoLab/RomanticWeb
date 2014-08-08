@@ -19563,7 +19563,12 @@ _:BX2D77b18483X3A145e0a5a108X3AX2D7fce <http://www.w3.org/1999/02/22-rdf-syntax-
 <http://chem.com/product/CV1-2566> <http://chem.com/vocab/lapShear> _:BX2D5f5284c1X3A14614878f24X3AX2D782f <http://chem.com/product/CV1-2566> .
 <http://chem.com/product/CV1-2566> <http://chem.com/vocab/workTime> _:BX2D5f5284c1X3A14614878f24X3AX2D7830 <http://chem.com/product/CV1-2566> .
 <http://chem.com/product/CV1-2566> <http://chem.com/vocab/tensile> _:BX2D5f5284c1X3A14614878f24X3AX2D7831 <http://chem.com/product/CV1-2566> .
-<http://chem.com/product/CV1-2566> <http://chem.com/vocab/viscosityComplex> <http://chem.com/product/CV1-2566/Viscosity> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566> <http://chem.com/vocab/viscosityComplex> <http://chem.com/product/CV1-2566/ViscosityComplex> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566/ViscosityComplex> <http://chem.com/vocab/viscosity> <http://chem.com/product/CV1-2566/Viscosity> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566/ViscosityComplex> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://chem.com/vocab/Viscosity> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566/Viscosity> <http://schema.org/unitCode> "cP"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566/Viscosity> <http://schema.org/value> "245.0"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/CV1-2566> .
+<http://chem.com/product/CV1-2566/Viscosity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://schema.org/QuantitativeValue> <http://chem.com/product/CV1-2566> .
 <http://chem.com/product/CV1-2566> <http://chem.com/vocab/specificGravity> "1.45"^^<http://www.w3.org/2001/XMLSchema#float> <http://chem.com/product/CV1-2566> .
 <http://chem.com/product/CV1-2566> <http://www.w3.org/2000/01/rdf-schema#comment> "*1) Primed Lap Shear 650 psi (4.5 MPa)"^^<http://www.w3.org/2001/XMLSchema#string> <http://chem.com/product/CV1-2566> .
 <http://chem.com/product/CV1-2566> <http://chem.com/vocab/cureSystem> <http://chem.com/vocab/Alkoxy> <http://chem.com/product/CV1-2566> .

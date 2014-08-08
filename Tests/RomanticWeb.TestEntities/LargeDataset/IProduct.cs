@@ -13,11 +13,14 @@ namespace RomanticWeb.TestEntities.LargeDataset
         [Property("rdfs", "comment")]
         string Comments { get; set; }
 
-        [Collection("chem", "viscosity")]
-        ICollection<IQuantitativeFloatProperty> Viscosity { get; }
+        [Collection("chem", "viscosityComplex")]
+        IViscosityComplex Viscosity { get; }
 
         [Property("chem", "cureSystem")]
-        IEntity CureSystem { get; set; }
+        EntityId CureSystem { get; set; }
+
+        [Property("chem", "cureComplex")]
+        ICollection<ICureComplex> CureComplex { get; set; }
 
         [Collection("chem", "cureTemperature")]
         ICollection<IQuantitativeFloatProperty> CureTemperature { get; }
@@ -25,31 +28,31 @@ namespace RomanticWeb.TestEntities.LargeDataset
         [Collection("chem", "cureTime")]
         ICollection<IQuantitativeFloatProperty> CureTime { get; }
 
-        [Property("chem", "durometer")]
-        IQuantitativeFloatProperty Durometer { get; set; }
+        [Collection("chem", "durometer")]
+        ICollection<IQuantitativeFloatProperty> Durometer { get; set; }
 
-        [Property("chem", "tensile")]
-        IQuantitativeFloatProperty Tensile { get; set; }
+        [Collection("chem", "tensile")]
+        ICollection<IQuantitativeFloatProperty> Tensile { get; set; }
 
-        [Property("chem", "elongation")]
-        IQuantitativeFloatProperty Elongation { get; set; }
+        [Collection("chem", "elongation")]
+        ICollection<IQuantitativeFloatProperty> Elongation { get; set; }
 
         [Property("chem", "tear")]
         IQuantitativeFloatProperty Tear { get; set; }
 
-        [Property("chem", "rheology")]
-        IQuantitativeFloatProperty Rheology { get; set; }
+        [Collection("chem", "rheology")]
+        ICollection<IQuantitativeFloatProperty> Rheology { get; set; }
 
-        [Property("chem", "specificGravity")]
-        double? SpecificGravity { get; set; }
+        [Collection("chem", "specificGravity")]
+        ICollection<double> SpecificGravity { get; set; }
 
         [Property("chem", "industrySegment")]
         EntityId Industry { get; set; }
 
-        [Property("chem", "grade")]
-        EntityId Grade { get; set; }
+        [Collection("chem", "grade")]
+        ICollection<EntityId> Grade { get; set; }
 
-        [Property("chem", "productCategory")]
+        [Collection("chem", "productCategory")]
         IEnumerable<EntityId> ProductCategory { get; }
 
         [Collection("chem", "msdsFile")]
@@ -58,7 +61,16 @@ namespace RomanticWeb.TestEntities.LargeDataset
         [Collection("chem", "function")]
         ICollection<EntityId> Function { get; }
 
+        [Collection("chem", "tackFreeTime")]
+        ICollection<IQuantitativeFloatProperty> TackFreeTime { get; }
+
+        [Collection("chem", "mixRatio")]
+        ICollection<string> MixRatio { get; }
+
         [Collection("chem", "group")]
         IEnumerable<string> Group { get; set; }
+
+        [Collection("chem", "appearance")]
+        ICollection<string> Appearance { get; set; }
     }
 }

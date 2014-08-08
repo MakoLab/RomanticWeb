@@ -19,3 +19,7 @@ StyleCop.Cache
 *.user
 *.CodeAnalysisLog.xml
 *.lastcodeanalysissucceeded
+*.vsp
+*.sdf
+Tests/RomanticWeb.Tests/IntegrationTests/UnitTest.cs
+Tests/RomanticWeb.Tests/RomanticWeb.UnitTests.csproj

@@ -13,6 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{AEA90D
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+		NuGetBuild\RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.nuspec = NuGetBuild\RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.nuspec
+		NuGetBuild\RomanticWeb.JsonLd\RomanticWeb.JsonLd.nuspec = NuGetBuild\RomanticWeb.JsonLd\RomanticWeb.JsonLd.nuspec
+		NuGetBuild\RomanticWeb\RomanticWeb.nuspec = NuGetBuild\RomanticWeb\RomanticWeb.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanticWeb.dotNetRDF", "RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.csproj", "{B1C2726C-C24A-4DAF-AEFA-A812E3C3D145}"

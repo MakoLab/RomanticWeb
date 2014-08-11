@@ -3,12 +3,12 @@
   <metadata>
     <id>RomanticWeb.dotNetRDF</id>
     <version>$version$</version>
-    <authors>$author$</authors>
+    <authors>tpluscode, alien-mcl</authors>
     <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial release</releaseNotes>
-    <copyright>Copyright MakoLab 2014</copyright>
+    <copyright>Copyright MakoLab © 2013 - 2014</copyright>
     <tags>rdf orm semanticwweb sparql linq</tags>
     <dependencies>
       <dependency id="RomanticWeb" />

@@ -8,6 +8,8 @@
     <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes>Initial release</releaseNotes>
+    <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
+    <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>
     <copyright>Copyright MakoLab © 2013 - 2014</copyright>
     <tags>rdf orm jsonld json-ld json lnked-data</tags>
     <dependencies>

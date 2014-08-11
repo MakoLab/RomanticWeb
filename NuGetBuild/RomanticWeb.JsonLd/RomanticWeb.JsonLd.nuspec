@@ -3,12 +3,12 @@
   <metadata>
     <id>RomanticWeb.JsonLd</id>
     <version>$version$</version>
-    <authors>$author$</authors>
+    <authors>tpluscode, alien-mcl</authors>
     <description>$description$</description>
     <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes>Initial release</releaseNotes>
-    <copyright>Copyright MakoLab 2014</copyright>
+    <copyright>Copyright MakoLab © 2013 - 2014</copyright>
     <tags>rdf orm jsonld json-ld json lnked-data</tags>
     <dependencies>
       <dependency id="Newtonsoft.Json"/>

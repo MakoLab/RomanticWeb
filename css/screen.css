@@ -46,7 +46,7 @@ body {
     padding-top: 10px;
 }
 
-.main p, .post p {
+.main p, .post p, .main li {
     font-family: Arial,sans-serif;
 }
 

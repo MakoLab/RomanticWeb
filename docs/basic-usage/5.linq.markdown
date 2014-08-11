@@ -3,7 +3,7 @@ layout: tutorial
 title:  "LINQ"
 permalink: 'linq/'
 prev: 'docs/basic-usage/rdf-types/'
-next: 'docs/advanced-topics/xml-config/'
+next: 'docs/advanced-topics/mapping/'
 categories: ['docs', 'basic-usage']
 ---
 

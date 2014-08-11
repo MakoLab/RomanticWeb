@@ -27,7 +27,7 @@ NuGet package.
 
     install-package RomanticWeb.dotNetRDF
 
-Thanks to dotNetRDF it is possible to use a single component to access a wide variety of supported triple stores such as [Virtuoso][Virtuoso], [Allegro Graph][allegro] or [Stardog][[stardog]]. For a full list please refer to the project's [wiki pages][dnr storage].
+Thanks to dotNetRDF it is possible to use a single component to access a wide variety of supported triple stores such as [Virtuoso][Virtuoso], [Allegro Graph][allegro] or [Stardog][stardog]. For a full list please refer to the project's [wiki pages][dnr storage].
 
 ## JSON-LD
 

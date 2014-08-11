@@ -4,3 +4,4 @@ pygments: true
 baseurl: /RomanticWeb
 permalink: /:categories/:title
 docs-categories: [getting-started]
+relative_permalinks: true

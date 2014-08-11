@@ -11,7 +11,7 @@
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>
     <copyright>Copyright MakoLab © 2013 - 2014</copyright>
-    <tags>rdf orm semantic linq sparql</tags>
+    <tags>rdf orm semanticweb semantic sparql linq</tags>
     <dependencies>
       <dependency id="Fody" />
       <dependency id="NLog" />

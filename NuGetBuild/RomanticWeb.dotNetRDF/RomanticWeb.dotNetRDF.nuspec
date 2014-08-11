@@ -8,6 +8,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial release</releaseNotes>
+    <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
+    <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>
     <copyright>Copyright MakoLab © 2013 - 2014</copyright>
     <tags>rdf orm semanticwweb sparql linq</tags>
     <dependencies>

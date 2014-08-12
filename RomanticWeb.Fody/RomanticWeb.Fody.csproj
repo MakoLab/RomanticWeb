@@ -107,6 +107,7 @@
     <ItemGroup>
       <OutputFiles Include="$(OutputPath)$(AssemblyName).*" />
     </ItemGroup>
+    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)Tools" />
     <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\"
                                      MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />

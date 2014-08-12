@@ -11,7 +11,7 @@
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>
     <copyright>Copyright MakoLab © 2013 - 2014</copyright>
-    <tags>rdf orm semanticwweb sparql linq</tags>
+    <tags>rdf orm semanticweb semantic sparql linq</tags>
     <dependencies>
       <dependency id="RomanticWeb" />
       <dependency id="dotNetRDF" version="(1.0.0,1.0.3]" />

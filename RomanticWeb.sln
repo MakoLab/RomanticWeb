@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{AEA90D
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 		NuGetBuild\RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.nuspec = NuGetBuild\RomanticWeb.dotNetRDF\RomanticWeb.dotNetRDF.nuspec
+		NuGetBuild\RomanticWeb.Fody\RomanticWeb.Fody.nuspec = NuGetBuild\RomanticWeb.Fody\RomanticWeb.Fody.nuspec
 		NuGetBuild\RomanticWeb.JsonLd\RomanticWeb.JsonLd.nuspec = NuGetBuild\RomanticWeb.JsonLd\RomanticWeb.JsonLd.nuspec
 		NuGetBuild\RomanticWeb\RomanticWeb.nuspec = NuGetBuild\RomanticWeb\RomanticWeb.nuspec
 	EndProjectSection

@@ -12,4 +12,4 @@ Now it’s possible to work with the full power of elastic RDF data sets with a 
 
 ============
 
-__Read more on the [project page](http://makolab.github.io/RomanticWeb/)__
+__Read more on the [project page](http://romanticweb.net/)__

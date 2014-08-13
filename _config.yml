@@ -1,7 +1,7 @@
 name: RomanticWeb project page
 markdown: kramdown
 pygments: true
-baseurl: /RomanticWeb
+baseurl: /
 permalink: /:categories/:title
 docs-categories: [getting-started]
 relative_permalinks: true

@@ -1,4 +1,4 @@
-# [![romantic web logo](http://makolab.github.io/RomanticWeb/images/logo.png)](http://makolab.github.io/RomanticWeb/) [![teamcity build status](http://ci.t-code.pl/app/rest/builds/buildType:bt12/statusIcon)](http://ci.t-code.pl/viewType.html?buildTypeId=bt12&guest=1) 
+# [![romantic web logo](http://romanticweb.net/images/logo.png)](http://romanticweb.net/) [![teamcity build status](http://ci.t-code.pl/app/rest/builds/buildType:bt12/statusIcon)](http://ci.t-code.pl/viewType.html?buildTypeId=bt12&guest=1) 
 
 ## Relational Object Model for SemanticWeb in .net!
 

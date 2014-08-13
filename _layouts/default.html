@@ -38,6 +38,12 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <link rel="shortcut icon" href="{{ site:baseurl }}/favicon.ico"/>
+    <script>
+        if (window.location.href.indexOf('http://makolab.github.io') === 0) {
+            window.location.href = 'http://romanticweb.net{{ page.url }}';
+        }
+    </script>
+    <link rel="canonical" href="http://romanticweb.net{{ page.url }}"/>
 </head>
 <body>
 <div class="container">

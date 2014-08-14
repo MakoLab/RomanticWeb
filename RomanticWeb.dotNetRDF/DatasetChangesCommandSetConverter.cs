@@ -85,7 +85,7 @@ namespace RomanticWeb.DotNetRDF
             foreach (var quad in quads)
             {
                 Uri entityGraphUri = quad.Graph.UnWrapGraphUri();
-                if ((entityGraphUri != lastGraphUri) || (quad.EntityId != lastEntityId))
+                if ((entityGraphUri != lastGraphUri) || ((quad.EntityId != lastEntityId) && !(quad.EntityId is BlankId)))
                 {
                     if ((lastGraphUri != null) && (lastEntityId != null))
                     {

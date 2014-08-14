@@ -21,12 +21,12 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
         {
             get
             {
-                if (this._store == null)
+                if (_store == null)
                 {
-                    this._store = new FileTripleStore(this.filePath);
+                    _store = new FileTripleStore(filePath);
                 }
 
-                return this._store;
+                return _store;
             }
         }
 
@@ -34,8 +34,8 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
         public void Should_store_blank_nodes_correctly()
         {
             // given
-            var entity = this.EntityContext.Create<IPerson>(new EntityId("urn:t:p"));
-            var friend = this.EntityContext.Create<IPerson>(entity.CreateBlankId());
+            var entity = EntityContext.Create<IPerson>(new EntityId("urn:t:p"));
+            var friend = EntityContext.Create<IPerson>(entity.CreateBlankId());
             entity.Friend = friend;
             friend.FirstName = "D";
 

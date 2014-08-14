@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests
             _entitiesReconstructed = new List<EntityQuad>();
             _entitiesRemoved = new List<EntityId>();
 
-            _tripleStore = new TripleStoreAdapter(this._realStore.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
+            _tripleStore = new TripleStoreAdapter(_realStore.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
         [Test]

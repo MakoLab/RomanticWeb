@@ -29,7 +29,7 @@ namespace RomanticWeb.Dynamic
         private readonly Entity _entity;
         private readonly Ontology _ontology;
         private readonly IResultTransformerCatalog _resultTransformers;
-        private readonly INodeConverter _nodeConverter = new FallbackNodeConverter();
+        private readonly INodeConverter _nodeConverter;
 
         /// <summary>Creates a new instance of <see cref="OntologyAccessor"/>.</summary>
         internal OntologyAccessor(Entity entity, Ontology ontology, IResultTransformerCatalog resultTransformers)

@@ -19,10 +19,10 @@ namespace RomanticWeb.Entities
             Aggregations = new Lazy<IDictionary<Aggregation, IResultAggregator>>(delegate
             {
                 var resultAggregations = new Dictionary<Aggregation, IResultAggregator>();
-                foreach (var resultProcessingStrategy in ContainerFactory.GetInstancesImplementing<IResultAggregator>())
-                {
-                    resultAggregations[resultProcessingStrategy.Aggregation] = resultProcessingStrategy;
-                }
+                ////foreach (var resultProcessingStrategy in ContainerFactory.GetInstancesImplementing<IResultAggregator>())
+                ////{
+                ////    resultAggregations[resultProcessingStrategy.Aggregation] = resultProcessingStrategy;
+                ////}
 
                 return resultAggregations;
             });

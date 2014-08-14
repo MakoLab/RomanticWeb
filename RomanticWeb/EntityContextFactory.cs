@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Anotar.NLog;
 using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
@@ -88,14 +89,7 @@ namespace RomanticWeb
         {
             get
             {
-                if (importedOntologies == null)
-                {
-                    lock (OntologiesLocker)
-                    {
-                        importedOntologies = ContainerFactory.GetInstancesImplementing<IOntologyProvider>();
-                    }
-                }
-
+                // todo: ioc
                 return importedOntologies;
             }
         }

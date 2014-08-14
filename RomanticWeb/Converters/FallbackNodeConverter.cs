@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -8,12 +9,12 @@ namespace RomanticWeb.Converters
     /// <summary>Default converter for <see cref="Node"/>s to value objects or entities.</summary>
     public sealed class FallbackNodeConverter : INodeConverter
     {
-        private static readonly IConverterCatalog Converters;
+        private readonly IConverterCatalog _converters;
 
         /// <summary>Constructor with entity context passed.</summary>
-        static FallbackNodeConverter()
+        public FallbackNodeConverter(IEnumerable<INodeConverter> converters)
         {
-            Converters = new ConverterCatalog();
+            this._converters = new ConverterCatalog(converters);
         }
 
         /// <summary>
@@ -61,9 +62,9 @@ namespace RomanticWeb.Converters
             return Node.ForLiteral(element.ToString());
         }
 
-        private static object ConvertLiteral(Node objectNode, IEntityContext context)
+        private object ConvertLiteral(Node objectNode, IEntityContext context)
         {
-            var converter = Converters.GetBestConverter(objectNode);
+            var converter = _converters.GetBestConverter(objectNode);
             if (converter != null)
             {
                 return converter.Convert(objectNode, context);
@@ -72,7 +73,7 @@ namespace RomanticWeb.Converters
             throw new InvalidOperationException();
         }
 
-        private static object ConvertUri(Node uriNode, IEntityContext context)
+        private object ConvertUri(Node uriNode, IEntityContext context)
         {
             return context.Load<IEntity>(uriNode.ToEntityId());
         }

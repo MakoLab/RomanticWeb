@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using RomanticWeb.IO;
 using RomanticWeb.Net;
 
@@ -15,7 +16,6 @@ namespace RomanticWeb.Ontologies
 
         static OntologyFactory()
         {
-            OntologyFactories = ContainerFactory.GetInstancesImplementing<IOntologyFactory>();
             OntologyFactoryMimeTypeMappingCache = new Dictionary<string, IOntologyFactory>();
         }
 

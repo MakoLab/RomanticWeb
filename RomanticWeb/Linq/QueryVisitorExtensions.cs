@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Expressions;
 using RomanticWeb.Linq.Model;

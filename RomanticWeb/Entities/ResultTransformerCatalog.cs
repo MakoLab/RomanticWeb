@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using RomanticWeb.ComponentModel.Composition;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;

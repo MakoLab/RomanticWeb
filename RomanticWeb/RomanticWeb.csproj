@@ -139,7 +139,6 @@
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
-    <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />
     <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="Entities\EntityProxy.cs" />
@@ -535,7 +534,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ComponentModel\Composition\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="$(SolutionDir)\NugetBuild\NugetBuild.targets" />

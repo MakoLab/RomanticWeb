@@ -22,7 +22,7 @@ namespace RomanticWeb.TestEntities
 
         IList<string> FriendsAsLiterals { get; set; }
 
-        IPerson Friend { get; }
+        IPerson Friend { get; set; }
 
         IEntity Entity { get; set; }
 

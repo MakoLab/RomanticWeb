@@ -123,6 +123,8 @@
     <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="Helpers\StoreAssertions.cs" />
+    <Compile Include="Helpers\TestingExtensions.cs" />
     <Compile Include="Indexing\EntityQuadCollectionTests.cs" />
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
@@ -190,6 +192,7 @@
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="EntityTripleTests.cs" />
     <Compile Include="Stubs\TestTransformerCatalog.cs" />
+    <Compile Include="TriplesStoreAdapterTests.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
     <Compile Include="TypeExtensionsTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">

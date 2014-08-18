@@ -17,6 +17,11 @@ namespace RomanticWeb.Converters
             this._converters = new ConverterCatalog(converters);
         }
 
+        public FallbackNodeConverter()
+            : this(new INodeConverter[0])
+        {
+        }
+
         /// <summary>
         /// Converts a node to a correct value based on type (URI, blank or literal)
         /// or it's datatype in the case of literal nodes

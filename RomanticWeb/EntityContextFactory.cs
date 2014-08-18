@@ -6,6 +6,7 @@ using Anotar.NLog;
 using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Visitors;
@@ -20,8 +21,6 @@ namespace RomanticWeb
     public class EntityContextFactory : IEntityContextFactory
     {
         #region Fields
-        private static readonly object OntologiesLocker = new Object();
-        private static IEnumerable<IOntologyProvider> importedOntologies;
 
         private readonly RdfTypeCache _matcher = new RdfTypeCache();
         private readonly IList<IConvention> _conventions;
@@ -34,6 +33,8 @@ namespace RomanticWeb
         private IBaseUriSelectionPolicy _baseUriSelector;
         private INamedGraphSelector _namedGraphSelector;
         private Uri _metaGraphUri;
+
+        private IServiceContainer _container = new ServiceContainer();
 
         #endregion
 
@@ -82,15 +83,6 @@ namespace RomanticWeb
             get
             {
                 return _conventions;
-            }
-        }
-
-        private IEnumerable<IOntologyProvider> ImportedOntologies
-        {
-            get
-            {
-                // todo: ioc
-                return importedOntologies;
             }
         }
 
@@ -243,8 +235,8 @@ namespace RomanticWeb
                 .SetDefault<DoubleConverter>(typeof(float), typeof(double))
                 .SetDefault<GuidConverter>(typeof(Guid))
                 .SetDefault<DefaultUriConverter>(typeof(Uri))
-                .SetDefault<StringConverter>(typeof(string));
-                ////.SetDefault<FallbackNodeConverter>(typeof(object));
+                .SetDefault<StringConverter>(typeof(string))
+                .SetDefault<FallbackNodeConverter>(typeof(object));
             yield return new DefaultDictionaryKeyPredicateConvention();
             yield return new DefaultDictionaryValuePredicateConvention();
             yield return new RdfListConvention();
@@ -275,7 +267,7 @@ namespace RomanticWeb
         {
             if (_actualOntologyProvider == null)
             {
-                _actualOntologyProvider = new CompoundOntologyProvider(ImportedOntologies);
+                _actualOntologyProvider = new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>());
             }
         }
 

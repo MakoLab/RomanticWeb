@@ -9,21 +9,26 @@ using RomanticWeb.Net;
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a centralized access to ontology provider factories.</summary>
-    public class OntologyFactory
+    internal class OntologyFactory
     {
-        private static readonly IEnumerable<IOntologyFactory> OntologyFactories;
         private static readonly IDictionary<string, IOntologyFactory> OntologyFactoryMimeTypeMappingCache;
+        private readonly IEnumerable<IOntologyFactory> _ontologyFactories;
 
         static OntologyFactory()
         {
             OntologyFactoryMimeTypeMappingCache = new Dictionary<string, IOntologyFactory>();
         }
 
+        public OntologyFactory(IEnumerable<IOntologyFactory> ontologyFactories)
+        {
+            _ontologyFactories = ontologyFactories;
+        }
+
         /// <summary>Creates an ontology from given file path.</summary>
         /// <param name="path">File path containing a serialized ontology data.</param>
         /// <remarks>This method assumes that path can be converted to an URI, thus it is possible to pass both local file system and remote files.</remarks>
         /// <returns>Ontology beeing an object representation of given data.</returns>
-        public static Ontology Create(string path)
+        public Ontology Create(string path)
         {
             Uri uriPath = new Uri(path);
             WebRequest request = WebRequest.Create(uriPath);
@@ -36,7 +41,7 @@ namespace RomanticWeb.Ontologies
         /// <summary>Creates an ontology from given stream.</summary>
         /// <param name="fileStream">Stream containing a serialized ontology data.</param>
         /// <returns>Ontology beeing an object representation of given data.</returns>
-        public static Ontology Create(Stream fileStream)
+        public Ontology Create(Stream fileStream)
         {
             if (fileStream == null)
             {
@@ -51,7 +56,7 @@ namespace RomanticWeb.Ontologies
         /// <param name="fileStream">Stream containing a serialized ontology data.</param>
         /// <param name="contentType">Explicitly passed content type of the data stored in the given stream.</param>
         /// <returns>Ontology beeing an object representation of given data.</returns>
-        public static Ontology Create(Stream fileStream, string contentType)
+        public Ontology Create(Stream fileStream, string contentType)
         {
             IOntologyFactory ontologyFactory = GetOntologyFactory(contentType);
             if (ontologyFactory == null)
@@ -64,14 +69,14 @@ namespace RomanticWeb.Ontologies
             return result;
         }
 
-        private static IOntologyFactory GetOntologyFactory(string contentType)
+        private IOntologyFactory GetOntologyFactory(string contentType)
         {
             IOntologyFactory result = null;
             lock (OntologyFactoryMimeTypeMappingCache)
             {
                 if (!OntologyFactoryMimeTypeMappingCache.ContainsKey(contentType))
                 {
-                    OntologyFactoryMimeTypeMappingCache[contentType] = result = OntologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType == contentType)).FirstOrDefault();
+                    OntologyFactoryMimeTypeMappingCache[contentType] = result = _ontologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType == contentType)).FirstOrDefault();
                 }
                 else
                 {

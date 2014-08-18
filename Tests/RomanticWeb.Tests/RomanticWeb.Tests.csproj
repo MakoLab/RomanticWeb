@@ -123,6 +123,7 @@
     <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
+    <Compile Include="Helpers\CultureScope.cs" />
     <Compile Include="Helpers\StoreAssertions.cs" />
     <Compile Include="Helpers\TestingExtensions.cs" />
     <Compile Include="Indexing\EntityQuadCollectionTests.cs" />

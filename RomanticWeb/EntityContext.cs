@@ -20,7 +20,7 @@ namespace RomanticWeb
     /// Creates a new instance of <see cref="EntityContext"/>
     /// </summary>
     [NullGuard(ValidationFlags.All)]
-    public class EntityContext : IEntityContext
+    public class EntityContext : IEntityContext, IServiceProvider
     {
         #region Fields
         private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
@@ -183,6 +183,11 @@ namespace RomanticWeb
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             return _entitySource.EntityExist(entityId);
+        }
+
+        object IServiceProvider.GetService(Type serviceType)
+        {
+            return new object();
         }
 
         #endregion

@@ -243,8 +243,8 @@ namespace RomanticWeb
                 .SetDefault<DoubleConverter>(typeof(float), typeof(double))
                 .SetDefault<GuidConverter>(typeof(Guid))
                 .SetDefault<DefaultUriConverter>(typeof(Uri))
-                .SetDefault<StringConverter>(typeof(string))
-                .SetDefault<FallbackNodeConverter>(typeof(object));
+                .SetDefault<StringConverter>(typeof(string));
+                ////.SetDefault<FallbackNodeConverter>(typeof(object));
             yield return new DefaultDictionaryKeyPredicateConvention();
             yield return new DefaultDictionaryValuePredicateConvention();
             yield return new RdfListConvention();

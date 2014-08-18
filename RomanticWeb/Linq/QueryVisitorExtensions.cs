@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,7 +70,7 @@ namespace RomanticWeb.Linq
                 if (classMappings.Any())
                 {
                     Uri primaryTypeUri = classMappings.First();
-                    IEnumerable<Type> inheritedTypes = ContainerFactory.GetTypesImplementing(entityType);
+                    IEnumerable<Type> inheritedTypes = new Collection<Type>(); // ContainerFactory.GetTypesImplementing(entityType);
                     IList<Uri> inheritedTypeUris = new List<Uri>();
                     if (inheritedTypes.Any())
                     {

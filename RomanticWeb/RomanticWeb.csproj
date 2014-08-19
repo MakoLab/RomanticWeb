@@ -69,6 +69,7 @@
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
+    <Compile Include="CompositionRoot.cs" />
     <Compile Include="Configuration\BaseUriElement.cs" />
     <Compile Include="Configuration\FactoriesCollection.cs" />
     <Compile Include="Configuration\FactoryElement.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\UriValidator.cs" />
     <Compile Include="Configuration\UriValidatorAttribute.cs" />
+    <Compile Include="ConventionsCompositionRoot.cs" />
     <Compile Include="Converters\AsEntityConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\CatalogConverterExtensions.cs" />

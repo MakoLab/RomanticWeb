@@ -21,15 +21,13 @@ namespace RomanticWeb.Mapping
         private readonly IDictionary<Tuple<Assembly, Type>, IMappingProviderSource> _sources;
         private readonly IDictionary<Type, IEntityMapping> _mappings;
         private readonly IDictionary<Type, IEntityMappingProvider> _openGenericProviders;
+        private readonly IList<IMappingModelVisitor> _visitors;
         private IList<IMappingProviderVisitor> _providerVisitors;
         private MappingModelBuilder _mappingBuilder;
-        private IList<IMappingModelVisitor> _visitors = new List<IMappingModelVisitor>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MappingsRepository"/> class.
-        /// </summary>
-        internal MappingsRepository()
+        public MappingsRepository(IEnumerable<IMappingModelVisitor> visitors)
         {
+            _visitors = visitors.ToList();
             _sources = new Dictionary<Tuple<Assembly, Type>, IMappingProviderSource>();
             _mappings = new Dictionary<Type, IEntityMapping>();
             _openGenericProviders = new Dictionary<Type, IEntityMappingProvider>();
@@ -86,7 +84,7 @@ namespace RomanticWeb.Mapping
                     select property).FirstOrDefault();
         }
 
-        internal void AddSource(Assembly mappingAssembly, IMappingProviderSource mappingSource)
+        public void AddSource(Assembly mappingAssembly, IMappingProviderSource mappingSource)
         {
             lock (_locker)
             {
@@ -97,12 +95,6 @@ namespace RomanticWeb.Mapping
                     _sources.Add(key, mappingSource);
                 }
             }
-        }
-
-        [Obsolete]
-        internal void AddVisitor(IMappingModelVisitor mappingModelVisitor)
-        {
-            _visitors.Add(mappingModelVisitor);
         }
 
         private static IEnumerable<IMappingProviderVisitor> GetDefaultProviderVisitors(MappingContext context)

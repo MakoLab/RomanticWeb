@@ -39,6 +39,7 @@ namespace RomanticWeb
             WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
 
+            _container.RegisterAssembly(GetType().Assembly, (impl, service) => service == typeof(INodeConverter) && impl != typeof(FallbackNodeConverter));
             _container.RegisterFrom<CompositionRoot>();
             _container.RegisterFrom<ConventionsCompositionRoot>();
             _container.Register<IEntityContextFactory>(factory => this, new PerContainerLifetime());
@@ -106,11 +107,17 @@ namespace RomanticWeb
             return _container.GetInstance<IEntityContext>();
         }
 
+        T IEntityContextFactory.GetService<T>(string serviceName)
+        {
+            return _container.GetInstance<T>(serviceName);
+        }
+
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
         /// <param name="entitySource">Target entity source.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
         {
+            _container.Register(f => entitySource());
             return this;
         }
 
@@ -119,11 +126,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithOntology(IOntologyProvider ontologyProvider)
         {
-            ////EnsureOntologyProvider();
-            ////if (!_actualOntologyProvider.OntologyProviders.Contains(ontologyProvider))
-            ////{
-            ////    _actualOntologyProvider.OntologyProviders.Add(ontologyProvider);
-            ////}
+            _container.RegisterInstance(ontologyProvider, Guid.NewGuid().ToString());
 
             return this;
         }
@@ -133,6 +136,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
         {
+            _container.Register(f => entityStoreFactory());
             return this;
         }
 
@@ -160,7 +164,7 @@ namespace RomanticWeb
         /// <summary>Exposes a method to define how the default graph name should be obtained.</summary>
         public EntityContextFactory WithNamedGraphSelector(INamedGraphSelector namedGraphSelector)
         {
-            ////_namedGraphSelector = namedGraphSelector;
+            _container.RegisterInstance(namedGraphSelector);
             return this;
         }
 

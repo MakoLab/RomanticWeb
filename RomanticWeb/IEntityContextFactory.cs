@@ -21,5 +21,7 @@ namespace RomanticWeb
             
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();
+
+        T GetService<T>(string serviceName);
     }
 }

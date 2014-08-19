@@ -1,4 +1,5 @@
 ﻿using System;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
@@ -18,6 +19,7 @@ namespace RomanticWeb
             registry.Register<IMappingModelVisitor, RdfTypeCache>("RdfTypeCache", new PerContainerLifetime());
             registry.Register<IRdfTypeCache, RdfTypeCache>("RdfTypeCache", new PerContainerLifetime());
             registry.Register<IBlankNodeIdGenerator, DefaultBlankNodeIdGenerator>();
+            registry.Register<INodeConverter, FallbackNodeConverter>("FallbackNodeConverter");
         }
 
         private IEntityContext CreateEntityContext(IServiceFactory factory)

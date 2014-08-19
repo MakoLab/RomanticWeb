@@ -75,7 +75,7 @@ namespace RomanticWeb.Converters
                 return converter.Convert(objectNode, context);
             }
 
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(string.Format("No suitable converter found to convert node '{0}'", objectNode));
         }
 
         private object ConvertUri(Node uriNode, IEntityContext context)

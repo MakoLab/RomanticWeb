@@ -14,7 +14,7 @@ namespace RomanticWeb.Converters
         /// <summary>Constructor with entity context passed.</summary>
         public FallbackNodeConverter(IEnumerable<INodeConverter> converters)
         {
-            this._converters = new ConverterCatalog(converters);
+            _converters = new ConverterCatalog(converters);
         }
 
         public FallbackNodeConverter()

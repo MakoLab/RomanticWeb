@@ -46,7 +46,7 @@ namespace RomanticWeb.Tests.Linq
 
             var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
-            var mappingContext = new MappingContext(ontologyProvider, EntityContextFactory.CreateDefaultConventions());
+            var mappingContext = new MappingContext(ontologyProvider);
             _typeCache = new TestCache();
             _entityContext = new EntityContext(
                 _factory.Object,
@@ -56,7 +56,8 @@ namespace RomanticWeb.Tests.Linq
                 new TripleStoreAdapter(_store) { MetaGraphUri = new Uri("http://app.magi/graphs") },
                 _baseUriSelectionPolicy.Object,
                 new TestGraphSelector(),
-                _typeCache);
+                _typeCache,
+                new DefaultBlankNodeIdGenerator());
         }
 
         [Test]

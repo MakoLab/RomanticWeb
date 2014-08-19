@@ -32,12 +32,13 @@ namespace RomanticWeb.Dynamic
         private readonly INodeConverter _nodeConverter;
 
         /// <summary>Creates a new instance of <see cref="OntologyAccessor"/>.</summary>
-        internal OntologyAccessor(Entity entity, Ontology ontology, IResultTransformerCatalog resultTransformers)
+        internal OntologyAccessor(Entity entity, Ontology ontology, INodeConverter nodeConverter, IResultTransformerCatalog resultTransformers)
         {
             _tripleStore = entity.Context.Store;
             _entity = entity;
             _ontology = ontology;
             _resultTransformers = resultTransformers;
+            _nodeConverter = nodeConverter;
             _context = entity.Context;
         }
 

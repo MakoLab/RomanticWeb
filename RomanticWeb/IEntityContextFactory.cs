@@ -6,7 +6,7 @@ using RomanticWeb.Ontologies;
 namespace RomanticWeb
 {
     /// <summary>An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext" />.</summary>
-    public interface IEntityContextFactory
+    public interface IEntityContextFactory : IServiceLocator
     {
         /// <summary>Gets the ontology provider.</summary>
         IOntologyProvider Ontologies { get; }
@@ -17,7 +17,7 @@ namespace RomanticWeb
         /// <summary>
         /// Gets the conventions.
         /// </summary>
-        IList<IConvention> Conventions { get; } 
+        IEnumerable<IConvention> Conventions { get; } 
             
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

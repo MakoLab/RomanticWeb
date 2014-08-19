@@ -4,6 +4,7 @@ using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
 using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
@@ -20,7 +21,7 @@ namespace RomanticWeb
     /// Creates a new instance of <see cref="EntityContext"/>
     /// </summary>
     [NullGuard(ValidationFlags.All)]
-    public class EntityContext : IEntityContext, IServiceProvider
+    internal class EntityContext : IEntityContext
     {
         #region Fields
         private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
@@ -32,33 +33,59 @@ namespace RomanticWeb
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
-
-        private IBlankNodeIdGenerator _blankIdGenerator = new DefaultBlankNodeIdGenerator();
+        private readonly IBlankNodeIdGenerator _blankIdGenerator;
         #endregion
 
         #region Constructors
+
+        public EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            MappingContext mappingContext,
+            IEntityStore entityStore,
+            IEntitySource entitySource,
+            IBaseUriSelectionPolicy baseUriSelector,
+            INamedGraphSelector namedGraphSelector,
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator)
+            : this(factory, mappings, mappingContext, entityStore, entitySource, namedGraphSelector, typeCache, blankIdGenerator)
+        {
+            _baseUriSelector = baseUriSelector;
+        }
+
         internal EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
-            IRdfTypeCache typeCache)
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator)
+            : this()
         {
-            LogTo.Info("Creating entity context");
+            if (_baseUriSelector == null)
+            {
+                LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
+            }
+
             _factory = factory;
             _entityStore = entityStore;
             _entitySource = entitySource;
-            _baseUriSelector = baseUriSelector;
             _mappings = mappings;
             _mappingContext = mappingContext;
             GraphSelector = namedGraphSelector;
             _typeCache = typeCache;
+            _blankIdGenerator = blankIdGenerator;
+        }
+
+        private EntityContext()
+        {
+            LogTo.Info("Creating entity context");
             _transformerCatalog = new ResultTransformerCatalog();
             EntityCache = new InMemoryEntityCache();
         }
+
         #endregion
 
         #region Properties
@@ -185,11 +212,6 @@ namespace RomanticWeb
             return _entitySource.EntityExist(entityId);
         }
 
-        object IServiceProvider.GetService(Type serviceType)
-        {
-            return new object();
-        }
-
         #endregion
 
         #region Non-public methods
@@ -208,7 +230,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.GetService<FallbackNodeConverter>(), TransformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 

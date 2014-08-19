@@ -10,9 +10,9 @@ namespace RomanticWeb.Mapping
     [NullGuard(ValidationFlags.All)]
     public sealed class MappingBuilder
     {
-        private readonly MappingsRepository _mappingsRepository;
+        private readonly IMappingsRepository _mappingsRepository;
 
-        internal MappingBuilder(MappingsRepository mappingsRepository)
+        internal MappingBuilder(IMappingsRepository mappingsRepository)
         {
             _mappingsRepository = mappingsRepository;
         }

@@ -47,28 +47,16 @@ namespace RomanticWeb
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
-            IBlankNodeIdGenerator blankIdGenerator)
-            : this(factory, mappings, mappingContext, entityStore, entitySource, namedGraphSelector, typeCache, blankIdGenerator)
-        {
-            _baseUriSelector = baseUriSelector;
-        }
-
-        internal EntityContext(
-            IEntityContextFactory factory,
-            IMappingsRepository mappings,
-            MappingContext mappingContext,
-            IEntityStore entityStore,
-            IEntitySource entitySource,
-            INamedGraphSelector namedGraphSelector,
-            IRdfTypeCache typeCache,
-            IBlankNodeIdGenerator blankIdGenerator)
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog)
             : this()
         {
-            if (_baseUriSelector == null)
+            if (baseUriSelector == null)
             {
                 LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
             }
 
+            _baseUriSelector = baseUriSelector;
             _factory = factory;
             _entityStore = entityStore;
             _entitySource = entitySource;
@@ -77,12 +65,12 @@ namespace RomanticWeb
             GraphSelector = namedGraphSelector;
             _typeCache = typeCache;
             _blankIdGenerator = blankIdGenerator;
+            _transformerCatalog = transformerCatalog;
         }
 
         private EntityContext()
         {
             LogTo.Info("Creating entity context");
-            _transformerCatalog = new ResultTransformerCatalog();
             EntityCache = new InMemoryEntityCache();
         }
 

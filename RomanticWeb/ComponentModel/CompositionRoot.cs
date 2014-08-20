@@ -34,7 +34,8 @@ namespace RomanticWeb.ComponentModel
                     factory.TryGetInstance<IBaseUriSelectionPolicy>(),
                     factory.GetInstance<INamedGraphSelector>(),
                     (IRdfTypeCache)factory.GetInstance<IMappingModelVisitor>("RdfTypeCache"),
-                    factory.GetInstance<IBlankNodeIdGenerator>());
+                    factory.GetInstance<IBlankNodeIdGenerator>(),
+                    factory.GetInstance<IResultTransformerCatalog>());
             }
         }
     }

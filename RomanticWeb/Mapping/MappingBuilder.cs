@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Sources;
 
@@ -10,12 +11,7 @@ namespace RomanticWeb.Mapping
     [NullGuard(ValidationFlags.All)]
     public sealed class MappingBuilder
     {
-        private readonly IMappingsRepository _mappingsRepository;
-
-        internal MappingBuilder(IMappingsRepository mappingsRepository)
-        {
-            _mappingsRepository = mappingsRepository;
-        }
+        private readonly IList<MappingProviderSourceMeta> _sources = new List<MappingProviderSourceMeta>();
 
         /// <summary>
         /// Allows registering attribute mappings
@@ -36,6 +32,14 @@ namespace RomanticWeb.Mapping
             get
             {
                 return new MappingFromFluent(this);
+            }
+        }
+
+        internal IEnumerable<MappingProviderSourceMeta> Sources
+        {
+            get
+            {
+                return _sources;
             }
         }
 
@@ -60,7 +64,35 @@ namespace RomanticWeb.Mapping
         internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingsRepository)
             where TMappingRepository : IMappingProviderSource
         {
-            _mappingsRepository.AddSource(mappingAssembly, mappingsRepository);
+            _sources.Add(new MappingProviderSourceMeta(mappingAssembly, mappingsRepository));
+        }
+
+        internal struct MappingProviderSourceMeta
+        {
+            private readonly Assembly _mappingAssembly;
+            private readonly IMappingProviderSource _mappingsRepository;
+
+            public MappingProviderSourceMeta(Assembly mappingAssembly, IMappingProviderSource mappingsRepository)
+            {
+                _mappingAssembly = mappingAssembly;
+                _mappingsRepository = mappingsRepository;
+            }
+
+            public IMappingProviderSource Repository
+            {
+                get
+                {
+                    return _mappingsRepository;
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return string.Format("{0} from assembly {1}", Repository.GetType().Name, _mappingAssembly.FullName);
+                }
+            }
         }
     }
 }

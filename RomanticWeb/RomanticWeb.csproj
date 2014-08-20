@@ -68,8 +68,9 @@
     <Compile Include="Collections\Mapping\ListOwnerMap.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
+    <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
-    <Compile Include="CompositionRoot.cs" />
+    <Compile Include="ComponentModel\CompositionRoot.cs" />
     <Compile Include="Configuration\BaseUriElement.cs" />
     <Compile Include="Configuration\FactoriesCollection.cs" />
     <Compile Include="Configuration\FactoryElement.cs" />
@@ -80,7 +81,8 @@
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\UriValidator.cs" />
     <Compile Include="Configuration\UriValidatorAttribute.cs" />
-    <Compile Include="ConventionsCompositionRoot.cs" />
+    <Compile Include="ComponentModel\ConventionsCompositionRoot.cs" />
+    <Compile Include="ComponentModel\ConvertersCompositionRoot.cs" />
     <Compile Include="Converters\AsEntityConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\CatalogConverterExtensions.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="ComponentModel\IServiceLocator.cs" />
     <Compile Include="LightInject\LightInject.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
@@ -537,9 +540,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ComponentModel\Composition\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="$(SolutionDir)\NugetBuild\NugetBuild.targets" />

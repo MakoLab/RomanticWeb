@@ -55,7 +55,7 @@ namespace RomanticWeb.Tests.Linq
             _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
             _factory.Setup(f => f.GetService<INodeConverter>("FallbackNodeConverter"))
-                    .Returns(new FallbackNodeConverter());
+                    .Returns(new FallbackNodeConverter(new INodeConverter[0]));
 
             var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap(), new TestAdressMap());

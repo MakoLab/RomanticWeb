@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
@@ -30,17 +31,16 @@ namespace RomanticWeb.Tests.Mapping
             _ontologies = new Mock<IOntologyProvider>();
             _ontologies.Setup(o => o.ResolveUri(It.IsAny<string>(), It.IsAny<string>()))
                        .Returns((string p, string t) => GetUri(p, t));
-
-            _mappingsRepository = new MappingsRepository(new IMappingModelVisitor[0]);
-            foreach (var mappingSource in CreateMappingSources())
-            {
-                MappingsRepository.AddSource(GetType().Assembly, mappingSource);
-            }
-
             IServiceContainer container = new ServiceContainer();
+
             container.RegisterFrom<ConventionsCompositionRoot>();
             var conventions = container.GetInstance<IEnumerable<IConvention>>();
-            MappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object, conventions));
+
+            _mappingsRepository = new MappingsRepository(
+                new MappingContext(_ontologies.Object, conventions),
+                CreateMappingSources(),
+                new IMappingProviderVisitor[0], 
+                new IMappingModelVisitor[0]);
         }
 
         protected abstract IEnumerable<IMappingProviderSource> CreateMappingSources();

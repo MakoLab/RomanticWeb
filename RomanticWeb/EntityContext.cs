@@ -230,7 +230,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.GetService<INodeConverter>("FallbackNodeConverter"), TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.GetService<FallbackNodeConverter>(), TransformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 

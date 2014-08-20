@@ -3,23 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Configuration;
-using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
-using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    public interface IServiceLocator
-    {
-        T GetService<T>();
-    }
-
     /// <summary>
     /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
     /// </summary>
@@ -36,13 +30,12 @@ namespace RomanticWeb
             ////_mappingsRepository = new MappingsRepository();
             ////_mappingsRepository.AddVisitor(_matcher);
 
-            WithMappings(DefaultMappings);
             LogTo.Info("Created entity context factory");
 
-            _container.RegisterAssembly(GetType().Assembly, (impl, service) => service == typeof(INodeConverter) && impl != typeof(FallbackNodeConverter));
-            _container.RegisterFrom<CompositionRoot>();
-            _container.RegisterFrom<ConventionsCompositionRoot>();
+            _container.RegisterAssembly(GetType().Assembly);
             _container.Register<IEntityContextFactory>(factory => this, new PerContainerLifetime());
+
+            WithMappings(DefaultMappings);
         }
 
         /// <inheritdoc/>
@@ -145,9 +138,13 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithMappings(Action<MappingBuilder> buildMappings)
         {
-            var mappingsRepository = _container.GetInstance<IMappingsRepository>();
-            var mappingBuilder = new MappingBuilder(mappingsRepository);
+            var mappingBuilder = new MappingBuilder();
             buildMappings.Invoke(mappingBuilder);
+
+            foreach (var source in mappingBuilder.Sources)
+            {
+                _container.RegisterInstance(source.Repository, source.Name);
+            }
 
             return this;
         }

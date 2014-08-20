@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Reflection;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping
 {
@@ -10,9 +8,6 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public interface IMappingsRepository
     {
-        /// <summary>Builds mappings and resolves all URIs against a given ontology provider.</summary>
-        void RebuildMappings(MappingContext mappingContext);
-
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>
         IEntityMapping MappingFor<TEntity>();
@@ -24,7 +19,5 @@ namespace RomanticWeb.Mapping
         /// <param name="predicateUri">Predicate Uri to be search for.</param>
         /// <returns>Property mapped to given predicate Uri or null.</returns>
         IPropertyMapping MappingForProperty(Uri predicateUri);
-
-        void AddSource(Assembly assembly, IMappingProviderSource mappingProviderSource);
     }
 }

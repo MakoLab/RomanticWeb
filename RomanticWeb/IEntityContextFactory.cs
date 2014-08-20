@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;

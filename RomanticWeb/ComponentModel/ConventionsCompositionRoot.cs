@@ -3,7 +3,7 @@ using RomanticWeb.Converters;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping.Conventions;
 
-namespace RomanticWeb
+namespace RomanticWeb.ComponentModel
 {
     internal class ConventionsCompositionRoot : ICompositionRoot
     {

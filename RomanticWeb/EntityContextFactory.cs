@@ -34,7 +34,7 @@ namespace RomanticWeb
 
             _container.RegisterAssembly(GetType().Assembly);
             _container.RegisterInstance<IEntityContextFactory>(this);
-            _container.RegisterInstance<IServiceLocator>(this);
+            _container.RegisterInstance<IServiceLocator>(new ServiceLocator(_container));
 
             WithMappings(DefaultMappings);
         }
@@ -99,11 +99,6 @@ namespace RomanticWeb
             LogTo.Debug("Creating entity context");
             
             return _container.GetInstance<IEntityContext>();
-        }
-
-        T IEntityContextFactory.GetService<T>(string serviceName)
-        {
-            return _container.GetInstance<T>(serviceName);
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
@@ -173,16 +168,6 @@ namespace RomanticWeb
         {
             _container.RegisterInstance(metaGraphUri, "MetaGraphUri");
             return this;
-        }
-
-        T IServiceLocator.GetService<T>()
-        {
-            return _container.GetInstance<T>();
-        }
-
-        public object GetService(Type serviceType)
-        {
-            return _container.GetInstance(serviceType);
         }
 
         private static void DefaultMappings(MappingBuilder mappings)

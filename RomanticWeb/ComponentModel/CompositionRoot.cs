@@ -35,7 +35,8 @@ namespace RomanticWeb.ComponentModel
                     factory.GetInstance<INamedGraphSelector>(),
                     (IRdfTypeCache)factory.GetInstance<IMappingModelVisitor>("RdfTypeCache"),
                     factory.GetInstance<IBlankNodeIdGenerator>(),
-                    factory.GetInstance<IResultTransformerCatalog>());
+                    factory.GetInstance<IResultTransformerCatalog>(),
+                    factory.GetInstance<IServiceLocator>());
             }
         }
     }

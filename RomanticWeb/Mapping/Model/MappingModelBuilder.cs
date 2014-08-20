@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Linq;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Model
 {
-    internal class MappingModelBuilder
+    public class MappingModelBuilder
     {
         private readonly MappingContext _mappingContext;
-
+        private readonly IServiceLocator _serviceLocator;
         private Type _currentType;
 
-        public MappingModelBuilder(MappingContext mappingContext)
+        public MappingModelBuilder(MappingContext mappingContext, IServiceLocator serviceLocator)
         {
             _mappingContext = mappingContext;
+            _serviceLocator = serviceLocator;
         }
 
         public IEntityMapping BuildMapping(IEntityMappingProvider mapping)
@@ -80,7 +82,7 @@ namespace RomanticWeb.Mapping.Model
             bool converterSet = SetConverter(collectionMapping, provider);
             if ((provider.ElementConverterType != null) && (!provider.ElementConverterType.ContainsGenericParameters))
             {
-                collectionMapping.ElementConverter = (INodeConverter)Activator.CreateInstance(provider.ElementConverterType);
+                collectionMapping.ElementConverter = (INodeConverter)_serviceLocator.GetService(provider.ElementConverterType);
             }
             else if (converterSet)
             {
@@ -95,7 +97,7 @@ namespace RomanticWeb.Mapping.Model
             bool result = false;
             if ((provider.ConverterType != null) && (!provider.ConverterType.ContainsGenericParameters) && (!provider.ConverterType.IsInterface))
             {
-                propertyMapping.Converter = (INodeConverter)Activator.CreateInstance(provider.ConverterType);
+                propertyMapping.Converter = (INodeConverter)_serviceLocator.GetService(provider.ConverterType);
                 result = true;
             }
 

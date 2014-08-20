@@ -6,6 +6,7 @@ using RomanticWeb.ComponentModel;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.Ontologies;
@@ -37,7 +38,7 @@ namespace RomanticWeb.Tests.Mapping
             var conventions = container.GetInstance<IEnumerable<IConvention>>();
 
             _mappingsRepository = new MappingsRepository(
-                new MappingContext(_ontologies.Object, conventions),
+                new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new Mock<IServiceLocator>().Object),
                 CreateMappingSources(),
                 new IMappingProviderVisitor[0], 
                 new IMappingModelVisitor[0]);

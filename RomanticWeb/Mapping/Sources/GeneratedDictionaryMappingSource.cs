@@ -18,9 +18,9 @@ namespace RomanticWeb.Mapping.Sources
         private readonly List<EntityMap> _entityMaps = new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
 
-        public GeneratedDictionaryMappingSource(IOntologyProvider ontologyProvider)
+        public GeneratedDictionaryMappingSource(MappingContext mappingContext)
         {
-            _ontologyProvider = ontologyProvider;
+            _ontologyProvider = mappingContext.OntologyProvider;
         }
 
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()

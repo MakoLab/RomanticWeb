@@ -22,17 +22,17 @@ namespace RomanticWeb.Mapping
         private readonly MappingModelBuilder _mappingBuilder;
 
         public MappingsRepository(
-            MappingContext mappingContext,
+            MappingModelBuilder mappingBuilder,
             IEnumerable<IMappingProviderSource> sources, 
             IEnumerable<IMappingProviderVisitor> providerVisitors,
             IEnumerable<IMappingModelVisitor> modelVisitors)
         {
             _modelVisitors = modelVisitors.ToList();
-            _providerVisitors = providerVisitors.ToList();
+            _providerVisitors = providerVisitors.OrderBy(OrderProviderVisitors).ToList();
             _sources = sources.ToList();
             _mappings = new Dictionary<Type, IEntityMapping>();
             _openGenericProviders = new Dictionary<Type, IEntityMappingProvider>();
-            _mappingBuilder = new MappingModelBuilder(mappingContext);
+            _mappingBuilder = mappingBuilder;
 
             CreateMappings(Sources.ToArray());
             CreateMappings(_providerVisitors.OfType<IMappingProviderSource>().ToArray());
@@ -127,6 +127,11 @@ namespace RomanticWeb.Mapping
             {
                 mapping.Accept(mappingModelVisitor);
             }
+        }
+
+        private object OrderProviderVisitors(IMappingProviderVisitor arg)
+        {
+            return arg.GetType().Name;
         }
     }
 }

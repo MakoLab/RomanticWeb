@@ -4,6 +4,7 @@ using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.NamedGraphs;
+using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.ComponentModel
 {
@@ -14,6 +15,7 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateEntityContext(factory));
             registry.Register<IRdfTypeCache, RdfTypeCache>("RdfTypeCache", new PerScopeLifetime());
             registry.Register<IBlankNodeIdGenerator, DefaultBlankNodeIdGenerator>();
+            registry.Register<IOntologyProvider, DefaultOntologiesProvider>("DefaultOntologiesProvider");
         }
 
         private IEntityContext CreateEntityContext(IServiceFactory factory)

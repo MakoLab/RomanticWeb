@@ -4,6 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
@@ -24,6 +25,7 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContextFactory> _factory;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
         private TestCache _typeCache;
+        private Mock<IServiceLocator> _locator;
 
         public interface IAddress : IEntity
         {
@@ -54,7 +56,9 @@ namespace RomanticWeb.Tests.Linq
             _factory = new Mock<IEntityContextFactory>();
             _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
-            _factory.Setup(f => f.GetService<INodeConverter>("FallbackNodeConverter"))
+
+            _locator = new Mock<IServiceLocator>(MockBehavior.Strict);
+            _locator.Setup(f => f.GetService<INodeConverter>("FallbackNodeConverter"))
                     .Returns(new FallbackNodeConverter(new INodeConverter[0]));
 
             var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
@@ -72,7 +76,8 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog());
+                new TestTransformerCatalog(),
+                _locator.Object);
         }
 
         [Test]

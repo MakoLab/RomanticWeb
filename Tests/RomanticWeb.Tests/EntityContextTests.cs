@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.CSharp.RuntimeBinder;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -76,7 +77,8 @@ namespace RomanticWeb.Tests
                 new TestGraphSelector(),
                 new TestCache(),
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog());
+                new TestTransformerCatalog(),
+                new Mock<IServiceLocator>().Object);
         }
 
         [TearDown]

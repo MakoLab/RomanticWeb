@@ -152,6 +152,7 @@
     <Compile Include="IEntityStore.cs" />
     <Compile Include="ComponentModel\IServiceLocator.cs" />
     <Compile Include="LightInject\LightInject.cs" />
+    <Compile Include="LightInject\ServiceLocator.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\GenericQueryOptimizer.cs" />

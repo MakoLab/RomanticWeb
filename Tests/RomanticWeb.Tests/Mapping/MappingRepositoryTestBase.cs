@@ -35,13 +35,15 @@ namespace RomanticWeb.Tests.Mapping
             IServiceContainer container = new ServiceContainer();
 
             container.RegisterFrom<ConventionsCompositionRoot>();
+            container.RegisterFrom<MappingCompositionRoot>();
+            container.RegisterFrom<ConvertersCompositionRoot>();
             var conventions = container.GetInstance<IEnumerable<IConvention>>();
 
             _mappingsRepository = new MappingsRepository(
-                new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new Mock<IServiceLocator>().Object),
+                new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new ServiceLocator(container)),
                 CreateMappingSources(),
-                new IMappingProviderVisitor[0], 
-                new IMappingModelVisitor[0]);
+                container.GetAllInstances<IMappingProviderVisitor>(),
+                container.GetAllInstances<IMappingModelVisitor>());
         }
 
         protected abstract IEnumerable<IMappingProviderSource> CreateMappingSources();

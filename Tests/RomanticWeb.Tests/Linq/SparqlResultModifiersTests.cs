@@ -4,6 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
@@ -58,7 +59,8 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog());
+                new TestTransformerCatalog(),
+                new Mock<IServiceLocator>().Object);
         }
 
         [Test]

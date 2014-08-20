@@ -7,5 +7,7 @@ namespace RomanticWeb.ComponentModel
         T GetService<T>();
 
         object GetService(Type serviceType);
+
+        T GetService<T>(string serviceName);
     }
 }

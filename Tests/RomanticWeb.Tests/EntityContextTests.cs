@@ -192,8 +192,8 @@ namespace RomanticWeb.Tests
             var entity = _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
 
             // when
-            var name = entity.FirstName;
-            var page = entity.Homepage;
+            var name = entity.Interests;
+            var page = entity.Interests;
             var interests = entity.Interests;
 
             // then

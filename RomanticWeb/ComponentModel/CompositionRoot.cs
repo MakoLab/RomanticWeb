@@ -16,6 +16,7 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IRdfTypeCache, RdfTypeCache>("RdfTypeCache", new PerScopeLifetime());
             registry.Register<IBlankNodeIdGenerator, DefaultBlankNodeIdGenerator>();
             registry.Register<IOntologyProvider, DefaultOntologiesProvider>("DefaultOntologiesProvider");
+            registry.Register<INamedGraphSelector, NamedGraphSelector>();
         }
 
         private IEntityContext CreateEntityContext(IServiceFactory factory)

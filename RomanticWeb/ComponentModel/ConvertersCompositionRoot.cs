@@ -1,5 +1,7 @@
 ﻿using System;
 using RomanticWeb.Converters;
+using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.LightInject;
 
 namespace RomanticWeb.ComponentModel
@@ -27,12 +29,23 @@ namespace RomanticWeb.ComponentModel
             registry.RegisterFallback(
                 (type, s) => typeof(INodeConverter).IsAssignableFrom(type),
                 request => Activator.CreateInstance(request.ServiceType));
+
+            registry.Register<IResultTransformerCatalog, ResultTransformerCatalog>(new PerContainerLifetime());
+            RegisterResultAggregator<AnyResultCheck>(registry);
+            RegisterResultAggregator<FirstOrDefault>(registry);
+            RegisterResultAggregator<FirstResult>(registry);
+            RegisterResultAggregator<SingleOrDefault>(registry);
+            RegisterResultAggregator<SingleResult>(registry);
         }
 
         private void RegisterConverter<T>(IServiceRegistry registry) where T : INodeConverter
         {
             registry.Register<INodeConverter, T>(typeof(T).FullName, new PerContainerLifetime());
-            registry.Register<T>(new PerContainerLifetime());
+        }
+
+        private void RegisterResultAggregator<T>(IServiceRegistry registry) where T : IResultAggregator
+        {
+            registry.Register<IResultAggregator, T>(typeof(T).FullName, new PerContainerLifetime());
         }
     }
 }

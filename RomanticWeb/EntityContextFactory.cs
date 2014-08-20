@@ -33,8 +33,8 @@ namespace RomanticWeb
             LogTo.Info("Created entity context factory");
 
             _container.RegisterAssembly(GetType().Assembly);
-            _container.Register<IEntityContextFactory>(factory => this, new PerContainerLifetime());
-            _container.Register<IServiceLocator>(factory => this, new PerContainerLifetime());
+            _container.RegisterInstance<IEntityContextFactory>(this);
+            _container.RegisterInstance<IServiceLocator>(this);
 
             WithMappings(DefaultMappings);
         }

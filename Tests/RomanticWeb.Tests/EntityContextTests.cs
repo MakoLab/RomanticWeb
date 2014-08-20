@@ -75,7 +75,8 @@ namespace RomanticWeb.Tests
                 _baseUriSelector.Object,
                 new TestGraphSelector(),
                 new TestCache(),
-                new DefaultBlankNodeIdGenerator());
+                new DefaultBlankNodeIdGenerator(),
+                new TestTransformerCatalog());
         }
 
         [TearDown]

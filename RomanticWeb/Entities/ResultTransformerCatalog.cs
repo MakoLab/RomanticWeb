@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Entities.ResultPostprocessing;
@@ -11,29 +10,25 @@ namespace RomanticWeb.Entities
     /// </summary>
     public sealed class ResultTransformerCatalog : IResultTransformerCatalog
     {
-        private static readonly Lazy<IDictionary<Aggregation, IResultAggregator>> Aggregations;
+        private readonly IDictionary<Aggregation, IResultAggregator> _aggregations;
         private readonly IResultAggregator _fallbackAggregation = new OriginalResult();
 
-        static ResultTransformerCatalog()
+        public ResultTransformerCatalog(IEnumerable<IResultAggregator> resultAggregators)
         {
-            Aggregations = new Lazy<IDictionary<Aggregation, IResultAggregator>>(delegate
-            {
-                var resultAggregations = new Dictionary<Aggregation, IResultAggregator>();
-                ////foreach (var resultProcessingStrategy in ContainerFactory.GetInstancesImplementing<IResultAggregator>())
-                ////{
-                ////    resultAggregations[resultProcessingStrategy.Aggregation] = resultProcessingStrategy;
-                ////}
+            _aggregations = new Dictionary<Aggregation, IResultAggregator>();
 
-                return resultAggregations;
-            });
+            foreach (var resultAggregator in resultAggregators)
+            {
+                _aggregations[resultAggregator.Aggregation] = resultAggregator;
+            }
         }
 
         /// <inheritdoc />
         public IResultAggregator GetAggregator(Aggregation aggregation)
         {
-            if (Aggregations.Value.ContainsKey(aggregation))
+            if (_aggregations.ContainsKey(aggregation))
             {
-                return Aggregations.Value[aggregation];
+                return _aggregations[aggregation];
             }
 
             return _fallbackAggregation;

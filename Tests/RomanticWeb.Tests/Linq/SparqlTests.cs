@@ -8,6 +8,7 @@ using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
@@ -58,7 +59,7 @@ namespace RomanticWeb.Tests.Linq
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
 
             _locator = new Mock<IServiceLocator>(MockBehavior.Strict);
-            _locator.Setup(f => f.GetService<INodeConverter>("FallbackNodeConverter"))
+            _locator.Setup(f => f.GetService<FallbackNodeConverter>())
                     .Returns(new FallbackNodeConverter(new INodeConverter[0]));
 
             var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
@@ -76,7 +77,7 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog(),
+                new ResultTransformerCatalog(new IResultAggregator[0]), 
                 _locator.Object);
         }
 

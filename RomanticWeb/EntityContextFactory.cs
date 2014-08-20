@@ -34,6 +34,7 @@ namespace RomanticWeb
 
             _container.RegisterAssembly(GetType().Assembly);
             _container.Register<IEntityContextFactory>(factory => this, new PerContainerLifetime());
+            _container.Register<IServiceLocator>(factory => this, new PerContainerLifetime());
 
             WithMappings(DefaultMappings);
         }
@@ -177,6 +178,11 @@ namespace RomanticWeb
         T IServiceLocator.GetService<T>()
         {
             return _container.GetInstance<T>();
+        }
+
+        public object GetService(Type serviceType)
+        {
+            return _container.GetInstance(serviceType);
         }
 
         private static void DefaultMappings(MappingBuilder mappings)

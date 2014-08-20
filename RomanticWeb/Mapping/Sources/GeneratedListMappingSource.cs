@@ -21,9 +21,9 @@ namespace RomanticWeb.Mapping.Sources
 
         private Type _currentEntityType;
 
-        public GeneratedListMappingSource(IOntologyProvider ontologyProvider)
+        public GeneratedListMappingSource(MappingContext mappingContext)
         {
-            _ontologyProvider = ontologyProvider;
+            _ontologyProvider = mappingContext.OntologyProvider;
         }
 
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()

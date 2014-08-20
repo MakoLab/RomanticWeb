@@ -8,6 +8,7 @@ using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
@@ -59,7 +60,7 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog(),
+                new ResultTransformerCatalog(new IResultAggregator[0]), 
                 new Mock<IServiceLocator>().Object);
         }
 

@@ -20,6 +20,7 @@ namespace RomanticWeb
     public class EntityContextFactory : IEntityContextFactory
     {
         private readonly IServiceContainer _container = new ServiceContainer();
+        private readonly ServiceLocator _serviceLocator;
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
@@ -30,7 +31,8 @@ namespace RomanticWeb
 
             _container.RegisterAssembly(GetType().Assembly);
             _container.RegisterInstance<IEntityContextFactory>(this);
-            _container.RegisterInstance<IServiceLocator>(new ServiceLocator(_container));
+            _serviceLocator = new ServiceLocator(_container);
+            _container.RegisterInstance<IServiceLocator>(_serviceLocator);
 
             WithMappings(DefaultMappings);
         }
@@ -59,6 +61,14 @@ namespace RomanticWeb
             get
             {
                 return _container.GetAllInstances<IConvention>();
+            }
+        }
+
+        public IServiceLocator Services
+        {
+            get
+            {
+                return _serviceLocator;
             }
         }
 
@@ -163,6 +173,12 @@ namespace RomanticWeb
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
             _container.RegisterInstance(metaGraphUri, "MetaGraphUri");
+            return this;
+        }
+
+        internal EntityContextFactory WithDependencies<T>() where T : ICompositionRoot, new()
+        {
+            _container.RegisterFrom<T>();
             return this;
         }
 

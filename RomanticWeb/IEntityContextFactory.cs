@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;
@@ -17,8 +18,10 @@ namespace RomanticWeb
         /// <summary>
         /// Gets the conventions.
         /// </summary>
-        IEnumerable<IConvention> Conventions { get; } 
-            
+        IEnumerable<IConvention> Conventions { get; }
+
+        IServiceLocator Services { get; }
+
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();
     }

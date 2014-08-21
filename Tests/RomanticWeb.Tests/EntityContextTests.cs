@@ -57,6 +57,7 @@ namespace RomanticWeb.Tests
         {
             _typesMapping = new TestPropertyMapping(typeof(ITypedEntity), typeof(IEnumerable<EntityId>), "Types", Vocabularies.Rdf.type);
             _factory = new Mock<IEntityContextFactory>();
+            _factory.SetupGet(f => f.Services).Returns(new Mock<IServiceLocator>().Object);
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>();
@@ -77,8 +78,7 @@ namespace RomanticWeb.Tests
                 new TestGraphSelector(),
                 new TestCache(),
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog(),
-                new Mock<IServiceLocator>().Object);
+                new TestTransformerCatalog());
         }
 
         [TearDown]

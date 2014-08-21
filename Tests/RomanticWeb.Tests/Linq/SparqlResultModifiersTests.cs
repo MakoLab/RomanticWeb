@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.ComponentModel;
@@ -43,6 +42,7 @@ namespace RomanticWeb.Tests.Linq
             _store.LoadTestFile("SuperTripleOperations.trig");
 
             _factory = new Mock<IEntityContextFactory>();
+            _factory.SetupGet(f => f.Services).Returns(new Mock<IServiceLocator>().Object);
             _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
 
@@ -60,8 +60,7 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new ResultTransformerCatalog(new IResultAggregator[0]), 
-                new Mock<IServiceLocator>().Object);
+                new ResultTransformerCatalog(new IResultAggregator[0]));
         }
 
         [Test]

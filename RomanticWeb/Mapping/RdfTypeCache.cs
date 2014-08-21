@@ -11,12 +11,11 @@ namespace RomanticWeb.Mapping
     /// Implementation of <see cref="IRdfTypeCache"/>, 
     /// which built by visiting <see cref="IEntityMapping"/>s
     /// </summary>
-    public class RdfTypeCache : IRdfTypeCache, Visitors.IMappingModelVisitor
+    public class RdfTypeCache : IRdfTypeCache
     {
         private readonly IDictionary<string, IEnumerable<Type>> _cache;
         private readonly IDictionary<Type, IList<IClassMapping>> _classMappings;
         private readonly IDictionary<Type, ISet<Type>> _directlyDerivingTypes;
-        private IList<IClassMapping> _currentClasses;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfTypeCache"/> class.
@@ -39,10 +38,11 @@ namespace RomanticWeb.Mapping
             }
 
             IEnumerable<Type> cached;
-            string cacheKey = requestedType.ToString() + ";" + System.String.Join(";", entityTypes.Select(item => item.ToString()));
+            var classList = entityTypes as Uri[] ?? entityTypes.ToArray();
+            string cacheKey = requestedType + ";" + String.Join(";", classList.Select(item => item.ToString()));
             if (!_cache.TryGetValue(cacheKey, out cached))
             {
-                if ((entityTypes.Any()) && (_directlyDerivingTypes.ContainsKey(requestedType)))
+                if ((classList.Any()) && (_directlyDerivingTypes.ContainsKey(requestedType)))
                 {
                     var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
                     while (childTypesToCheck.Any())
@@ -61,7 +61,7 @@ namespace RomanticWeb.Mapping
                         {
                             foreach (var mapping in _classMappings[potentialMatch])
                             {
-                                if (mapping.IsMatch(entityTypes))
+                                if (mapping.IsMatch(classList))
                                 {
                                     selectedTypes.Add(potentialMatch);
                                 }
@@ -76,52 +76,11 @@ namespace RomanticWeb.Mapping
             return cached;
         }
 
-        /// <summary>
-        /// Sets the currently processed enitty type
-        /// and updates inheritance cache
-        /// </summary>
-        public void Visit(IEntityMapping entityMapping)
+        /// <inheridoc/>
+        public void Add(Type entityType, IList<IClassMapping> classMappings)
         {
-            if (!_classMappings.ContainsKey(entityMapping.EntityType))
-            {
-                _classMappings.Add(entityMapping.EntityType, new List<IClassMapping>());
-            }
-
-            AddAsChildOfParentTypes(entityMapping.EntityType);
-
-            _currentClasses = _classMappings[entityMapping.EntityType];
-        }
-
-        /// <summary>
-        /// Does nothing
-        /// </summary>
-        public void Visit(ICollectionMapping collectionMapping)
-        {
-        }
-
-        /// <summary>
-        /// Does nothing
-        /// </summary>
-        public void Visit(IDictionaryMapping dictionaryMapping)
-        {
-        }
-
-        /// <summary>
-        /// Does nothing
-        /// </summary>
-        public void Visit(IPropertyMapping propertyMapping)
-        {
-        }
-
-        /// <summary>
-        /// Adds class URI to the current entity's list
-        /// </summary>
-        public void Visit(IClassMapping classMapping)
-        {
-            if (!classMapping.IsInherited)
-            {
-                _currentClasses.Add(classMapping);
-            }
+            AddAsChildOfParentTypes(entityType);
+            _classMappings[entityType] = classMappings;
         }
 
         private void AddAsChildOfParentTypes(Type entityType)

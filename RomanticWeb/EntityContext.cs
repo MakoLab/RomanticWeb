@@ -191,11 +191,11 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T EntityAs<T>(IEntity entity) where T : class, IEntity
         {
-            Entity rootEntity = (Entity)entity;
+            var rootEntity = (Entity)entity;
             rootEntity.EnsureIsInitialized();
             IEnumerable<Uri> entityTypeUris = _entityStore.GetObjectsForPredicate(rootEntity.Id, Rdf.type, GraphSelector.SelectGraph(rootEntity.Id, null, null)).Select(item => item.Uri);
             var entityTypes = _typeCache.GetMostDerivedMappedTypes(entityTypeUris, typeof(T));
-            return EntityAs((Entity)rootEntity, typeof(T), entityTypes.ToArray());
+            return EntityAs(rootEntity, typeof(T), entityTypes.ToArray());
         }
 
         /// <inheritdoc />

@@ -140,6 +140,7 @@
     <Compile Include="Helpers\TripleExtentions.cs" />
     <Compile Include="Linq\SparqlResultModifiersTests.cs" />
     <Compile Include="Mapping\ClassMappingTests.cs" />
+    <Compile Include="RdfTypeCacheBuilderTests.cs" />
     <Compile Include="RdfTypeCacheTests.cs" />
     <Compile Include="IntegrationTests\InMemory\LoadingTests.cs" />
     <Compile Include="IntegrationTests\LoadingTestsBase.cs" />

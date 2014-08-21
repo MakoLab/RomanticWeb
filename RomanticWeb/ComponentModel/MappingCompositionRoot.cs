@@ -17,7 +17,8 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IMappingsRepository, MappingsRepository>();
             registry.Register<MappingModelBuilder>();
 
-            registry.Register<IMappingModelVisitor, RdfTypeCache>("RdfTypeCache");
+            registry.Register<IRdfTypeCache, RdfTypeCache>(new PerContainerLifetime());
+            registry.Register<IMappingModelVisitor, RdfTypeCacheBuilder>(new PerContainerLifetime());
 
             registry.Register<IMappingProviderVisitor, ConventionsVisitor>("ConventionsVisitor");
             registry.Register<IMappingProviderVisitor, MappingProvidersValidator>("MappingProvidersValidator");

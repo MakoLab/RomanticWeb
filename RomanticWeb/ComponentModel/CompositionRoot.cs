@@ -13,7 +13,6 @@ namespace RomanticWeb.ComponentModel
         void ICompositionRoot.Compose(IServiceRegistry registry)
         {
             registry.Register(factory => CreateEntityContext(factory));
-            registry.Register<IRdfTypeCache, RdfTypeCache>("RdfTypeCache", new PerScopeLifetime());
             registry.Register<IBlankNodeIdGenerator, DefaultBlankNodeIdGenerator>();
             registry.Register<IOntologyProvider, DefaultOntologiesProvider>("DefaultOntologiesProvider");
             registry.Register<INamedGraphSelector, NamedGraphSelector>();
@@ -34,7 +33,7 @@ namespace RomanticWeb.ComponentModel
                     entitySource,
                     factory.TryGetInstance<IBaseUriSelectionPolicy>(),
                     factory.GetInstance<INamedGraphSelector>(),
-                    (IRdfTypeCache)factory.GetInstance<IMappingModelVisitor>("RdfTypeCache"),
+                    factory.GetInstance<IRdfTypeCache>(),
                     factory.GetInstance<IBlankNodeIdGenerator>(),
                     factory.GetInstance<IResultTransformerCatalog>(),
                     factory.GetInstance<IServiceLocator>());

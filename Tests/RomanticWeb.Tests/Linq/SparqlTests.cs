@@ -4,13 +4,12 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
-using RomanticWeb.Entities.ResultAggregations;
+using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
-using RomanticWeb.Ontologies;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using VDS.RDF;
@@ -22,11 +21,7 @@ namespace RomanticWeb.Tests.Linq
     {
         private IEntityContext _entityContext;
         private TripleStore _store;
-        private TestMappingsRepository _mappingsRepository;
-        private Mock<IEntityContextFactory> _factory;
-        private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
         private TestCache _typeCache;
-        private Mock<IServiceLocator> _locator;
 
         public interface IAddress : IEntity
         {
@@ -54,31 +49,15 @@ namespace RomanticWeb.Tests.Linq
             _store = new TripleStore();
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig");
 
-            _factory = new Mock<IEntityContextFactory>();
-            _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
-            _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
+            IEntityContextFactory factory = new EntityContextFactory()
+                .WithDefaultOntologies()
+                .WithEntitySource(() => new TripleStoreAdapter(_store))
+                .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
+                .WithDependencies<Dependencies>();
 
-            _locator = new Mock<IServiceLocator>(MockBehavior.Strict);
-            _locator.Setup(f => f.GetService<FallbackNodeConverter>())
-                    .Returns(new FallbackNodeConverter(new INodeConverter[0]));
+            _typeCache = (TestCache)factory.Services.GetService<IRdfTypeCache>();
 
-            var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
-            _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap(), new TestAdressMap());
-            var mappingContext = new MappingContext(ontologyProvider);
-            _typeCache = new TestCache();
-            var entitySource = new TripleStoreAdapter(_store) { MetaGraphUri = new Uri("http://app.magi/graphs") };
-            _entityContext = new EntityContext(
-                _factory.Object,
-                _mappingsRepository,
-                mappingContext,
-                new EntityStore(),
-                entitySource,
-                _baseUriSelectionPolicy.Object,
-                new TestGraphSelector(),
-                _typeCache,
-                new DefaultBlankNodeIdGenerator(),
-                new ResultTransformerCatalog(new IResultAggregator[0]), 
-                _locator.Object);
+            _entityContext = factory.CreateContext();
         }
 
         [Test]
@@ -411,6 +390,29 @@ namespace RomanticWeb.Tests.Linq
             {
                 Class(Vocabularies.Rdfs.Class);
                 Collection("Types", Vocabularies.Rdf.type, typeof(ICollection<EntityId>), new EntityIdConverter());
+            }
+        }
+
+        private class Dependencies : ICompositionRoot
+        {
+            private readonly TestCache _typeCache;
+            private readonly Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
+
+            public Dependencies()
+            {
+                _typeCache = new TestCache();
+                _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
+                _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://magi/"));
+            }
+
+            public void Compose(IServiceRegistry serviceRegistry)
+            {
+                serviceRegistry.RegisterInstance<IRdfTypeCache>(_typeCache);
+                serviceRegistry.RegisterInstance(_baseUriSelectionPolicy.Object);
+                serviceRegistry.Register<INamedGraphSelector, TestGraphSelector>();
+
+                var repository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap(), new TestAdressMap());
+                serviceRegistry.RegisterInstance<IMappingsRepository>(repository);
             }
         }
     }

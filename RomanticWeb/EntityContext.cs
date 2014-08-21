@@ -4,7 +4,6 @@ using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
 using NullGuard;
-using RomanticWeb.ComponentModel;
 using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
@@ -35,7 +34,6 @@ namespace RomanticWeb
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
-        private readonly IServiceLocator _serviceLocator;
 
         #endregion
 
@@ -51,10 +49,9 @@ namespace RomanticWeb
             INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog, 
-            IServiceLocator serviceLocator)
-            : this(serviceLocator)
+            IResultTransformerCatalog transformerCatalog)
         {
+            LogTo.Info("Creating entity context");
             if (baseUriSelector == null)
             {
                 LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
@@ -70,12 +67,7 @@ namespace RomanticWeb
             _typeCache = typeCache;
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
-        }
 
-        private EntityContext(IServiceLocator serviceLocator)
-        {
-            _serviceLocator = serviceLocator;
-            LogTo.Info("Creating entity context");
             EntityCache = new InMemoryEntityCache();
         }
 
@@ -223,7 +215,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _serviceLocator.GetService<FallbackNodeConverter>(), TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.Services.GetService<FallbackNodeConverter>(), TransformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 

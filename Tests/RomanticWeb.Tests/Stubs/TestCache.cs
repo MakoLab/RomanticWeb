@@ -28,7 +28,6 @@ namespace RomanticWeb.Tests.Stubs
 
         public void Add(Type entityType, IList<IClassMapping> classMappings)
         {
-            throw new NotImplementedException();
         }
 
         public void Setup<TRequested, TReturned>()

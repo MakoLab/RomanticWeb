@@ -2,7 +2,6 @@
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -16,6 +15,7 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IBlankNodeIdGenerator, DefaultBlankNodeIdGenerator>();
             registry.Register<IOntologyProvider, DefaultOntologiesProvider>("DefaultOntologiesProvider");
             registry.Register<INamedGraphSelector, NamedGraphSelector>();
+            registry.Register<IEntityStore, EntityStore>();
         }
 
         private IEntityContext CreateEntityContext(IServiceFactory factory)
@@ -35,8 +35,7 @@ namespace RomanticWeb.ComponentModel
                     factory.GetInstance<INamedGraphSelector>(),
                     factory.GetInstance<IRdfTypeCache>(),
                     factory.GetInstance<IBlankNodeIdGenerator>(),
-                    factory.GetInstance<IResultTransformerCatalog>(),
-                    factory.GetInstance<IServiceLocator>());
+                    factory.GetInstance<IResultTransformerCatalog>());
             }
         }
     }

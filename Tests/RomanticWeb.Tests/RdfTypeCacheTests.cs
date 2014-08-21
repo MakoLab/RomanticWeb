@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
 using NUnit.Framework;
 using RomanticWeb.Entities;
@@ -40,7 +39,7 @@ namespace RomanticWeb.Tests
         public void Should_return_requested_type_if_it_is_only_mapped()
         {
             // given
-            Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
 
             // when
             var type = _rdfTypeCache.GetMostDerivedMappedTypes(_entity.Types.Select(item => item.Uri), typeof(IAgent)).Single();
@@ -53,8 +52,8 @@ namespace RomanticWeb.Tests
         public void Should_return_derived_type_if_requested_parent_but_entity_is_appropriately_typed()
         {
             // given
-            Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
-            Visit(CreateMapping<IPerson>(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(IPerson), CreateClassMappings(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
@@ -68,8 +67,8 @@ namespace RomanticWeb.Tests
         public void Should_not_return_unrelated_type_mapped_to_same_class_URI()
         {
             // given
-            Visit(CreateMapping<IAgent>());
-            Visit(CreateMapping<TestEntities.IPerson>(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(TestEntities.IPerson), CreateClassMappings(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
 
             // when
@@ -83,10 +82,10 @@ namespace RomanticWeb.Tests
         public void Should_return_correct_subtype_when_base_type_explicitly_stated()
         {
             // given
-            Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
-            Visit(CreateMapping<IOrganization>(Vocabularies.Foaf.Organization));
-            Visit(CreateMapping<IGroup>(Vocabularies.Foaf.Group));
-            Visit(CreateMapping<IPerson>(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(IOrganization), CreateClassMappings(Vocabularies.Foaf.Organization));
+            _rdfTypeCache.Add(typeof(IGroup), CreateClassMappings(Vocabularies.Foaf.Group));
+            _rdfTypeCache.Add(typeof(IPerson), CreateClassMappings(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
 
@@ -101,8 +100,8 @@ namespace RomanticWeb.Tests
         public void Should_return_correct_subtype_when_additional_unrelated_types_present()
         {
             // given
-            Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
-            Visit(CreateMapping<IPerson>(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(IPerson), CreateClassMappings(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
             _entity.Types.Add(new EntityId(new Uri("urn:other:type")));
@@ -118,9 +117,9 @@ namespace RomanticWeb.Tests
         public void Should_return_multiple_matching_most_derived_types()
         {
             // given
-            Visit(CreateMapping<IAgent>(Vocabularies.Foaf.Agent));
-            Visit(CreateMapping<IPerson>(Vocabularies.Foaf.Person));
-            Visit(CreateMapping<IAlsoPerson>(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAgent), CreateClassMappings(Vocabularies.Foaf.Agent));
+            _rdfTypeCache.Add(typeof(IPerson), CreateClassMappings(Vocabularies.Foaf.Person));
+            _rdfTypeCache.Add(typeof(IAlsoPerson), CreateClassMappings(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Person));
             _entity.Types.Add(new EntityId(Vocabularies.Foaf.Agent));
 
@@ -133,16 +132,6 @@ namespace RomanticWeb.Tests
             type.Should().NotContain(typeof(IAgent));
         }
 
-        private static IEntityMapping CreateMapping<T>(params Uri[] classUris)
-        {
-            var classMappings = classUris.Select(CreateClassMapping);
-            return new
-                       {
-                           EntityType = typeof(T),
-                           Classes = classMappings
-                       }.ActLike<IEntityMapping>();
-        }
-
         private static IClassMapping CreateClassMapping(Uri uri)
         {
             return New.ExpandoObject(
@@ -151,14 +140,9 @@ namespace RomanticWeb.Tests
                       .ActLike<IClassMapping>();
         }
 
-        private void Visit(IEntityMapping mapping)
+        private static IList<IClassMapping> CreateClassMappings(params Uri[] uris)
         {
-            _rdfTypeCache.Visit(mapping);
-
-            foreach (var classMapping in mapping.Classes)
-            {
-                _rdfTypeCache.Visit(classMapping);
-            }
+            return (from uri in uris select CreateClassMapping(uri)).ToList();
         }
 
         private class TypedEntity : ITypedEntity

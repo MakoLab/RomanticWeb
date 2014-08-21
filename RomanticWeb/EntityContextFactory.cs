@@ -26,10 +26,6 @@ namespace RomanticWeb
         /// </summary>
         public EntityContextFactory()
         {
-            ////_namedGraphSelector = new NamedGraphSelector();
-            ////_mappingsRepository = new MappingsRepository();
-            ////_mappingsRepository.AddVisitor(_matcher);
-
             LogTo.Info("Created entity context factory");
 
             _container.RegisterAssembly(GetType().Assembly);

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
-using RomanticWeb.ComponentModel;
 using RomanticWeb.Configuration;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
@@ -19,22 +19,25 @@ namespace RomanticWeb
     /// </summary>
     public class EntityContextFactory : IEntityContextFactory
     {
-        private readonly IServiceContainer _container = new ServiceContainer();
-        private readonly ServiceLocator _serviceLocator;
+        private readonly IServiceContainer _container;
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
         /// </summary>
         public EntityContextFactory()
+            : this(new ServiceContainer())
         {
             LogTo.Info("Created entity context factory");
 
             _container.RegisterAssembly(GetType().Assembly);
             _container.RegisterInstance<IEntityContextFactory>(this);
-            _serviceLocator = new ServiceLocator(_container);
-            _container.RegisterInstance<IServiceLocator>(_serviceLocator);
 
             WithMappings(DefaultMappings);
+        }
+
+        internal EntityContextFactory(IServiceContainer container)
+        {
+            _container = container;
         }
 
         /// <inheritdoc/>
@@ -64,11 +67,11 @@ namespace RomanticWeb
             }
         }
 
-        public IServiceLocator Services
+        public INodeConverter FallbackNodeConverter
         {
             get
             {
-                return _serviceLocator;
+                return _container.GetInstance<INodeConverter>();
             }
         }
 

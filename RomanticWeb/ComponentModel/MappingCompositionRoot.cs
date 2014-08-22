@@ -13,8 +13,8 @@ namespace RomanticWeb.ComponentModel
     {
         void ICompositionRoot.Compose(IServiceRegistry registry)
         {
-            registry.Register(factory => CreateMappingContext(factory));
-            registry.Register<IMappingsRepository, MappingsRepository>();
+            registry.Register(factory => CreateMappingContext(factory), new PerContainerLifetime());
+            registry.Register<IMappingsRepository, MappingsRepository>(new PerContainerLifetime());
             registry.Register<MappingModelBuilder>();
 
             registry.Register<IRdfTypeCache, RdfTypeCache>(new PerContainerLifetime());

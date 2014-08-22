@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -12,9 +11,9 @@ namespace RomanticWeb.Converters
         private readonly IConverterCatalog _converters;
 
         /// <summary>Constructor with entity context passed.</summary>
-        public FallbackNodeConverter(IEnumerable<INodeConverter> converters)
+        public FallbackNodeConverter(IConverterCatalog converters)
         {
-            _converters = new ConverterCatalog(converters);
+            _converters = converters;
         }
 
         /// <summary>

@@ -169,7 +169,6 @@
     <Compile Include="IntegrationTests\TestMappings\DefaultGraphPersonMapping.cs" />
     <Compile Include="IntegrationTests\DynamicTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\InMemoryDynamicTests.cs" />
-    <Compile Include="IntegrationTests\InMemory\InMemoryMappingTestsBase.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTestsBase.cs" />
     <Compile Include="IntegrationTests\TestMappings\NamedGraphsPersonMapping.cs" />

@@ -4,7 +4,6 @@ using System.Linq;
 using Anotar.NLog;
 using ImpromptuInterface;
 using NullGuard;
-using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
@@ -215,7 +214,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.Services.GetService<FallbackNodeConverter>(), TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, TransformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 

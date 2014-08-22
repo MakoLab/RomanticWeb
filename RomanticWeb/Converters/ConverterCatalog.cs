@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using RomanticWeb.LightInject;
 
 namespace RomanticWeb.Converters
 {
@@ -10,19 +11,14 @@ namespace RomanticWeb.Converters
     /// </summary>
     public sealed class ConverterCatalog : IConverterCatalog
     {
-        private readonly IEnumerable<INodeConverter> _nodeConverters;
-
-        internal ConverterCatalog(IEnumerable<INodeConverter> nodeConverters)
-        {
-            _nodeConverters = nodeConverters;
-        }
+        private readonly IDictionary<Type, INodeConverter> _nodeConverters = new ThreadSafeDictionary<Type, INodeConverter>();
 
         /// <inheritdoc/>
         public IReadOnlyCollection<INodeConverter> UriNodeConverters
         {
             get
             {
-                return new ReadOnlyCollection<INodeConverter>(_nodeConverters.ToList());
+                return new ReadOnlyCollection<INodeConverter>(_nodeConverters.Values.ToList());
             }
         }
 
@@ -31,8 +27,25 @@ namespace RomanticWeb.Converters
         {
             get
             {
-                return new ReadOnlyCollection<ILiteralNodeConverter>(_nodeConverters.Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
+                return new ReadOnlyCollection<ILiteralNodeConverter>(_nodeConverters.Values.Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
             }
+        }
+
+        /// <inheritdoc/>
+        public INodeConverter GetConverter(Type converterType)
+        {
+            if (!_nodeConverters.ContainsKey(converterType))
+            {
+                AddConverter((INodeConverter)Activator.CreateInstance(converterType));
+            }
+
+            return _nodeConverters[converterType];
+        }
+
+        /// <inheritdoc/>
+        public void AddConverter(INodeConverter nodeConverter)
+        {
+            _nodeConverters[nodeConverter.GetType()] = nodeConverter;
         }
     }
 }

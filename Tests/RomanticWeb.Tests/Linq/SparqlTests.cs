@@ -49,13 +49,14 @@ namespace RomanticWeb.Tests.Linq
             _store = new TripleStore();
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig");
 
-            IEntityContextFactory factory = new EntityContextFactory()
+            IServiceContainer container = new ServiceContainer();
+            IEntityContextFactory factory = new EntityContextFactory(container)
                 .WithDefaultOntologies()
                 .WithEntitySource(() => new TripleStoreAdapter(_store))
                 .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
                 .WithDependencies<Dependencies>();
 
-            _typeCache = (TestCache)factory.Services.GetService<IRdfTypeCache>();
+            _typeCache = (TestCache)container.GetInstance<IRdfTypeCache>();
 
             _entityContext = factory.CreateContext();
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RomanticWeb.Converters
 {
@@ -22,5 +23,9 @@ namespace RomanticWeb.Converters
         /// The literal node converters.
         /// </value>
         IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
+
+        INodeConverter GetConverter(Type converterType);
+
+        void AddConverter(INodeConverter nodeConverter);
     }
 }

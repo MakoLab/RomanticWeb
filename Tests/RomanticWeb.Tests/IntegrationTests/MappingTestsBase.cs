@@ -362,7 +362,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Creating_entity_should_populate_changeset_with_entity_type()
+        public void Creating_entity_should_populate_changeset_with_all_entity_types()
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
@@ -374,13 +374,20 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Assert.That(EntityContext.HasChanges);
-            var newTriple = new EntityQuad(
+            var agentTriple = new EntityQuad(
                 entityId,
                 Node.ForUri(entityUri),
                 Node.ForUri(Rdf.type),
                 Node.ForUri(Foaf.Person),
                 Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
-            EntityContext.Store.Changes.QuadsAdded.Should().Contain(newTriple);
+            var personTriple = new EntityQuad(
+                entityId,
+                Node.ForUri(entityUri),
+                Node.ForUri(Rdf.type),
+                Node.ForUri(Foaf.Agent),
+                Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
+            EntityContext.Store.Changes.QuadsAdded.Should().Contain(personTriple);
+            EntityContext.Store.Changes.QuadsAdded.Should().Contain(agentTriple);
         }
 
         [Test]

@@ -91,6 +91,7 @@
     <Compile Include="Converters\IConverterCatalog.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
+    <Compile Include="Converters\IFallbackNodeConverter.cs" />
     <Compile Include="Converters\ILiteralNodeConverter.cs" />
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="Converters\FallbackNodeConverter.cs" />
@@ -275,7 +276,8 @@
     <Compile Include="Mapping\Providers\TermMappingProvider.cs" />
     <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
     <Compile Include="Mapping\Providers\VisitableEntityMappingProviderBase.cs" />
-    <Compile Include="Mapping\RdfTypeCacheBuilder.cs" />
+    <Compile Include="Mapping\Visitors\ConverterCatalogVisitor.cs" />
+    <Compile Include="Mapping\Visitors\RdfTypeCacheBuilder.cs" />
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Sources\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\Sources\ClosedGenericEntityMappingProvider.cs" />

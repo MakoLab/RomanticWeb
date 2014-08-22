@@ -414,6 +414,8 @@ namespace RomanticWeb.Tests.Linq
 
                 var repository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap(), new TestAdressMap());
                 serviceRegistry.RegisterInstance<IMappingsRepository>(repository);
+
+                serviceRegistry.Register<INodeConverter, StringConverter>("String converter");
             }
         }
     }

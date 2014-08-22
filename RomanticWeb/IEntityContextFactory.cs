@@ -20,7 +20,7 @@ namespace RomanticWeb
         /// </summary>
         IEnumerable<IConvention> Conventions { get; }
 
-        INodeConverter FallbackNodeConverter { get; }
+        IFallbackNodeConverter FallbackNodeConverter { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

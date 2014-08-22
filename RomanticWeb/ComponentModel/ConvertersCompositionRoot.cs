@@ -9,12 +9,8 @@ namespace RomanticWeb.ComponentModel
     {
         public void Compose(IServiceRegistry registry)
         {
-            var converterCatalog = new ConverterCatalog();
-            var fallbackNodeConverter = new FallbackNodeConverter(converterCatalog);
-            converterCatalog.AddConverter(fallbackNodeConverter);
-
-            registry.RegisterInstance<IConverterCatalog>(converterCatalog);
-            registry.RegisterInstance<INodeConverter>(fallbackNodeConverter);
+            registry.Register<IConverterCatalog, ConverterCatalog>(new PerContainerLifetime());
+            registry.Register<IFallbackNodeConverter, FallbackNodeConverter>(new PerContainerLifetime());
 
             registry.Register<IResultTransformerCatalog, ResultTransformerCatalog>(new PerContainerLifetime());
             RegisterResultAggregator<AnyResultCheck>(registry);

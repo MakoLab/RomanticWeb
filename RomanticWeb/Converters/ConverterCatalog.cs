@@ -13,6 +13,19 @@ namespace RomanticWeb.Converters
     {
         private readonly IDictionary<Type, INodeConverter> _nodeConverters = new ThreadSafeDictionary<Type, INodeConverter>();
 
+        public ConverterCatalog(IEnumerable<INodeConverter> converters)
+        {
+            foreach (var converter in converters)
+            {
+                AddConverter(converter);
+            }
+        }
+
+        internal ConverterCatalog()
+            : this(new INodeConverter[0])
+        {
+        }
+
         /// <inheritdoc/>
         public IReadOnlyCollection<INodeConverter> UriNodeConverters
         {
@@ -36,7 +49,7 @@ namespace RomanticWeb.Converters
         {
             if (!_nodeConverters.ContainsKey(converterType))
             {
-                AddConverter((INodeConverter)Activator.CreateInstance(converterType));
+                AddConverter(CreateConverter(converterType));
             }
 
             return _nodeConverters[converterType];
@@ -46,6 +59,16 @@ namespace RomanticWeb.Converters
         public void AddConverter(INodeConverter nodeConverter)
         {
             _nodeConverters[nodeConverter.GetType()] = nodeConverter;
+        }
+
+        private INodeConverter CreateConverter(Type converterType)
+        {
+            if (converterType == typeof(FallbackNodeConverter))
+            {
+                return new FallbackNodeConverter(this);
+            }
+
+            return (INodeConverter)Activator.CreateInstance(converterType);
         }
     }
 }

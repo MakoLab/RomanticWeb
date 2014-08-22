@@ -370,7 +370,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             var entityId = new EntityId(entityUri);
 
             // then
-            EntityContext.Create<IPerson>(entityId);
+            EntityContext.Create<TestEntities.Foaf.IPerson>(entityId);
 
             // then
             Assert.That(EntityContext.HasChanges);

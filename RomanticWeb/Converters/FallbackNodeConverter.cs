@@ -6,7 +6,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Converters
 {
     /// <summary>Default converter for <see cref="Node"/>s to value objects or entities.</summary>
-    public sealed class FallbackNodeConverter : INodeConverter
+    public sealed class FallbackNodeConverter : IFallbackNodeConverter
     {
         private readonly IConverterCatalog _converters;
 
@@ -14,6 +14,7 @@ namespace RomanticWeb.Converters
         public FallbackNodeConverter(IConverterCatalog converters)
         {
             _converters = converters;
+            _converters.AddConverter(this);
         }
 
         /// <summary>

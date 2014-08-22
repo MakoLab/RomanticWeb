@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using RomanticWeb.Mapping.Model;
 
-namespace RomanticWeb.Mapping
+namespace RomanticWeb.Mapping.Visitors
 {
-    internal class RdfTypeCacheBuilder : Visitors.IMappingModelVisitor
+    internal class RdfTypeCacheBuilder : IMappingModelVisitor
     {
         private readonly IRdfTypeCache _rdfTypeCache;
         private readonly IDictionary<Type, IList<IClassMapping>> _classMappings;

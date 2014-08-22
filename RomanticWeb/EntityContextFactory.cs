@@ -29,15 +29,14 @@ namespace RomanticWeb
         {
             LogTo.Info("Created entity context factory");
 
-            _container.RegisterAssembly(GetType().Assembly);
-            _container.RegisterInstance<IEntityContextFactory>(this);
-
             WithMappings(DefaultMappings);
         }
 
         internal EntityContextFactory(IServiceContainer container)
         {
             _container = container;
+            _container.RegisterAssembly(GetType().Assembly);
+            _container.RegisterInstance<IEntityContextFactory>(this);
         }
 
         /// <inheritdoc/>
@@ -67,11 +66,11 @@ namespace RomanticWeb
             }
         }
 
-        public INodeConverter FallbackNodeConverter
+        public IFallbackNodeConverter FallbackNodeConverter
         {
             get
             {
-                return _container.GetInstance<INodeConverter>();
+                return _container.GetInstance<IFallbackNodeConverter>();
             }
         }
 

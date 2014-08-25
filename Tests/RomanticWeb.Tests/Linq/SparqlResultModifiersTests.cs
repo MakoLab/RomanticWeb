@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
@@ -58,7 +59,7 @@ namespace RomanticWeb.Tests.Linq
                 new TestGraphSelector(),
                 _typeCache,
                 new DefaultBlankNodeIdGenerator(),
-                new ResultTransformerCatalog(new IResultAggregator[0]));
+                new ResultTransformerCatalog(new IResultAggregator[0], new EmitHelper()));
         }
 
         [Test]

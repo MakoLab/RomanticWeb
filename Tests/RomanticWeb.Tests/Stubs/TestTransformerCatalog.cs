@@ -1,4 +1,5 @@
-﻿using RomanticWeb.Entities;
+﻿using RomanticWeb.Dynamic;
+using RomanticWeb.Entities;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;
@@ -25,7 +26,7 @@ namespace RomanticWeb.Tests.Stubs
                 switch (collection.StoreAs)
                 {
                     case StoreAs.RdfList:
-                        return new RdfListTransformer();
+                        return new RdfListTransformer(new EmitHelper());
                     case StoreAs.SimpleCollection:
                         return new ObservableCollectionTransformer();
                 }

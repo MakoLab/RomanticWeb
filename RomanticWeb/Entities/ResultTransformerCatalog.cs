@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;
@@ -8,13 +9,15 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// Default implementation of <see cref="IResultTransformerCatalog"/>
     /// </summary>
-    public sealed class ResultTransformerCatalog : IResultTransformerCatalog
+    internal sealed class ResultTransformerCatalog : IResultTransformerCatalog
     {
         private readonly IDictionary<Aggregation, IResultAggregator> _aggregations;
         private readonly IResultAggregator _fallbackAggregation = new OriginalResult();
+        private readonly EmitHelper _emitHelper;
 
-        public ResultTransformerCatalog(IEnumerable<IResultAggregator> resultAggregators)
+        public ResultTransformerCatalog(IEnumerable<IResultAggregator> resultAggregators, EmitHelper emitHelper)
         {
+            _emitHelper = emitHelper;
             _aggregations = new Dictionary<Aggregation, IResultAggregator>();
 
             foreach (var resultAggregator in resultAggregators)
@@ -42,7 +45,7 @@ namespace RomanticWeb.Entities
             {
                 if (collectionMapping.StoreAs == StoreAs.RdfList)
                 {
-                    return new RdfListTransformer();
+                    return new RdfListTransformer(_emitHelper);
                 }
 
                 if (collectionMapping.StoreAs == StoreAs.SimpleCollection)

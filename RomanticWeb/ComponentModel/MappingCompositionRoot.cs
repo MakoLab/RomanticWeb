@@ -1,4 +1,5 @@
-﻿using RomanticWeb.LightInject;
+﻿using RomanticWeb.Dynamic;
+using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
@@ -24,6 +25,8 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IMappingProviderVisitor, MappingProvidersValidator>("MappingProvidersValidator");
             registry.Register<IMappingProviderVisitor, GeneratedListMappingSource>("GeneratedListMappingSource");
             registry.Register<IMappingProviderVisitor, GeneratedDictionaryMappingSource>("GeneratedDictionaryMappingSource");
+
+            registry.Register<EmitHelper>(new PerContainerLifetime());
         }
 
         private MappingContext CreateMappingContext(IServiceFactory factory)

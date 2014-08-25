@@ -101,6 +101,7 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Dynamic\EmitExtensions.cs" />
     <Compile Include="Dynamic\EmitHelper.cs" />
     <Compile Include="Dynamic\DefaultDictionaryTypeProvider.cs" />
     <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />

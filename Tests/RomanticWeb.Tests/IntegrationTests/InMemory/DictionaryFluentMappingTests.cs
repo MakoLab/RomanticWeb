@@ -8,7 +8,7 @@ using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests.InMemory
 {
-    [TestFixture, RunInApplicationDomain]
+    [TestFixture]
     public class DictionaryFluentMappingTests : DictionaryTestsBase
     {
         private TripleStore _store;

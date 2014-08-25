@@ -8,7 +8,7 @@ using RomanticWeb.TestEntities;
 
 namespace RomanticWeb.Tests
 {
-    [TestFixture, RunInApplicationDomain]
+    [TestFixture]
     public class EntityContextFactoryTests
     {
         private EntityContextFactory _entityContextFactory;

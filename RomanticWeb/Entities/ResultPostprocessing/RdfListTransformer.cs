@@ -15,14 +15,17 @@ namespace RomanticWeb.Entities.ResultPostprocessing
     /// <summary>
     /// Transforms the resulting nodes to an RDF:list adapter
     /// </summary>
-    public class RdfListTransformer : SimpleTransformer
+    internal class RdfListTransformer : SimpleTransformer
     {
+        private readonly EmitHelper _emitHelper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfListTransformer"/> class.
         /// </summary>
-        public RdfListTransformer()
+        public RdfListTransformer(EmitHelper emitHelper)
             : base(new SingleOrDefault())
         {
+            _emitHelper = emitHelper;
         }
 
         /// <summary>
@@ -94,14 +97,14 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             }
         }
 
-        private static Type GetOwnerType(IPropertyMapping property)
+        private Type GetOwnerType(IPropertyMapping property)
         {
-            return EmitHelper.GetBuilder().GetType(string.Format("{0}_{1}_ListOwner", property.DeclaringType.FullName, property.Name), true);
+            return _emitHelper.GetBuilder().GetType(string.Format("{0}_{1}_ListOwner", property.DeclaringType.FullName, property.Name), true);
         }
 
-        private static Type GetNodeType(IPropertyMapping property)
+        private Type GetNodeType(IPropertyMapping property)
         {
-            return EmitHelper.GetBuilder().GetType(string.Format("{0}_{1}_ListNode", property.DeclaringType.FullName, property.Name), true);
+            return _emitHelper.GetBuilder().GetType(string.Format("{0}_{1}_ListNode", property.DeclaringType.FullName, property.Name), true);
         }
     }
 }

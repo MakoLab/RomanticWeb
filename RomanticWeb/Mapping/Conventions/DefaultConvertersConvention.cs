@@ -60,7 +60,7 @@ namespace RomanticWeb.Mapping.Conventions
         /// </summary>
         /// <typeparam name="T">Typ of property</typeparam>
         /// <typeparam name="TConverter">The type of the converter.</typeparam>
-        public DefaultConvertersConvention SetDefault<T, TConverter>() where TConverter : INodeConverter, new()
+        public DefaultConvertersConvention SetDefault<T, TConverter>() where TConverter : INodeConverter
         {
             SetDefault(typeof(T), typeof(TConverter));
             return this;

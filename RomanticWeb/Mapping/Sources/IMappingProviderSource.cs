@@ -8,9 +8,11 @@ namespace RomanticWeb.Mapping.Sources
     /// </summary>
     public interface IMappingProviderSource
     {
+        string Description { get; }
+   
         /// <summary>
         /// Gets the mapping providers.
         /// </summary>
         IEnumerable<IEntityMappingProvider> GetMappingProviders();
-    }
+ }
 }

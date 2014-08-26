@@ -123,6 +123,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithOntology(IOntologyProvider ontologyProvider)
         {
+            // todo: get rid of Guid by refatoring how ontolgies are added
             _container.RegisterInstance(ontologyProvider, Guid.NewGuid().ToString());
 
             return this;
@@ -147,7 +148,7 @@ namespace RomanticWeb
 
             foreach (var source in mappingBuilder.Sources)
             {
-                _container.RegisterInstance(source.Repository, source.Name);
+                _container.RegisterInstance(source, source.Description);
             }
 
             return this;
@@ -156,9 +157,9 @@ namespace RomanticWeb
         /// <summary>Exposes a method to define how base <see cref="Uri"/>s are selected for relavitve <see cref="EntityId"/>s.</summary>
         public EntityContextFactory WithBaseUri(Action<BaseUriSelectorBuilder> setupPolicy)
         {
-            ////var builder = new BaseUriSelectorBuilder();
-            ////setupPolicy(builder);
-            ////_baseUriSelector = builder.Build();
+            var builder = new BaseUriSelectorBuilder();
+            setupPolicy(builder);
+            _container.RegisterInstance(builder.Build());
             return this;
         }
 

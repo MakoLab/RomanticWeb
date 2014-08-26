@@ -5,7 +5,7 @@ using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Model
 {
-    public class MappingModelBuilder
+    internal class MappingModelBuilder
     {
         private readonly MappingContext _mappingContext;
         private readonly IConverterCatalog _converterCatalog;

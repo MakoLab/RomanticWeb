@@ -22,6 +22,14 @@ namespace RomanticWeb.Mapping.Sources
             LogTo.Trace("Created fluent mappings repository for assembly {0}", assembly);
         }
 
+        public override string Description
+        {
+            get
+            {
+                return string.Format("Fluent mappings from assembly {0}", Assembly);
+            }
+        }
+
         /// <summary>
         /// Finds all fluent <see cref="AssemblyMappingsSource.Assembly"/>s in the <see cref="AssemblyMappingsSource"/>
         /// and transforms them to <see cref="EntityMap"/>s

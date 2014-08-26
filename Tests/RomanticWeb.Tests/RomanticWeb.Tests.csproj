@@ -58,9 +58,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NUnit.ApplicationDomain">
-      <HintPath>..\..\packages\NUnit.ApplicationDomain.1.0.3\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.core.dll</HintPath>
       <Private>False</Private>

@@ -279,7 +279,6 @@
     <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
     <Compile Include="Mapping\Providers\VisitableEntityMappingProviderBase.cs" />
     <Compile Include="Mapping\Visitors\ConverterCatalogVisitor.cs" />
-    <Compile Include="Mapping\Visitors\IMappingProviderVisitorChain.cs" />
     <Compile Include="Mapping\Visitors\MappingProviderVisitorChain.cs" />
     <Compile Include="Mapping\Visitors\RdfTypeCacheBuilder.cs" />
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />

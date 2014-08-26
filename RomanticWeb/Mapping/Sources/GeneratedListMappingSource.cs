@@ -28,6 +28,14 @@ namespace RomanticWeb.Mapping.Sources
             _ontologyProvider = mappingContext.OntologyProvider;
         }
 
+        public string Description
+        {
+            get
+            {
+                return "Collection mappings";
+            }
+        }
+
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             return from map in _entryMaps select map.Accept(_visitor);

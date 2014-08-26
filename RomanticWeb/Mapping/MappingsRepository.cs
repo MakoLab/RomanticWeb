@@ -12,7 +12,7 @@ namespace RomanticWeb.Mapping
     /// <summary>
     /// Default implementation of <see cref="IMappingsRepository"/>
     /// </summary>
-    public sealed class MappingsRepository : IMappingsRepository
+    internal sealed class MappingsRepository : IMappingsRepository
     {
         private readonly IList<IMappingProviderSource> _sources;
         private readonly IDictionary<Type, IEntityMapping> _mappings;

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace RomanticWeb.Mapping.Visitors
 {
-    internal class MappingProviderVisitorChain : IMappingProviderVisitorChain
+    internal class MappingProviderVisitorChain
     {
         private readonly IList<Type> _visitors = new List<Type>();
 
@@ -16,25 +16,9 @@ namespace RomanticWeb.Mapping.Visitors
             }
         }
 
-        public void AddFirst<T>() where T : IMappingProviderVisitor
-        {
-            _visitors.Insert(0, typeof(T));
-        }
-
-        public void AddLast<T>() where T : IMappingProviderVisitor
+        public void Add<T>() where T : IMappingProviderVisitor
         {
             _visitors.Add(typeof(T));
-        }
-
-        public void AddAfter<TExisting, TNew>() where TExisting : IMappingProviderVisitor where TNew : IMappingProviderVisitor
-        {
-            var indexOfExisting = _visitors.IndexOf(typeof(TExisting));
-            if (indexOfExisting == -1)
-            {
-                AddLast<TNew>();
-            }
-
-            _visitors.Insert(indexOfExisting + 1, typeof(TNew));
         }
     }
 }

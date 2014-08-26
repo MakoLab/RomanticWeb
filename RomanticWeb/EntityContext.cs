@@ -44,23 +44,27 @@ namespace RomanticWeb
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            IBaseUriSelectionPolicy baseUriSelector,
+            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog)
-            : this(
-                factory,
-                mappings,
-                mappingContext,
-                entityStore,
-                entitySource,
-                namedGraphSelector,
-                typeCache,
-                blankIdGenerator,
-                transformerCatalog)
+            IResultTransformerCatalog transformerCatalog) : this()
         {
+            _factory = factory;
+            _entityStore = entityStore;
+            _entitySource = entitySource;
             _baseUriSelector = baseUriSelector;
+            _mappings = mappings;
+            _mappingContext = mappingContext;
+            GraphSelector = namedGraphSelector;
+            _typeCache = typeCache;
+            _blankIdGenerator = blankIdGenerator;
+            _transformerCatalog = transformerCatalog;
+
+            if (_baseUriSelector == null)
+            {
+                LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
+            } 
         }
 
         public EntityContext(
@@ -73,19 +77,23 @@ namespace RomanticWeb
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog)
+            : this(
+                factory,
+                mappings,
+                mappingContext,
+                entityStore,
+                entitySource,
+                null,
+                namedGraphSelector,
+                typeCache,
+                blankIdGenerator,
+                transformerCatalog)
+        {
+        }
+
+        private EntityContext()
         {
             LogTo.Info("Creating entity context");
-
-            _factory = factory;
-            _entityStore = entityStore;
-            _entitySource = entitySource;
-            _mappings = mappings;
-            _mappingContext = mappingContext;
-            GraphSelector = namedGraphSelector;
-            _typeCache = typeCache;
-            _blankIdGenerator = blankIdGenerator;
-            _transformerCatalog = transformerCatalog;
-
             EntityCache = new InMemoryEntityCache();
         }
 
@@ -122,18 +130,7 @@ namespace RomanticWeb
 
         /// <inheritdoc />
         [AllowNull]
-        public IBaseUriSelectionPolicy BaseUriSelector
-        {
-            get
-            {
-                if (_baseUriSelector == null)
-                {
-                    LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
-                } 
-                
-                return _baseUriSelector;
-            }
-        }
+        public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
 
         internal IEntityCache EntityCache { get; private set; }
         #endregion
@@ -212,11 +209,11 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T EntityAs<T>(IEntity entity) where T : class, IEntity
         {
-            var rootEntity = (Entity)entity;
+            Entity rootEntity = (Entity)entity;
             rootEntity.EnsureIsInitialized();
             IEnumerable<Uri> entityTypeUris = _entityStore.GetObjectsForPredicate(rootEntity.Id, Rdf.type, GraphSelector.SelectGraph(rootEntity.Id, null, null)).Select(item => item.Uri);
             var entityTypes = _typeCache.GetMostDerivedMappedTypes(entityTypeUris, typeof(T));
-            return EntityAs(rootEntity, typeof(T), entityTypes.ToArray());
+            return EntityAs((Entity)rootEntity, typeof(T), entityTypes.ToArray());
         }
 
         /// <inheritdoc />

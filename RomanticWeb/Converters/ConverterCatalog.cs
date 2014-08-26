@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using RomanticWeb.LightInject;
 
 namespace RomanticWeb.Converters
 {
@@ -11,7 +10,7 @@ namespace RomanticWeb.Converters
     /// </summary>
     public sealed class ConverterCatalog : IConverterCatalog
     {
-        private readonly IDictionary<Type, INodeConverter> _nodeConverters = new ThreadSafeDictionary<Type, INodeConverter>();
+        private readonly IDictionary<Type, INodeConverter> _nodeConverters = new Dictionary<Type, INodeConverter>();
 
         public ConverterCatalog(IEnumerable<INodeConverter> converters)
         {

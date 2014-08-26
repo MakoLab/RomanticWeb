@@ -25,6 +25,14 @@ namespace RomanticWeb.Mapping.Sources
             _ontologyProvider = mappingContext.OntologyProvider;
         }
 
+        public string Description
+        {
+            get
+            {
+                return "Dictionary mappings";
+            }
+        }
+
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             return from map in _entityMaps

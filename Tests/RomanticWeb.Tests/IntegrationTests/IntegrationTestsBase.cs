@@ -81,7 +81,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected virtual IMappingProviderSource SetupMappings()
         {
-            return new Mock<IMappingProviderSource>().Object;
+            var mock = new Mock<IMappingProviderSource>();
+            mock.SetupGet(p => p.Description).Returns("Mock provider");
+            return mock.Object;
         }
 
         protected virtual void ChildSetup()

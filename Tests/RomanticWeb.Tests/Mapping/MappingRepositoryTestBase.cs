@@ -9,7 +9,6 @@ using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
-using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.Tests.Mapping
@@ -19,7 +18,7 @@ namespace RomanticWeb.Tests.Mapping
         private Mock<IOntologyProvider> _ontologies;
         private MappingsRepository _mappingsRepository;
 
-        protected MappingsRepository MappingsRepository
+        internal MappingsRepository MappingsRepository
         {
             get
             {

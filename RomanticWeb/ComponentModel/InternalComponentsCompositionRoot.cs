@@ -56,7 +56,7 @@ namespace RomanticWeb.ComponentModel
 
         private static IMappingsRepository CreateMappingsRepository(IServiceFactory factory)
         {
-            var visitors = from type in factory.GetInstance<IMappingProviderVisitorChain>().Visitors
+            var visitors = from type in factory.GetInstance<MappingProviderVisitorChain>().Visitors
                            select (IMappingProviderVisitor)factory.GetInstance(type);
 
             return new MappingsRepository(

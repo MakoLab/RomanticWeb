@@ -11,7 +11,7 @@ namespace RomanticWeb.Mapping
     [NullGuard(ValidationFlags.All)]
     public sealed class MappingBuilder
     {
-        private readonly IList<MappingProviderSourceMeta> _sources = new List<MappingProviderSourceMeta>();
+        private readonly IList<IMappingProviderSource> _sources = new List<IMappingProviderSource>();
 
         /// <summary>
         /// Allows registering attribute mappings
@@ -35,7 +35,7 @@ namespace RomanticWeb.Mapping
             }
         }
 
-        internal IEnumerable<MappingProviderSourceMeta> Sources
+        internal IEnumerable<IMappingProviderSource> Sources
         {
             get
             {
@@ -61,38 +61,10 @@ namespace RomanticWeb.Mapping
             Attributes.FromAssembly(assembly);
         }
 
-        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingsRepository)
+        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingProvider)
             where TMappingRepository : IMappingProviderSource
         {
-            _sources.Add(new MappingProviderSourceMeta(mappingAssembly, mappingsRepository));
-        }
-
-        internal struct MappingProviderSourceMeta
-        {
-            private readonly Assembly _mappingAssembly;
-            private readonly IMappingProviderSource _mappingsRepository;
-
-            public MappingProviderSourceMeta(Assembly mappingAssembly, IMappingProviderSource mappingsRepository)
-            {
-                _mappingAssembly = mappingAssembly;
-                _mappingsRepository = mappingsRepository;
-            }
-
-            public IMappingProviderSource Repository
-            {
-                get
-                {
-                    return _mappingsRepository;
-                }
-            }
-
-            public string Name
-            {
-                get
-                {
-                    return string.Format("{0} from assembly {1}", Repository.GetType().Name, _mappingAssembly.FullName);
-                }
-            }
+            _sources.Add(mappingProvider);
         }
     }
 }

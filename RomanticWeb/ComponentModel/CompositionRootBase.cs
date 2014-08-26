@@ -79,9 +79,9 @@ namespace RomanticWeb.ComponentModel
 
         protected void MappingProviderVisitor<TVisitor>() where TVisitor : IMappingProviderVisitor
         {
-            var chain = AddInstanceRegistration<IMappingProviderVisitorChain, MappingProviderVisitorChain>();
+            var chain = AddInstanceRegistration<MappingProviderVisitorChain, MappingProviderVisitorChain>();
 
-            chain.AddLast<TVisitor>();
+            chain.Add<TVisitor>();
             _registrations.Add(registry => registry.Register<TVisitor>());
         }
 

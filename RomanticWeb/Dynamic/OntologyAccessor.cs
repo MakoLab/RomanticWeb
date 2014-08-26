@@ -110,7 +110,7 @@ namespace RomanticWeb.Dynamic
             return convertObject;
         }
 
-        public class DynamicListNode : ListEntryMap<IRdfListNode<object>, object, FallbackNodeConverter> { }
+        internal class DynamicListNode : ListEntryMap<IRdfListNode<object>, object, FallbackNodeConverter> { }
 
         private class DebuggerViewProxy
         {

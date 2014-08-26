@@ -18,6 +18,9 @@ namespace RomanticWeb.Mapping
         /// <returns>the <paramref name="requestedType"/> or a type derived from it</returns>
         IEnumerable<Type> GetMostDerivedMappedTypes(IEnumerable<Uri> entityTypes, Type requestedType);
 
+        /// <summary>
+        /// Adds a type to the cache
+        /// </summary>
         void Add(Type entityType, IList<IClassMapping> classMappings);
     }
 }

@@ -40,12 +40,11 @@ namespace RomanticWeb.Tests.Mapping
             container.RegisterFrom<ConvertersCompositionRoot>();
             container.RegisterInstance(_ontologies.Object);
             var conventions = container.GetInstance<IEnumerable<IConvention>>();
+            var mappingModelBuilder = new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new ConverterCatalog());
+            container.RegisterInstance(mappingModelBuilder);
+            container.Register(f => CreateMappingSources());
 
-            _mappingsRepository = new MappingsRepository(
-                new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new ConverterCatalog()),
-                CreateMappingSources(),
-                container.GetAllInstances<IMappingProviderVisitor>(),
-                container.GetAllInstances<IMappingModelVisitor>());
+            _mappingsRepository = (MappingsRepository)container.GetInstance<IMappingsRepository>();
         }
 
         protected abstract IEnumerable<IMappingProviderSource> CreateMappingSources();

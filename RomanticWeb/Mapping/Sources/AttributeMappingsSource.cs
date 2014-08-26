@@ -22,6 +22,7 @@ namespace RomanticWeb.Mapping.Sources
             LogTo.Trace("Created attribute mappings repository for assembly {0}", assembly);
         }
 
+        /// <inheritdoc />
         public override string Description
         {
             get

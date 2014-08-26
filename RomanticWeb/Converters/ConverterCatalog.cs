@@ -12,6 +12,9 @@ namespace RomanticWeb.Converters
     {
         private readonly IDictionary<Type, INodeConverter> _nodeConverters = new Dictionary<Type, INodeConverter>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
+        /// </summary>
         public ConverterCatalog(IEnumerable<INodeConverter> converters)
         {
             foreach (var converter in converters)

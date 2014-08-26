@@ -66,6 +66,7 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc/>
         public IFallbackNodeConverter FallbackNodeConverter
         {
             get

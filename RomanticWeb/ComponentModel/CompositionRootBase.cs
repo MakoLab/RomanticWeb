@@ -11,6 +11,9 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb.ComponentModel
 {
+    /// <summary>
+    /// Base class for changing Romantic Web components
+    /// </summary>
     public abstract class CompositionRootBase : ICompositionRoot
     {
         private const string EntityStoreServiceName = "EntityStore";
@@ -26,31 +29,49 @@ namespace RomanticWeb.ComponentModel
             }
         }
 
+        /// <summary>
+        /// Sets the <see cref="IEntityContext"/> implementation type
+        /// </summary>
         protected void EntityContext<TContext>() where TContext : IEntityContext
         {
             AddRegistration<IEntityContext, TContext>();
         }
 
+        /// <summary>
+        /// Sets the <see cref="IBlankNodeIdGenerator"/> implementation type
+        /// </summary>
         protected void BlankNodeIdGenerator<TGenerator>() where TGenerator : IBlankNodeIdGenerator
         {
             AddRegistration<IBlankNodeIdGenerator, TGenerator>();
         }
 
+        /// <summary>
+        /// Adds a <see cref="IOntologyProvider"/> 
+        /// </summary>
         protected void Ontology<TProvider>() where TProvider : IOntologyProvider
         {
             AddNamedRegistration<IOntologyProvider, TProvider>();
         }
 
+        /// <summary>
+        /// Sets the <see cref="INamedGraphSelector"/> implementation type
+        /// </summary>
         protected void NamedGraphSelector<TSelector>() where TSelector : INamedGraphSelector
         {
             AddRegistration<INamedGraphSelector, TSelector>();
         }
 
+        /// <summary>
+        /// Sets the <see cref="IEntityStore"/> implementation type
+        /// </summary>
         protected void EntityStore<TStore>() where TStore : IEntityStore
         {
             AddRegistration<IEntityStore, TStore>(EntityStoreServiceName);
         }
 
+        /// <summary>
+        /// Adds <see cref="IConvention"/> implementation type, with optional setup
+        /// </summary>
         protected void Convention<TConvention>(Action<TConvention> setup = null) where TConvention : IConvention, new()
         {
             var convention = AddInstanceRegistration<IConvention, TConvention>();
@@ -61,22 +82,34 @@ namespace RomanticWeb.ComponentModel
             }
         }
 
+        /// <summary>
+        /// Sets the <see cref="IFallbackNodeConverter"/> implementation type
+        /// </summary>
         protected void FallbackNodeConverter<TConverter>() where TConverter : IFallbackNodeConverter
         {
             AddRegistration<IFallbackNodeConverter, TConverter>(lifetime: new PerContainerLifetime());
         }
 
+        /// <summary>
+        /// Adds a <see cref="IMappingModelVisitor"/>
+        /// </summary>
         protected void MappingModelVisitor<TVisitor>() where TVisitor : IMappingModelVisitor
         {
             AddNamedRegistration<IMappingModelVisitor, TVisitor>(new PerContainerLifetime());
         }
 
+        /// <summary>
+        /// Sets the <see cref="IRdfTypeCache"/> implementation type
+        /// </summary>
         protected void RdfTypeCache<TCache>() 
             where TCache : IRdfTypeCache
         {
             AddRegistration<IRdfTypeCache, TCache>(lifetime: new PerContainerLifetime());
         }
 
+        /// <summary>
+        /// Adds a <see cref="IMappingProviderVisitor"/>
+        /// </summary>
         protected void MappingProviderVisitor<TVisitor>() where TVisitor : IMappingProviderVisitor
         {
             var chain = AddInstanceRegistration<MappingProviderVisitorChain, MappingProviderVisitorChain>();

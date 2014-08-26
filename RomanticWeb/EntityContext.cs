@@ -44,19 +44,38 @@ namespace RomanticWeb
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
+            IBaseUriSelectionPolicy baseUriSelector,
+            INamedGraphSelector namedGraphSelector,
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog)
+            : this(
+                factory,
+                mappings,
+                mappingContext,
+                entityStore,
+                entitySource,
+                namedGraphSelector,
+                typeCache,
+                blankIdGenerator,
+                transformerCatalog)
+        {
+            _baseUriSelector = baseUriSelector;
+        }
+
+        public EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            MappingContext mappingContext,
+            IEntityStore entityStore,
+            IEntitySource entitySource,
             INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog)
         {
             LogTo.Info("Creating entity context");
-            if (baseUriSelector == null)
-            {
-                LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
-            }
 
-            _baseUriSelector = baseUriSelector;
             _factory = factory;
             _entityStore = entityStore;
             _entitySource = entitySource;
@@ -103,7 +122,18 @@ namespace RomanticWeb
 
         /// <inheritdoc />
         [AllowNull]
-        public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
+        public IBaseUriSelectionPolicy BaseUriSelector
+        {
+            get
+            {
+                if (_baseUriSelector == null)
+                {
+                    LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
+                } 
+                
+                return _baseUriSelector;
+            }
+        }
 
         internal IEntityCache EntityCache { get; private set; }
         #endregion

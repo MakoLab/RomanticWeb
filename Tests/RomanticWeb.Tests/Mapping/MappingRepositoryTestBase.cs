@@ -37,7 +37,7 @@ namespace RomanticWeb.Tests.Mapping
 
             container.RegisterFrom<ConventionsCompositionRoot>();
             container.RegisterFrom<MappingCompositionRoot>();
-            container.RegisterFrom<ConvertersCompositionRoot>();
+            container.RegisterFrom<InternalComponentsCompositionRoot>();
             container.RegisterInstance(_ontologies.Object);
             var conventions = container.GetInstance<IEnumerable<IConvention>>();
             var mappingModelBuilder = new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new ConverterCatalog());

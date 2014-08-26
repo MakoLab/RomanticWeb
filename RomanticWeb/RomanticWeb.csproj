@@ -68,6 +68,7 @@
     <Compile Include="Collections\Mapping\ListOwnerMap.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
+    <Compile Include="ComponentModel\CompositionRootBase.cs" />
     <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="ComponentModel\CompositionRoot.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="Configuration\UriValidator.cs" />
     <Compile Include="Configuration\UriValidatorAttribute.cs" />
     <Compile Include="ComponentModel\ConventionsCompositionRoot.cs" />
-    <Compile Include="ComponentModel\ConvertersCompositionRoot.cs" />
+    <Compile Include="ComponentModel\InternalComponentsCompositionRoot.cs" />
     <Compile Include="Converters\AsEntityConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\CatalogConverterExtensions.cs" />

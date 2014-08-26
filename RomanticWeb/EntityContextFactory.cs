@@ -114,7 +114,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
         {
-            _container.Register(f => entitySource());
+            _container.Register(f => entitySource(), "EntitySource");
             return this;
         }
 

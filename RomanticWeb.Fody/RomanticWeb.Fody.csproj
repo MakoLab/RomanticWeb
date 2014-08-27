@@ -100,9 +100,15 @@
     </ItemGroup>
     <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)Tools" />
     <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\"
-                                     MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\" MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
   </Target>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
   <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
+  <Import Project="..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets'))" />
+  </Target>
 </Project>

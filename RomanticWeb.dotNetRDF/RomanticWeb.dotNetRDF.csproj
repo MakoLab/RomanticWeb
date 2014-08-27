@@ -154,4 +154,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)\Tools\GitHubLink.exe $(ProjectDir) -u https://github.com/MakoLab/RomanticWeb</PostBuildEvent>
+  </PropertyGroup>
 </Project>

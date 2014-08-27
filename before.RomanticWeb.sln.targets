@@ -26,4 +26,8 @@
                   AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)"/>
     <Message Condition="'$(TeamCityBuild)' == 'true'" Text="##teamcity[buildNumber '$(Major).$(Minor).$(Build).$(Revision)']" />
   </Target>
+  
+  <Target Name="Nuget restore" BeforeTargets="Build">
+    <Exec Command='"$(MSBuildProjectDirectory)\.nuget\nuget.exe" restore "$(MSBuildProjectDirectory)\RomanticWeb.sln"'></Exec>
+  </Target>
 </Project>

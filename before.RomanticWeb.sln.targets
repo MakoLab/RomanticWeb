@@ -1,35 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MajorVersion>0</MajorVersion>
-    <MinorVersion>2</MinorVersion>
-    <TeamCityBuild>false</TeamCityBuild>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\.build</MSBuildCommunityTasksPath>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(TEAMCITY_BUILD_PROPERTIES_FILE)' != ''">
-    <TeamCityBuild>true</TeamCityBuild>
-  </PropertyGroup>
-  
   <ItemGroup>
     <NugetsToRemove Include="$(MSBuildProjectDirectory)\NuGetBuild\**\*.nupkg" />
   </ItemGroup>
-  
-  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
-  
-  <Target Name="Version" BeforeTargets="Build">
-    <Version Major="$(MajorVersion)" Minor="$(MinorVersion)" BuildType="Automatic" RevisionType="Automatic" >
-      <Output TaskParameter="Major" PropertyName="Major" />
-      <Output TaskParameter="Minor" PropertyName="Minor" />
-      <Output TaskParameter="Build" PropertyName="Build" />
-      <Output TaskParameter="Revision" PropertyName="Revision" />
-    </Version>
-    <AssemblyInfo CodeLanguage="CS"
-                  OutputFile="$(SolutionDir)\.build\VersionAssemblyInfo.cs"
-                  AssemblyVersion="$(Major).$(Minor).0.0"
-                  AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)"/>
-    <Message Condition="'$(TeamCityBuild)' == 'true'" Text="##teamcity[buildNumber '$(Major).$(Minor).$(Build).$(Revision)']" />
-  </Target>
   
   <Target Name="Nuget restore" BeforeTargets="Build">
     <Exec Command='"$(MSBuildProjectDirectory)\.nuget\nuget.exe" restore "$(MSBuildProjectDirectory)\RomanticWeb.sln"'></Exec>

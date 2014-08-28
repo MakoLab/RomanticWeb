@@ -1,0 +1,35 @@
+---
+layout: tutorial
+title:  "Debugging"
+permalink: 'debugging/'
+next: 'docs/getting-started/concepts/'
+prev: 'docs/getting-started/introduction/'
+categories: ['docs', 'getting-started']
+---
+
+# Debugging Romantic Web
+
+## Install from NuGet
+
+If you have installed RomanticWeb from NuGet you should be almost ready to debug Romantic Web using Visual Studio.
+
+## Set up Visual Studio
+
+Next you need to go to Visual Studio options and check the box shown below. Restarting Visual Studio may be necessary.
+
+![Visual Studio - Enable source server support](/images/visualstudio_enablesourceserversupport.png)
+
+You should now be ready to debug the project without local git and symbol server
+
+## How it works?
+
+The pdb files included in the NuGet package have been modified during build to include a GitHub link for each source
+file. Visual Studio comes with a tool called `SrcSrv.dll`, which enables it to download required files from github
+directly whenever they are requested by the debugged. For more information check out the [project page][srcsrv].
+
+Many thanks to [Geert van Horrik][geert], creator of [GitHubLink][GitHubLink], which allows linking of debugging symbols
+with GitHub source files.
+
+[srcsrv]: http://msdn.microsoft.com/en-us/library/windows/hardware/ff558791(v=vs.85).aspx
+[geert]: https://github.com/GeertvanHorrik
+[GitHubLink]: https://github.com/GeertvanHorrik/GitHubLink

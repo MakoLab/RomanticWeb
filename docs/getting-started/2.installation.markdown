@@ -2,7 +2,7 @@
 layout: tutorial
 title:  "Installation"
 permalink: 'installation/'
-next: 'docs/getting-started/concepts/'
+next: 'docs/getting-started/debugging/'
 prev: 'docs/getting-started/introduction/'
 categories: ['docs', 'getting-started']
 ---

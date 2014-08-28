@@ -98,8 +98,6 @@
       <OutputFiles Include="$(OutputPath)$(AssemblyName).*" />
     </ItemGroup>
     <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)Tools" />
-    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\RomanticWeb.Fody\" MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
   </Target>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
   <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />

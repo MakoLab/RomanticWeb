@@ -5,24 +5,25 @@
   <PropertyGroup>
     <BuildNuGetPackage Condition="'$(BuildNuGetPackage)'==''">true</BuildNuGetPackage>
     <SolutionDir>$(MSBuildProjectDirectory)\..\</SolutionDir>
-    <OutputPath>$(SolutionDir)\$(AssemblyName)\bin\Release\</OutputPath>
+    <ProjectOutputPath>$(SolutionDir)\$(AssemblyName)\bin\Release\</ProjectOutputPath>
+    <DestinationFolder Condition="'$(DestinationFolder)' == ''">Lib\net40</DestinationFolder>
   </PropertyGroup>
 
   <ItemGroup>
-    <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" />
-    <OutputFiles Include="$(OutputPath)$(AssemblyName).pdb" />
-    <OutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
+    <OutputFiles Include="$(ProjectOutputPath)$(AssemblyName).xml" />
+    <OutputFiles Include="$(ProjectOutputPath)$(AssemblyName).pdb" />
+    <OutputFiles Include="$(ProjectOutputPath)$(AssemblyName).dll" />
     <BinariesToClean Include="$(MSBuildProjectDirectory)\$(AssemblyName)\Lib\**\*.*" />
   </ItemGroup>
 
   <Target Name="CopyNugetBinaries">
     <Copy SourceFiles="@(OutputFiles)" ContinueOnError="true" 
-          DestinationFolder="$(MSBuildProjectDirectory)\$(AssemblyName)\Lib\net40" />
+          DestinationFolder="$(MSBuildProjectDirectory)\$(AssemblyName)\$(DestinationFolder)" />
   </Target>
 
   <Target Name="PepitaPackage" Condition="'$(BuildNuGetPackage)' != 'false'">
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(MSBuildProjectDirectory)\$(AssemblyName)" 
-                                     MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
+                                     MetadataAssembly="$([System.IO.Path]::GetFullPath('$(ProjectOutputPath)$(AssemblyName).dll'))" />
   </Target>
 
   <Target Name="Clean nuget binaries" BeforeTargets="CopyNugetBinaries">

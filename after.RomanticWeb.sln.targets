@@ -6,8 +6,20 @@
   </Target>
 
   <Target Name="PepitaPackage" AfterTargets="GitHubLink">
-    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets" 
+    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets"
              Targets="CopyNugetBinaries;PepitaPackage"
              Properties="AssemblyName=RomanticWeb" />
+
+    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets"
+             Targets="CopyNugetBinaries;PepitaPackage"
+             Properties="AssemblyName=RomanticWeb.dotNetRDF" />
+
+    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets"
+             Targets="CopyNugetBinaries;PepitaPackage"
+             Properties="AssemblyName=RomanticWeb.JsonLd" />
+
+    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets"
+             Targets="CopyNugetBinaries;PepitaPackage"
+             Properties="AssemblyName=RomanticWeb.Fody;DestinationFolder=." />
   </Target>
 </Project>

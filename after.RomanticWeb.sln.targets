@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="GitHubLink" AfterTargets="Build">
+    <Exec Command='"$(MSBuildProjectDirectory)\Tools\GitHubLink.exe" "$(MSBuildProjectDirectory)" -u https://github.com/MakoLab/RomanticWeb'
+          ContinueOnError="true" IgnoreExitCode="true"></Exec>
+  </Target>
+
+  <Target Name="PepitaPackage" AfterTargets="GitHubLink">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\NuGetBuild\NugetBuild.targets" 
+             Targets="CopyNugetBinaries;PepitaPackage"
+             Properties="AssemblyName=RomanticWeb" />
+  </Target>
+</Project>

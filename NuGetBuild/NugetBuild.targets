@@ -1,29 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildProjectDirectory)\..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets" />
+  
   <PropertyGroup>
-    <DestinationNugetPackage Condition="'$(DestinationNugetPackage)'==''">$(AssemblyName)</DestinationNugetPackage>
     <BuildNuGetPackage Condition="'$(BuildNuGetPackage)'==''">true</BuildNuGetPackage>
+    <SolutionDir>$(MSBuildProjectDirectory)\..\</SolutionDir>
+    <OutputPath>$(SolutionDir)\$(AssemblyName)\bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <OutputFiles Include="$(OutputPath)$(AssemblyName).xml" />
     <OutputFiles Include="$(OutputPath)$(AssemblyName).pdb" />
     <OutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
-    <NugetsToMove Include="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\*.nupkg" />
-    <BinariesToClean Include="$(SolutionDir)NuGetBuild\**\Lib\**\*.*" />
+    <BinariesToClean Include="$(MSBuildProjectDirectory)\$(AssemblyName)\Lib\**\*.*" />
   </ItemGroup>
 
-  <Target Name="CopyNugetBinaries" AfterTargets="AfterBuild">
+  <Target Name="CopyNugetBinaries">
     <Copy SourceFiles="@(OutputFiles)" ContinueOnError="true" 
-          DestinationFolder="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)\Lib\net40" />
+          DestinationFolder="$(MSBuildProjectDirectory)\$(AssemblyName)\Lib\net40" />
   </Target>
 
-  <Target Name="PepitaPackage" AfterTargets="CopyNugetBinaries" Condition="'$(BuildNuGetPackage)' != 'false'">
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild\$(DestinationNugetPackage)" 
+  <Target Name="PepitaPackage" Condition="'$(BuildNuGetPackage)' != 'false'">
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(MSBuildProjectDirectory)\$(AssemblyName)" 
                                      MetadataAssembly="$([System.IO.Path]::GetFullPath('$(OutputPath)$(AssemblyName).dll'))" />
   </Target>
-  <Target Name="MovePackages" AfterTargets="PepitaPackage">
-    <Move SourceFiles="@(NugetsToMove)" DestinationFolder="$(SolutionDir)NuGet" />
+
+  <Target Name="Clean nuget binaries" BeforeTargets="CopyNugetBinaries">
+    <Delete Files="@(BinariesToClean)" />
   </Target>
   
   <!--

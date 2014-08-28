@@ -11,6 +11,10 @@
     <TeamCityBuild>true</TeamCityBuild>
   </PropertyGroup>
   
+  <ItemGroup>
+    <NugetsToRemove Include="$(MSBuildProjectDirectory)\NuGetBuild\**\*.nupkg" />
+  </ItemGroup>
+  
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
   
   <Target Name="Version" BeforeTargets="Build">
@@ -29,5 +33,9 @@
   
   <Target Name="Nuget restore" BeforeTargets="Build">
     <Exec Command='"$(MSBuildProjectDirectory)\.nuget\nuget.exe" restore "$(MSBuildProjectDirectory)\RomanticWeb.sln"'></Exec>
+  </Target>
+
+  <Target Name="Clean nuget artifacts" BeforeTargets="Build">
+    <Delete Files="@(NugetsToRemove)" ContinueOnError="true" />
   </Target>
 </Project>

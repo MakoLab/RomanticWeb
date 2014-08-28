@@ -23,3 +23,4 @@ StyleCop.Cache
 *.sdf
 Tests/RomanticWeb.Tests/IntegrationTests/UnitTest.cs
 Tests/RomanticWeb.Tests/RomanticWeb.UnitTests.csproj
+*.srcsrv

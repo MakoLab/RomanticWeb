@@ -17,7 +17,7 @@ If you have installed RomanticWeb from NuGet you should be almost ready to debug
 
 Next you need to go to Visual Studio options and check the box shown below. Restarting Visual Studio may be necessary.
 
-![Visual Studio - Enable source server support](/images/visualstudio_enablesourceserversupport.png)
+![Visual Studio - Enable source server support](/images/visualstudio_enablesourceserversupport.png =700x)
 
 You should now be ready to debug the project without local git and symbol server
 

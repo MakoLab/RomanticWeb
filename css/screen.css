@@ -88,8 +88,9 @@ table.highlighttable td.linenos {
     border: none;
 }
 
-
-
+.content img{
+    max-width: 700px;
+}
 
 @media (max-width: 767px) {
     .navbar-nav {

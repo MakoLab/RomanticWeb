@@ -40,8 +40,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{5510EA
 	ProjectSection(SolutionItems) = preProject
 		after.RomanticWeb.sln.targets = after.RomanticWeb.sln.targets
 		before.RomanticWeb.sln.targets = before.RomanticWeb.sln.targets
-		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
-		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
 		NuGetBuild\NugetBuild.targets = NuGetBuild\NugetBuild.targets
 	EndProjectSection
 EndProject

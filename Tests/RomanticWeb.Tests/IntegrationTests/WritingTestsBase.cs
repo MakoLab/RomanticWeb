@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
@@ -136,6 +138,23 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             AssertStoreCounts(6, 1);
+        }
+
+        [Test]
+        public void Should_correctly_delete_and_create_an_entity()
+        {
+            // given 
+            LoadTestFile("AssociatedInstances");
+
+            // when
+            EntityContext.Delete(new Uri("http://magi/people/Karol"));
+            var person = EntityContext.Create<IPerson>(new Uri("http://magi/people/Karol"));
+            person.Name = "Charles";
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Where(q => q.Graph.Uri == new Uri("http://data.magi/people/Karol"))
+                         .Should().HaveCount(3);
         }
 
         protected override void ChildSetup()

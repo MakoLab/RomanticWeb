@@ -20,7 +20,7 @@ namespace RomanticWeb
     /// Creates a new instance of <see cref="EntityContext"/>
     /// </summary>
     [NullGuard(ValidationFlags.All)]
-    public class EntityContext : IEntityContext
+    internal class EntityContext : IEntityContext
     {
         #region Fields
         private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
@@ -32,12 +32,13 @@ namespace RomanticWeb
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
+        private readonly IBlankNodeIdGenerator _blankIdGenerator;
 
-        private IBlankNodeIdGenerator _blankIdGenerator = new DefaultBlankNodeIdGenerator();
         #endregion
 
         #region Constructors
-        internal EntityContext(
+
+        public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
             MappingContext mappingContext,
@@ -45,9 +46,10 @@ namespace RomanticWeb
             IEntitySource entitySource,
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             INamedGraphSelector namedGraphSelector,
-            IRdfTypeCache typeCache)
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog) : this()
         {
-            LogTo.Info("Creating entity context");
             _factory = factory;
             _entityStore = entityStore;
             _entitySource = entitySource;
@@ -56,9 +58,45 @@ namespace RomanticWeb
             _mappingContext = mappingContext;
             GraphSelector = namedGraphSelector;
             _typeCache = typeCache;
-            _transformerCatalog = new ResultTransformerCatalog();
+            _blankIdGenerator = blankIdGenerator;
+            _transformerCatalog = transformerCatalog;
+
+            if (_baseUriSelector == null)
+            {
+                LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
+            } 
+        }
+
+        public EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            MappingContext mappingContext,
+            IEntityStore entityStore,
+            IEntitySource entitySource,
+            INamedGraphSelector namedGraphSelector,
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog)
+            : this(
+                factory,
+                mappings,
+                mappingContext,
+                entityStore,
+                entitySource,
+                null,
+                namedGraphSelector,
+                typeCache,
+                blankIdGenerator,
+                transformerCatalog)
+        {
+        }
+
+        private EntityContext()
+        {
+            LogTo.Info("Creating entity context");
             EntityCache = new InMemoryEntityCache();
         }
+
         #endregion
 
         #region Properties
@@ -203,7 +241,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, TransformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 

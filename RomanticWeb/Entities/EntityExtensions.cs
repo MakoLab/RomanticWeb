@@ -12,8 +12,6 @@ namespace RomanticWeb.Entities
     /// <summary>Provides useful extensions methods for entities.</summary>
     public static class EntityExtensions
     {
-        private static readonly FallbackNodeConverter FallbackNodeConverter = new FallbackNodeConverter();
-
         /// <summary>Gets the entity as a dynamic object.</summary>
         /// <param name="entity">Target entity to be converted to dynamic.</param>
         public static dynamic AsDynamic(this IEntity entity)
@@ -154,7 +152,8 @@ namespace RomanticWeb.Entities
                     }
                     else
                     {
-                        object item = FallbackNodeConverter.Convert(@object, entity.Context);
+                        var converter = (FallbackNodeConverter)((IServiceProvider)entity.Context).GetService(typeof(FallbackNodeConverter));
+                        object item = converter.Convert(@object, entity.Context);
                         if (item != null)
                         {
                             output.Add(item);

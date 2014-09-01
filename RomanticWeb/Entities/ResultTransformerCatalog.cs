@@ -1,6 +1,5 @@
-using System;
 using System.Collections.Generic;
-using RomanticWeb.ComponentModel.Composition;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Mapping.Model;
@@ -10,31 +9,29 @@ namespace RomanticWeb.Entities
     /// <summary>
     /// Default implementation of <see cref="IResultTransformerCatalog"/>
     /// </summary>
-    public sealed class ResultTransformerCatalog : IResultTransformerCatalog
+    internal sealed class ResultTransformerCatalog : IResultTransformerCatalog
     {
-        private static readonly Lazy<IDictionary<Aggregation, IResultAggregator>> Aggregations;
+        private readonly IDictionary<Aggregation, IResultAggregator> _aggregations;
         private readonly IResultAggregator _fallbackAggregation = new OriginalResult();
+        private readonly EmitHelper _emitHelper;
 
-        static ResultTransformerCatalog()
+        public ResultTransformerCatalog(IEnumerable<IResultAggregator> resultAggregators, EmitHelper emitHelper)
         {
-            Aggregations = new Lazy<IDictionary<Aggregation, IResultAggregator>>(delegate
-            {
-                var resultAggregations = new Dictionary<Aggregation, IResultAggregator>();
-                foreach (var resultProcessingStrategy in ContainerFactory.GetInstancesImplementing<IResultAggregator>())
-                {
-                    resultAggregations[resultProcessingStrategy.Aggregation] = resultProcessingStrategy;
-                }
+            _emitHelper = emitHelper;
+            _aggregations = new Dictionary<Aggregation, IResultAggregator>();
 
-                return resultAggregations;
-            });
+            foreach (var resultAggregator in resultAggregators)
+            {
+                _aggregations[resultAggregator.Aggregation] = resultAggregator;
+            }
         }
 
         /// <inheritdoc />
         public IResultAggregator GetAggregator(Aggregation aggregation)
         {
-            if (Aggregations.Value.ContainsKey(aggregation))
+            if (_aggregations.ContainsKey(aggregation))
             {
-                return Aggregations.Value[aggregation];
+                return _aggregations[aggregation];
             }
 
             return _fallbackAggregation;
@@ -48,7 +45,7 @@ namespace RomanticWeb.Entities
             {
                 if (collectionMapping.StoreAs == StoreAs.RdfList)
                 {
-                    return new RdfListTransformer();
+                    return new RdfListTransformer(_emitHelper);
                 }
 
                 if (collectionMapping.StoreAs == StoreAs.SimpleCollection)

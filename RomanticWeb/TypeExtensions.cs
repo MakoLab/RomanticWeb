@@ -150,5 +150,19 @@ namespace System
 
             return result;
         }
+
+        internal static IEnumerable<Type> GetImplementingTypes(this Type @interface)
+        {
+            if (!@interface.IsInterface)
+            {
+                throw new ArgumentOutOfRangeException("interface");
+            }
+
+            return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where !assembly.IsDynamic
+                    from type in assembly.GetTypes()
+                    where (type != @interface) && (@interface.IsAssignableFrom(type)) && (type.IsInterface)
+                    select type);
+        } 
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping
 {
@@ -16,5 +17,10 @@ namespace RomanticWeb.Mapping
         /// <param name="requestedType">Requested <see cref="IEntity"/> type.</param>
         /// <returns>the <paramref name="requestedType"/> or a type derived from it</returns>
         IEnumerable<Type> GetMostDerivedMappedTypes(IEnumerable<Uri> entityTypes, Type requestedType);
+
+        /// <summary>
+        /// Adds a type to the cache
+        /// </summary>
+        void Add(Type entityType, IList<IClassMapping> classMappings);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RomanticWeb.Mapping.Fluent;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Sources;
@@ -16,6 +17,14 @@ namespace RomanticWeb.Tests.Stubs
             foreach (var entityMap in entityMaps)
             {
                 Add(entityMap);
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return Guid.NewGuid().ToString("N");
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using NullGuard;
 using RomanticWeb.Mapping.Sources;
 
@@ -10,12 +11,7 @@ namespace RomanticWeb.Mapping
     [NullGuard(ValidationFlags.All)]
     public sealed class MappingBuilder
     {
-        private readonly MappingsRepository _mappingsRepository;
-
-        internal MappingBuilder(MappingsRepository mappingsRepository)
-        {
-            _mappingsRepository = mappingsRepository;
-        }
+        private readonly IList<IMappingProviderSource> _sources = new List<IMappingProviderSource>();
 
         /// <summary>
         /// Allows registering attribute mappings
@@ -39,6 +35,14 @@ namespace RomanticWeb.Mapping
             }
         }
 
+        internal IEnumerable<IMappingProviderSource> Sources
+        {
+            get
+            {
+                return _sources;
+            }
+        }
+
         /// <summary>
         /// Registers both fluent and attrbiute mappings from an assembly
         /// </summary>
@@ -57,10 +61,10 @@ namespace RomanticWeb.Mapping
             Attributes.FromAssembly(assembly);
         }
 
-        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingsRepository)
+        internal void AddMapping<TMappingRepository>(Assembly mappingAssembly, TMappingRepository mappingProvider)
             where TMappingRepository : IMappingProviderSource
         {
-            _mappingsRepository.AddSource(mappingAssembly, mappingsRepository);
+            _sources.Add(mappingProvider);
         }
     }
 }

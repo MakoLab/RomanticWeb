@@ -64,7 +64,10 @@
     <Compile Include="Collections\Mapping\ListOwnerMap.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
+    <Compile Include="ComponentModel\CompositionRootBase.cs" />
+    <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
+    <Compile Include="ComponentModel\CompositionRoot.cs" />
     <Compile Include="Configuration\BaseUriElement.cs" />
     <Compile Include="Configuration\FactoriesCollection.cs" />
     <Compile Include="Configuration\FactoryElement.cs" />
@@ -75,6 +78,8 @@
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\UriValidator.cs" />
     <Compile Include="Configuration\UriValidatorAttribute.cs" />
+    <Compile Include="ComponentModel\ConventionsCompositionRoot.cs" />
+    <Compile Include="ComponentModel\InternalComponentsCompositionRoot.cs" />
     <Compile Include="Converters\AsEntityConverter.cs" />
     <Compile Include="Converters\Base64BinaryConverter.cs" />
     <Compile Include="Converters\CatalogConverterExtensions.cs" />
@@ -83,6 +88,7 @@
     <Compile Include="Converters\IConverterCatalog.cs" />
     <Compile Include="Converters\EntityIdConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
+    <Compile Include="Converters\IFallbackNodeConverter.cs" />
     <Compile Include="Converters\ILiteralNodeConverter.cs" />
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="Converters\FallbackNodeConverter.cs" />
@@ -92,6 +98,7 @@
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
+    <Compile Include="Dynamic\EmitExtensions.cs" />
     <Compile Include="Dynamic\EmitHelper.cs" />
     <Compile Include="Dynamic\DefaultDictionaryTypeProvider.cs" />
     <Compile Include="Dynamic\DynamicPropertyAggregate.cs" />
@@ -135,7 +142,6 @@
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="FluentCompare.cs" />
-    <Compile Include="ComponentModel\Composition\ContainerFactory.cs" />
     <Compile Include="Entities\BlankId.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="Entities\EntityProxy.cs" />
@@ -143,6 +149,7 @@
     <Compile Include="ICache.cs" />
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
+    <Compile Include="LightInject\LightInject.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\GenericQueryOptimizer.cs" />
@@ -267,6 +274,9 @@
     <Compile Include="Mapping\Providers\TermMappingProvider.cs" />
     <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
     <Compile Include="Mapping\Providers\VisitableEntityMappingProviderBase.cs" />
+    <Compile Include="Mapping\Visitors\ConverterCatalogVisitor.cs" />
+    <Compile Include="Mapping\Visitors\MappingProviderVisitorChain.cs" />
+    <Compile Include="Mapping\Visitors\RdfTypeCacheBuilder.cs" />
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />
     <Compile Include="Mapping\Sources\AttributeMappingsSource.cs" />
     <Compile Include="Mapping\Sources\ClosedGenericEntityMappingProvider.cs" />

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.DotNetRDF;
+using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
+using RomanticWeb.Entities.ResultAggregations;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Helpers;
@@ -46,7 +47,7 @@ namespace RomanticWeb.Tests.Linq
 
             var ontologyProvider = new CompoundOntologyProvider(new DefaultOntologiesProvider());
             _mappingsRepository = new TestMappingsRepository(new TestPersonMap(), new TestTypedEntityMap());
-            var mappingContext = new MappingContext(ontologyProvider, EntityContextFactory.CreateDefaultConventions());
+            var mappingContext = new MappingContext(ontologyProvider);
             _typeCache = new TestCache();
             _entityContext = new EntityContext(
                 _factory.Object,
@@ -56,7 +57,9 @@ namespace RomanticWeb.Tests.Linq
                 new TripleStoreAdapter(_store) { MetaGraphUri = new Uri("http://app.magi/graphs") },
                 _baseUriSelectionPolicy.Object,
                 new TestGraphSelector(),
-                _typeCache);
+                _typeCache,
+                new DefaultBlankNodeIdGenerator(),
+                new ResultTransformerCatalog(new IResultAggregator[0], new EmitHelper()));
         }
 
         [Test]

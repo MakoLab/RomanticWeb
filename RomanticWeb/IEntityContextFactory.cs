@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Ontologies;
@@ -17,8 +18,13 @@ namespace RomanticWeb
         /// <summary>
         /// Gets the conventions.
         /// </summary>
-        IList<IConvention> Conventions { get; } 
-            
+        IEnumerable<IConvention> Conventions { get; }
+
+        /// <summary>
+        /// Gets the fallback node converter.
+        /// </summary>
+        IFallbackNodeConverter FallbackNodeConverter { get; }
+
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();
     }

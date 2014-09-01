@@ -194,16 +194,6 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Selected_entitys_blank_node_IEntity_property_should_be_read_only()
-        {
-            IAddress address = (from resources in _entityContext.AsQueryable<IPerson>()
-                                where resources.Id == (EntityId)"http://magi/people/Gniewoslaw"
-                                select resources.Address).FirstOrDefault();
-            address.Street = "test";
-        }
-
-        [Test]
         public void Selecting_entitys_IEntity_property()
         {
             IAddress address = (from resources in _entityContext.AsQueryable<IPerson>()

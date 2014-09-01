@@ -65,9 +65,9 @@
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.core.interfaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util">
       <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.util.dll</HintPath>
@@ -136,6 +136,7 @@
     <Compile Include="Helpers\TripleExtentions.cs" />
     <Compile Include="Linq\SparqlResultModifiersTests.cs" />
     <Compile Include="Mapping\ClassMappingTests.cs" />
+    <Compile Include="RdfTypeCacheBuilderTests.cs" />
     <Compile Include="RdfTypeCacheTests.cs" />
     <Compile Include="IntegrationTests\InMemory\LoadingTests.cs" />
     <Compile Include="IntegrationTests\LoadingTestsBase.cs" />
@@ -164,7 +165,6 @@
     <Compile Include="IntegrationTests\TestMappings\DefaultGraphPersonMapping.cs" />
     <Compile Include="IntegrationTests\DynamicTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\InMemoryDynamicTests.cs" />
-    <Compile Include="IntegrationTests\InMemory\InMemoryMappingTestsBase.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsBase.cs" />
     <Compile Include="IntegrationTests\MappingTestsBase.cs" />
     <Compile Include="IntegrationTests\TestMappings\NamedGraphsPersonMapping.cs" />

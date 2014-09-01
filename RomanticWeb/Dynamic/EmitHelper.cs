@@ -4,43 +4,35 @@ using System.Reflection.Emit;
 
 namespace RomanticWeb.Dynamic
 {
-    internal static class EmitHelper
+    internal class EmitHelper
     {
+        private const string DynamicMappingModuleName = "DynamicDictionaryMappings";
         private static readonly object Locker = new object();
-        private static readonly Lazy<AssemblyBuilder> AsmBuilder = new Lazy<AssemblyBuilder>(CreateBuilder);
+        private readonly Lazy<AssemblyBuilder> _asmBuilder;
+        private readonly Guid _assemblyGuid = Guid.NewGuid();
 
-        public static ModuleBuilder GetDynamicModule(string name)
+        public EmitHelper()
+        {
+            _asmBuilder = new Lazy<AssemblyBuilder>(CreateBuilder);
+        }
+
+        public ModuleBuilder GetDynamicModule()
         {
             lock (Locker)
             {
                 var assemblyBuilder = GetBuilder();
-                return assemblyBuilder.GetDynamicModule(name) ?? assemblyBuilder.DefineDynamicModule(name);
+                return assemblyBuilder.GetDynamicModule(DynamicMappingModuleName) ?? assemblyBuilder.DefineDynamicModule(DynamicMappingModuleName);
             }
         }
 
-        public static AssemblyBuilder GetBuilder()
+        public AssemblyBuilder GetBuilder()
         {
-            return AsmBuilder.Value;
+            return _asmBuilder.Value;
         }
 
-        public static Type GetOrEmitType(this ModuleBuilder moduleBuilder, string typeName, Func<ModuleBuilder, TypeBuilder> emitType)
+        private AssemblyBuilder CreateBuilder()
         {
-            Type mapType;
-            if (moduleBuilder.GetType(typeName) != null)
-            {
-                mapType = moduleBuilder.GetType(typeName, true);
-            }
-            else
-            {
-                mapType = emitType(moduleBuilder).CreateType();
-            }
-
-            return mapType;
-        }
-
-        private static AssemblyBuilder CreateBuilder()
-        {
-            var asmName = new AssemblyName("RomanticWeb.Dynamic");
+            var asmName = new AssemblyName("RomanticWeb.Dynamic_" + _assemblyGuid.ToString("N"));
             return AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndSave);
         }
     }

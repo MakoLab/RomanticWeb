@@ -18,12 +18,22 @@ namespace RomanticWeb.Mapping.Sources
         private readonly IFluentMapsVisitor _visitor = new FluentMappingProviderBuilder();
         private readonly IList<EntityMap> _entryMaps = new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
+        private readonly EmitHelper _emitHelper;
 
         private Type _currentEntityType;
 
-        public GeneratedListMappingSource(IOntologyProvider ontologyProvider)
+        public GeneratedListMappingSource(MappingContext mappingContext, EmitHelper emitHelper)
         {
-            _ontologyProvider = ontologyProvider;
+            _emitHelper = emitHelper;
+            _ontologyProvider = mappingContext.OntologyProvider;
+        }
+
+        public string Description
+        {
+            get
+            {
+                return "Collection mappings";
+            }
         }
 
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()
@@ -59,7 +69,7 @@ namespace RomanticWeb.Mapping.Sources
 
         private EntityMap CreateListOwnerMapping(ICollectionMappingProvider map)
         {
-            var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicListMappings");
+            var defineDynamicModule = _emitHelper.GetDynamicModule();
             var ownerTypeName = GetOwnerTypeName(map);
 
             var mapType = defineDynamicModule.GetOrEmitType(ownerTypeName + "Map", moduleBuilder => EmitOwnerMappingType(map, moduleBuilder, ownerTypeName));
@@ -95,7 +105,7 @@ namespace RomanticWeb.Mapping.Sources
 
         private EntityMap CreateListEntryMapping(ICollectionMappingProvider map)
         {
-            var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicListMappings");
+            var defineDynamicModule = _emitHelper.GetDynamicModule();
             var nodeTypeName = GetNodeTypeName(map);
 
             var mapType = defineDynamicModule.GetOrEmitType(nodeTypeName + "Map", builder => EmitNodeMappingType(builder, map, nodeTypeName));

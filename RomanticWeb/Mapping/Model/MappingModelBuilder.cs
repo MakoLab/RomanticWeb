@@ -8,12 +8,13 @@ namespace RomanticWeb.Mapping.Model
     internal class MappingModelBuilder
     {
         private readonly MappingContext _mappingContext;
-
+        private readonly IConverterCatalog _converterCatalog;
         private Type _currentType;
 
-        public MappingModelBuilder(MappingContext mappingContext)
+        public MappingModelBuilder(MappingContext mappingContext, IConverterCatalog converterCatalog)
         {
             _mappingContext = mappingContext;
+            _converterCatalog = converterCatalog;
         }
 
         public IEntityMapping BuildMapping(IEntityMappingProvider mapping)
@@ -80,7 +81,7 @@ namespace RomanticWeb.Mapping.Model
             bool converterSet = SetConverter(collectionMapping, provider);
             if ((provider.ElementConverterType != null) && (!provider.ElementConverterType.ContainsGenericParameters))
             {
-                collectionMapping.ElementConverter = (INodeConverter)Activator.CreateInstance(provider.ElementConverterType);
+                collectionMapping.ElementConverter = _converterCatalog.GetConverter(provider.ElementConverterType);
             }
             else if (converterSet)
             {
@@ -95,7 +96,7 @@ namespace RomanticWeb.Mapping.Model
             bool result = false;
             if ((provider.ConverterType != null) && (!provider.ConverterType.ContainsGenericParameters) && (!provider.ConverterType.IsInterface))
             {
-                propertyMapping.Converter = (INodeConverter)Activator.CreateInstance(provider.ConverterType);
+                propertyMapping.Converter = _converterCatalog.GetConverter(provider.ConverterType);
                 result = true;
             }
 

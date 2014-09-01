@@ -29,15 +29,16 @@ namespace RomanticWeb.Dynamic
         private readonly Entity _entity;
         private readonly Ontology _ontology;
         private readonly IResultTransformerCatalog _resultTransformers;
-        private readonly INodeConverter _nodeConverter = new FallbackNodeConverter();
+        private readonly INodeConverter _nodeConverter;
 
         /// <summary>Creates a new instance of <see cref="OntologyAccessor"/>.</summary>
-        internal OntologyAccessor(Entity entity, Ontology ontology, IResultTransformerCatalog resultTransformers)
+        internal OntologyAccessor(Entity entity, Ontology ontology, INodeConverter nodeConverter, IResultTransformerCatalog resultTransformers)
         {
             _tripleStore = entity.Context.Store;
             _entity = entity;
             _ontology = ontology;
             _resultTransformers = resultTransformers;
+            _nodeConverter = nodeConverter;
             _context = entity.Context;
         }
 
@@ -109,7 +110,7 @@ namespace RomanticWeb.Dynamic
             return convertObject;
         }
 
-        public class DynamicListNode : ListEntryMap<IRdfListNode<object>, object, FallbackNodeConverter> { }
+        internal class DynamicListNode : ListEntryMap<IRdfListNode<object>, object, FallbackNodeConverter> { }
 
         private class DebuggerViewProxy
         {

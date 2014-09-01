@@ -17,10 +17,20 @@ namespace RomanticWeb.Mapping.Sources
         private readonly IFluentMapsVisitor _visitor = new FluentMappingProviderBuilder();
         private readonly List<EntityMap> _entityMaps = new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
+        private readonly EmitHelper _emitHelper;
 
-        public GeneratedDictionaryMappingSource(IOntologyProvider ontologyProvider)
+        public GeneratedDictionaryMappingSource(MappingContext mappingContext, EmitHelper emitHelper)
         {
-            _ontologyProvider = ontologyProvider;
+            _emitHelper = emitHelper;
+            _ontologyProvider = mappingContext.OntologyProvider;
+        }
+
+        public string Description
+        {
+            get
+            {
+                return "Dictionary mappings";
+            }
         }
 
         public IEnumerable<IEntityMappingProvider> GetMappingProviders()
@@ -61,7 +71,7 @@ namespace RomanticWeb.Mapping.Sources
             var typeArguments = new[] { owner, entry }.Concat(map.PropertyInfo.PropertyType.GenericTypeArguments).ToArray();
             var ownerMapType = type.MakeGenericType(typeArguments);
 
-            var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicDictionaryMappings");
+            var defineDynamicModule = _emitHelper.GetDynamicModule();
             var mapType = defineDynamicModule.GetOrEmitType(owner.Name + "Map", builder => EmitOwnerMap(map, builder, owner, ownerMapType));
 
             return (EntityMap)Activator.CreateInstance(mapType);
@@ -95,7 +105,7 @@ namespace RomanticWeb.Mapping.Sources
             var typeArguments = new[] { entry }.Concat(map.PropertyInfo.PropertyType.GenericTypeArguments).ToArray();
             var ownerMapType = type.MakeGenericType(typeArguments);
 
-            var defineDynamicModule = EmitHelper.GetDynamicModule("DynamicDictionaryMappings");
+            var defineDynamicModule = _emitHelper.GetDynamicModule();
             var mapType = defineDynamicModule.GetOrEmitType(entry.Name + "Map", builder => EmitEntryMap(map, builder, entry, ownerMapType));
 
             return (EntityMap)Activator.CreateInstance(mapType);

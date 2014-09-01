@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Tests.Stubs
 {
@@ -24,6 +24,10 @@ namespace RomanticWeb.Tests.Stubs
             {
                 yield return requestedType;
             }
+        }
+
+        public void Add(Type entityType, IList<IClassMapping> classMappings)
+        {
         }
 
         public void Setup<TRequested, TReturned>()

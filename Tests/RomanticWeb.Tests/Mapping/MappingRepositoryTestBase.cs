@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.ComponentModel;
+using RomanticWeb.Converters;
+using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Ontologies;
 
@@ -14,7 +18,7 @@ namespace RomanticWeb.Tests.Mapping
         private Mock<IOntologyProvider> _ontologies;
         private MappingsRepository _mappingsRepository;
 
-        protected MappingsRepository MappingsRepository
+        internal MappingsRepository MappingsRepository
         {
             get
             {
@@ -28,21 +32,18 @@ namespace RomanticWeb.Tests.Mapping
             _ontologies = new Mock<IOntologyProvider>();
             _ontologies.Setup(o => o.ResolveUri(It.IsAny<string>(), It.IsAny<string>()))
                        .Returns((string p, string t) => GetUri(p, t));
+            IServiceContainer container = new ServiceContainer();
 
-            _mappingsRepository = new MappingsRepository();
-            foreach (var mappingSource in CreateMappingSources())
-            {
-                MappingsRepository.AddSource(GetType().Assembly, mappingSource);
-            }
+            container.RegisterFrom<ConventionsCompositionRoot>();
+            container.RegisterFrom<MappingCompositionRoot>();
+            container.RegisterFrom<InternalComponentsCompositionRoot>();
+            container.RegisterInstance(_ontologies.Object);
+            var conventions = container.GetInstance<IEnumerable<IConvention>>();
+            var mappingModelBuilder = new MappingModelBuilder(new MappingContext(_ontologies.Object, conventions), new ConverterCatalog());
+            container.RegisterInstance(mappingModelBuilder);
+            container.Register(f => CreateMappingSources());
 
-            IEnumerable<IConvention> conventions = new IConvention[]
-                                                       {
-                                                           new DefaultDictionaryKeyPredicateConvention(),
-                                                           new DefaultDictionaryValuePredicateConvention(),
-                                                           new CollectionStorageConvention(),
-                                                           new RdfListConvention()
-                                                       };
-            MappingsRepository.RebuildMappings(new MappingContext(_ontologies.Object, conventions));
+            _mappingsRepository = (MappingsRepository)container.GetInstance<IMappingsRepository>();
         }
 
         protected abstract IEnumerable<IMappingProviderSource> CreateMappingSources();

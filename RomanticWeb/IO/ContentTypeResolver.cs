@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using RomanticWeb.ComponentModel.Composition;
 
 namespace RomanticWeb.IO
 {
     /// <summary>Provides a main source of the content type resolution infrastructure.</summary>
     public class ContentTypeResolver
     {
-        private static readonly IEnumerable<IContentTypeResolver> ContentTypeResolvers;
-
-        static ContentTypeResolver()
-        {
-            ContentTypeResolvers = ContainerFactory.GetInstancesImplementing<IContentTypeResolver>();
-        }
+        private static IEnumerable<IContentTypeResolver> _contentTypeResolvers;
 
         /// <summary>Resolves a MIME type of the given content.</summary>
         /// <param name="uri">Original Uri of the content.</param>
@@ -22,7 +16,7 @@ namespace RomanticWeb.IO
         /// <returns>String representing a MIME type of the given content.</returns>
         public static string Resolve(Uri uri, WebResponse response)
         {
-            return ContentTypeResolvers.Select(item => item.Resolve(uri, response)).FirstOrDefault(item => item != null);
+            return _contentTypeResolvers.Select(item => item.Resolve(uri, response)).FirstOrDefault(item => item != null);
         }
     }
 }

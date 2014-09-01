@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Tests.Stubs
 {
@@ -40,6 +42,11 @@ namespace RomanticWeb.Tests.Stubs
         }
 
         public IPropertyMapping MappingForProperty(Uri predicateUri)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddSource(Assembly assembly, IMappingProviderSource mappingProviderSource)
         {
             throw new NotImplementedException();
         }

@@ -5,12 +5,14 @@
 // <owner primary="true" current="true"></owner> 
 //-----------------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 
 namespace System
 {
     /// <summary>This structure holds components of an Xsd Duration. It is used internally to support Xsd durations without loss of fidelity. Duration structures are immutable once they've been created.</summary> 
+    [ExcludeFromCodeCoverage]
     public struct Duration
     {
         #region Fields

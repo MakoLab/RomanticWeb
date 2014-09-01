@@ -18,6 +18,9 @@ namespace RomanticWeb.Mapping.Sources
             _assembly = assembly;
         }
 
+        /// <inheritdoc />
+        public abstract string Description { get; }
+
         /// <summary>Gets the source <see cref="System.Reflection.Assembly"/>.</summary>
         protected Assembly Assembly
         {

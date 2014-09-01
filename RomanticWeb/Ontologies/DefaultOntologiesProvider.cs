@@ -76,11 +76,15 @@ namespace RomanticWeb.Ontologies
 
         private IList<Ontology> _ontologies;
         private IList<BuiltInOntologies> _includedOntologies;
+        private OntologyFactory _ontologyFactory;
 
         /// <summary>Creates a default ontology provider with all built in ontologies.</summary>
         public DefaultOntologiesProvider()
-            : base()
         {
+            _ontologyFactory = new OntologyFactory(new IOntologyFactory[]
+                                                       {
+                                                           new XmlOntologyFactory()
+                                                       });
             _ontologies = new List<Ontology>();
             _includedOntologies = new List<BuiltInOntologies>();
             Include(BuiltInOntologies.RDF |
@@ -148,7 +152,7 @@ namespace RomanticWeb.Ontologies
                         throw new System.IO.FileNotFoundException(System.String.Format("No embedded ontology stream found for '{0}'.", ontology.ToString()));
                     }
 
-                    Ontology ontologyInstance = OntologyFactory.Create(
+                    Ontology ontologyInstance = _ontologyFactory.Create(
                         Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName),
                         "application/" + (resourceName.EndsWith(".owl") ? "owl" : "rdf") + "+xml");
                     if (ontologyInstance != null)

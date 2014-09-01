@@ -66,6 +66,7 @@ namespace RomanticWeb.Tests
             _store = new Mock<IEntitySource>();
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
+            var catalog = new TestTransformerCatalog();
             _entityContext = new EntityContext(
                 _factory.Object,
                 _mappings.Object,
@@ -73,10 +74,10 @@ namespace RomanticWeb.Tests
                 _entityStore.Object,
                 _store.Object,
                 _baseUriSelector.Object,
-                new TestGraphSelector(),
                 new TestCache(),
                 new DefaultBlankNodeIdGenerator(),
-                new TestTransformerCatalog());
+                catalog,
+                new ImpromptuInterfaceCaster(catalog, new TestGraphSelector(), _mappings.Object));
         }
 
         [TearDown]

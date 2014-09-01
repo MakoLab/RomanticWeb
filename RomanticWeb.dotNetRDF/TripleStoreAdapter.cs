@@ -116,19 +116,9 @@ namespace RomanticWeb.DotNetRDF
             queryVisitor.MetaGraphUri = MetaGraphUri;
             queryVisitor.VisitQuery(sparqlQuery);
             variables = queryVisitor.Variables;
-            LogTo.Info("RomanticWeb.dotNetRDF.TripleStoreAdapter parsed query: {0}", queryVisitor.CommandText);
+            LogTo.Debug("Parsed query: {0}", queryVisitor.CommandText);
             SparqlQueryParser parser = new SparqlQueryParser();
             return parser.ParseFromString(queryVisitor.CommandText);
-        }
-
-        private IGraph GetGraph(Uri graphUri)
-        {
-            if (!_store.HasGraph(graphUri))
-            {
-                _store.Add(new Graph { BaseUri = graphUri });
-            }
-
-            return _store[graphUri];
         }
 
         private void ExecuteCommandSet(SparqlUpdateCommandSet commands)

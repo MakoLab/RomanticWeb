@@ -34,6 +34,8 @@ namespace RomanticWeb.ComponentModel
             registry.Register<MappingModelBuilder>();
             registry.Register(factory => CreateMappingContext(factory), new PerContainerLifetime());
             registry.Register(factory => CreateMappingsRepository(factory), new PerContainerLifetime());
+
+            registry.Register<IEntityCaster, ImpromptuInterfaceCaster>();
         }
 
         private static IEntitySource CreateEntitySource(IServiceFactory factory)

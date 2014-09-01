@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -45,12 +44,6 @@ namespace RomanticWeb
 
         /// <summary>Gets the <see cref="IOntologyProvider" />.</summary>
         IOntologyProvider Ontologies { get; }
-
-        /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
-        INamedGraphSelector GraphSelector { get; }
-
-        /// <summary>Gets the transformer catalog.</summary>
-        IResultTransformerCatalog TransformerCatalog { get; }
 
         /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>
         IMappingsRepository Mappings { get; }

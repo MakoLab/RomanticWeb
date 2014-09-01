@@ -123,10 +123,7 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool TrySetMember(SetMemberBinder binder, [AllowNull]object value)
         {
-            if ((_entity.Id is BlankId) && (((BlankId)_entity.Id).RootEntityId == null))
-            {
-                throw new InvalidOperationException(String.Format("Entity <{0}> is a blank node not attached to any non-blank node resource and is in a read-only mode.", _entity.Id));
-            }
+            CheckIsNotReadonly();
 
             try
             {
@@ -228,6 +225,21 @@ namespace RomanticWeb.Entities
 
             return _selector.SelectGraph(Id, _entityMapping, property);
         }
+
+        private void CheckIsNotReadonly()
+        {
+            var id = _entity.Id as BlankId;
+            if (id == null)
+            {
+                return;
+            }
+            
+            if (id.RootEntityId == null && id.Graph == null)
+            {
+                throw new InvalidOperationException(String.Format("Blank node entity <{0}> is read-only.", id));
+            }
+        }
+
         #endregion
 
         private class DebuggerDisplayProxy

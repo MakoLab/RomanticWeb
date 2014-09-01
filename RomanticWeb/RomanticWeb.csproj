@@ -139,6 +139,8 @@
     <Compile Include="Entities\ResultPostprocessing\ObservableCollectionTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\RdfListTransformer.cs" />
     <Compile Include="IEntityCache.cs" />
+    <Compile Include="Entities\IEntityCaster.cs" />
+    <Compile Include="Entities\ImpromptuInterfaceCaster.cs" />
     <Compile Include="InMemoryEntityCache.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />

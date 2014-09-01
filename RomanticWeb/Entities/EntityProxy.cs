@@ -22,6 +22,9 @@ namespace RomanticWeb.Entities
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
+
+        private readonly INamedGraphSelector _selector;
+
         private ISourceGraphSelectionOverride _overrideSourceGraph;
         private IDictionary<int, object> _memberCache = new Dictionary<int, object>();
         #endregion
@@ -34,12 +37,17 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
-        public EntityProxy(Entity entity, IEntityMapping entityMapping, IResultTransformerCatalog resultTransformers)
+        public EntityProxy(
+            Entity entity, 
+            IEntityMapping entityMapping, 
+            IResultTransformerCatalog resultTransformers,
+            INamedGraphSelector selector)
         {
             _store = entity.Context.Store;
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
+            _selector = selector;
         }
 
         #endregion
@@ -117,7 +125,7 @@ namespace RomanticWeb.Entities
         {
             if ((_entity.Id is BlankId) && (((BlankId)_entity.Id).RootEntityId == null))
             {
-                throw new InvalidOperationException(System.String.Format("Entity <'{0}'> is a blank node not attached to any non-blank node resource and is in a read-only mode.", _entity.Id));
+                throw new InvalidOperationException(String.Format("Entity <{0}> is a blank node not attached to any non-blank node resource and is in a read-only mode.", _entity.Id));
             }
 
             try
@@ -215,10 +223,10 @@ namespace RomanticWeb.Entities
         {
             if (_overrideSourceGraph != null)
             {
-                return _overrideSourceGraph.SelectGraph(Context.GraphSelector);
+                return _overrideSourceGraph.SelectGraph(_selector);
             }
 
-            return Context.GraphSelector.SelectGraph(Id, _entityMapping, property);
+            return _selector.SelectGraph(Id, _entityMapping, property);
         }
         #endregion
 

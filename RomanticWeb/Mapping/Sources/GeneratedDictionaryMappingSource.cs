@@ -72,7 +72,11 @@ namespace RomanticWeb.Mapping.Sources
             var ownerMapType = type.MakeGenericType(typeArguments);
 
             var defineDynamicModule = _emitHelper.GetDynamicModule();
-            var mapType = defineDynamicModule.GetOrEmitType(owner.Name + "Map", builder => EmitOwnerMap(map, builder, owner, ownerMapType));
+            Type mapType = null;
+            lock (defineDynamicModule)
+            {
+                mapType = defineDynamicModule.GetOrEmitType(owner.Name + "Map", builder => EmitOwnerMap(map, builder, owner, ownerMapType));
+            }
 
             return (EntityMap)Activator.CreateInstance(mapType);
         }
@@ -106,7 +110,11 @@ namespace RomanticWeb.Mapping.Sources
             var ownerMapType = type.MakeGenericType(typeArguments);
 
             var defineDynamicModule = _emitHelper.GetDynamicModule();
-            var mapType = defineDynamicModule.GetOrEmitType(entry.Name + "Map", builder => EmitEntryMap(map, builder, entry, ownerMapType));
+            Type mapType = null;
+            lock (defineDynamicModule)
+            {
+                mapType = defineDynamicModule.GetOrEmitType(entry.Name + "Map", builder => EmitEntryMap(map, builder, entry, ownerMapType));
+            }
 
             return (EntityMap)Activator.CreateInstance(mapType);
         }

@@ -41,15 +41,14 @@ namespace RomanticWeb.Entities
         public EntityProxy(
             Entity entity,
             IEntityMapping entityMapping, 
-            IEntityStore store, 
             IResultTransformerCatalog resultTransformers,
             INamedGraphSelector selector)
         {
+            _store = entity.Context.Store;
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
             _selector = selector;
-            _store = store;
         }
 
         #endregion

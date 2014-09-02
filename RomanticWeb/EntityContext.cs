@@ -120,6 +120,14 @@ namespace RomanticWeb
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
 
+        public DatasetChanges Changes
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         internal IEntityCache EntityCache { get; private set; }
         #endregion
 

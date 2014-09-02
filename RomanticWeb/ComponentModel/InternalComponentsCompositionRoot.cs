@@ -48,10 +48,9 @@ namespace RomanticWeb.ComponentModel
         {
             return (entity, mapping) =>
                 {
-                    var entityStore = factory.GetInstance<IEntityStore>();
                     var transformerCatalog = factory.GetInstance<IResultTransformerCatalog>();
                     var namedGraphSeletor = factory.GetInstance<INamedGraphSelector>();
-                    return new EntityProxy(entity, mapping, entityStore, transformerCatalog, namedGraphSeletor);
+                    return new EntityProxy(entity, mapping, transformerCatalog, namedGraphSeletor);
                 };
         }
 

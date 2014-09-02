@@ -29,9 +29,6 @@ namespace RomanticWeb
         public EntityContextFactory()
             : this(new ServiceContainer())
         {
-            LogTo.Info("Created entity context factory");
-
-            WithMappings(DefaultMappings);
         }
 
         internal EntityContextFactory(IServiceContainer container)
@@ -39,6 +36,10 @@ namespace RomanticWeb
             _container = container;
             _container.RegisterAssembly(GetType().Assembly);
             _container.RegisterInstance<IEntityContextFactory>(this);
+
+            WithMappings(DefaultMappings);
+
+            LogTo.Info("Created entity context factory");
         }
 
         /// <inheritdoc/>

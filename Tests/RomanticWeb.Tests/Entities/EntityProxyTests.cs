@@ -26,12 +26,13 @@ namespace RomanticWeb.Tests.Entities
             _context = new Mock<IEntityContext>(MockBehavior.Strict);
             _graphSelector = new Mock<INamedGraphSelector>();
 
+            _context.Setup(c => c.Store).Returns(new EntityStore());
             _context.Setup(c => c.InitializeEnitity(It.IsAny<IEntity>()));
             _graphSelector.Setup(g => g.SelectGraph(It.IsAny<EntityId>(), It.IsAny<IEntityMapping>(), It.IsAny<IPropertyMapping>()))
                           .Returns(new Uri("urn:default:graph"));
 
             var entity = new Entity(_entityId, _context.Object);
-            _entityProxy = new EntityProxy(entity, _mapping.Object, new EntityStore(), new TestTransformerCatalog(), _graphSelector.Object);
+            _entityProxy = new EntityProxy(entity, _mapping.Object, new TestTransformerCatalog(), _graphSelector.Object);
         }
 
         [TearDown]

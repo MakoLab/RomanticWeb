@@ -20,11 +20,20 @@ namespace RomanticWeb
         /// <returns>Enumeration of quads describing given entity.</returns>
         IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId, bool includeBlankNodes = true);
 
-        void ReplacePredicateValues(EntityId id, Node predicate, Node[] newValues, Uri graph);
-
+        /// <summary>Adds a triple to the store.</summary>
         void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> quads);
 
-        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour);
+        /// <summary>Removes the current triple(s) for subject/predicate and replaces it with triples with given object(s).</summary>
+        /// <param name="id">the subject</param>
+        /// <param name="propertyUri">the predicate</param>
+        /// <param name="newValues">new object node(s)</param>
+        /// <param name="graphUri">destination graph</param>
+        void ReplacePredicateValues(EntityId id, Node propertyUri, Node[] newValues, Uri graphUri);       
+        
+        /// <summary>Marks an entity for deletion.</summary>
+        /// <param name="entityId">Identifier of the entity to be removed.</param>
+        /// <param name="deleteBehaviour">Optional parameter telling how to tread other related entities.</param>
+        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren);        
 
         /// <summary>Forces the store to use current state as it's initial state.</summary>
         void ResetState();

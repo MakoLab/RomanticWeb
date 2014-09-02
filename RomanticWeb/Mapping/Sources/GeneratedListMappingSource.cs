@@ -19,6 +19,7 @@ namespace RomanticWeb.Mapping.Sources
         private readonly IList<EntityMap> _entryMaps = new List<EntityMap>();
         private readonly IOntologyProvider _ontologyProvider;
         private readonly EmitHelper _emitHelper;
+        private readonly object _emissionSync = new object();
 
         private Type _currentEntityType;
 
@@ -69,10 +70,14 @@ namespace RomanticWeb.Mapping.Sources
 
         private EntityMap CreateListOwnerMapping(ICollectionMappingProvider map)
         {
+            Type mapType = null;
             var defineDynamicModule = _emitHelper.GetDynamicModule();
             var ownerTypeName = GetOwnerTypeName(map);
+            lock (defineDynamicModule)
+            {
+                mapType = defineDynamicModule.GetOrEmitType(ownerTypeName + "Map", moduleBuilder => EmitOwnerMappingType(map, moduleBuilder, ownerTypeName));
+            }
 
-            var mapType = defineDynamicModule.GetOrEmitType(ownerTypeName + "Map", moduleBuilder => EmitOwnerMappingType(map, moduleBuilder, ownerTypeName));
             return (EntityMap)Activator.CreateInstance(mapType);
         }
 
@@ -105,10 +110,13 @@ namespace RomanticWeb.Mapping.Sources
 
         private EntityMap CreateListEntryMapping(ICollectionMappingProvider map)
         {
+            Type mapType = null;
             var defineDynamicModule = _emitHelper.GetDynamicModule();
             var nodeTypeName = GetNodeTypeName(map);
-
-            var mapType = defineDynamicModule.GetOrEmitType(nodeTypeName + "Map", builder => EmitNodeMappingType(builder, map, nodeTypeName));
+            lock (defineDynamicModule)
+            {
+                mapType = defineDynamicModule.GetOrEmitType(nodeTypeName + "Map", builder => EmitNodeMappingType(builder, map, nodeTypeName));
+            }
 
             return (EntityMap)Activator.CreateInstance(mapType);
         }

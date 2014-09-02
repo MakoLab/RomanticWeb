@@ -40,6 +40,8 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IEntityCaster, ImpromptuInterfaceCaster>();
 
             registry.Register(factory => CreateEntityProxy(factory));
+
+            registry.Register<IStoreChangeTracker, DefaultStoreChangeTracker>();
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)
@@ -49,8 +51,7 @@ namespace RomanticWeb.ComponentModel
                     var entityStore = factory.GetInstance<IEntityStore>();
                     var transformerCatalog = factory.GetInstance<IResultTransformerCatalog>();
                     var namedGraphSeletor = factory.GetInstance<INamedGraphSelector>();
-                    var changeTracker = factory.GetInstance<IStoreChangeTracker>();
-                    return new EntityProxy(entity, mapping, entityStore, transformerCatalog, namedGraphSeletor, changeTracker);
+                    return new EntityProxy(entity, mapping, entityStore, transformerCatalog, namedGraphSeletor);
                 };
         }
 

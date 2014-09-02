@@ -127,13 +127,13 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<IEntity>(this, _entitySource, _changeTracker);
+            return new EntityQueryable<IEntity>(this, _entitySource, _entityStore);
         }
 
         /// <inheritdoc />
         public IQueryable<T> AsQueryable<T>() where T : class, IEntity
         {
-            return new EntityQueryable<T>(this, _entitySource, _changeTracker);
+            return new EntityQueryable<T>(this, _entitySource, _entityStore);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
@@ -177,7 +177,7 @@ namespace RomanticWeb
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Deleting entity {0}", entityId);
-            _changeTracker.Delete(entityId, deleteBehaviour);
+            _entityStore.Delete(entityId, deleteBehaviour);
         }
 
         void IDisposable.Dispose()

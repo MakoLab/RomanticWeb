@@ -16,6 +16,7 @@ namespace RomanticWeb.Tests
     {
         private TripleStoreAdapter _tripleStore;
         private Mock<IUpdateableTripleStore> _realStore;
+        private Mock<IEntityStore> _entityStore;
         private IList<EntityQuad> _quadsAdded;
         private IList<EntityQuad> _quadsRemoved;
         private IList<EntityQuad> _entitiesReconstructed;
@@ -25,16 +26,17 @@ namespace RomanticWeb.Tests
         public void Setup()
         {
             _realStore = new Mock<IUpdateableTripleStore>();
+            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _quadsAdded = new List<EntityQuad>();
             _quadsRemoved = new List<EntityQuad>();
             _entitiesReconstructed = new List<EntityQuad>();
             _entitiesRemoved = new List<EntityId>();
 
-            _tripleStore = new TripleStoreAdapter(_realStore.Object, null) { MetaGraphUri = new Uri("urn:meta:graph") };
+            _tripleStore = new TripleStoreAdapter(_realStore.Object, _entityStore.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
         [Test]
-        public void Should_insert_blank_nodes_ins_single_command()
+        public void Should_insert_blank_nodes_in_single_command()
         {
             // given
             var identifier = new EntityId("urn:some:uri");

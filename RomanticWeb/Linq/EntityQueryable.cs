@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
-using RomanticWeb.Updates;
 
 namespace RomanticWeb.Linq
 {
@@ -13,9 +12,9 @@ namespace RomanticWeb.Linq
         /// <summary>Creates an instance of the queryable entity factory.</summary>
         /// <param name="entityContext">Entity context to be used by this provider.</param>
         /// <param name="entitySource">Entity source.</param>
-        /// <param name="changeTracker">Change tracker</param>
-        public EntityQueryable(IEntityContext entityContext, IEntitySource entitySource, IStoreChangeTracker changeTracker)
-            : base(QueryParser.CreateDefault(), new EntityQueryExecutor(entityContext, entitySource, changeTracker))
+        /// <param name="store">Entity store</param>
+        public EntityQueryable(IEntityContext entityContext, IEntitySource entitySource, IEntityStore store)
+            : base(QueryParser.CreateDefault(), new EntityQueryExecutor(entityContext, entitySource, store))
         {
         }
 

@@ -29,8 +29,6 @@ namespace RomanticWeb.Tests
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
 
-        private Mock<IStoreChangeTracker> _tracker;
-
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
         {
             get
@@ -70,7 +68,6 @@ namespace RomanticWeb.Tests
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
-            _tracker = new Mock<Updates.IStoreChangeTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,
                 _mappings.Object,
@@ -82,7 +79,7 @@ namespace RomanticWeb.Tests
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
                 new ImpromptuInterfaceCaster((entity, mapping) => new Mock<IEntityProxy>().Object, _mappings.Object),
-                _tracker.Object);
+                new Mock<IStoreChangeTracker>(MockBehavior.Strict).Object);
         }
 
         [TearDown]
@@ -269,13 +266,13 @@ namespace RomanticWeb.Tests
         {
             // given
             var entityId = new EntityId("urn:some:entityid");
-            _tracker.Setup(store => store.Delete(entityId, DeleteBehaviour.DoNothing));
+            _entityStore.Setup(store => store.Delete(entityId, DeleteBehaviour.DoNothing));
 
             // when
             _entityContext.Delete(entityId, DeleteBehaviour.DoNothing);
 
             // then
-            _tracker.Verify(store => store.Delete(entityId, DeleteBehaviour.DoNothing), Times.Once);
+            _entityStore.Verify(store => store.Delete(entityId, DeleteBehaviour.DoNothing), Times.Once);
         }
 
         [Test]
@@ -317,7 +314,7 @@ namespace RomanticWeb.Tests
             var entityId = new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
-            _tracker.Setup(store => store.Delete(It.IsAny<EntityId>(), DeleteBehaviour.DoNothing));
+            _entityStore.Setup(store => store.Delete(It.IsAny<EntityId>(), DeleteBehaviour.DoNothing));
 
             // when
             _entityContext.Delete(entityId, DeleteBehaviour.DoNothing);

@@ -20,6 +20,12 @@ namespace RomanticWeb
         /// <returns>Enumeration of quads describing given entity.</returns>
         IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId, bool includeBlankNodes = true);
 
+        void ReplacePredicateValues(EntityId id, Node predicate, Node[] newValues, Uri graph);
+
+        void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> quads);
+
+        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour);
+
         /// <summary>Forces the store to use current state as it's initial state.</summary>
         void ResetState();
     }

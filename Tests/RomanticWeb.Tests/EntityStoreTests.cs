@@ -34,7 +34,7 @@ namespace RomanticWeb.Tests
             var property = Node.ForUri(Foaf.knows);
 
             // when
-            _entityStore.ReplacePredicateValues(EntityId, property, () => new Node[0], GraphUri);
+            _entityStore.ReplacePredicateValues(EntityId, property, new Node[0], GraphUri);
 
             // then
             _entityStore.Quads.Should().HaveCount(0);

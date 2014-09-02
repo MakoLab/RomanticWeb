@@ -420,6 +420,7 @@
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
+    <Compile Include="Updates\IStoreChangeTracker.cs" />
     <Compile Include="Vocabularies\Schema.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />

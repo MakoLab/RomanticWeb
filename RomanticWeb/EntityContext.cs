@@ -6,8 +6,8 @@ using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
-using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb
 {
@@ -28,6 +28,8 @@ namespace RomanticWeb
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
+        private readonly IStoreChangeTracker _changeTracker;
+
         #endregion
 
         #region Constructors
@@ -42,7 +44,8 @@ namespace RomanticWeb
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
-            IEntityCaster caster) : this()
+            IEntityCaster caster, 
+            IStoreChangeTracker changeTracker) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -70,7 +73,8 @@ namespace RomanticWeb
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
-            IEntityCaster caster)
+            IEntityCaster caster, 
+            IStoreChangeTracker changeTracker)
             : this(
                 factory,
                 mappings,
@@ -81,12 +85,14 @@ namespace RomanticWeb
                 typeCache,
                 blankIdGenerator,
                 transformerCatalog, 
-                caster)
+                caster, 
+                changeTracker)
         {
         }
 
-        private EntityContext()
+        private EntityContext(IStoreChangeTracker changeTracker)
         {
+            _changeTracker = changeTracker;
             LogTo.Info("Creating entity context");
             EntityCache = new InMemoryEntityCache();
         }
@@ -99,16 +105,13 @@ namespace RomanticWeb
         public IEntityStore Store { get { return _entityStore; } }
 
         /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
-        public bool HasChanges { get { return Store.Changes.Any; } }
+        public bool HasChanges { get { return _changeTracker.HasChanges; } }
 
         /// <inheritdoc />
         public IBlankNodeIdGenerator BlankIdGenerator { get { return _blankIdGenerator; } }
 
         /// <inheritdoc />
         public IOntologyProvider Ontologies { get { return _factory.Ontologies; } }
-
-        /// <inheritdoc />
-        public INamedGraphSelector GraphSelector { get; private set; }
 
         /// <inheritdoc />
         public IMappingsRepository Mappings { get { return _mappings; } }
@@ -124,13 +127,13 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<IEntity>(this, _entitySource, _mappings, _baseUriSelector);
+            return new EntityQueryable<IEntity>(this, _entitySource, _changeTracker);
         }
 
         /// <inheritdoc />
         public IQueryable<T> AsQueryable<T>() where T : class, IEntity
         {
-            return new EntityQueryable<T>(this, _entitySource, _mappings, _baseUriSelector);
+            return new EntityQueryable<T>(this, _entitySource, _changeTracker);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
@@ -159,22 +162,22 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.ApplyChanges(_entityStore.Changes);
+            _entitySource.Commit();
             _entityStore.ResetState();
         }
 
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
-            Delete(entityId, DeleteBehaviours.Default);
+            Delete(entityId, DeleteBehaviour.Default);
         }
 
         /// <inheritdoc />
-        public void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour)
+        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour)
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Deleting entity {0}", entityId);
-            _entityStore.Delete(entityId, deleteBehaviour);
+            _changeTracker.Delete(entityId, deleteBehaviour);
         }
 
         void IDisposable.Dispose()

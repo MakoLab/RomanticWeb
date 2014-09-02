@@ -30,7 +30,7 @@ namespace RomanticWeb.Tests
             _entitiesReconstructed = new List<EntityQuad>();
             _entitiesRemoved = new List<EntityId>();
 
-            _tripleStore = new TripleStoreAdapter(_realStore.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
+            _tripleStore = new TripleStoreAdapter(_realStore.Object, null) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace RomanticWeb.Tests
             var changes = new DatasetChanges(_quadsAdded, _quadsRemoved, _entitiesReconstructed, _entitiesRemoved);
 
             // when
-            _tripleStore.ApplyChanges(changes);
+            _tripleStore.Commit();
 
             // then
             _realStore.Verify(st => st.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 1)));

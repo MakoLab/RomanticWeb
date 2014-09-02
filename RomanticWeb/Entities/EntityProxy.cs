@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Collections;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb.Entities
 {
@@ -25,6 +27,8 @@ namespace RomanticWeb.Entities
 
         private readonly INamedGraphSelector _selector;
 
+        private readonly IStoreChangeTracker _changeTracker;
+
         private ISourceGraphSelectionOverride _overrideSourceGraph;
         private IDictionary<int, object> _memberCache = new Dictionary<int, object>();
         #endregion
@@ -38,16 +42,19 @@ namespace RomanticWeb.Entities
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
         public EntityProxy(
-            Entity entity, 
+            Entity entity,
             IEntityMapping entityMapping, 
+            IEntityStore store, 
             IResultTransformerCatalog resultTransformers,
-            INamedGraphSelector selector)
+            INamedGraphSelector selector,
+            IStoreChangeTracker changeTracker)
         {
-            _store = entity.Context.Store;
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
             _selector = selector;
+            _changeTracker = changeTracker;
+            _store = store;
         }
 
         #endregion
@@ -138,13 +145,13 @@ namespace RomanticWeb.Entities
                 var propertyUri = Node.ForUri(property.Uri);
                 var resultTransformer = _resultTransformers.GetTransformer(property);
 
-                Func<IEnumerable<Node>> newValues = () => new Node[0];
+                var newValues = new Node[0];
                 if (value != null)
                 {
-                    newValues = () => resultTransformer.ToNodes(value, this, property, Context);
+                    newValues = resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
-                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
+                _changeTracker.ReplacePredicateValues(Id, propertyUri, newValues, graph);
                 return true;
             }
             catch

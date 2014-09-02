@@ -19,30 +19,29 @@ namespace RomanticWeb.Tests.Linq
     public class QueryableTests
     {
         private EntityQueryable<IPerson> persons;
-        private Mock<IEntityStore> _entityStore;
         private Mock<IEntitySource> _entitySource;
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
+        private Mock<Updates.IStoreChangeTracker> _tracker;
 
         [SetUp]
         public void SetUp()
         {
             _mappings = new TestMappingsRepository(new NamedGraphsPersonMapping());
             _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
+            _tracker = new Mock<Updates.IStoreChangeTracker>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource = new Mock<IEntitySource>(MockBehavior.Strict);
 
-            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
-            _entityStore.Setup(s => s.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
+            _tracker.Setup(s => s.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
 
             _entityContext = new Mock<IEntityContext>(MockBehavior.Strict);
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>())).Returns((EntityId id) => CreatePersonEntity(id));
-            _entityContext.Setup(context => context.Store).Returns(_entityStore.Object);
             _entityContext.SetupGet(context => context.Mappings).Returns(_mappings);
             _entityContext.SetupGet(context => context.BaseUriSelector).Returns(_baseUriSelectionPolicy.Object);
 
-            persons = new EntityQueryable<IPerson>(_entityContext.Object, _entitySource.Object, _mappings, _baseUriSelectionPolicy.Object);
+            persons = new EntityQueryable<IPerson>(_entityContext.Object, _entitySource.Object, _tracker.Object);
         }
 
         [TearDown]
@@ -65,7 +64,7 @@ namespace RomanticWeb.Tests.Linq
 
             // then
             Assert.That(result, Has.Count.EqualTo(5));
-            _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t => t.Count() == 10)), Times.Exactly(5));
+            _tracker.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t => t.Count() == 10)), Times.Exactly(5));
         }
 
         protected IEnumerable<EntityQuad> GetSamplePersonTriples(int count)

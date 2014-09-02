@@ -12,6 +12,7 @@ using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Updates;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests
@@ -27,6 +28,8 @@ namespace RomanticWeb.Tests
         private Mock<IEntityContextFactory> _factory;
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
+
+        private Mock<IStoreChangeTracker> _tracker;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
         {
@@ -54,7 +57,7 @@ namespace RomanticWeb.Tests
         [SetUp]
         public void Setup()
         {
-            _typesMapping = new TestPropertyMapping(typeof(ITypedEntity), typeof(IEnumerable<EntityId>), "Types", Vocabularies.Rdf.type);
+            _typesMapping = new TestPropertyMapping(typeof(ITypedEntity), typeof(IEnumerable<EntityId>), "Types", Rdf.type);
             _factory = new Mock<IEntityContextFactory>();
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
@@ -67,6 +70,7 @@ namespace RomanticWeb.Tests
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
+            _tracker = new Mock<Updates.IStoreChangeTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,
                 _mappings.Object,
@@ -77,7 +81,8 @@ namespace RomanticWeb.Tests
                 new TestCache(),
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
-                new ImpromptuInterfaceCaster(catalog, new TestGraphSelector(), _mappings.Object));
+                new ImpromptuInterfaceCaster((entity, mapping) => new Mock<IEntityProxy>().Object, _mappings.Object),
+                _tracker.Object);
         }
 
         [TearDown]
@@ -248,15 +253,15 @@ namespace RomanticWeb.Tests
         public void Should_apply_changes_to_underlying_store_when_committing()
         {
             // given
-            var aChangeset = new DatasetChanges();
-            _entityStore.Setup(store => store.Changes).Returns(aChangeset);
+            ////var aChangeset = new DatasetChanges();
+            ////_entityStore.Setup(store => store.Changes).Returns(aChangeset);
             _entityStore.Setup(store => store.ResetState());
 
             // when
             _entityContext.Commit();
 
             // then
-            _store.Verify(store => store.ApplyChanges(aChangeset), Times.Once);
+            _store.Verify(store => store.Commit(), Times.Once);
         }
 
         [Test]
@@ -264,13 +269,13 @@ namespace RomanticWeb.Tests
         {
             // given
             var entityId = new EntityId("urn:some:entityid");
-            _entityStore.Setup(store => store.Delete(entityId, DeleteBehaviours.DoNothing));
+            _tracker.Setup(store => store.Delete(entityId, DeleteBehaviour.DoNothing));
 
             // when
-            _entityContext.Delete(entityId, DeleteBehaviours.DoNothing);
+            _entityContext.Delete(entityId, DeleteBehaviour.DoNothing);
 
             // then
-            _entityStore.Verify(store => store.Delete(entityId, DeleteBehaviours.DoNothing), Times.Once);
+            _tracker.Verify(store => store.Delete(entityId, DeleteBehaviour.DoNothing), Times.Once);
         }
 
         [Test]
@@ -312,10 +317,10 @@ namespace RomanticWeb.Tests
             var entityId = new EntityId("some/relative/uri");
             _baseUriSelector.Setup(bus => bus.SelectBaseUri(It.IsAny<EntityId>()))
                             .Returns(new Uri("http://test.com/base/"));
-            _entityStore.Setup(store => store.Delete(It.IsAny<EntityId>(), DeleteBehaviours.DoNothing));
+            _tracker.Setup(store => store.Delete(It.IsAny<EntityId>(), DeleteBehaviour.DoNothing));
 
             // when
-            _entityContext.Delete(entityId, DeleteBehaviours.DoNothing);
+            _entityContext.Delete(entityId, DeleteBehaviour.DoNothing);
 
             // then
             _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId), Times.Once);

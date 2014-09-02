@@ -122,11 +122,10 @@ namespace RomanticWeb
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
-        /// <param name="entitySource">Target entity source.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
+        public EntityContextFactory WithEntitySource<TSource>() where TSource : IEntitySource
         {
-            _container.Register(f => entitySource(), "EntitySource");
+            _container.Register<IEntitySource, TSource>();
             return this;
         }
 

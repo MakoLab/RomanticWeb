@@ -18,7 +18,8 @@ namespace RomanticWeb.Tests.DotNetRDF
         {
             // given
             var tripleStore = new Mock<IUpdateableTripleStore>();
-            var tripleStoreAdapter = Create(tripleStore);
+            var tracker = new Mock<Updates.IStoreChangeTracker>();
+            var tripleStoreAdapter = Create(tripleStore, tracker);
             IEnumerable<EntityId> deletedEntities = new[]
                 {
                     new EntityId("urn:some:entity1"),
@@ -29,15 +30,15 @@ namespace RomanticWeb.Tests.DotNetRDF
             var changes = new DatasetChanges(new EntityQuad[0], new EntityQuad[0], new EntityQuad[0], deletedEntities);
 
             // when
-            tripleStoreAdapter.ApplyChanges(changes);
+            tripleStoreAdapter.Commit();
 
             // then
             tripleStore.Verify(store => store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 8)));
         }
 
-        private TripleStoreAdapter Create<TStore>(Mock<TStore> store) where TStore : class, ITripleStore
+        private TripleStoreAdapter Create<TStore>(Mock<TStore> store, Mock<Updates.IStoreChangeTracker> tracker) where TStore : class, ITripleStore
         {
-            var tripleStoreAdapter = new TripleStoreAdapter(store.Object)
+            var tripleStoreAdapter = new TripleStoreAdapter(store.Object, tracker.Object)
                                        {
                                            MetaGraphUri = new Uri("http://app.magi/graphs")
                                        };

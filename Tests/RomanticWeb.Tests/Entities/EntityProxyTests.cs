@@ -6,6 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Updates;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Entities
@@ -18,21 +19,22 @@ namespace RomanticWeb.Tests.Entities
         private Mock<IEntityMapping> _mapping;
         private Mock<IEntityContext> _context;
         private Mock<INamedGraphSelector> _graphSelector;
+        private Mock<IStoreChangeTracker> _tracker;
 
         [SetUp]
         public void Setup()
         {
             _mapping = new Mock<IEntityMapping>(MockBehavior.Strict);
             _context = new Mock<IEntityContext>(MockBehavior.Strict);
+            _tracker = new Mock<IStoreChangeTracker>(MockBehavior.Strict);
             _graphSelector = new Mock<INamedGraphSelector>();
 
-            _context.Setup(c => c.Store).Returns(new EntityStore());
             _context.Setup(c => c.InitializeEnitity(It.IsAny<IEntity>()));
             _graphSelector.Setup(g => g.SelectGraph(It.IsAny<EntityId>(), It.IsAny<IEntityMapping>(), It.IsAny<IPropertyMapping>()))
                           .Returns(new Uri("urn:default:graph"));
 
             var entity = new Entity(_entityId, _context.Object);
-            _entityProxy = new EntityProxy(entity, _mapping.Object, new TestTransformerCatalog(), _graphSelector.Object);
+            _entityProxy = new EntityProxy(entity, _mapping.Object, new EntityStore(), new TestTransformerCatalog(), _graphSelector.Object, _tracker.Object);
         }
 
         [TearDown]

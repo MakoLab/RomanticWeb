@@ -11,16 +11,16 @@ namespace RomanticWeb
 {
     internal class DatasetChangesGenerator
     {
-        private IDictionary<EntityId, DeleteBehaviours> _markedForDeletion;
+        private IDictionary<EntityId, DeleteBehaviour> _markedForDeletion;
         private EntityQuadCollection _initialQuads;
         private EntityQuadCollection _currentQuads;
-        private IDictionary<EntityId, DeleteBehaviours> _deletedEntities;
+        private IDictionary<EntityId, DeleteBehaviour> _deletedEntities;
         private IDictionary<EntityId, IList<EntityQuad>> _quadsAdded = new Dictionary<EntityId, IList<EntityQuad>>();
         private IList<EntityQuad> _quadsRemoved = new List<EntityQuad>();
         private ISet<EntityId> _entitiesRemoved = new HashSet<EntityId>();
         private IDictionary<EntityId, ISet<EntityQuad>> _entitiesReconstructed = new Dictionary<EntityId, ISet<EntityQuad>>();
 
-        internal DatasetChangesGenerator(EntityQuadCollection initialQuads, EntityQuadCollection currentQuads, IDictionary<EntityId, DeleteBehaviours> deletedEntities)
+        internal DatasetChangesGenerator(EntityQuadCollection initialQuads, EntityQuadCollection currentQuads, IDictionary<EntityId, DeleteBehaviour> deletedEntities)
         {
             _initialQuads = initialQuads;
             _currentQuads = currentQuads;
@@ -31,14 +31,14 @@ namespace RomanticWeb
             _entitiesReconstructed = new Dictionary<EntityId, ISet<EntityQuad>>();
         }
 
-        internal IDictionary<EntityId, DeleteBehaviours> MarkedForDeletion
+        internal IDictionary<EntityId, DeleteBehaviour> MarkedForDeletion
         {
             get
             {
                 if (_markedForDeletion == null)
                 {
-                    _markedForDeletion = new Dictionary<EntityId, DeleteBehaviours>();
-                    foreach (KeyValuePair<EntityId, DeleteBehaviours> entityDeleted in _deletedEntities)
+                    _markedForDeletion = new Dictionary<EntityId, DeleteBehaviour>();
+                    foreach (KeyValuePair<EntityId, DeleteBehaviour> entityDeleted in _deletedEntities)
                     {
                         DeleteEntity(entityDeleted.Key, entityDeleted.Value);
                     }
@@ -50,8 +50,8 @@ namespace RomanticWeb
 
         internal DatasetChanges GenerateDatasetChanges()
         {
-            _markedForDeletion = new Dictionary<EntityId, DeleteBehaviours>();
-            foreach (KeyValuePair<EntityId, DeleteBehaviours> entityDeleted in _deletedEntities)
+            _markedForDeletion = new Dictionary<EntityId, DeleteBehaviour>();
+            foreach (KeyValuePair<EntityId, DeleteBehaviour> entityDeleted in _deletedEntities)
             {
                 DeleteEntity(entityDeleted.Key, entityDeleted.Value);
             }
@@ -70,7 +70,7 @@ namespace RomanticWeb
             return new DatasetChanges(_quadsAdded.Values.SelectMany(item => item), _quadsRemoved, _entitiesReconstructed.Values.SelectMany(item => item), _entitiesRemoved);
         }
 
-        private void DeleteEntity(EntityId entityId, DeleteBehaviours deleteBehaviour)
+        private void DeleteEntity(EntityId entityId, DeleteBehaviour deleteBehaviour)
         {
             if (!_markedForDeletion.ContainsKey(entityId))
             {
@@ -80,13 +80,13 @@ namespace RomanticWeb
                     _entitiesRemoved.Add(entityId);
                 }
 
-                if ((deleteBehaviour & DeleteBehaviours.DeleteVolatileChildren) == DeleteBehaviours.DeleteVolatileChildren)
+                if ((deleteBehaviour & DeleteBehaviour.DeleteVolatileChildren) == DeleteBehaviour.DeleteVolatileChildren)
                 {
                     foreach (EntityQuad quad in _currentQuads[entityId])
                     {
                         if ((quad.Predicate.Uri.AbsoluteUri != Rdf.type.AbsoluteUri) &&
-                            ((((deleteBehaviour & DeleteBehaviours.DeleteVolatileChildren) == DeleteBehaviours.DeleteVolatileChildren) && (quad.Object.IsBlank)) ||
-                            (((deleteBehaviour & DeleteBehaviours.DeleteChildren) == DeleteBehaviours.DeleteChildren) && (!quad.Object.IsLiteral))))
+                            ((((deleteBehaviour & DeleteBehaviour.DeleteVolatileChildren) == DeleteBehaviour.DeleteVolatileChildren) && (quad.Object.IsBlank)) ||
+                            (((deleteBehaviour & DeleteBehaviour.DeleteChildren) == DeleteBehaviour.DeleteChildren) && (!quad.Object.IsLiteral))))
                         {
                             DeleteEntity(quad.Object.ToEntityId(), deleteBehaviour);
                         }
@@ -201,7 +201,7 @@ namespace RomanticWeb
             {
                 if ((quad.Object.IsLiteral) || ((!_markedForDeletion.ContainsKey(quad.Object.ToEntityId())) &&
                     ((!_markedForDeletion.ContainsKey(quad.Subject.ToEntityId())) ||
-                    (((_markedForDeletion[quad.Subject.ToEntityId()] & DeleteBehaviours.NullifyVolatileChildren) == DeleteBehaviours.NullifyVolatileChildren) && (!(quad.Subject.ToEntityId() is BlankId))))))
+                    (((_markedForDeletion[quad.Subject.ToEntityId()] & DeleteBehaviour.NullifyVolatileChildren) == DeleteBehaviour.NullifyVolatileChildren) && (!(quad.Subject.ToEntityId() is BlankId))))))
                 {
                     AddUnique(reconstructedEntity, quad);
                 }

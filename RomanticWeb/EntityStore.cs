@@ -13,14 +13,14 @@ namespace RomanticWeb
     {
         private readonly EntityQuadCollection _entityQuads;
         private readonly EntityQuadCollection _initialQuads;
-        private readonly IDictionary<EntityId, DeleteBehaviours> _deletedEntities;
-        private IDictionary<EntityId, DeleteBehaviours> _markedForDeletion;
+        private readonly IDictionary<EntityId, DeleteBehaviour> _deletedEntities;
+        private IDictionary<EntityId, DeleteBehaviour> _markedForDeletion;
 
         public EntityStore()
         {
             _entityQuads = new EntityQuadCollection();
             _initialQuads = new EntityQuadCollection();
-            _deletedEntities = new Dictionary<EntityId, DeleteBehaviours>();
+            _deletedEntities = new Dictionary<EntityId, DeleteBehaviour>();
         }
 
         public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }
@@ -76,19 +76,19 @@ namespace RomanticWeb
             _initialQuads.Add(entityId, entityTriples);
         }
 
-        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> getNewValues, Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Node[] newValues, Uri graphUri)
         {
             _markedForDeletion = null;
             if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
             {
-                _entityQuads.SetEntityTypeQuads(entityId, getNewValues(), graphUri);
+                _entityQuads.SetEntityTypeQuads(entityId, newValues, graphUri);
             }
             else
             {
                 var subjectNode = Node.FromEntityId(entityId);
                 RemoveTriples(entityId, subjectNode, propertyUri, graphUri);
 
-                foreach (var valueNode in getNewValues())
+                foreach (var valueNode in newValues)
                 {
                     var triple = new EntityQuad(entityId, subjectNode, propertyUri, valueNode).InGraph(graphUri);
                     _entityQuads.Add(triple);
@@ -96,7 +96,7 @@ namespace RomanticWeb
             }
         }
 
-        public void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour = DeleteBehaviours.DeleteVolatileChildren | DeleteBehaviours.NullifyVolatileChildren)
+        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren)
         {
             _markedForDeletion = null;
             _deletedEntities[entityId] = deleteBehaviour;
@@ -107,8 +107,8 @@ namespace RomanticWeb
             foreach (var deleted in _markedForDeletion ?? new DatasetChangesGenerator(_initialQuads, _entityQuads, _deletedEntities).MarkedForDeletion)
             {
                 _entityQuads.Remove(deleted.Key);
-                if ((((deleted.Value & DeleteBehaviours.NullifyVolatileChildren) == DeleteBehaviours.NullifyVolatileChildren) && (deleted.Key is BlankId)) ||
-                    ((deleted.Value & DeleteBehaviours.NullifyChildren) == DeleteBehaviours.NullifyChildren))
+                if ((((deleted.Value & DeleteBehaviour.NullifyVolatileChildren) == DeleteBehaviour.NullifyVolatileChildren) && (deleted.Key is BlankId)) ||
+                    ((deleted.Value & DeleteBehaviour.NullifyChildren) == DeleteBehaviour.NullifyChildren))
                 {
                     _entityQuads.RemoveWhereObject(deleted.Key);
                 }

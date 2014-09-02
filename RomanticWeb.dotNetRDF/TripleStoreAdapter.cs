@@ -6,6 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Model;
+using RomanticWeb.Updates;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
@@ -20,12 +21,14 @@ namespace RomanticWeb.DotNetRDF
     {
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
+        private readonly IStoreChangeTracker _changeTracker;
 
         /// <summary>Creates a new instance of <see cref="TripleStoreAdapter"/></summary>
         /// <param name="store">The underlying triple store</param>
-        public TripleStoreAdapter(ITripleStore store)
+        public TripleStoreAdapter(ITripleStore store, IStoreChangeTracker changeTracker)
         {
             _store = store;
+            _changeTracker = changeTracker;
             _namespaces = new NamespaceMapper(true);
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
@@ -48,7 +51,7 @@ namespace RomanticWeb.DotNetRDF
                           let graph = result.HasBoundValue("g") ? result["g"].WrapNode(entityId) : null
                           select new EntityQuad(entityId, subject, predicate, @object, graph);
 
-            store.AssertEntity(entityId, triples);
+            _changeTracker.AssertEntity(entityId, triples);
         }
 
         /// <summary>Executes an ASK query to perform existence check.</summary>
@@ -99,9 +102,9 @@ namespace RomanticWeb.DotNetRDF
         }
 
         /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
-        public void ApplyChanges(DatasetChanges datasetChanges)
+        public void Commit()
         {
-            ExecuteCommandSet(new DatasetChangesCommandSetConverter(_store.Triples, MetaGraphUri, datasetChanges).ConvertToSparqlUpdateCommandSet());
+            ExecuteCommandSet(new DatasetChangesCommandSetConverter(_store.Triples, MetaGraphUri, null).ConvertToSparqlUpdateCommandSet());
         }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)

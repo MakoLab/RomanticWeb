@@ -6,6 +6,7 @@ using NullGuard;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
 using RomanticWeb.Entities;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb.Linq
 {
@@ -20,17 +21,22 @@ namespace RomanticWeb.Linq
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
         private readonly IQueryOptimizer _queryOptimizer;
+        private readonly IStoreChangeTracker _changeTracker;
         private EntityQueryModelVisitor _modelVisitor;
+
         #endregion
 
         #region Constructors
+
         /// <summary>Creates an instance of the query executor aware of the entities queried.</summary>
         /// <param name="entityContext">Entity factory to be used when creating objects.</param>
         /// <param name="entitySource">Entity source.</param>
-        public EntityQueryExecutor(IEntityContext entityContext, IEntitySource entitySource)
+        /// <param name="changeTracker">Update tracker</param>
+        public EntityQueryExecutor(IEntityContext entityContext, IEntitySource entitySource, IStoreChangeTracker changeTracker)
         {
             _entityContext = entityContext;
             _entitySource = entitySource;
+            _changeTracker = changeTracker;
             _queryOptimizer = new GenericQueryOptimizer();
         }
         #endregion
@@ -42,7 +48,7 @@ namespace RomanticWeb.Linq
         /// <returns>Single scalar value beeing result of a query.</returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            RomanticWeb.Linq.Model.Query sparqlQuery = VisitQueryModel(queryModel);
+            var sparqlQuery = VisitQueryModel(queryModel);
             switch (sparqlQuery.QueryForm)
             {
                 case Model.QueryForms.Ask: return (T)Convert.ChangeType(_entitySource.ExecuteAskQuery(sparqlQuery), typeof(T));
@@ -73,7 +79,7 @@ namespace RomanticWeb.Linq
                 queryModel.ResultOperators.Remove(resultOperator);
             }
 
-            RomanticWeb.Linq.Model.Query sparqlQuery = VisitQueryModel(queryModel);
+            Model.Query sparqlQuery = VisitQueryModel(queryModel);
             IEnumerable<RomanticWeb.Model.EntityQuad> quads = _entitySource.ExecuteEntityQuery(sparqlQuery);
             IEnumerable<T> result = (!typeof(IEntity).IsAssignableFrom(typeof(T)) ? CreateLiteralResultSet<T>(quads) : CreateEntityResultSet<T>(quads));
 
@@ -88,7 +94,7 @@ namespace RomanticWeb.Linq
         #endregion
 
         #region Non-public methods
-        private RomanticWeb.Linq.Model.Query VisitQueryModel(QueryModel queryModel)
+        private Model.Query VisitQueryModel(QueryModel queryModel)
         {
             _modelVisitor = new EntityQueryModelVisitor(_entityContext);
             _modelVisitor.VisitQueryModel(queryModel);
@@ -120,7 +126,7 @@ namespace RomanticWeb.Linq
             foreach (var triples in groupedTriples)
             {
                 ids.Add(triples.Key.EntityId);
-                _entityContext.Store.AssertEntity(triples.Key.EntityId, triples);
+                _changeTracker.AssertEntity(triples.Key.EntityId, triples);
             }
 
             var createMethodInfo = EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });

@@ -10,7 +10,9 @@ using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Mapping.Visitors;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb.ComponentModel
 {
@@ -36,6 +38,20 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateMappingsRepository(factory), new PerContainerLifetime());
 
             registry.Register<IEntityCaster, ImpromptuInterfaceCaster>();
+
+            registry.Register(factory => CreateEntityProxy(factory));
+        }
+
+        private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)
+        {
+            return (entity, mapping) =>
+                {
+                    var entityStore = factory.GetInstance<IEntityStore>();
+                    var transformerCatalog = factory.GetInstance<IResultTransformerCatalog>();
+                    var namedGraphSeletor = factory.GetInstance<INamedGraphSelector>();
+                    var changeTracker = factory.GetInstance<IStoreChangeTracker>();
+                    return new EntityProxy(entity, mapping, entityStore, transformerCatalog, namedGraphSeletor, changeTracker);
+                };
         }
 
         private static IEntitySource CreateEntitySource(IServiceFactory factory)

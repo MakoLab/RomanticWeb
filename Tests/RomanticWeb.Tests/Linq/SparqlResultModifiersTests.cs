@@ -19,7 +19,6 @@ namespace RomanticWeb.Tests.Linq
     public class SparqlResultModifiersTests
     {
         private IEntityContext _entityContext;
-        private TripleStore _store;
 
         public interface IPerson : IEntity
         {
@@ -33,13 +32,9 @@ namespace RomanticWeb.Tests.Linq
         [SetUp]
         public void Setup()
         {
-            _store = new TripleStore();
-            _store.LoadTestFile("SuperTripleOperations.trig");
-
             IServiceContainer container = new ServiceContainer();
             IEntityContextFactory factory = new EntityContextFactory(container)
                .WithDefaultOntologies()
-               .WithEntitySource(() => new TripleStoreAdapter(_store))
                .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
                .WithDependencies<Dependencies>();
 
@@ -114,6 +109,11 @@ namespace RomanticWeb.Tests.Linq
                 serviceRegistry.RegisterInstance<IMappingsRepository>(repository);
 
                 serviceRegistry.Register<INamedGraphSelector, TestGraphSelector>();
+
+                var store = new TripleStore();
+                store.LoadTestFile("SuperTripleOperations.trig");
+                serviceRegistry.RegisterInstance<ITripleStore>(store);
+                serviceRegistry.Register<IEntitySource, TripleStoreAdapter>();
             }
         }
     }

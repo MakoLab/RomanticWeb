@@ -8,9 +8,9 @@ namespace RomanticWeb
 {
     /// <summary>Behavior that should be applied when deleting entities.</summary>
     [Flags]
-    public enum DeleteBehaviours
+    public enum DeleteBehaviour
     {
-        /// <summary>Default delete behavior set to <see cref="DeleteBehaviours.DeleteVolatileChildren" /> and <see cref="DeleteBehaviours.NullifyVolatileChildren" />.</summary>
+        /// <summary>Default delete behavior set to <see cref="DeleteBehaviour.DeleteVolatileChildren" /> and <see cref="DeleteBehaviour.NullifyVolatileChildren" />.</summary>
         Default = 0x0000011,
 
         /// <summary>Nothing special should happen.</summary>
@@ -82,7 +82,7 @@ namespace RomanticWeb
         /// <summary>Marks an entity for deletion.</summary>
         /// <param name="entityId">Target entity to be deleted.</param>
         /// <param name="deleteBehaviour">Entity deletion behaviour.</param>
-        void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour);
+        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour);
 
         /// <summary>Initializes the enitity.</summary>
         /// <param name="entity">The entity.</param>

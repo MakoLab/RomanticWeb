@@ -36,6 +36,6 @@ namespace RomanticWeb
         /// <summary>
         /// Applies changes to the underlaying triple store
         /// </summary>
-        void ApplyChanges(DatasetChanges datasetChanges);
+        void Commit();
     }
 }

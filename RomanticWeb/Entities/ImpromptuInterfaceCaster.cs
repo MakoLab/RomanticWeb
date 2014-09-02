@@ -3,25 +3,21 @@ using System.Linq;
 using ImpromptuInterface;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
-using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities
 {
     internal class ImpromptuInterfaceCaster : IEntityCaster
     {
         private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
-        
-        private readonly IResultTransformerCatalog _transformerCatalog;
-        private readonly INamedGraphSelector _graphSelector;
+
+        private readonly Func<Entity, IEntityMapping, IEntityProxy> _createProxy;
         private readonly IMappingsRepository _mappings;
 
         public ImpromptuInterfaceCaster(
-            IResultTransformerCatalog transformerCatalog,
-            INamedGraphSelector graphSelector, 
+            Func<Entity, IEntityMapping, IEntityProxy> proxyFactory,
             IMappingsRepository mappings)
         {
-            _transformerCatalog = transformerCatalog;
-            _graphSelector = graphSelector;
+            _createProxy = proxyFactory;
             _mappings = mappings;
         }
 
@@ -53,7 +49,7 @@ namespace RomanticWeb.Entities
 
         private dynamic EntityAs(Entity entity, IEntityMapping mapping, Type[] types)
         {
-            var proxy = new EntityProxy(entity, mapping, _transformerCatalog, _graphSelector);
+            var proxy = _createProxy(entity, mapping);
             return Impromptu.DynamicActLike(proxy, types);
         }
 

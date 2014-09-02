@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.DotNetRDF;
+using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Ontologies;
 using RomanticWeb.TestEntities.Animals;
 using RomanticWeb.Tests.Stubs;
+using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -45,20 +48,24 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
+        protected abstract ITripleStore Store { get; }
+
         [SetUp]
         public void Setup()
         {
             Mappings = SetupMappings();
             _entityStore = new EntityStore();
 
-            _factory = new EntityContextFactory().WithEntitySource(CreateEntitySource)
-                                               .WithOntology(new DefaultOntologiesProvider())
-                                               .WithOntology(new LifeOntology())
-                                               .WithOntology(new TestOntologyProvider(IncludeFoaf))
-                                               .WithOntology(new ChemOntology())
-                                               .WithMappings(BuildMappings)
-                                               .WithMetaGraphUri(MetaGraphUri)
-                                               .WithEntityStore(() => _entityStore);
+            IServiceContainer container = new ServiceContainer();
+            container.Register(factory => Store);
+            _factory = new EntityContextFactory(container).WithEntitySource<TripleStoreAdapter>()
+                                                 .WithOntology(new DefaultOntologiesProvider())
+                                                 .WithOntology(new LifeOntology())
+                                                 .WithOntology(new TestOntologyProvider(IncludeFoaf))
+                                                 .WithOntology(new ChemOntology())
+                                                 .WithMappings(BuildMappings)
+                                                 .WithMetaGraphUri(MetaGraphUri)
+                                                 .WithEntityStore(() => _entityStore);
             ChildSetup();
         }
 
@@ -91,8 +98,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         protected abstract void LoadTestFile(string fileName);
-
-        protected abstract IEntitySource CreateEntitySource();
 
         public class LifeOntology : IOntologyProvider
         {

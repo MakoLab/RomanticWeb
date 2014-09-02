@@ -114,7 +114,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(entity.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(entity.Id, DeleteBehaviour.DeleteChildren | DeleteBehaviour.NullifyChildren);
             EntityContext.Commit();
 
             // then
@@ -133,7 +133,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(someAgent.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(someAgent.Id, DeleteBehaviour.DeleteChildren | DeleteBehaviour.NullifyChildren);
             EntityContext.Commit();
 
             // then

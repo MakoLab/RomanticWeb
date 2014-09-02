@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
-using NullGuard;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
-using RomanticWeb.Entities;
-using RomanticWeb.Mapping;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb.Linq
 {
@@ -15,10 +13,9 @@ namespace RomanticWeb.Linq
         /// <summary>Creates an instance of the queryable entity factory.</summary>
         /// <param name="entityContext">Entity context to be used by this provider.</param>
         /// <param name="entitySource">Entity source.</param>
-        /// <param name="mappingsRepository">Repository of mappings to be used when resolving strong types to ontologies.</param>
-        /// <param name="baseUriSelectionPolicy">Base Uri selection policy to resolve relative Uris.</param>
-        public EntityQueryable(IEntityContext entityContext, IEntitySource entitySource, IMappingsRepository mappingsRepository, [AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
-            : base(QueryParser.CreateDefault(), new EntityQueryExecutor(entityContext, entitySource))
+        /// <param name="changeTracker">Change tracker</param>
+        public EntityQueryable(IEntityContext entityContext, IEntitySource entitySource, IStoreChangeTracker changeTracker)
+            : base(QueryParser.CreateDefault(), new EntityQueryExecutor(entityContext, entitySource, changeTracker))
         {
         }
 

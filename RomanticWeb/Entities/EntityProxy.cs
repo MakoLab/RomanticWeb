@@ -9,7 +9,6 @@ using RomanticWeb.Collections;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Model;
 using RomanticWeb.NamedGraphs;
-using RomanticWeb.Updates;
 
 namespace RomanticWeb.Entities
 {
@@ -26,8 +25,6 @@ namespace RomanticWeb.Entities
         private readonly IResultTransformerCatalog _resultTransformers;
 
         private readonly INamedGraphSelector _selector;
-
-        private readonly IStoreChangeTracker _changeTracker;
 
         private ISourceGraphSelectionOverride _overrideSourceGraph;
         private IDictionary<int, object> _memberCache = new Dictionary<int, object>();
@@ -46,14 +43,12 @@ namespace RomanticWeb.Entities
             IEntityMapping entityMapping, 
             IEntityStore store, 
             IResultTransformerCatalog resultTransformers,
-            INamedGraphSelector selector,
-            IStoreChangeTracker changeTracker)
+            INamedGraphSelector selector)
         {
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
             _selector = selector;
-            _changeTracker = changeTracker;
             _store = store;
         }
 
@@ -151,7 +146,7 @@ namespace RomanticWeb.Entities
                     newValues = resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
-                _changeTracker.ReplacePredicateValues(Id, propertyUri, newValues, graph);
+                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
                 return true;
             }
             catch

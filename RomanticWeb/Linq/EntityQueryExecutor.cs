@@ -6,7 +6,6 @@ using NullGuard;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
 using RomanticWeb.Entities;
-using RomanticWeb.Updates;
 
 namespace RomanticWeb.Linq
 {
@@ -21,22 +20,24 @@ namespace RomanticWeb.Linq
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
         private readonly IQueryOptimizer _queryOptimizer;
-        private readonly IStoreChangeTracker _changeTracker;
+        private readonly IEntityStore _store;
         private EntityQueryModelVisitor _modelVisitor;
 
         #endregion
 
         #region Constructors
 
-        /// <summary>Creates an instance of the query executor aware of the entities queried.</summary>
+        /// <summary>
+        /// Creates an instance of the query executor aware of the entities queried.
+        /// </summary>
         /// <param name="entityContext">Entity factory to be used when creating objects.</param>
         /// <param name="entitySource">Entity source.</param>
-        /// <param name="changeTracker">Update tracker</param>
-        public EntityQueryExecutor(IEntityContext entityContext, IEntitySource entitySource, IStoreChangeTracker changeTracker)
+        /// <param name="store">Entity store</param>
+        public EntityQueryExecutor(IEntityContext entityContext, IEntitySource entitySource, IEntityStore store)
         {
             _entityContext = entityContext;
             _entitySource = entitySource;
-            _changeTracker = changeTracker;
+            _store = store;
             _queryOptimizer = new GenericQueryOptimizer();
         }
         #endregion
@@ -126,7 +127,7 @@ namespace RomanticWeb.Linq
             foreach (var triples in groupedTriples)
             {
                 ids.Add(triples.Key.EntityId);
-                _changeTracker.AssertEntity(triples.Key.EntityId, triples);
+                _store.AssertEntity(triples.Key.EntityId, triples);
             }
 
             var createMethodInfo = EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });

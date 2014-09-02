@@ -1,44 +1,23 @@
-using System;
 using System.Collections.Generic;
-using RomanticWeb.Entities;
-using RomanticWeb.Model;
+using System.Linq;
 
 namespace RomanticWeb.Updates
 {
     public interface IStoreChangeTracker
     {
         bool HasChanges { get; }
-
-        void ReplacePredicateValues(EntityId id, Node predicate, Node[] newValues, Uri graph);
-
-        void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> quads);
-
-        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour);
     }
 
     internal class DefaultStoreChangeTracker : IStoreChangeTracker
     {
+        private readonly IList<DatasetChange> _changes = new List<DatasetChange>(32);
+
         public bool HasChanges
         {
             get
             {
-                throw new NotImplementedException();
+                return _changes.Any();
             }
-        }
-
-        public void ReplacePredicateValues(EntityId id, Node predicate, Node[] newValues, Uri graph)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> quads)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour)
-        {
-            throw new NotImplementedException();
         }
     }
 }

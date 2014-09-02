@@ -18,7 +18,7 @@ namespace RomanticWeb.Tests.DotNetRDF
         {
             // given
             var tripleStore = new Mock<IUpdateableTripleStore>();
-            var tracker = new Mock<Updates.IStoreChangeTracker>();
+            var tracker = new Mock<IEntityStore>();
             var tripleStoreAdapter = Create(tripleStore, tracker);
             IEnumerable<EntityId> deletedEntities = new[]
                 {
@@ -36,7 +36,7 @@ namespace RomanticWeb.Tests.DotNetRDF
             tripleStore.Verify(store => store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 8)));
         }
 
-        private TripleStoreAdapter Create<TStore>(Mock<TStore> store, Mock<Updates.IStoreChangeTracker> tracker) where TStore : class, ITripleStore
+        private TripleStoreAdapter Create<TStore>(Mock<TStore> store, Mock<IEntityStore> tracker) where TStore : class, ITripleStore
         {
             var tripleStoreAdapter = new TripleStoreAdapter(store.Object, tracker.Object)
                                        {

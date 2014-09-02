@@ -13,7 +13,6 @@ using RomanticWeb.Mapping;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Stubs;
-using RomanticWeb.Updates;
 
 namespace RomanticWeb.Tests.Linq
 {
@@ -25,7 +24,7 @@ namespace RomanticWeb.Tests.Linq
         private Mock<IEntityContext> _entityContext;
         private IMappingsRepository _mappings;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelectionPolicy;
-        private Mock<IStoreChangeTracker> _tracker;
+        private Mock<IEntityStore> _store;
         private Tuple<IQueryable<IPerson>, string, string, string, string, string, string>[] _testQueries;
 
         [SetUp]
@@ -35,15 +34,15 @@ namespace RomanticWeb.Tests.Linq
             _baseUriSelectionPolicy = new Mock<IBaseUriSelectionPolicy>();
             _baseUriSelectionPolicy.Setup(policy => policy.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri("http://test/"));
             _entitySource = new Mock<IEntitySource>(MockBehavior.Strict);
-            _tracker = new Mock<IStoreChangeTracker>(MockBehavior.Strict);
-            _tracker.Setup(store => store.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
+            _store = new Mock<IEntityStore>(MockBehavior.Strict);
+            _store.Setup(store => store.AssertEntity(It.IsAny<EntityId>(), It.IsAny<IEnumerable<EntityQuad>>()));
 
             _entityContext = new Mock<IEntityContext>(MockBehavior.Strict);
             _entityContext.Setup(context => context.Load<IPerson>(It.IsAny<EntityId>())).Returns((EntityId id) => CreatePersonEntity(id));
             _entityContext.SetupGet(context => context.Mappings).Returns(_mappings);
             _entityContext.SetupGet(context => context.BaseUriSelector).Returns(_baseUriSelectionPolicy.Object);
 
-            _persons = new EntityQueryable<IPerson>(_entityContext.Object, _entitySource.Object, _tracker.Object);
+            _persons = new EntityQueryable<IPerson>(_entityContext.Object, _entitySource.Object, _store.Object);
             _testQueries = GetTestQueries();
         }
 

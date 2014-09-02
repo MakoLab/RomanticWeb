@@ -6,7 +6,6 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Model;
-using RomanticWeb.Updates;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
@@ -21,14 +20,17 @@ namespace RomanticWeb.DotNetRDF
     {
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
-        private readonly IStoreChangeTracker _changeTracker;
+        private readonly IEntityStore _entityStore;
 
-        /// <summary>Creates a new instance of <see cref="TripleStoreAdapter"/></summary>
+        /// <summary>
+        /// Creates a new instance of <see cref="TripleStoreAdapter" />
+        /// </summary>
         /// <param name="store">The underlying triple store</param>
-        public TripleStoreAdapter(ITripleStore store, IStoreChangeTracker changeTracker)
+        /// <param name="entityStore">The entity store.</param>
+        public TripleStoreAdapter(ITripleStore store, IEntityStore entityStore)
         {
             _store = store;
-            _changeTracker = changeTracker;
+            _entityStore = entityStore;
             _namespaces = new NamespaceMapper(true);
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
@@ -51,7 +53,7 @@ namespace RomanticWeb.DotNetRDF
                           let graph = result.HasBoundValue("g") ? result["g"].WrapNode(entityId) : null
                           select new EntityQuad(entityId, subject, predicate, @object, graph);
 
-            _changeTracker.AssertEntity(entityId, triples);
+            _entityStore.AssertEntity(entityId, triples);
         }
 
         /// <summary>Executes an ASK query to perform existence check.</summary>

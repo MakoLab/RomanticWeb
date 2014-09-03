@@ -7,7 +7,7 @@ using System.Xml.Linq;
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Converts an OWL based ontology written with XML syntax into an object representation.</summary>
-    public class XmlOntologyFactory : IOntologyFactory
+    public class XmlOntologyLoader : IOntologyLoader
     {
         private static readonly string[] AcceptedMimeTypes = new string[] { "application/rdf+xml", "application/owl+xml" };
         private static readonly string[] AcceptedNodeTypes = new string[] { "Class", "Property", "DatatypeProperty", "ObjectProperty" };

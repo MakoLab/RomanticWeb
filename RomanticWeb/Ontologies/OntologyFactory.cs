@@ -4,24 +4,22 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using RomanticWeb.IO;
+using RomanticWeb.LightInject;
 using RomanticWeb.Net;
 
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a centralized access to ontology provider factories.</summary>
-    internal class OntologyFactory
+    public class OntologyFactory
     {
-        private static readonly IDictionary<string, IOntologyFactory> OntologyFactoryMimeTypeMappingCache;
-        private readonly IEnumerable<IOntologyFactory> _ontologyFactories;
+        private readonly IDictionary<string, IOntologyLoader> _ontologyFactoryMimeTypeMappingCache;
+        private readonly IServiceContainer _container;
 
-        static OntologyFactory()
+        public OntologyFactory()
         {
-            OntologyFactoryMimeTypeMappingCache = new Dictionary<string, IOntologyFactory>();
-        }
-
-        public OntologyFactory(IEnumerable<IOntologyFactory> ontologyFactories)
-        {
-            _ontologyFactories = ontologyFactories;
+            _container = new ServiceContainer();
+            _container.RegisterAssembly(GetType().Assembly);
+            _ontologyFactoryMimeTypeMappingCache = new Dictionary<string, IOntologyLoader>();
         }
 
         /// <summary>Creates an ontology from given file path.</summary>
@@ -43,11 +41,6 @@ namespace RomanticWeb.Ontologies
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public Ontology Create(Stream fileStream)
         {
-            if (fileStream == null)
-            {
-                throw new ArgumentNullException("fileStream");
-            }
-
             string contentType = ContentTypeResolver.Resolve(null, new StreamWebResponse(fileStream));
             return Create(fileStream, contentType);
         }
@@ -58,7 +51,7 @@ namespace RomanticWeb.Ontologies
         /// <returns>Ontology beeing an object representation of given data.</returns>
         public Ontology Create(Stream fileStream, string contentType)
         {
-            IOntologyFactory ontologyFactory = GetOntologyFactory(contentType);
+            IOntologyLoader ontologyFactory = GetOntologyFactory(contentType);
             if (ontologyFactory == null)
             {
                 throw new NotSupportedException(System.String.Format("MIME type of '{0}' is not supported.", contentType));
@@ -69,18 +62,14 @@ namespace RomanticWeb.Ontologies
             return result;
         }
 
-        private IOntologyFactory GetOntologyFactory(string contentType)
+        private IOntologyLoader GetOntologyFactory(string contentType)
         {
-            IOntologyFactory result = null;
-            lock (OntologyFactoryMimeTypeMappingCache)
+            IOntologyLoader result = null;
+            lock (_ontologyFactoryMimeTypeMappingCache)
             {
-                if (!OntologyFactoryMimeTypeMappingCache.ContainsKey(contentType))
+                if (!_ontologyFactoryMimeTypeMappingCache.TryGetValue(contentType, out result))
                 {
-                    OntologyFactoryMimeTypeMappingCache[contentType] = result = _ontologyFactories.Where(item => item.Accepts.Any(mimeType => mimeType == contentType)).FirstOrDefault();
-                }
-                else
-                {
-                    result = OntologyFactoryMimeTypeMappingCache[contentType];
+                    _ontologyFactoryMimeTypeMappingCache[contentType] = result = _container.GetAllInstances<IOntologyLoader>().Where(item => item.Accepts.Any(mimeType => mimeType == contentType)).FirstOrDefault();
                 }
             }
 

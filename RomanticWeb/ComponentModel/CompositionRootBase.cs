@@ -99,6 +99,14 @@ namespace RomanticWeb.ComponentModel
         }
 
         /// <summary>
+        /// Adds a <see cref="IOntologyLoader"/>
+        /// </summary>
+        protected void OntologyLoader<TLoader>() where TLoader : IOntologyLoader
+        {
+            AddNamedRegistration<IOntologyLoader, TLoader>();
+        }
+
+        /// <summary>
         /// Sets the <see cref="IRdfTypeCache"/> implementation type
         /// </summary>
         protected void RdfTypeCache<TCache>() 

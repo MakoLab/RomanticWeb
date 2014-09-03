@@ -81,10 +81,7 @@ namespace RomanticWeb.Ontologies
         /// <summary>Creates a default ontology provider with all built in ontologies.</summary>
         public DefaultOntologiesProvider()
         {
-            _ontologyFactory = new OntologyFactory(new IOntologyFactory[]
-                                                       {
-                                                           new XmlOntologyFactory()
-                                                       });
+            _ontologyFactory = new OntologyFactory();
             _ontologies = new List<Ontology>();
             _includedOntologies = new List<BuiltInOntologies>();
             Include(BuiltInOntologies.RDF |

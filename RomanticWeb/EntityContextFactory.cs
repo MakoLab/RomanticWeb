@@ -45,7 +45,7 @@ namespace RomanticWeb
         {
             get
             {
-                return _container.GetInstance<IOntologyProvider>();
+                return new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>());
             }
         }
 

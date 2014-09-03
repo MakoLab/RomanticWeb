@@ -3,7 +3,7 @@
 namespace RomanticWeb.Ontologies
 {
     /// <summary>Provides a base interface for ontology factories.</summary>
-    public interface IOntologyFactory
+    public interface IOntologyLoader
     {
         /// <summary>Gets an array of accepted MIME types.</summary>
         string[] Accepts { get; }

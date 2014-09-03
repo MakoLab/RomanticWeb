@@ -65,6 +65,7 @@
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\CompositionRootBase.cs" />
+    <Compile Include="ComponentModel\OntologyLoaderCompositionRoot.cs" />
     <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
     <Compile Include="ComponentModel\CompositionRoot.cs" />
@@ -357,7 +358,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FOAF.tt</DependentUpon>
     </Compile>
-    <Compile Include="Ontologies\IOntologyFactory.cs" />
+    <Compile Include="Ontologies\IOntologyLoader.cs" />
     <Compile Include="Ontologies\IOntologyProvider.cs" />
     <Compile Include="Ontologies\LDP.cs">
       <AutoGen>True</AutoGen>
@@ -407,7 +408,7 @@
     </Compile>
     <Compile Include="Ontologies\Term.cs" />
     <Compile Include="Ontologies\OntologyExtensions.cs" />
-    <Compile Include="Ontologies\XmlOntologyFactory.cs" />
+    <Compile Include="Ontologies\XmlOntologyLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ontologies\Property.cs" />
     <Compile Include="Ontologies\Class.cs" />

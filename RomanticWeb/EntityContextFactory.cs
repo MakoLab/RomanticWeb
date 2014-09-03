@@ -193,6 +193,11 @@ namespace RomanticWeb
 
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
+            return WithDependenciesInternal<T>();
+        }
+
+        internal EntityContextFactory WithDependenciesInternal<T>() where T : ICompositionRoot, new()
+        {
             _container.RegisterFrom<T>();
             return this;
         }

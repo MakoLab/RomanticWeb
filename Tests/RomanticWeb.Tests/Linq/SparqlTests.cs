@@ -54,7 +54,7 @@ namespace RomanticWeb.Tests.Linq
                 .WithDefaultOntologies()
                 .WithEntitySource(() => new TripleStoreAdapter(_store))
                 .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
-                .WithDependencies<Dependencies>();
+                .WithDependenciesInternal<Dependencies>();
 
             _typeCache = (TestCache)container.GetInstance<IRdfTypeCache>();
 

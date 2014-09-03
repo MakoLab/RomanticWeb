@@ -2,6 +2,7 @@
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -15,15 +16,14 @@ namespace RomanticWeb
         /// <summary>Gets the mappings.</summary>
         IMappingsRepository Mappings { get; }
 
-        /// <summary>
-        /// Gets the conventions.
-        /// </summary>
+        /// <summary>Gets the conventions.</summary>
         IEnumerable<IConvention> Conventions { get; }
 
-        /// <summary>
-        /// Gets the fallback node converter.
-        /// </summary>
+        /// <summary>Gets the fallback node converter.</summary>
         IFallbackNodeConverter FallbackNodeConverter { get; }
+
+        /// <summary>Gets the mapping model visitors.</summary>
+        IEnumerable<IMappingModelVisitor> MappingModelVisitors { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

@@ -9,6 +9,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
+using RomanticWeb.Mapping.Visitors;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
@@ -72,6 +73,15 @@ namespace RomanticWeb
             get
             {
                 return _container.GetInstance<IFallbackNodeConverter>();
+            }
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IMappingModelVisitor> MappingModelVisitors
+        {
+            get
+            {
+                return _container.GetAllInstances<IMappingModelVisitor>();
             }
         }
 

@@ -36,7 +36,7 @@ namespace RomanticWeb.Tests.Linq
             IEntityContextFactory factory = new EntityContextFactory(container)
                .WithDefaultOntologies()
                .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
-               .WithDependencies<Dependencies>();
+               .WithDependenciesInternal<Dependencies>();
 
             _entityContext = factory.CreateContext();
         }

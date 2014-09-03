@@ -50,7 +50,7 @@ namespace RomanticWeb.ComponentModel
         /// </summary>
         protected void Ontology<TProvider>() where TProvider : IOntologyProvider
         {
-            AddNamedRegistration<IOntologyProvider, TProvider>();
+            AddNamedRegistration<IOntologyProvider, TProvider>(new PerContainerLifetime());
         }
 
         /// <summary>

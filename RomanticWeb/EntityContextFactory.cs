@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Anotar.NLog;
+using RomanticWeb.ComponentModel;
 using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;

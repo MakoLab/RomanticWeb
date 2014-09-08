@@ -6,6 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Sparql;
 using RomanticWeb.Model;
+using RomanticWeb.Updates;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
@@ -21,16 +22,19 @@ namespace RomanticWeb.DotNetRDF
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
         private readonly IEntityStore _entityStore;
+        private readonly ISparqlCommandFactory _sparqlCommandFactory;
 
         /// <summary>
         /// Creates a new instance of <see cref="TripleStoreAdapter" />
         /// </summary>
         /// <param name="store">The underlying triple store</param>
         /// <param name="entityStore">The entity store.</param>
-        public TripleStoreAdapter(ITripleStore store, IEntityStore entityStore)
+        /// <param name="sparqlCommandFactory"></param>
+        public TripleStoreAdapter(ITripleStore store, IEntityStore entityStore, ISparqlCommandFactory sparqlCommandFactory)
         {
             _store = store;
             _entityStore = entityStore;
+            _sparqlCommandFactory = sparqlCommandFactory;
             _namespaces = new NamespaceMapper(true);
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
         }
@@ -104,9 +108,11 @@ namespace RomanticWeb.DotNetRDF
         }
 
         /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
-        public void Commit()
+        /// <param name="changes"></param>
+        public void Commit(IEnumerable<DatasetChange> changes)
         {
-            ExecuteCommandSet(new DatasetChangesCommandSetConverter(_store.Triples, MetaGraphUri, null).ConvertToSparqlUpdateCommandSet());
+            var updateCommands = _sparqlCommandFactory.CreateCommandSet(changes);
+            ExecuteCommandSet(new SparqlUpdateCommandSet(updateCommands));
         }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)

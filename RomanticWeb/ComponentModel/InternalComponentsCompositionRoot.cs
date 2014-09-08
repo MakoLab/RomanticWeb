@@ -41,7 +41,7 @@ namespace RomanticWeb.ComponentModel
 
             registry.Register(factory => CreateEntityProxy(factory));
 
-            registry.Register<IStoreChangeTracker, DefaultStoreChangeTracker>();
+            registry.Register<IDatasetChangesTracker, DatasetChanges>();
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)

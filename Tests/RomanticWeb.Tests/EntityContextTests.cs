@@ -28,6 +28,9 @@ namespace RomanticWeb.Tests
         private Mock<IEntityContextFactory> _factory;
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
+        private Mock<IDatasetChangesOptimizier> _changesOptimizer;
+
+        private Mock<IDatasetChangesTracker> _changesTracker;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
         {
@@ -35,39 +38,48 @@ namespace RomanticWeb.Tests
             {
                 Setup();
 
-                yield return new Lazy<IEntity>(() =>
-                    {
-                        _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
-                                    .Returns(new Node[0]);
-                        return _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
-                    });
                 yield return new Lazy<IEntity>(
                     () =>
-                    {
-                        _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
-                                    .Returns(new Node[0]);
-                        _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(new EntityMapping(typeof(IPerson)));
-                        return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
-                    });
+                        {
+                            _entityStore.Setup(
+                                s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
+                                        .Returns(new Node[0]);
+                            return _entityContext.Load<IEntity>(new EntityId("http://magi/people/Tomasz"));
+                        });
+                yield return new Lazy<IEntity>(
+                    () =>
+                        {
+                            _entityStore.Setup(
+                                s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
+                                        .Returns(new Node[0]);
+                            _mappings.Setup(m => m.MappingFor(typeof(IPerson)))
+                                     .Returns(new EntityMapping(typeof(IPerson)));
+                            return _entityContext.Load<IPerson>(new EntityId("http://magi/people/Tomasz"));
+                        });
             }
         }
 
         [SetUp]
         public void Setup()
         {
-            _typesMapping = new TestPropertyMapping(typeof(ITypedEntity), typeof(IEnumerable<EntityId>), "Types", Rdf.type);
+            _typesMapping = new TestPropertyMapping(
+                typeof(ITypedEntity), typeof(IEnumerable<EntityId>), "Types", Rdf.type);
             _factory = new Mock<IEntityContextFactory>();
             _ontologyProvider = new TestOntologyProvider();
             _mappings = new Mock<IMappingsRepository>();
             _entityStore = new Mock<IEntityStore>();
             _entityStore.Setup(es => es.GetObjectsForPredicate(It.IsAny<EntityId>(), Rdf.type, It.IsAny<Uri>()))
                         .Returns(new Node[0]);
-            _mappings.Setup(m => m.MappingFor<ITypedEntity>()).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
-            _mappings.Setup(m => m.MappingFor(typeof(ITypedEntity))).Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
+            _mappings.Setup(m => m.MappingFor<ITypedEntity>())
+                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
+            _mappings.Setup(m => m.MappingFor(typeof(ITypedEntity)))
+                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
+            _changesOptimizer = new Mock<IDatasetChangesOptimizier>(MockBehavior.Strict);
+            _changesTracker = new Mock<IDatasetChangesTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,
                 _mappings.Object,
@@ -79,7 +91,8 @@ namespace RomanticWeb.Tests
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
                 new ImpromptuInterfaceCaster((entity, mapping) => new EntityProxy(entity, mapping, catalog, new TestGraphSelector()), _mappings.Object),
-                new Mock<IStoreChangeTracker>(MockBehavior.Strict).Object);
+                _changesTracker.Object,
+                _changesOptimizer.Object);
         }
 
         [TearDown]
@@ -87,6 +100,7 @@ namespace RomanticWeb.Tests
         {
             _store.VerifyAll();
             _baseUriSelector.VerifyAll();
+            _changesOptimizer.VerifyAll();
         }
 
         [Test]
@@ -102,7 +116,8 @@ namespace RomanticWeb.Tests
             Assert.That(entity.Id, Is.EqualTo(new EntityId("http://magi/people/Tomasz")));
         }
 
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Creating_new_Entity_should_throw_when_EntityId_is_null()
         {
             _entityContext.Load<IEntity>(null);
@@ -126,7 +141,8 @@ namespace RomanticWeb.Tests
         [Test]
         [TestCaseSource("TypedAndUntypedEntities")]
         [ExpectedException(typeof(RuntimeBinderException))]
-        public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces(Lazy<IEntity> lazyEntity)
+        public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces(
+            Lazy<IEntity> lazyEntity)
         {
             // given
             dynamic entity = lazyEntity.Value.AsDynamic();
@@ -177,7 +193,8 @@ namespace RomanticWeb.Tests
             var id = entity.foaf.givenName;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+            _store.Verify(
+                s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
         }
 
         [Test]
@@ -185,8 +202,7 @@ namespace RomanticWeb.Tests
         {
             // when
             var mockingMapping = new Mock<IEntityMapping>();
-            mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>()))
-                          .Returns((string prop) => GetMapping(prop));
+            mockingMapping.Setup(m => m.PropertyFor(It.IsAny<string>())).Returns((string prop) => GetMapping(prop));
             _mappings.Setup(m => m.MappingFor(typeof(IPerson))).Returns(mockingMapping.Object);
             _entityStore.Setup(s => s.GetObjectsForPredicate(It.IsAny<EntityId>(), It.IsAny<Uri>(), It.IsAny<Uri>()))
                         .Returns(new Node[0]);
@@ -198,7 +214,8 @@ namespace RomanticWeb.Tests
             var interests = entity.Interests;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+            _store.Verify(
+                s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
         }
 
         [Test]
@@ -250,15 +267,15 @@ namespace RomanticWeb.Tests
         public void Should_apply_changes_to_underlying_store_when_committing()
         {
             // given
-            ////var aChangeset = new DatasetChanges();
-            ////_entityStore.Setup(store => store.Changes).Returns(aChangeset);
+            var datasetChanges = new DatasetChange[0];
+            _changesOptimizer.Setup(co => co.Optimize(It.IsAny<IDatasetChanges>())).Returns(datasetChanges);
             _entityStore.Setup(store => store.ResetState());
 
             // when
             _entityContext.Commit();
 
             // then
-            _store.Verify(store => store.Commit(), Times.Once);
+            _store.Verify(store => store.Commit(datasetChanges), Times.Once);
         }
 
         [Test]
@@ -323,9 +340,31 @@ namespace RomanticWeb.Tests
             _baseUriSelector.Verify(bus => bus.SelectBaseUri(entityId), Times.Once);
         }
 
+        [Test]
+        public void Committing_should_process_changes_and_pass_them_to_triple_source()
+        {
+            // given
+            IEnumerable<DatasetChange> changes = new[] { new TestChange("urn:some:id", "urn:the:graph") };
+            _changesOptimizer.Setup(c => c.Optimize(_changesTracker.Object)).Returns(changes);
+
+            // when
+            _entityContext.Commit();
+
+            // then
+            _store.Verify(store => store.Commit(changes));
+        }
+
         private static PropertyMapping GetMapping(string propertyName)
         {
             return new TestPropertyMapping(typeof(IEntity), typeof(int), propertyName, new Uri("http://unittest/" + propertyName));
+        }
+
+        private class TestChange : DatasetChange
+        {
+            public TestChange(EntityId changedEntity, EntityId graph)
+                : base(changedEntity, graph)
+            {
+            }
         }
     }
 }

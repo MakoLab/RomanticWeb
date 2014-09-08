@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
+using RomanticWeb.Updates;
 using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb

@@ -4,7 +4,6 @@ using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
-using RomanticWeb.Model;
 using VDS.RDF;
 using VDS.RDF.Update;
 
@@ -27,10 +26,9 @@ namespace RomanticWeb.Tests.DotNetRDF
                     new EntityId("urn:some:entity3"),
                     new EntityId("urn:some:entity4")
                 };
-            var changes = new DatasetChanges(new EntityQuad[0], new EntityQuad[0], new EntityQuad[0], deletedEntities);
 
             // when
-            tripleStoreAdapter.Commit();
+            tripleStoreAdapter.Commit(null);
 
             // then
             tripleStore.Verify(store => store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 8)));
@@ -38,7 +36,7 @@ namespace RomanticWeb.Tests.DotNetRDF
 
         private TripleStoreAdapter Create<TStore>(Mock<TStore> store, Mock<IEntityStore> tracker) where TStore : class, ITripleStore
         {
-            var tripleStoreAdapter = new TripleStoreAdapter(store.Object, tracker.Object)
+            var tripleStoreAdapter = new TripleStoreAdapter(store.Object, tracker.Object, null)
                                        {
                                            MetaGraphUri = new Uri("http://app.magi/graphs")
                                        };

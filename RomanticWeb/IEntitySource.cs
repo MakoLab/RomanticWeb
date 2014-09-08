@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Model;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb
 {
@@ -36,6 +37,7 @@ namespace RomanticWeb
         /// <summary>
         /// Applies changes to the underlaying triple store
         /// </summary>
-        void Commit();
+        /// <param name="changes"></param>
+        void Commit(IEnumerable<DatasetChange> changes);
     }
 }

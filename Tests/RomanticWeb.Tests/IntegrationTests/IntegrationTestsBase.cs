@@ -15,7 +15,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 {
     public abstract class IntegrationTestsBase
     {
-        private EntityStore _entityStore;
+        private IEntityStore _entityStore;
         private IEntityContext _entityContext;
         private IEntityContextFactory _factory;
 
@@ -54,7 +54,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Setup()
         {
             Mappings = SetupMappings();
-            _entityStore = new EntityStore();
 
             IServiceContainer container = new ServiceContainer();
             container.Register(factory => Store);
@@ -64,8 +63,10 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithOntology(new TestOntologyProvider(IncludeFoaf))
                                                  .WithOntology(new ChemOntology())
                                                  .WithMappings(BuildMappings)
-                                                 .WithMetaGraphUri(MetaGraphUri)
-                                                 .WithEntityStore(() => _entityStore);
+                                                 .WithMetaGraphUri(MetaGraphUri);
+
+            _entityStore = container.GetInstance<IEntityStore>();
+
             ChildSetup();
         }
 

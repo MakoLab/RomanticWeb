@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Resourcer;
 using RomanticWeb.Entities;
-
+using RomanticWeb.Updates;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;

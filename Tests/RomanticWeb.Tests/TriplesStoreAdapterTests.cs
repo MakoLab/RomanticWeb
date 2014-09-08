@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
+using RomanticWeb.Updates;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
 using VDS.RDF.Update;
@@ -17,42 +19,76 @@ namespace RomanticWeb.Tests
         private TripleStoreAdapter _tripleStore;
         private Mock<IUpdateableTripleStore> _realStore;
         private Mock<IEntityStore> _entityStore;
-        private IList<EntityQuad> _quadsAdded;
-        private IList<EntityQuad> _quadsRemoved;
-        private IList<EntityQuad> _entitiesReconstructed;
-        private IList<EntityId> _entitiesRemoved;
+        private Mock<ISparqlCommandFactory> _factory;
 
         [SetUp]
         public void Setup()
         {
             _realStore = new Mock<IUpdateableTripleStore>();
             _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
-            _quadsAdded = new List<EntityQuad>();
-            _quadsRemoved = new List<EntityQuad>();
-            _entitiesReconstructed = new List<EntityQuad>();
-            _entitiesRemoved = new List<EntityId>();
+            _factory = new Mock<ISparqlCommandFactory>(MockBehavior.Strict);
 
-            _tripleStore = new TripleStoreAdapter(_realStore.Object, _entityStore.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
+            _tripleStore = new TripleStoreAdapter(_realStore.Object, _entityStore.Object, _factory.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
         [Test]
-        public void Should_insert_blank_nodes_in_single_command()
+        public void Should_convert_commands_and_execute_on_triple_store()
         {
             // given
-            var identifier = new EntityId("urn:some:uri");
-            var blankNode = new BlankId("magi", identifier);
-            var graph = Node.ForUri(new Uri("urn:graph:id"));
-            _quadsAdded.Add(new EntityQuad(identifier, Node.FromEntityId(identifier), Node.ForUri(Rdf.predicate), Node.ForLiteral("value"), graph));
-            _quadsAdded.Add(new EntityQuad(identifier, Node.FromEntityId(identifier), Node.ForUri(Rdf.predicate), Node.FromEntityId(blankNode), graph));
-            _quadsAdded.Add(new EntityQuad(identifier, Node.FromEntityId(identifier), Node.ForUri(Rdf.predicate), Node.FromEntityId(blankNode), graph));
-            _quadsAdded.Add(new EntityQuad(blankNode, Node.FromEntityId(blankNode), Node.ForUri(Rdf.predicate), Node.ForLiteral("other value"), graph));
-            var changes = new DatasetChanges(_quadsAdded, _quadsRemoved, _entitiesReconstructed, _entitiesRemoved);
+            var testCommand = new TestCommand();
+            var testUpdates = new[] { new TestUpdate() };
+            _factory.Setup(f => f.CreateCommandSet(testUpdates))
+                    .Returns(new[] { testCommand });
 
             // when
-            _tripleStore.Commit();
+            _tripleStore.Commit(testUpdates);
 
             // then
-            _realStore.Verify(st => st.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 1)));
+            _realStore.Verify(st => st.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.Commands.Single() == testCommand)));
+        }
+
+        public class TestCommand : SparqlUpdateCommand
+        {
+            public TestCommand()
+                : base(SparqlUpdateCommandType.Add)
+            {
+            }
+
+            public override bool AffectsSingleGraph
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override bool AffectsGraph(Uri graphUri)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Evaluate(SparqlUpdateEvaluationContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Process(ISparqlUpdateProcessor processor)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class TestUpdate : DatasetChange
+        {
+            public TestUpdate()
+                : base("urn:test:entity", "urn:test:graph")
+            {
+            }
         }
     }
 }

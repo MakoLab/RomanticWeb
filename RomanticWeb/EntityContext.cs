@@ -28,7 +28,10 @@ namespace RomanticWeb
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
-        private readonly IStoreChangeTracker _changeTracker;
+
+        private readonly IDatasetChangesOptimizier _optimizier;
+
+        private readonly IDatasetChangesTracker _changeTracker;
 
         #endregion
 
@@ -45,7 +48,8 @@ namespace RomanticWeb
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster, 
-            IStoreChangeTracker changeTracker) : this(changeTracker)
+            IDatasetChangesTracker changeTracker,
+            IDatasetChangesOptimizier optimizier) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -57,6 +61,7 @@ namespace RomanticWeb
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
             _caster = caster;
+            _optimizier = optimizier;
 
             if (_baseUriSelector == null)
             {
@@ -73,8 +78,9 @@ namespace RomanticWeb
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
-            IEntityCaster caster, 
-            IStoreChangeTracker changeTracker)
+            IEntityCaster caster,
+            IDatasetChangesTracker changeTracker, 
+            IDatasetChangesOptimizier optimizer)
             : this(
                 factory,
                 mappings,
@@ -86,11 +92,12 @@ namespace RomanticWeb
                 blankIdGenerator,
                 transformerCatalog, 
                 caster, 
-                changeTracker)
+                changeTracker,
+                optimizer)
         {
         }
 
-        private EntityContext(IStoreChangeTracker changeTracker)
+        private EntityContext(IDatasetChangesTracker changeTracker)
         {
             _changeTracker = changeTracker;
             LogTo.Info("Creating entity context");
@@ -120,11 +127,11 @@ namespace RomanticWeb
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
 
-        public DatasetChanges Changes
+        public IDatasetChanges Changes
         {
             get
             {
-                throw new NotImplementedException();
+                return _changeTracker;
             }
         }
 
@@ -170,7 +177,7 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.Commit();
+            _entitySource.Commit(_optimizier.Optimize(Changes));
             _entityStore.ResetState();
         }
 

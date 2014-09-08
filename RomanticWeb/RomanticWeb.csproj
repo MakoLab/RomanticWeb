@@ -94,7 +94,6 @@
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="Converters\FallbackNodeConverter.cs" />
     <Compile Include="Converters\StringConverter.cs" />
-    <Compile Include="DatasetChanges.cs" />
     <Compile Include="DatasetChangesGenerator.cs" />
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
@@ -421,8 +420,12 @@
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Updates\DatasetChange.cs" />
-    <Compile Include="Updates\EntityCreation.cs" />
-    <Compile Include="Updates\IStoreChangeTracker.cs" />
+    <Compile Include="Updates\DatasetChanges.cs" />
+    <Compile Include="Updates\GraphDelete.cs" />
+    <Compile Include="Updates\GraphUpdate.cs" />
+    <Compile Include="Updates\IDatasetChanges.cs" />
+    <Compile Include="Updates\IDatasetChangesOptimizier.cs" />
+    <Compile Include="Updates\IDatasetChangesTracker.cs" />
     <Compile Include="Vocabularies\Schema.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />

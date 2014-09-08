@@ -227,7 +227,8 @@ namespace RomanticWeb.Model
             return result;
         }
 
-        internal void SetEntityTypeQuads(EntityId entityId, IEnumerable<Node> typeNodes, Uri graphUri)
+        [Obsolete("Make this private so that it's transparent to the caller")]
+        internal void SetEntityTypeQuads(EntityId entityId, IEnumerable<EntityQuad> typeQuads, Uri graphUri)
         {
             Index<string> index = null;
             string key = MakeSubject(entityId);
@@ -257,15 +258,12 @@ namespace RomanticWeb.Model
                 }
                 else
                 {
-                    _entityTypeQuads[key] = entityTypeQuads = new List<EntityQuad>();
+                    _entityTypeQuads[key] = new List<EntityQuad>();
                 }
 
-                Node subjectNode = Node.FromEntityId(entityId);
-                Node predicateNode = Node.ForUri(Rdf.type);
-                foreach (var typeNode in typeNodes.Distinct())
+                foreach (var quad in typeQuads.Distinct())
                 {
                     added = true;
-                    EntityQuad quad = new EntityQuad(entityId, subjectNode, predicateNode, typeNode).InGraph(graphUri);
                     if (index == null)
                     {
                         index = _subjects.Add(key, _quads.Count, 1);

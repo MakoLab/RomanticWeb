@@ -68,7 +68,7 @@ namespace RomanticWeb
                 }
             }
 
-            return new DatasetChanges(_quadsAdded.Values.SelectMany(item => item), _quadsRemoved, _entitiesReconstructed.Values.SelectMany(item => item), _entitiesRemoved);
+            return new DatasetChanges();
         }
 
         private void DeleteEntity(EntityId entityId, DeleteBehaviour deleteBehaviour)

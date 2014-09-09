@@ -16,7 +16,9 @@ namespace RomanticWeb.Tests.Updates
     {
         private const string GraphId = "urn:some:graph";
         private static readonly EntityId EntityId = "urn:test:id";
-        private static readonly EntityQuad AQuad = new EntityQuad(EntityId, Node.ForUri(Rdf.subject), Node.ForUri(Rdf.predicate), Node.ForLiteral("string"));
+        private static readonly EntityQuad AQuad = new EntityQuad(EntityId, Node.ForUri(Rdf.subject), Node.ForUri(Rdf.predicate), Node.ForLiteral("A"));
+        private static readonly EntityQuad BQuad = new EntityQuad(EntityId, Node.ForUri(Rdf.subject), Node.ForUri(Rdf.predicate), Node.ForLiteral("B"));
+        private static readonly EntityQuad CQuad = new EntityQuad(EntityId, Node.ForUri(Rdf.subject), Node.ForUri(Rdf.predicate), Node.ForLiteral("C"));
         private DatasetChangesOptimizer _optimizer;
         private TestDatasetChanges _changes;
 
@@ -63,6 +65,46 @@ namespace RomanticWeb.Tests.Updates
             // then
             optimized.Should().HaveCount(1);
             optimized.Single().Should().BeOfType<GraphUpdate>();
+        }
+
+        [Test]
+        public void Should_merge_multiple_distinct_removed_quads()
+        {
+            // given
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new[] { AQuad }, new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new[] { AQuad }, new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new[] { AQuad }, new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new[] { BQuad }, new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new[] { CQuad }, new EntityQuad[0]));
+
+            // when
+            var optimized = _optimizer.Optimize(_changes).ToList();
+
+            // then
+            optimized.Should().HaveCount(1);
+            var update = (GraphUpdate)optimized.Single();
+            update.RemovedQuads.Should().HaveCount(3);
+            update.RemovedQuads.Should().ContainInOrder(AQuad, BQuad, CQuad);
+        }
+
+        [Test]
+        public void Should_merge_multiple_distinct_added_quads()
+        {
+            // given
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new[] { AQuad }));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new[] { AQuad }));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new[] { AQuad }));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new[] { BQuad }));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new[] { CQuad }));
+
+            // when
+            var optimized = _optimizer.Optimize(_changes).ToList();
+
+            // then
+            optimized.Should().HaveCount(1);
+            var update = (GraphUpdate)optimized.Single();
+            update.AddedQuads.Should().HaveCount(3);
+            update.AddedQuads.Should().ContainInOrder(AQuad, BQuad, CQuad);
         }
 
         public class TestDatasetChanges : IDatasetChanges

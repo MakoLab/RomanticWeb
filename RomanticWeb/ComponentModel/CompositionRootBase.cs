@@ -95,7 +95,7 @@ namespace RomanticWeb.ComponentModel
         protected void Convention<TConvention>(Action<TConvention> setup = null) 
             where TConvention : IConvention, new()
         {
-            _registrations.Add(registry => registry.Register<TConvention>());
+            _registrations.Add(registry => registry.Register<TConvention>(new PerContainerLifetime()));
             _registrations.Add(registry => registry.Register<IConvention>(factory => CreateConvention<TConvention>(factory), typeof(TConvention).FullName, new PerContainerLifetime()));
 
             if (setup != null)
@@ -147,7 +147,7 @@ namespace RomanticWeb.ComponentModel
             where TVisitor : IMappingProviderVisitor
         {
             MappingProviderVisitorChain.Add<TVisitor>();
-            _registrations.Add(registry => registry.Register<TVisitor>());
+            _registrations.Add(registry => registry.Register<TVisitor>(new PerContainerLifetime()));
         }
 
         protected void SharedComponent<TComponent, TImplementation>(string name = null) 
@@ -164,7 +164,7 @@ namespace RomanticWeb.ComponentModel
         protected void TransientComponent<TComponent, TImplementation>(string name = null) 
             where TImplementation : TComponent
         {
-            AddRegistration<TComponent, TImplementation>(name, null);
+            AddRegistration<TComponent, TImplementation>(name, new PerRequestLifeTime());
         }
 
         private void AddRegistration<TComponent, TImplementation>(string name, ILifetime lifetime)

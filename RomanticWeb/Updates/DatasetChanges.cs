@@ -53,7 +53,13 @@ namespace RomanticWeb.Updates
         public IEnumerable<EntityId> EntitiesRemoved { get; private set; }
 
         /// <summary>Gets a value indicating whether there are any changes.</summary>
-        public bool HasChanges { get { return (QuadsAdded.Any()) || (QuadsRemoved.Any()) || (EntitiesReconstructed.Any()) || (EntitiesRemoved.Any()); } }
+        public bool HasChanges
+        {
+            get
+            {
+                return _graphChanges.Any() && _graphChanges.All(changes => changes.Value.Any());
+            }
+        }
 
         public IEnumerable<DatasetChange> this[EntityId graphUri]
         {

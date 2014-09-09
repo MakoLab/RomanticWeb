@@ -29,7 +29,7 @@ namespace RomanticWeb.ComponentModel
             RegisterResultAggregator<SingleOrDefault>(registry);
             RegisterResultAggregator<SingleResult>(registry);
 
-            registry.Register(factory => CreateEntitySource(factory));
+            registry.Register(factory => CreateEntitySource(factory), new PerContainerLifetime());
 
             registry.Register<EmitHelper>(new PerContainerLifetime());
 
@@ -37,12 +37,12 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateMappingContext(factory), new PerContainerLifetime());
             registry.Register(factory => CreateMappingsRepository(factory), new PerContainerLifetime());
 
-            registry.Register<IEntityCaster, ImpromptuInterfaceCaster>();
+            registry.Register<IEntityCaster, ImpromptuInterfaceCaster>(new PerScopeLifetime());
 
             registry.Register(factory => CreateEntityProxy(factory));
 
-            registry.Register<IDatasetChangesTracker, DatasetChanges>();
-            registry.Register<IDatasetChangesOptimizer, DatasetChangesOptimizer>();
+            registry.Register<IDatasetChangesTracker, DatasetChanges>(new PerScopeLifetime());
+            registry.Register<IDatasetChangesOptimizer, DatasetChangesOptimizer>(new PerContainerLifetime());
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)

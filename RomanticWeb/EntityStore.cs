@@ -77,22 +77,28 @@ namespace RomanticWeb
             _initialQuads.Add(entityId, entityQuads);
         }
 
-        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Node[] newValues, Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
         {
             IEnumerable<EntityQuad> removedQuads;
             var subjectNode = Node.FromEntityId(entityId);
-            var newQuads = from node in newValues
-                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri);
-            newQuads = newQuads.ToArray();
 
+            IEnumerable<EntityQuad> newQuads;
             if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
             {
+                newQuads = from node in newValues()
+                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri);
+                newQuads = newQuads.ToArray();
+
                 removedQuads = _entityQuads.GetEntityTypeQuads(entityId);
                 _entityQuads.SetEntityTypeQuads(entityId, newQuads, graphUri);
             }
             else
             {
                 removedQuads = RemoveTriples(entityId, subjectNode, propertyUri, graphUri).ToList();
+
+                newQuads = from node in newValues()
+                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri);
+                newQuads = newQuads.ToArray();
 
                 foreach (var triple in newQuads)
                 {

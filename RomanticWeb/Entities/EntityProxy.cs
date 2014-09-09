@@ -139,10 +139,10 @@ namespace RomanticWeb.Entities
                 var propertyUri = Node.ForUri(property.Uri);
                 var resultTransformer = _resultTransformers.GetTransformer(property);
 
-                var newValues = new Node[0];
+                Func<IEnumerable<Node>> newValues = () => new Node[0];
                 if (value != null)
                 {
-                    newValues = resultTransformer.ToNodes(value, this, property, Context).ToArray();
+                    newValues = () => resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
                 _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);

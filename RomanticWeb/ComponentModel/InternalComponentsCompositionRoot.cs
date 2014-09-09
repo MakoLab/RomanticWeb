@@ -42,6 +42,7 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateEntityProxy(factory));
 
             registry.Register<IDatasetChangesTracker, DatasetChanges>();
+            registry.Register<IDatasetChangesOptimizer, DatasetChangesOptimizer>();
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)
@@ -74,7 +75,8 @@ namespace RomanticWeb.ComponentModel
 
         private static IMappingsRepository CreateMappingsRepository(IServiceFactory factory)
         {
-            var visitors = from type in factory.GetInstance<MappingProviderVisitorChain>().Visitors
+            var visitors = from chain in factory.GetAllInstances<MappingProviderVisitorChain>()
+                           from type in chain.Visitors
                            select (IMappingProviderVisitor)factory.GetInstance(type);
 
             return new MappingsRepository(

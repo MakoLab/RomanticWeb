@@ -141,15 +141,6 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>Includes a given <see cref="IEntityStore" /> in context that will be created.</summary>
-        /// <param name="entityStoreFactory">Target entity store.</param>
-        /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
-        {
-            _container.Register(f => entityStoreFactory());
-            return this;
-        }
-
         /// <summary>Exposes the method to register mapping repositories.</summary>
         /// <param name="buildMappings">Delegate method to be used for building mappings.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>

@@ -29,7 +29,7 @@ namespace RomanticWeb
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
 
-        private readonly IDatasetChangesOptimizier _optimizier;
+        private readonly IDatasetChangesOptimizer _optimizer;
 
         private readonly IDatasetChangesTracker _changeTracker;
 
@@ -49,7 +49,7 @@ namespace RomanticWeb
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster, 
             IDatasetChangesTracker changeTracker,
-            IDatasetChangesOptimizier optimizier) : this(changeTracker)
+            IDatasetChangesOptimizer optimizer) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -61,7 +61,7 @@ namespace RomanticWeb
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
             _caster = caster;
-            _optimizier = optimizier;
+            _optimizer = optimizer;
 
             if (_baseUriSelector == null)
             {
@@ -80,7 +80,7 @@ namespace RomanticWeb
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster,
             IDatasetChangesTracker changeTracker, 
-            IDatasetChangesOptimizier optimizer)
+            IDatasetChangesOptimizer optimizer)
             : this(
                 factory,
                 mappings,
@@ -177,7 +177,7 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.Commit(_optimizier.Optimize(Changes));
+            _entitySource.Commit(_optimizer.Optimize(Changes));
             _entityStore.ResetState();
         }
 

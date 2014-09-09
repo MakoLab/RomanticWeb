@@ -11,7 +11,14 @@ namespace RomanticWeb.Updates
     /// <summary>Represents changes made in the triple store.</summary>
     public sealed class DatasetChanges : IDatasetChangesTracker
     {
-        private readonly IDictionary<EntityId, IList<DatasetChange>> _entityChanges = new ConcurrentDictionary<EntityId, IList<DatasetChange>>(); 
+        private const int GraphChangesCapacity = 16;
+
+        private readonly IDictionary<EntityId, IList<DatasetChange>> _graphChanges = new ConcurrentDictionary<EntityId, IList<DatasetChange>>();
+
+        public DatasetChanges()
+            : this(new EntityQuad[0], new EntityQuad[0], new EntityQuad[0], new EntityId[0])
+        {
+        }
 
         internal DatasetChanges(
             IEnumerable<EntityQuad> quadsAdded,
@@ -23,11 +30,6 @@ namespace RomanticWeb.Updates
             QuadsRemoved = quadsRemoved;
             EntitiesReconstructed = entitiesReconstructed;
             EntitiesRemoved = entitiesRemoved;
-        }
-
-        internal DatasetChanges()
-            : this(new EntityQuad[0], new EntityQuad[0], new EntityQuad[0], new EntityId[0])
-        {
         }
 
         /// <summary>Gets the added quads.</summary>
@@ -57,23 +59,33 @@ namespace RomanticWeb.Updates
         {
             get
             {
-                return _entityChanges[graphUri];
+                return _graphChanges[graphUri];
             }
         }
 
         public void Add(DatasetChange datasetChange)
         {
-            throw new System.NotImplementedException();
+            ChangesFor(datasetChange.Graph).Add(datasetChange);
         }
 
         public IEnumerator<KeyValuePair<EntityId, IEnumerable<DatasetChange>>> GetEnumerator()
         {
-            return new ChangesEnumerator(_entityChanges);
+            return new ChangesEnumerator(_graphChanges);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private IList<DatasetChange> ChangesFor(EntityId graph)
+        {
+            if (!_graphChanges.ContainsKey(graph))
+            {
+                _graphChanges[graph] = new List<DatasetChange>(GraphChangesCapacity);
+            }
+
+            return _graphChanges[graph];
         }
 
         private class ChangesEnumerator : IEnumerator<KeyValuePair<EntityId, IEnumerable<DatasetChange>>>

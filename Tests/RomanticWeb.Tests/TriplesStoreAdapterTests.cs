@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
-using RomanticWeb.Entities;
-using RomanticWeb.Model;
 using RomanticWeb.Updates;
-using RomanticWeb.Vocabularies;
 using VDS.RDF;
 using VDS.RDF.Update;
 

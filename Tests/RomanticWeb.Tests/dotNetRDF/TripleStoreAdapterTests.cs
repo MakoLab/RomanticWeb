@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;
-using RomanticWeb.Entities;
+using RomanticWeb.Updates;
 using VDS.RDF;
 using VDS.RDF.Update;
 
@@ -12,38 +12,79 @@ namespace RomanticWeb.Tests.DotNetRDF
     [TestFixture]
     public class TripleStoreAdapterTests
     {
-        [Test]
-        public void Should_execute_delete_command_for_each_deleted_entity()
+        private TripleStoreAdapter _tripleStore;
+        private Mock<IUpdateableTripleStore> _realStore;
+        private Mock<IEntityStore> _entityStore;
+        private Mock<ISparqlCommandFactory> _factory;
+
+        [SetUp]
+        public void Setup()
         {
-            // given
-            var tripleStore = new Mock<IUpdateableTripleStore>();
-            var tracker = new Mock<IEntityStore>();
-            var tripleStoreAdapter = Create(tripleStore, tracker);
-            IEnumerable<EntityId> deletedEntities = new[]
-                {
-                    new EntityId("urn:some:entity1"),
-                    new EntityId("urn:some:entity2"),
-                    new EntityId("urn:some:entity3"),
-                    new EntityId("urn:some:entity4")
-                };
+            _realStore = new Mock<IUpdateableTripleStore>();
+            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
+            _factory = new Mock<ISparqlCommandFactory>(MockBehavior.Strict);
 
-            // when
-            tripleStoreAdapter.Commit(null);
-
-            // then
-            tripleStore.Verify(store => store.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.CommandCount == 8)));
+            _tripleStore = new TripleStoreAdapter(_realStore.Object, _entityStore.Object, _factory.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
-        private TripleStoreAdapter Create<TStore>(Mock<TStore> store, Mock<IEntityStore> tracker) where TStore : class, ITripleStore
+        [Test]
+        public void Should_convert_commands_and_execute_on_triple_store()
         {
-            var tripleStoreAdapter = new TripleStoreAdapter(store.Object, tracker.Object, null)
-                                       {
-                                           MetaGraphUri = new Uri("http://app.magi/graphs")
-                                       };
-            var metagraph = new Graph { BaseUri = tripleStoreAdapter.MetaGraphUri };
-            store.Setup(s => s.HasGraph(tripleStoreAdapter.MetaGraphUri)).Returns(true);
-            store.Setup(s => s[tripleStoreAdapter.MetaGraphUri]).Returns(metagraph);
-            return tripleStoreAdapter;
+            // given
+            var testCommand = new TestCommand();
+            var testUpdates = new[] { new TestUpdate() };
+            _factory.Setup(f => f.CreateCommandSet(testUpdates))
+                    .Returns(new[] { testCommand });
+
+            // when
+            _tripleStore.Commit(testUpdates);
+
+            // then
+            _realStore.Verify(st => st.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.Commands.Single() == testCommand)));
+        }
+
+        public class TestCommand : SparqlUpdateCommand
+        {
+            public TestCommand()
+                : base(SparqlUpdateCommandType.Add)
+            {
+            }
+
+            public override bool AffectsSingleGraph
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override bool AffectsGraph(Uri graphUri)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Evaluate(SparqlUpdateEvaluationContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Process(ISparqlUpdateProcessor processor)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class TestUpdate : DatasetChange
+        {
+            public TestUpdate()
+                : base("urn:test:entity", "urn:test:graph")
+            {
+            }
         }
     }
 }

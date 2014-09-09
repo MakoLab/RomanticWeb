@@ -36,11 +36,7 @@ namespace RomanticWeb.DotNetRDF
         {
             _nodeFactory = new Graph();
             _parser = new SparqlUpdateParser();
-            return new SparqlUpdateCommandSet(
-                GetDeleteEntityCommands(_datasetChanges.EntitiesRemoved).Concat(
-                GetDeleteDataCommands(_datasetChanges.QuadsRemoved)).Concat(
-                GetInsertDataCommands(_datasetChanges.QuadsAdded, false)).Concat(
-                GetInsertDataCommands(_datasetChanges.EntitiesReconstructed)));
+            return new SparqlUpdateCommandSet();
         }
 
         private IEnumerable<SparqlUpdateCommand> GetDeleteEntityCommands(IEnumerable<EntityId> entityGraphs)

@@ -28,7 +28,7 @@ namespace RomanticWeb.Tests
         private Mock<IEntityContextFactory> _factory;
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
-        private Mock<IDatasetChangesOptimizier> _changesOptimizer;
+        private Mock<IDatasetChangesOptimizer> _changesOptimizer;
 
         private Mock<IDatasetChangesTracker> _changesTracker;
 
@@ -78,7 +78,7 @@ namespace RomanticWeb.Tests
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
-            _changesOptimizer = new Mock<IDatasetChangesOptimizier>(MockBehavior.Strict);
+            _changesOptimizer = new Mock<IDatasetChangesOptimizer>(MockBehavior.Strict);
             _changesTracker = new Mock<IDatasetChangesTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,

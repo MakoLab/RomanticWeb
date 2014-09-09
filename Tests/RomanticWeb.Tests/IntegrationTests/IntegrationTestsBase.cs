@@ -63,7 +63,8 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithOntology(new TestOntologyProvider(IncludeFoaf))
                                                  .WithOntology(new ChemOntology())
                                                  .WithMappings(BuildMappings)
-                                                 .WithMetaGraphUri(MetaGraphUri);
+                                                 .WithMetaGraphUri(MetaGraphUri)
+                                                 .WithDependencies<Components>();
 
             _entityStore = container.GetInstance<IEntityStore>();
 

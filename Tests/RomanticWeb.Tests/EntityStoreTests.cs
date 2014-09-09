@@ -36,7 +36,7 @@ namespace RomanticWeb.Tests
             var property = Node.ForUri(Foaf.knows);
 
             // when
-            _entityStore.ReplacePredicateValues(EntityId, property, new Node[0], GraphUri);
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new Node[0], GraphUri);
 
             // then
             _entityStore.Quads.Should().HaveCount(0);
@@ -51,7 +51,7 @@ namespace RomanticWeb.Tests
             var newValue = Node.ForLiteral("Tomek");
 
             // when
-            _entityStore.ReplacePredicateValues(EntityId, property, new[] { newValue }, GraphUri);
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri);
 
             // then
             _entityStore.Quads.Where(q => q.Graph.Uri == GraphUri).Should().HaveCount(6);

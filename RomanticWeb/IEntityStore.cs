@@ -28,7 +28,7 @@ namespace RomanticWeb
         /// <param name="propertyUri">the predicate</param>
         /// <param name="newValues">new object node(s)</param>
         /// <param name="graphUri">destination graph</param>
-        void ReplacePredicateValues(EntityId id, Node propertyUri, Node[] newValues, Uri graphUri);       
+        void ReplacePredicateValues(EntityId id, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri);       
         
         /// <summary>Marks an entity for deletion.</summary>
         /// <param name="entityId">Identifier of the entity to be removed.</param>

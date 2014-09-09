@@ -40,8 +40,8 @@ namespace RomanticWeb.Updates
 
         private DatasetChange MergeUpdates(GraphUpdate compacted, GraphUpdate nextChange)
         {
-            var removed = compacted.RemovedQuads.ToList();
-            var added = compacted.AddedQuads.ToList();
+            var removed = compacted.RemovedQuads.Union(nextChange.RemovedQuads);
+            var added = compacted.AddedQuads.Union(nextChange.AddedQuads);
 
             return new GraphUpdate(compacted.ChangedEntity, compacted.Graph, removed.ToArray(), added.ToArray());
         }

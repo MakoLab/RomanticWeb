@@ -15,9 +15,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 {
     public abstract class IntegrationTestsBase
     {
-        private IEntityStore _entityStore;
         private IEntityContext _entityContext;
         private IEntityContextFactory _factory;
+        private IServiceContainer _container;
 
         public virtual bool IncludeFoaf { get { return false; } }
 
@@ -44,7 +44,13 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected IEntityStore EntityStore { get { return _entityStore; } }
+        protected IEntityStore EntityStore
+        {
+            get
+            {
+                return _container.GetInstance<IEntityStore>();
+            }
+        }
 
         protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
@@ -55,9 +61,9 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             Mappings = SetupMappings();
 
-            IServiceContainer container = new ServiceContainer();
-            container.Register(factory => Store);
-            _factory = new EntityContextFactory(container).WithEntitySource<TripleStoreAdapter>()
+            _container = new ServiceContainer();
+            _container.Register(factory => Store);
+            _factory = new EntityContextFactory(_container).WithEntitySource<TripleStoreAdapter>()
                                                  .WithOntology(new DefaultOntologiesProvider())
                                                  .WithOntology(new LifeOntology())
                                                  .WithOntology(new TestOntologyProvider(IncludeFoaf))
@@ -65,8 +71,6 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithMappings(BuildMappings)
                                                  .WithMetaGraphUri(MetaGraphUri)
                                                  .WithDependencies<Components>();
-
-            _entityStore = container.GetInstance<IEntityStore>();
 
             ChildSetup();
         }

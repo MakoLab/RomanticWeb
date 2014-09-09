@@ -21,7 +21,9 @@ namespace RomanticWeb
     /// </summary>
     public class EntityContextFactory : IEntityContextFactory
     {
+        private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
+        private readonly IList<Scope> _trackedScopes = new List<Scope>();
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
@@ -118,8 +120,12 @@ namespace RomanticWeb
         public IEntityContext CreateContext()
         {
             LogTo.Debug("Creating entity context");
-            
-            return _container.GetInstance<IEntityContext>();
+
+            lock (Locker)
+            {
+                _trackedScopes.Add(_container.BeginScope());
+                return _container.GetInstance<IEntityContext>();
+            }
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>

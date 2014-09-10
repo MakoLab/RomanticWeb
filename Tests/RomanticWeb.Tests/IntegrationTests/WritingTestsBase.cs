@@ -144,7 +144,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_correctly_delete_and_create_an_entity()
         {
             // given 
-            LoadTestFile("AssociatedInstances");
+            LoadTestFile("AssociatedInstances.trig");
 
             // when
             EntityContext.Delete(new Uri("http://magi/people/Karol"));

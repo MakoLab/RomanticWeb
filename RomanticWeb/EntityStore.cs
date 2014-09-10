@@ -15,15 +15,12 @@ namespace RomanticWeb
         private readonly IDatasetChangesTracker _changesTracker;
         private readonly EntityQuadCollection _entityQuads;
         private readonly EntityQuadCollection _initialQuads;
-        private readonly IDictionary<EntityId, DeleteBehaviour> _deletedEntities;
-        private IDictionary<EntityId, DeleteBehaviour> _markedForDeletion;
 
         public EntityStore(IDatasetChangesTracker changesTracker)
         {
             _changesTracker = changesTracker;
             _entityQuads = new EntityQuadCollection();
             _initialQuads = new EntityQuadCollection();
-            _deletedEntities = new Dictionary<EntityId, DeleteBehaviour>();
         }
 
         public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }
@@ -65,7 +62,6 @@ namespace RomanticWeb
 
         public void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples)
         {
-            _markedForDeletion = null;
             if (_entityQuads.Entities.Contains(entityId))
             {
                 LogTo.Info("Skipping entity {0}. Entity already added to store", entityId);
@@ -109,33 +105,42 @@ namespace RomanticWeb
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren)
         {
-            var removed = _entityQuads.GetEntityQuads(entityId).ToList().SelectMany(RemoveTriple).ToList();
+            var deletes = from entityQuad in _entityQuads.GetEntityQuads(entityId).ToList()
+                          from removedQuad in RemoveTriple(entityQuad)
+                          select removedQuad;
 
-            foreach (var graph in removed.Select(quad => quad.Graph).Distinct())
+            if (entityId is BlankId)
             {
-                _changesTracker.Add(new GraphDelete(entityId, graph.Uri));
+                deletes = deletes.Union(_entityQuads.RemoveWhereObject(entityId));
+            }
+
+            var deletesGrouped = from removedQuad in deletes 
+                                 group removedQuad by removedQuad.Graph into g 
+                                 select g;
+
+            foreach (var removed in deletesGrouped.ToList())
+            {
+                if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
+                {
+                    var removedQuads = removed;
+                    _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
+                }
+                else
+                {
+                    _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
+                }
             }
         }
 
         public void ResetState()
         {
-            foreach (var deleted in _markedForDeletion ?? new DatasetChangesGenerator(_initialQuads, _entityQuads, _deletedEntities).MarkedForDeletion)
-            {
-                _entityQuads.Remove(deleted.Key);
-                if ((((deleted.Value & DeleteBehaviour.NullifyVolatileChildren) == DeleteBehaviour.NullifyVolatileChildren) && (deleted.Key is BlankId)) ||
-                    ((deleted.Value & DeleteBehaviour.NullifyChildren) == DeleteBehaviour.NullifyChildren))
-                {
-                    _entityQuads.RemoveWhereObject(deleted.Key);
-                }
-            }
-
             _initialQuads.Clear();
             foreach (EntityId entityId in _entityQuads)
             {
                 _initialQuads.Add(entityId, _entityQuads[entityId]);
             }
 
-            _markedForDeletion = null;
+            _changesTracker.Reset();
         }
 
         /// <summary>

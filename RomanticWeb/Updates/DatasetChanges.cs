@@ -35,6 +35,11 @@ namespace RomanticWeb.Updates
             ChangesFor(datasetChange.Graph).Add(datasetChange);
         }
 
+        public void Reset()
+        {
+            _graphChanges.Clear();
+        }
+
         public IEnumerator<KeyValuePair<EntityId, IEnumerable<DatasetChange>>> GetEnumerator()
         {
             return new ChangesEnumerator(_graphChanges);

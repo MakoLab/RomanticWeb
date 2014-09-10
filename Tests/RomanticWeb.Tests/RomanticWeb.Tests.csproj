@@ -119,6 +119,7 @@
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="dotNetRDF\DefaultSparqlCommandFactoryTests.cs" />
     <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
@@ -194,7 +195,6 @@
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="EntityTripleTests.cs" />
     <Compile Include="Stubs\TestTransformerCatalog.cs" />
-    <Compile Include="TriplesStoreAdapterTests.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
     <Compile Include="TypeExtensionsTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">

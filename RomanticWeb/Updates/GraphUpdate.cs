@@ -5,12 +5,12 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Updates
 {
-    internal class GraphUpdate : DatasetChange
+    public class GraphUpdate : DatasetChange
     {
         private readonly ISet<EntityQuad> _removedQuads;
         private readonly ISet<EntityQuad> _addedQuads;
 
-        public GraphUpdate(EntityId entityId, EntityId graph, EntityQuad[] removedQuads, EntityQuad[] addedQuads)
+        internal GraphUpdate(EntityId entityId, EntityId graph, EntityQuad[] removedQuads, EntityQuad[] addedQuads)
             : base(entityId, graph)
         {
             _removedQuads = new HashSet<EntityQuad>(removedQuads.Except(addedQuads));

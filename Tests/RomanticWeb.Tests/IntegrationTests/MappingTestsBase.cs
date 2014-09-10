@@ -367,24 +367,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            var entityUri = new Uri("http://magi/people/Tomasz");
-            var entityId = new EntityId(entityUri);
+            EntityId entityId = "http://magi/people/Tomasz";
+            EntityId graphUri = "http://data.magi/people/Tomasz";
 
             // then
             EntityContext.Create<TestEntities.Foaf.IPerson>(entityId);
 
             // then
-            EntityContext.Changes["http://data.magi/people/Tomasz"]
-                .Should().Contain(change => GraphUpdateSettingRdfTypes(change));
-        }
-
-        public bool GraphUpdateSettingRdfTypes(DatasetChange change)
-        {
-            var update = change as GraphUpdate;
-            return update != null
-                && update.AddedQuads.All(q => q.Predicate == Node.ForUri(Rdf.type))
-                && update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Person))
-                && update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Agent));
+            EntityContext.Changes[graphUri].Should().Contain(change => GraphUpdateSettingRdfTypes(change));
         }
 
         [Test]
@@ -499,6 +489,15 @@ namespace RomanticWeb.Tests.IntegrationTests
         private string SerializeStore()
         {
             return String.Join(Environment.NewLine, EntityStore.Quads);
+        }
+
+        private static bool GraphUpdateSettingRdfTypes(DatasetChange change)
+        {
+            var update = change as GraphUpdate;
+            return update != null
+                && update.AddedQuads.All(q => q.Predicate == Node.ForUri(Rdf.type))
+                && (update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Person))
+                || update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Agent)));
         }
 
         [Obsolete]

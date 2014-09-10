@@ -34,9 +34,9 @@ namespace RomanticWeb.Tests.Updates
         {
             // given
             _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
-            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphReconstruct(EntityId, GraphId, new EntityQuad[0]));
             _changes.Add(new GraphDelete(EntityId, GraphId));
-            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphReconstruct(EntityId, GraphId, new EntityQuad[0]));
             _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
             DatasetChange delete = new GraphDelete(EntityId, GraphId);
             _changes.Add(delete);
@@ -48,6 +48,29 @@ namespace RomanticWeb.Tests.Updates
             optimized.Should().HaveCount(1);
             optimized.Single().Should().BeOfType<GraphDelete>();
             optimized.Single().Should().BeSameAs(delete);
+        }
+
+        [Test]
+        public void Should_ignore_updates_but_not_deletes_followed_by_graph_reconstruct()
+        {
+            // given
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphReconstruct(EntityId, GraphId, new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphUpdate(EntityId, GraphId, new EntityQuad[0], new EntityQuad[0]));
+            _changes.Add(new GraphDelete(EntityId, GraphId));
+            var reconstruct = new GraphReconstruct(EntityId, GraphId, new EntityQuad[0]);
+            _changes.Add(reconstruct);
+
+            // when
+            var optimized = _optimizer.Optimize(_changes).ToList();
+
+            // then
+            optimized.Should().HaveCount(2);
+            optimized[0].Should().BeOfType<GraphDelete>();
+            optimized[1].Should().BeOfType<GraphReconstruct>();
+            optimized[1].Should().BeSameAs(reconstruct);
         }
 
         [Test]

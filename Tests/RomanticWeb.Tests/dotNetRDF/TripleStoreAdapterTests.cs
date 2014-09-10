@@ -32,12 +32,12 @@ namespace RomanticWeb.Tests.DotNetRDF
         {
             // given
             var testCommand = new TestCommand();
-            var testUpdates = new[] { new TestUpdate() };
-            _factory.Setup(f => f.CreateCommandSet(testUpdates))
+            var testUpdates = new TestUpdate();
+            _factory.Setup(f => f.CreateCommands(testUpdates))
                     .Returns(new[] { testCommand });
 
             // when
-            _tripleStore.Commit(testUpdates);
+            _tripleStore.Commit(new[] { testUpdates });
 
             // then
             _realStore.Verify(st => st.ExecuteUpdate(It.Is<SparqlUpdateCommandSet>(set => set.Commands.Single() == testCommand)));

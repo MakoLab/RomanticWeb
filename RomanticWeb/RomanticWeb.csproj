@@ -94,7 +94,6 @@
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="Converters\FallbackNodeConverter.cs" />
     <Compile Include="Converters\StringConverter.cs" />
-    <Compile Include="DatasetChangesGenerator.cs" />
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
@@ -423,6 +422,7 @@
     <Compile Include="Updates\DatasetChanges.cs" />
     <Compile Include="Updates\DatasetChangesOptimizer.cs" />
     <Compile Include="Updates\GraphDelete.cs" />
+    <Compile Include="Updates\GraphReconstruct.cs" />
     <Compile Include="Updates\GraphUpdate.cs" />
     <Compile Include="Updates\IDatasetChanges.cs" />
     <Compile Include="Updates\IDatasetChangesOptimizer.cs" />

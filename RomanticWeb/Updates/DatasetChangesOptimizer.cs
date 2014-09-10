@@ -22,6 +22,11 @@ namespace RomanticWeb.Updates
                     result.Clear();
                     result.Push(change);
                 }
+                else if (change is GraphReconstruct)
+                {
+                    result = new Stack<DatasetChange>(result.Where(c => c is GraphDelete));
+                    result.Push(change);
+                }
                 else
                 {
                     if (result.Count > 0 && result.Peek() is GraphUpdate)
@@ -35,7 +40,7 @@ namespace RomanticWeb.Updates
                 }
             }
 
-            return result;
+            return result.Reverse();
         }
 
         private DatasetChange MergeUpdates(GraphUpdate compacted, GraphUpdate nextChange)

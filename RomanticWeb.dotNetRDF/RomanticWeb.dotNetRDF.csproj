@@ -64,7 +64,6 @@
     <Compile Include="Configuration\StoresCollection.cs" />
     <Compile Include="Configuration\StoresConfigurationSection.cs" />
     <Compile Include="Configuration\StorageProviders\VirtuosoManagerElement.cs" />
-    <Compile Include="DatasetChangesCommandSetConverter.cs" />
     <Compile Include="DefaultSparqlCommandFactory.cs" />
     <Compile Include="Components.cs" />
     <Compile Include="EntityIdExtensions.cs" />
@@ -85,9 +84,8 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Queries\DeleteEntityGraph.ru" />
-    <EmbeddedResource Include="Queries\InsertEntity.ru" />
-    <EmbeddedResource Include="Queries\InsertBlankNode.ru" />
-    <EmbeddedResource Include="Queries\DeleteData.ru" />
+    <EmbeddedResource Include="Queries\ModifyEntityGraph.ru" />
+    <EmbeddedResource Include="Queries\ReconstructGraph.ru" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Anotar.NLog">

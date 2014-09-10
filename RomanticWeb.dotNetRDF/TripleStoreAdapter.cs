@@ -111,8 +111,11 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="changes"></param>
         public void Commit(IEnumerable<DatasetChange> changes)
         {
-            var updateCommands = _sparqlCommandFactory.CreateCommandSet(changes);
-            ExecuteCommandSet(new SparqlUpdateCommandSet(updateCommands));
+            var updateCommands = changes.SelectMany(_sparqlCommandFactory.CreateCommands);
+            var commands = new SparqlUpdateCommandSet(updateCommands);
+
+            LogTo.Debug("Executing SPARQL Update:{0}{1}", Environment.NewLine, commands);
+            ExecuteCommandSet(commands);
         }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)

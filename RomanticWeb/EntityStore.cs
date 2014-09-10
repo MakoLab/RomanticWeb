@@ -79,26 +79,24 @@ namespace RomanticWeb
 
         public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
         {
-            IEnumerable<EntityQuad> removedQuads;
+            EntityQuad[] newQuads;
+            EntityQuad[] removedQuads;
             var subjectNode = Node.FromEntityId(entityId);
 
-            IEnumerable<EntityQuad> newQuads;
             if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
             {
-                newQuads = from node in newValues()
-                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri);
-                newQuads = newQuads.ToArray();
+                removedQuads = _entityQuads.GetEntityTypeQuads(entityId).ToArray();
+                newQuads = (from node in newValues()
+                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
-                removedQuads = _entityQuads.GetEntityTypeQuads(entityId);
                 _entityQuads.SetEntityTypeQuads(entityId, newQuads, graphUri);
             }
             else
             {
-                removedQuads = RemoveTriples(entityId, subjectNode, propertyUri, graphUri).ToList();
+                removedQuads = RemoveTriples(entityId, subjectNode, propertyUri, graphUri).ToArray();
 
-                newQuads = from node in newValues()
-                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri);
-                newQuads = newQuads.ToArray();
+                newQuads = (from node in newValues()
+                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
                 foreach (var triple in newQuads)
                 {
@@ -106,7 +104,7 @@ namespace RomanticWeb
                 }
             }
 
-            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads.ToArray(), newQuads.ToArray()));
+            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren)

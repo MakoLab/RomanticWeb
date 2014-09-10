@@ -188,6 +188,9 @@ namespace RomanticWeb
             return this;
         }
 
+        /// <summary>
+        /// Registers dependencies from a given <see cref="CompositionRootBase"/> type
+        /// </summary>
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
             return WithDependenciesInternal<T>();

@@ -38,6 +38,7 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
+        /// <param name="selector">The named graph selector.</param>
         public EntityProxy(
             Entity entity,
             IEntityMapping entityMapping, 

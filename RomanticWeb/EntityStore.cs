@@ -140,7 +140,7 @@ namespace RomanticWeb
                 _initialQuads.Add(entityId, _entityQuads[entityId]);
             }
 
-            _changesTracker.Reset();
+            _changesTracker.Clear();
         }
 
         /// <summary>

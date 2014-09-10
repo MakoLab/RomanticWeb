@@ -150,17 +150,35 @@ namespace RomanticWeb.ComponentModel
             _registrations.Add(registry => registry.Register<TVisitor>(new PerContainerLifetime()));
         }
 
+        /// <summary>
+        /// Registers a custom dependency type. It will be shared between all <see cref="EntityContext"/>s
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
+        /// <param name="name">Optional name.</param>
         protected void SharedComponent<TComponent, TImplementation>(string name = null) 
             where TImplementation : TComponent
         {
             AddRegistration<TComponent, TImplementation>(name, new PerContainerLifetime());
         }
 
+        /// <summary>
+        /// Registers a custom dependency instance. It will be shared between all <see cref="EntityContext"/>s
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <param name="instance">An instance of <typeparamref name="TComponent"/></param>
+        /// <param name="name">Optional name.</param>
         protected void SharedComponent<TComponent>(TComponent instance, string name = null)
         {
             AddInstanceRegistration(instance, name);
         }
 
+        /// <summary>
+        /// Registers a custom dependency type. A new instance will be created for each <see cref="EntityContext"/>
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
+        /// <param name="name">Optional name.</param>
         protected void TransientComponent<TComponent, TImplementation>(string name = null) 
             where TImplementation : TComponent
         {

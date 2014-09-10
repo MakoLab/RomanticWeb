@@ -1,6 +1,6 @@
 ﻿namespace RomanticWeb.DotNetRDF
 {
-    public class Components : ComponentModel.CompositionRootBase
+    internal class Components : ComponentModel.CompositionRootBase
     {
         public Components()
         {

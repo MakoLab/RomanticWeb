@@ -13,7 +13,7 @@ using Triple = VDS.RDF.Triple;
 
 namespace RomanticWeb.DotNetRDF
 {
-    public class DefaultSparqlCommandFactory : ISparqlCommandFactory
+    internal class DefaultSparqlCommandFactory : ISparqlCommandFactory
     {
         private static readonly string DeleteEntityGraphCommandText = Resource.AsString("Queries.DeleteEntityGraph.ru");
         private static readonly string ModifyEntityCommandText = Resource.AsString("Queries.ModifyEntityGraph.ru");
@@ -68,7 +68,7 @@ namespace RomanticWeb.DotNetRDF
             var deleteCommands = new SparqlParameterizedString(DeleteEntityGraphCommandText);
             deleteCommands.SetUri("graph", change.Graph.Uri);
             deleteCommands.SetUri("metaGraph", MetaGraphUri);
-            deleteCommands.SetUri("entity", change.ChangedEntity.Uri);
+            deleteCommands.SetUri("entity", change.Entity.Uri);
 
             return GetParsedCommands(deleteCommands);
         }
@@ -83,7 +83,7 @@ namespace RomanticWeb.DotNetRDF
             var deleteCommands = new SparqlParameterizedString(commandText);
             deleteCommands.SetUri("graph", change.Graph.Uri);
             deleteCommands.SetUri("metaGraph", MetaGraphUri);
-            deleteCommands.SetUri("entity", change.ChangedEntity.Uri);
+            deleteCommands.SetUri("entity", change.Entity.Uri);
 
             return GetParsedCommands(deleteCommands);
         }

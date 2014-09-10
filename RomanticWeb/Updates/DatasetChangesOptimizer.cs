@@ -48,7 +48,7 @@ namespace RomanticWeb.Updates
             var removed = compacted.RemovedQuads.Union(nextChange.RemovedQuads);
             var added = compacted.AddedQuads.Union(nextChange.AddedQuads);
 
-            return new GraphUpdate(compacted.ChangedEntity, compacted.Graph, removed.ToArray(), added.ToArray());
+            return new GraphUpdate(compacted.Entity, compacted.Graph, removed.ToArray(), added.ToArray());
         }
     }
 }

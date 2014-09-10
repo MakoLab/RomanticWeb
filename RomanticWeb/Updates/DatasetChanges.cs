@@ -6,14 +6,13 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Updates
 {
-    /// <summary>Represents changes made in the triple store.</summary>
+    /// <summary>Represents ordered changes made in the triple store.</summary>
     public sealed class DatasetChanges : IDatasetChangesTracker
     {
         private const int GraphChangesCapacity = 16;
-
         private readonly IDictionary<EntityId, IList<DatasetChange>> _graphChanges = new ConcurrentDictionary<EntityId, IList<DatasetChange>>();
 
-        /// <summary>Gets a value indicating whether there are any changes.</summary>
+        /// <inheritdoc/>
         public bool HasChanges
         {
             get
@@ -22,6 +21,7 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<DatasetChange> this[EntityId graphUri]
         {
             get
@@ -30,21 +30,29 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <inheritdoc/>
         public void Add(DatasetChange datasetChange)
         {
             ChangesFor(datasetChange.Graph).Add(datasetChange);
         }
 
-        public void Reset()
+        /// <inheritdoc/>
+        public void Clear()
         {
             _graphChanges.Clear();
         }
 
+        /// <summary>
+        /// Gets the enumerator of changes grouped by named graphs
+        /// </summary>
         public IEnumerator<KeyValuePair<EntityId, IEnumerable<DatasetChange>>> GetEnumerator()
         {
             return new ChangesEnumerator(_graphChanges);
         }
 
+        /// <summary>
+        /// Gets the enumerator of changes grouped by named graphs
+        /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

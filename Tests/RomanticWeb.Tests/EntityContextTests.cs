@@ -361,8 +361,8 @@ namespace RomanticWeb.Tests
 
         private class TestChange : DatasetChange
         {
-            public TestChange(EntityId changedEntity, EntityId graph)
-                : base(changedEntity, graph)
+            public TestChange(EntityId entity, EntityId graph)
+                : base(entity, graph)
             {
             }
         }

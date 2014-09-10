@@ -51,6 +51,9 @@ namespace RomanticWeb
         /// <summary>Gets the <see cref="IBaseUriSelectionPolicy" />.</summary>
         IBaseUriSelectionPolicy BaseUriSelector { get; }
 
+        /// <summary>
+        /// Gets the changes.
+        /// </summary>
         Updates.IDatasetChanges Changes { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>

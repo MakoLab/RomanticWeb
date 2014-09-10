@@ -5,6 +5,9 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Updates
 {
+    /// <summary>
+    /// Represents a change, which updates a named graph
+    /// </summary>
     public class GraphUpdate : DatasetChange
     {
         private readonly ISet<EntityQuad> _removedQuads;
@@ -17,6 +20,9 @@ namespace RomanticWeb.Updates
             _addedQuads = new HashSet<EntityQuad>(addedQuads.Except(removedQuads));
         }
 
+        /// <summary>
+        /// Gets the removed quads.
+        /// </summary>
         public IEnumerable<EntityQuad> RemovedQuads
         {
             get
@@ -25,6 +31,9 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Gets the added quads.
+        /// </summary>
         public IEnumerable<EntityQuad> AddedQuads
         {
             get

@@ -66,6 +66,7 @@
     <Compile Include="Configuration\StorageProviders\VirtuosoManagerElement.cs" />
     <Compile Include="DefaultSparqlCommandFactory.cs" />
     <Compile Include="Components.cs" />
+    <Compile Include="EntityContextFactoryExtensions.cs" />
     <Compile Include="EntityIdExtensions.cs" />
     <Compile Include="FileTripleStore.cs" />
     <Compile Include="ISparqlCommandFactory.cs" />

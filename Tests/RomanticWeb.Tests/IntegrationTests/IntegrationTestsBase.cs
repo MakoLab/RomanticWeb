@@ -63,14 +63,14 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             _container = new ServiceContainer();
             _container.Register(factory => Store);
-            _factory = new EntityContextFactory(_container).WithEntitySource<TripleStoreAdapter>()
+            _factory = new EntityContextFactory(_container)
                                                  .WithOntology(new DefaultOntologiesProvider())
                                                  .WithOntology(new LifeOntology())
                                                  .WithOntology(new TestOntologyProvider(IncludeFoaf))
                                                  .WithOntology(new ChemOntology())
                                                  .WithMappings(BuildMappings)
                                                  .WithMetaGraphUri(MetaGraphUri)
-                                                 .WithDependencies<Components>();
+                                                 .WithDotNetRDF();
 
             ChildSetup();
         }

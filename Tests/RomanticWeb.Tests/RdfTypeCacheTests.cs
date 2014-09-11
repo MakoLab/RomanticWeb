@@ -16,7 +16,7 @@ namespace RomanticWeb.Tests
     {
         private static readonly dynamic New = Builder.New();
         private RdfTypeCache _rdfTypeCache;
-        private ITypedEntity _entity;
+        private ITypedEntityWritable _entity;
 
         [SetUp]
         public void Setup()
@@ -145,7 +145,7 @@ namespace RomanticWeb.Tests
             return (from uri in uris select CreateClassMapping(uri)).ToList();
         }
 
-        private class TypedEntity : ITypedEntity
+        private class TypedEntity : ITypedEntityWritable
         {
             public TypedEntity()
             {
@@ -168,7 +168,20 @@ namespace RomanticWeb.Tests
                 }
             }
 
-            public ICollection<EntityId> Types { get; set; }
+            public IEnumerable<EntityId> Types { get; private set; }
+
+            IList<EntityId> ITypedEntityWritable.Types
+            {
+                get
+                {
+                    return Types.ToList();
+                }
+
+                set
+                {
+                    Types = value;
+                }
+            }
         }
     }
 }

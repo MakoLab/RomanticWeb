@@ -55,14 +55,11 @@ namespace RomanticWeb.Entities
 
         private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
         {
-            var typed = (ITypedEntity)EntityAs(entity, _mappings.FindEntityMapping<ITypedEntity>(), new[] { typeof(ITypedEntity) });
-            var currentTypes = typed.Types.Select(t => t.Uri).ToArray();
-            var additionalTypes = entityMapping.Classes.Select(c => c.Uri);
+            var typed = (ITypedEntityWritable)EntityAs(entity, _mappings.FindEntityMapping<ITypedEntityWritable>(), new[] { typeof(ITypedEntityWritable) });
+            var currentTypes = typed.Types;
+            var additionalTypes = entityMapping.Classes.Select(c => (EntityId)c.Uri);
 
-            foreach (var rdfType in currentTypes.Union(additionalTypes))
-            {
-                typed.Types.Add(rdfType);
-            }
+            typed.Types = currentTypes.Union(additionalTypes).ToList();
         }
 
         private IEntityMapping GetMapping(Type type)

@@ -9,7 +9,8 @@
          /// </summary>
          public static EntityContextFactory WithDotNetRDF(this EntityContextFactory factory)
          {
-             return factory.WithDependencies<Components>();
+             return factory.WithDependencies<Components>()
+                           .WithEntitySource<TripleStoreAdapter>();
          }
     }
 }

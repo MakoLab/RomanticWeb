@@ -1,3 +1,4 @@
+using NullGuard;
 using RomanticWeb.Entities;
 
 namespace RomanticWeb.Updates
@@ -37,6 +38,7 @@ namespace RomanticWeb.Updates
         /// </summary>
         public EntityId Graph
         {
+            [return: AllowNull]
             get
             {
                 return _graph;

@@ -33,7 +33,7 @@ namespace RomanticWeb
         /// <summary>Marks an entity for deletion.</summary>
         /// <param name="entityId">Identifier of the entity to be removed.</param>
         /// <param name="deleteBehaviour">Optional parameter telling how to tread other related entities.</param>
-        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren);        
+        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default);        
 
         /// <summary>Forces the store to use current state as it's initial state.</summary>
         void ResetState();

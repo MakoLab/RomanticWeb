@@ -11,5 +11,10 @@ namespace RomanticWeb.Updates
             : base(entity, graph)
         {
         }
+
+        public override string ToString()
+        {
+            return string.Format("Delete graph {0}", Graph);
+        }
     }
 }

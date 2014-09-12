@@ -150,9 +150,9 @@ namespace RomanticWeb.Tests.Updates
                 }
             }
 
-            public IEnumerator<KeyValuePair<EntityId, IEnumerable<DatasetChange>>> GetEnumerator()
+            public IEnumerator<IEnumerable<DatasetChange>> GetEnumerator()
             {
-                yield return new KeyValuePair<EntityId, IEnumerable<DatasetChange>>(GraphId, _changes);
+                yield return _changes;
             }
 
             IEnumerator IEnumerable.GetEnumerator()

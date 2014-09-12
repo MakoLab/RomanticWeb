@@ -427,6 +427,7 @@
     <Compile Include="Updates\IDatasetChanges.cs" />
     <Compile Include="Updates\IDatasetChangesOptimizer.cs" />
     <Compile Include="Updates\IDatasetChangesTracker.cs" />
+    <Compile Include="Updates\RemoveReferences.cs" />
     <Compile Include="Vocabularies\Schema.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />

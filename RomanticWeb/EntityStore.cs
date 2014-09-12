@@ -103,7 +103,7 @@ namespace RomanticWeb
             _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
         }
 
-        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.DeleteVolatileChildren | DeleteBehaviour.NullifyVolatileChildren)
+        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
             var deletes = from entityQuad in _entityQuads.GetEntityQuads(entityId).ToList()
                           from removedQuad in RemoveTriple(entityQuad)
@@ -118,18 +118,7 @@ namespace RomanticWeb
                                  group removedQuad by removedQuad.Graph into g 
                                  select g;
 
-            foreach (var removed in deletesGrouped.ToList())
-            {
-                if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
-                {
-                    var removedQuads = removed;
-                    _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
-                }
-                else
-                {
-                    _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
-                }
-            }
+            TrackChanges(entityId, deleteBehaviour, deletesGrouped);
         }
 
         public void ResetState()
@@ -185,6 +174,28 @@ namespace RomanticWeb
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
+        }
+
+        private void TrackChanges(EntityId entityId, DeleteBehaviour deleteBehaviour, IEnumerable<IGrouping<Node, EntityQuad>> deletesGrouped)
+        {
+            foreach (var removed in deletesGrouped.ToList())
+            {
+                if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
+                {
+                    var removedQuads = removed;
+                    _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
+                }
+                else
+                {
+                    _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
+                }
+            }
+
+            if (!(entityId is BlankId) && deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
+            {
+                _entityQuads.RemoveWhereObject(entityId);
+                _changesTracker.Add(new RemoveReferences(entityId));
+            }
         }
     }
 }

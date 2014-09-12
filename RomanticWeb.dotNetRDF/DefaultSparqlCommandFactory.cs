@@ -18,6 +18,7 @@ namespace RomanticWeb.DotNetRDF
         private static readonly string DeleteEntityGraphCommandText = Resource.AsString("Queries.DeleteEntityGraph.ru");
         private static readonly string ModifyEntityCommandText = Resource.AsString("Queries.ModifyEntityGraph.ru");
         private static readonly string ReconstructCommandText = Resource.AsString("Queries.ReconstructGraph.ru");
+        private static readonly string RemoveReferencesCommandText = Resource.AsString("Queries.RemoveReferences.ru");
 
         private readonly Dictionary<Type, Func<dynamic, IEnumerable<SparqlUpdateCommand>>> _commandFactories;
         private readonly Uri _metaGraphUri;
@@ -30,6 +31,7 @@ namespace RomanticWeb.DotNetRDF
             _commandFactories[typeof(GraphDelete)] = delete => CreateGraphDeleteCommand(delete);
             _commandFactories[typeof(GraphUpdate)] = update => CreateGraphUpdateCommand(update);
             _commandFactories[typeof(GraphReconstruct)] = reconstruct => CreateReconstructCommand(reconstruct);
+            _commandFactories[typeof(RemoveReferences)] = remove => CreateRemoveReferencesCommand(remove);
         }
 
         protected Uri MetaGraphUri
@@ -99,6 +101,14 @@ namespace RomanticWeb.DotNetRDF
             deleteCommands.SetUri("metaGraph", MetaGraphUri);
 
             return GetParsedCommands(deleteCommands);
+        }
+
+        private IEnumerable<SparqlUpdateCommand> CreateRemoveReferencesCommand(RemoveReferences removeReferences)
+        {
+            var removeReferenceCommand = new SparqlParameterizedString(RemoveReferencesCommandText);
+            removeReferenceCommand.SetUri("reference", removeReferences.Entity.Uri);
+
+            return GetParsedCommands(removeReferenceCommand);
         }
 
         private IEnumerable<SparqlUpdateCommand> GetParsedCommands(SparqlParameterizedString commandString)

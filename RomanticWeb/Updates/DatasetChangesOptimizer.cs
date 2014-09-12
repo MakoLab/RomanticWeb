@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using RomanticWeb.Entities;
+using Anotar.NLog;
 
 namespace RomanticWeb.Updates
 {
@@ -8,14 +8,18 @@ namespace RomanticWeb.Updates
     {
         public IEnumerable<DatasetChange> Optimize(IDatasetChanges changes)
         {
-            return changes.SelectMany(OptimizeChangesForGraph);
+            foreach (var change in changes.SelectMany(OptimizeChangesForGraph))
+            {
+                LogTo.Info("Selecting change '{0}' for committing to store", change);
+                yield return change;
+            }
         }
 
-        private IEnumerable<DatasetChange> OptimizeChangesForGraph(KeyValuePair<EntityId, IEnumerable<DatasetChange>> changesForGraph)
+        private IEnumerable<DatasetChange> OptimizeChangesForGraph(IEnumerable<DatasetChange> changesForGraph)
         {
             var result = new Stack<DatasetChange>();
 
-            foreach (var change in changesForGraph.Value)
+            foreach (var change in changesForGraph)
             {
                 if (change is GraphDelete)
                 {

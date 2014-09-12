@@ -59,7 +59,11 @@ namespace RomanticWeb.Entities
             var currentTypes = typed.Types;
             var additionalTypes = entityMapping.Classes.Select(c => (EntityId)c.Uri);
 
-            typed.Types = currentTypes.Union(additionalTypes).ToList();
+            var entityIds = currentTypes.Union(additionalTypes).ToList();
+            if (entityIds.Any())
+            {
+                typed.Types = entityIds;
+            }
         }
 
         private IEntityMapping GetMapping(Type type)

@@ -55,7 +55,7 @@ namespace RomanticWeb.Entities
 
         private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
         {
-            var typed = (ITypedEntityWritable)EntityAs(entity, _mappings.FindEntityMapping<ITypedEntityWritable>(), new[] { typeof(ITypedEntityWritable) });
+            var typed = (ITypedEntity)EntityAs(entity, _mappings.FindEntityMapping<ITypedEntity>(), new[] { typeof(ITypedEntity) });
             var currentTypes = typed.Types;
             var additionalTypes = entityMapping.Classes.Select(c => (EntityId)c.Uri);
 

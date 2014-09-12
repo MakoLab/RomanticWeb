@@ -9,13 +9,6 @@ namespace RomanticWeb.Entities
     {
         /// <summary>Gets the entity's rdf classes.</summary>
         [Collection("rdf", "type", StoreAs = StoreAs.SimpleCollection)]
-        IEnumerable<EntityId> Types { get; }
-    }
-
-    public interface ITypedEntityWritable : ITypedEntity
-    {
-        /// <summary>Gets or sets the entity's rdf classes.</summary>
-        [Collection("rdf", "type", StoreAs = StoreAs.SimpleCollection)]
-        new IList<EntityId> Types { get; set; }
+        IList<EntityId> Types { get; set; }
     }
 }

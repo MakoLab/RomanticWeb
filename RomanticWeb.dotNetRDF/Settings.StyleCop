@@ -1,6 +1,7 @@
 <StyleCopSettings Version="105" >
   <SourceFileList>
     <SourceFile>VersionAssemblyInfo.cs</SourceFile>
+    <SourceFile>NonClosingStreamWrapper.cs</SourceFile>
     <Settings>
 	  <GlobalSettings>
 	    <BooleanProperty Name="RulesEnabledByDefault">False</BooleanProperty>

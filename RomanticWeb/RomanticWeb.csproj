@@ -466,6 +466,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>CNT.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Ontologies\GEO.rdf" />
     <None Include="Ontologies\RDF.tt">
       <DependentUpon>RDF.owl</DependentUpon>
       <Generator>TextTemplatingFileGenerator</Generator>

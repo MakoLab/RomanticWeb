@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using NullGuard;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
@@ -11,7 +9,6 @@ using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Collections;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
-using RomanticWeb.Entities.ResultPostprocessing;
 using RomanticWeb.Linq.Model;
 using RomanticWeb.Linq.Model.Navigators;
 using RomanticWeb.Mapping;

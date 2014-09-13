@@ -29,7 +29,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<INodeConverter> UriNodeConverters
+        public IEnumerable<INodeConverter> UriNodeConverters
         {
             get
             {
@@ -38,7 +38,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters
+        public IEnumerable<ILiteralNodeConverter> LiteralNodeConverters
         {
             get
             {

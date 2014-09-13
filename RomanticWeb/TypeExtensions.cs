@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -33,7 +34,7 @@ namespace System
                 }
                 else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    result = type.GenericTypeArguments.Single();
+                    result = type.GetGenericArguments().Single();
                 }
                 else if ((typeof(IEnumerable).IsAssignableFrom(type)) && (type != typeof(string)))
                 {
@@ -164,5 +165,10 @@ namespace System
                     from type in assembly.GetTypesWhere(type => (type != @interface) && (@interface.IsAssignableFrom(type)) && (type.IsInterface))
                     select type);
         } 
+
+        internal static IEnumerable<T> GetCustomAttributes<T>(this MemberInfo property)
+        {
+            return property.GetCustomAttributes(typeof(T), true).Cast<T>();
+        }
     }
 }

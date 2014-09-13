@@ -68,7 +68,7 @@ namespace RomanticWeb.Mapping.Sources
             var owner = actualEntityType.Assembly.GetType(string.Format("{0}_{1}_Owner", actualEntityType.FullName, map.PropertyInfo.Name));
             var entry = actualEntityType.Assembly.GetType(string.Format("{0}_{1}_Entry", actualEntityType.FullName, map.PropertyInfo.Name));
             var type = typeof(DictionaryOwnerMap<,,,>);
-            var typeArguments = new[] { owner, entry }.Concat(map.PropertyInfo.PropertyType.GenericTypeArguments).ToArray();
+            var typeArguments = new[] { owner, entry }.Concat(map.PropertyInfo.PropertyType.GetGenericArguments()).ToArray();
             var ownerMapType = type.MakeGenericType(typeArguments);
 
             var defineDynamicModule = _emitHelper.GetDynamicModule();
@@ -106,7 +106,7 @@ namespace RomanticWeb.Mapping.Sources
             var actualEntityType = map.PropertyInfo.DeclaringType;
             var entry = actualEntityType.Assembly.GetType(string.Format("{0}_{1}_Entry", actualEntityType.FullName, map.PropertyInfo.Name));
             var type = typeof(DictionaryEntryMap<,,>);
-            var typeArguments = new[] { entry }.Concat(map.PropertyInfo.PropertyType.GenericTypeArguments).ToArray();
+            var typeArguments = new[] { entry }.Concat(map.PropertyInfo.PropertyType.GetGenericArguments()).ToArray();
             var ownerMapType = type.MakeGenericType(typeArguments);
 
             var defineDynamicModule = _emitHelper.GetDynamicModule();

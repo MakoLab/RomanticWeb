@@ -195,7 +195,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.Seek(0, SeekOrigin.Begin);
-                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096);
                 _storeReader.Load(this, fileReader);
             }
         }
@@ -216,7 +216,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.Seek(0, SeekOrigin.Begin);
-                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096);
                 _rdfReader.Load(graph, fileReader);
             }
         }
@@ -256,7 +256,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.SetLength(0);
-                TextWriter fileWriter = new StreamWriter(_fileStream, System.Text.UTF8Encoding.UTF8, 4096, true);
+                TextWriter fileWriter = new StreamWriter(_fileStream, System.Text.UTF8Encoding.UTF8, 4096);
                 _storeWriter.Save(this, fileWriter);
                 _fileStream.Flush();
             }

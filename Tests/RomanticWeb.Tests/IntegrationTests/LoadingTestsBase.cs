@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -99,25 +100,32 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [Timeout(10000)]
         public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way()
         {
             // given
             LoadTestFile("LargeDataset.nq");
+            var stopwatch = new Stopwatch();
 
             // when
+            stopwatch.Start();
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();
+            stopwatch.Stop();
+
+            // then
+            Console.Write("Time taken: {0}", stopwatch.ElapsedMilliseconds);
+            stopwatch.ElapsedMilliseconds.Should().BeLessOrEqualTo(2000);
         }
 
         [Test]
-        [Timeout(10000)]
         public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way()
         {
             // given
             LoadTestFile("LargeDataset.nq");
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();
+            var stopwatch = new Stopwatch();
 
             // when
+            stopwatch.Start();
             foreach (IProduct product in entities)
             {
                 string name = product.Name;
@@ -138,6 +146,12 @@ namespace RomanticWeb.Tests.IntegrationTests
                 string msdsFile = System.String.Join(", ", product.MsdsFile.Select(item => item.Id.ToString()));
                 string function = System.String.Join(", ", product.Function.Select(item => item.ToString()));
             }
+
+            stopwatch.Stop();
+
+            // then
+            Console.Write("Time taken: {0}", stopwatch.ElapsedMilliseconds);
+            stopwatch.ElapsedMilliseconds.Should().BeLessOrEqualTo(2000);
         }
 
         [Test]

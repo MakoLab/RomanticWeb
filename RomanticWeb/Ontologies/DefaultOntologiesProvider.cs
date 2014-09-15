@@ -103,10 +103,28 @@ namespace RomanticWeb.Ontologies
         }
 
         /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
+        /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider) :
+            this(ontologyProvider, BuiltInOntologies.RDF | BuiltInOntologies.RDFS | BuiltInOntologies.OWL | BuiltInOntologies.SKOS | BuiltInOntologies.DC | BuiltInOntologies.DCTerms | BuiltInOntologies.DCAM | BuiltInOntologies.DCMIType | BuiltInOntologies.FOAF | BuiltInOntologies.Schema | BuiltInOntologies.SIOC | BuiltInOntologies.GEO | BuiltInOntologies.LDP | BuiltInOntologies.CNT | BuiltInOntologies.SPIN | BuiltInOntologies.SP)
+        {
+        }
+
+        /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
         /// <param name="ontologies">Ontologies to be included int this instance.</param>
         public DefaultOntologiesProvider(BuiltInOntologies ontologies)
             : this()
         {
+            Include(ontologies);
+        }
+
+        /// <summary>Creates a default ontology provider with given built in ontologies initialized.</summary>
+        /// <param name="ontologyProvider">Ontology provider to be wrapped by this instance.</param>
+        /// <param name="ontologies">Ontologies to be included int this instance.</param>
+        public DefaultOntologiesProvider(IOntologyProvider ontologyProvider, BuiltInOntologies ontologies)
+            : base()
+        {
+            _ontologies = ontologyProvider.Ontologies.ToList();
+            _includedOntologies = new List<BuiltInOntologies>();
             Include(ontologies);
         }
 

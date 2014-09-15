@@ -16,7 +16,7 @@ namespace RomanticWeb.Linq
     {
         #region Fields
         private static readonly MethodInfo EnumerableCastMethod = Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable");
-        private static readonly MethodInfo EntityLoadMethod = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Load", "EntityId");
+        private static readonly MethodInfo EntityLoadMethod = Info.OfMethod("RomanticWeb", "RomanticWeb.IEntityContext", "Create", "EntityId");
         private readonly IEntityContext _entityContext;
         private readonly IEntitySource _entitySource;
         private readonly IQueryOptimizer _queryOptimizer;

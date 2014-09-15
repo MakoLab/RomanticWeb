@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,15 +10,16 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Model
 {
-    internal sealed class EntityQuadCollection : IEnumerable<EntityId>
+    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
+    internal sealed class EntityQuadCollection : IEntityQuadCollection
     {
         private IList<EntityQuad> _quads = new List<EntityQuad>();
         private IDictionary<EntityId, int> _entities = new Dictionary<EntityId, int>();
-        private IDictionary<string, IList<EntityQuad>> _entityTypeQuads = new Dictionary<string, IList<EntityQuad>>();
+        private IDictionary<string, ISet<EntityQuad>> _entityTypeQuads = new Dictionary<string, ISet<EntityQuad>>();
         private IndexCollection<string> _subjects = new IndexCollection<string>();
         private object _locker = new Object();
 
-        internal int Count
+        public int Count
         {
             get
             {
@@ -31,7 +33,7 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal IEnumerable<EntityId> Entities
+        public IEnumerable<EntityId> Entities
         {
             get
             {
@@ -45,7 +47,7 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal int EntitiesCount
+        public int EntitiesCount
         {
             get
             {
@@ -59,11 +61,11 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal IEnumerable<EntityQuad> Quads { get { return _quads; } }
+        public IEnumerable<EntityQuad> Quads { get { return _quads; } }
 
         internal IndexCollection<string> Subjects { get { return _subjects; } }
 
-        internal IEnumerable<EntityQuad> this[EntityId entityId] { get { return GetEntities(MakeSubject(entityId)); } }
+        public IEnumerable<EntityQuad> this[EntityId entityId] { get { return GetEntities(MakeSubject(entityId)); } }
 
         /// <inheritdoc />
         IEnumerator<EntityId> IEnumerable<EntityId>.GetEnumerator()
@@ -77,7 +79,7 @@ namespace RomanticWeb.Model
             return ((IEnumerable<EntityId>)this).GetEnumerator();
         }
 
-        internal void Add(EntityQuad quad)
+        public void Add(EntityQuad quad)
         {
             string key = MakeSubject(quad);
             Index<string> index = null;
@@ -89,7 +91,7 @@ namespace RomanticWeb.Model
             AddInternal(quad, key, index);
         }
 
-        internal void Add(EntityId entityId, IEnumerable<EntityQuad> entityTriples)
+        public void Add(EntityId entityId, IEnumerable<EntityQuad> entityTriples)
         {
             string lastKey = null;
             Index<string> index = null;
@@ -114,7 +116,7 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal void Remove(EntityQuad quad)
+        public void Remove(EntityQuad quad)
         {
             lock (_locker)
             {
@@ -156,7 +158,7 @@ namespace RomanticWeb.Model
             return result;
         }
 
-        internal IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
+        public IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
         {
             IList<EntityQuad> result = new List<EntityQuad>();
             lock (_locker)
@@ -202,7 +204,7 @@ namespace RomanticWeb.Model
             return result;
         }
 
-        internal void Clear()
+        public void Clear()
         {
             lock (_locker)
             {
@@ -213,14 +215,14 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal IEnumerable<EntityQuad> GetEntityTypeQuads(EntityId entityId)
+        public IEnumerable<EntityQuad> GetEntityTypeQuads(EntityId entityId)
         {
-            IList<EntityQuad> result;
+            ISet<EntityQuad> result;
             lock (_locker)
             {
                 if (!_entityTypeQuads.TryGetValue(MakeSubject(entityId), out result))
                 {
-                    result = new EntityQuad[0];
+                    return new EntityQuad[0];
                 }
             }
 
@@ -228,7 +230,7 @@ namespace RomanticWeb.Model
         }
 
         [Obsolete("Make this private so that it's transparent to the caller")]
-        internal void SetEntityTypeQuads(EntityId entityId, IEnumerable<EntityQuad> typeQuads, Uri graphUri)
+        public void SetEntityTypeQuads(EntityId entityId, IEnumerable<EntityQuad> typeQuads, Uri graphUri)
         {
             Index<string> index = null;
             string key = MakeSubject(entityId);
@@ -236,7 +238,7 @@ namespace RomanticWeb.Model
             lock (_locker)
             {
                 index = _subjects[key, IndexCollection<string>.FirstPossible];
-                IList<EntityQuad> entityTypeQuads;
+                ISet<EntityQuad> entityTypeQuads;
                 if (_entityTypeQuads.TryGetValue(key, out entityTypeQuads))
                 {
                     foreach (EntityQuad quad in entityTypeQuads)
@@ -258,7 +260,7 @@ namespace RomanticWeb.Model
                 }
                 else
                 {
-                    _entityTypeQuads[key] = new List<EntityQuad>();
+                    _entityTypeQuads[key] = new HashSet<EntityQuad>();
                 }
 
                 foreach (var quad in typeQuads.Distinct())
@@ -285,7 +287,7 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
+        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
         {
             IList<EntityQuad> result = new List<EntityQuad>();
             IList<BlankId> addedBlankNodes = new List<BlankId>();
@@ -402,10 +404,10 @@ namespace RomanticWeb.Model
                 AddEntity(quad.EntityId);
                 if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
                 {
-                    IList<EntityQuad> entityTypeQuads;
+                    ISet<EntityQuad> entityTypeQuads;
                     if (!_entityTypeQuads.TryGetValue(index.Key, out entityTypeQuads))
                     {
-                        _entityTypeQuads[index.Key] = entityTypeQuads = new List<EntityQuad>();
+                        _entityTypeQuads[index.Key] = new HashSet<EntityQuad>();
                     }
 
                     _entityTypeQuads[index.Key].Add(quad);
@@ -420,7 +422,7 @@ namespace RomanticWeb.Model
                 RemoveEntity(quad.EntityId);
                 if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
                 {
-                    IList<EntityQuad> entityTypeQuads;
+                    ISet<EntityQuad> entityTypeQuads;
                     if (_entityTypeQuads.TryGetValue(key, out entityTypeQuads))
                     {
                         _entityTypeQuads[key].Remove(quad);

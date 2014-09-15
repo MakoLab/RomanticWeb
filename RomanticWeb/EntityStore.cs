@@ -13,14 +13,14 @@ namespace RomanticWeb
     internal class EntityStore : IEntityStore
     {
         private readonly IDatasetChangesTracker _changesTracker;
-        private readonly EntityQuadCollection _entityQuads;
-        private readonly EntityQuadCollection _initialQuads;
+        private readonly IEntityQuadCollection _entityQuads;
+        private readonly IEntityQuadCollection _initialQuads;
 
         public EntityStore(IDatasetChangesTracker changesTracker)
         {
             _changesTracker = changesTracker;
-            _entityQuads = new EntityQuadCollection();
-            _initialQuads = new EntityQuadCollection();
+            _entityQuads = new EntityQuadCollection2();
+            _initialQuads = new EntityQuadCollection2();
         }
 
         public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }

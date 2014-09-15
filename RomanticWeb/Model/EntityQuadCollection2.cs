@@ -23,25 +23,25 @@ namespace RomanticWeb.Model
             }
         }
 
-        public IEnumerable<EntityQuad> Quads
+        public int Count
         {
             get
             {
-                return _quads;
+                return _quads.Count;
             }
         }
 
-        public IEnumerable<EntityQuad> this[EntityId entityId]
+        public bool IsReadOnly
         {
             get
             {
-                return EntityQuads(entityId);
+                return false;
             }
         }
 
         public IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
         {
-            foreach (var entityQuad in Quads.Where(q => q.Object == Node.FromEntityId(entityId)))
+            foreach (var entityQuad in _quads.Where(q => q.Object == Node.FromEntityId(entityId)))
             {
                 Remove(entityQuad);
                 yield return entityQuad;
@@ -87,20 +87,30 @@ namespace RomanticWeb.Model
             _entityQuads.Clear();
         }
 
-        public void Remove(EntityQuad entityTriple)
+        public bool Contains(EntityQuad item)
         {
-            _quads.Remove(entityTriple);
-            EntityQuads(entityTriple.EntityId).Remove(entityTriple);
+            return _quads.Contains(item);
         }
 
-        public IEnumerator<EntityId> GetEnumerator()
+        public void CopyTo(EntityQuad[] array, int arrayIndex)
         {
-            return Entities.GetEnumerator();
+            _quads.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(EntityQuad entityTriple)
+        {
+            _quads.Remove(entityTriple);
+            return EntityQuads(entityTriple.EntityId).Remove(entityTriple);
+        }
+
+        IEnumerator<EntityQuad> IEnumerable<EntityQuad>.GetEnumerator()
+        {
+            return _quads.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return _quads.GetEnumerator();
         }
 
         private ISet<EntityQuad> EntityQuads(EntityId entityId)

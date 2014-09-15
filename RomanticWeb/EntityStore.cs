@@ -6,7 +6,6 @@ using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using RomanticWeb.Updates;
-using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb
 {
@@ -23,7 +22,7 @@ namespace RomanticWeb
             _initialQuads = new EntityQuadCollection2();
         }
 
-        public IEnumerable<EntityQuad> Quads { get { return _entityQuads.Quads; } }
+        public IEnumerable<EntityQuad> Quads { get { return _entityQuads; } }
 
         public IDatasetChanges Changes
         {
@@ -35,17 +34,9 @@ namespace RomanticWeb
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId, Uri predicate, [AllowNull] Uri graph)
         {
-            IEnumerable<EntityQuad> quads;
-            if (predicate.AbsoluteUri == Rdf.type.AbsoluteUri)
-            {
-                quads = _entityQuads.GetEntityTypeQuads(entityId);
-            }
-            else
-            {
-                quads = from triple in _entityQuads[entityId]
+            var quads = from triple in _entityQuads.GetEntityQuads(entityId)
                         where triple.Predicate.Uri.AbsoluteUri == predicate.AbsoluteUri
                         select triple;
-            }
 
             if (graph != null)
             {
@@ -57,7 +48,7 @@ namespace RomanticWeb
 
         public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId, bool includeBlankNodes = true)
         {
-            return (includeBlankNodes ? _entityQuads.GetEntityQuads(entityId) : _entityQuads[entityId]);
+            throw new NotImplementedException();
         }
 
         public void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples)
@@ -79,15 +70,15 @@ namespace RomanticWeb
             EntityQuad[] removedQuads;
             var subjectNode = Node.FromEntityId(entityId);
 
-            if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
-            {
-                removedQuads = _entityQuads.GetEntityTypeQuads(entityId).ToArray();
-                newQuads = (from node in newValues()
-                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
+            ////if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
+            ////{
+            ////    removedQuads = _entityQuads.GetEntityTypeQuads(entityId).ToArray();
+            ////    newQuads = (from node in newValues()
+            ////               select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
-                _entityQuads.SetEntityTypeQuads(entityId, newQuads, graphUri);
-            }
-            else
+            ////    _entityQuads.SetEntityTypeQuads(entityId, newQuads, graphUri);
+            ////}
+            ////else
             {
                 removedQuads = RemoveTriples(entityId, subjectNode, propertyUri, graphUri).ToArray();
 
@@ -124,9 +115,9 @@ namespace RomanticWeb
         public void ResetState()
         {
             _initialQuads.Clear();
-            foreach (EntityId entityId in _entityQuads)
+            foreach (var entityId in _entityQuads.Entities)
             {
-                _initialQuads.Add(entityId, _entityQuads[entityId]);
+                _initialQuads.Add(entityId, _entityQuads.GetEntityQuads(entityId));
             }
 
             _changesTracker.Clear();

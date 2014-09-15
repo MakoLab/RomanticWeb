@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RomanticWeb.Entities;
 using RomanticWeb.Vocabularies;
 
@@ -30,6 +27,14 @@ namespace RomanticWeb.Model
                 }
 
                 return result;
+            }
+        }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -61,22 +66,19 @@ namespace RomanticWeb.Model
             }
         }
 
-        public IEnumerable<EntityQuad> Quads { get { return _quads; } }
+        internal IList<EntityQuad> Quads { get { return _quads; } } 
 
         internal IndexCollection<string> Subjects { get { return _subjects; } }
 
-        public IEnumerable<EntityQuad> this[EntityId entityId] { get { return GetEntities(MakeSubject(entityId)); } }
-
-        /// <inheritdoc />
-        IEnumerator<EntityId> IEnumerable<EntityId>.GetEnumerator()
+        public IEnumerator<EntityQuad> GetEnumerator()
         {
-            return Entities.GetEnumerator();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<EntityId>)this).GetEnumerator();
+            return GetEnumerator();
         }
 
         public void Add(EntityQuad quad)
@@ -116,7 +118,12 @@ namespace RomanticWeb.Model
             }
         }
 
-        public void Remove(EntityQuad quad)
+        public void CopyTo(EntityQuad[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(EntityQuad quad)
         {
             lock (_locker)
             {
@@ -127,8 +134,12 @@ namespace RomanticWeb.Model
                     _quads.RemoveAt(indexOf);
                     _subjects.Remove(key, indexOf);
                     UpdateStateAfterRemove(quad, key);
+                    
+                    return true;
                 }
             }
+
+            return false;
         }
 
         internal IEnumerable<EntityQuad> Remove(EntityId entityId)
@@ -215,6 +226,11 @@ namespace RomanticWeb.Model
             }
         }
 
+        public bool Contains(EntityQuad item)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<EntityQuad> GetEntityTypeQuads(EntityId entityId)
         {
             ISet<EntityQuad> result;
@@ -298,7 +314,7 @@ namespace RomanticWeb.Model
         private void GetEntityQuads(IList<EntityQuad> result, IList<BlankId> addedBlankNodes, EntityId entityId)
         {
             IList<BlankId> blanksToAdd = new List<BlankId>();
-            foreach (EntityQuad quad in this[entityId])
+            foreach (EntityQuad quad in GetEntityQuads(entityId))
             {
                 result.Add(quad);
                 if (quad.Object.IsBlank)

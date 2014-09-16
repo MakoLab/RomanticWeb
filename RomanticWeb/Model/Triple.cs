@@ -6,6 +6,7 @@ namespace RomanticWeb.Model
     /// <summary>Reprents a triple, which does nto belong to a graph.</summary>
     public class Triple : IComparable, IComparable<Triple>
     {
+        private readonly int _hashCode;
         private readonly Node _object;
         private readonly Node _subject;
         private readonly Node _predicate;
@@ -29,6 +30,8 @@ namespace RomanticWeb.Model
             _subject = s;
             _predicate = p;
             _object = o;
+
+            _hashCode = ComputeHashCode();
         }
 
         /// <summary>Gets the triple's object.</summary>
@@ -61,13 +64,7 @@ namespace RomanticWeb.Model
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = _object.GetHashCode();
-                hashCode = (hashCode * 397) ^ _subject.GetHashCode();
-                hashCode = (hashCode * 397) ^ _predicate.GetHashCode();
-                return hashCode;
-            }
+            return _hashCode;
         }
 
         int IComparable<Triple>.CompareTo(Triple other)
@@ -95,5 +92,16 @@ namespace RomanticWeb.Model
             return _object.Equals(other._object) && _subject.Equals(other._subject) && _predicate.Equals(other._predicate);
         }
 #pragma warning restore
+
+        private int ComputeHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _object.GetHashCode();
+                hashCode = (hashCode * 397) ^ _subject.GetHashCode();
+                hashCode = (hashCode * 397) ^ _predicate.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

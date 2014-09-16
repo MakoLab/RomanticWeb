@@ -16,5 +16,10 @@ namespace RomanticWeb.Updates
                 throw new ArgumentOutOfRangeException("entity", "Reference cannot be a blank id");
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("Removing references to {0}", Entity);
+        }
     }
 }

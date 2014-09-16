@@ -8,8 +8,10 @@ using RomanticWeb.Vocabularies;
 namespace RomanticWeb.Model
 {
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
-    internal sealed class EntityQuadCollection : IEntityQuadCollection
+    internal sealed class EntityQuadCollection : IEntityQuadCollection, IEnumerable<EntityId>
     {
+        private static readonly Node RdfType = Node.ForUri(Rdf.type);
+
         private IList<EntityQuad> _quads = new List<EntityQuad>();
         private IDictionary<EntityId, int> _entities = new Dictionary<EntityId, int>();
         private IDictionary<string, ISet<EntityQuad>> _entityTypeQuads = new Dictionary<string, ISet<EntityQuad>>();
@@ -34,7 +36,7 @@ namespace RomanticWeb.Model
         {
             get
             {
-                throw new NotImplementedException();
+                return false;
             }
         }
 
@@ -66,19 +68,45 @@ namespace RomanticWeb.Model
             }
         }
 
-        internal IList<EntityQuad> Quads { get { return _quads; } } 
+        public IEnumerable<EntityQuad> Quads { get { return _quads; } }
 
         internal IndexCollection<string> Subjects { get { return _subjects; } }
 
+        IEnumerable<EntityQuad> IEntityQuadCollection.this[EntityId entityId]
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IEnumerable<EntityQuad> this[Node entityId] { get { return GetEntities(MakeSubject(entityId)); } }
+
+        IEnumerable<EntityQuad> IEntityQuadCollection.this[Node entityId, Node predicate]
+        {
+            get
+            {
+                return from quad in this[entityId]
+                       where quad.Predicate == predicate
+                       select quad;
+            }
+        }
+
         public IEnumerator<EntityQuad> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _quads.GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        IEnumerator<EntityId> IEnumerable<EntityId>.GetEnumerator()
+        {
+            return Entities.GetEnumerator();
         }
 
         /// <inheritdoc />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IEnumerable<EntityId>)this).GetEnumerator();
         }
 
         public void Add(EntityQuad quad)
@@ -97,7 +125,9 @@ namespace RomanticWeb.Model
         {
             string lastKey = null;
             Index<string> index = null;
-            foreach (EntityQuad quad in entityTriples)
+            var entityQuads = entityTriples as IList<EntityQuad> ?? entityTriples.ToList();
+            var notEntityTypeQuads = entityQuads.Where(q => q.Predicate != RdfType);
+            foreach (EntityQuad quad in notEntityTypeQuads)
             {
                 if (quad.EntityId != entityId)
                 {
@@ -116,11 +146,20 @@ namespace RomanticWeb.Model
 
                 index = AddInternal(quad, key, index);
             }
+
+            var typeQuads = from triple in entityQuads.Where(q => q.Predicate == RdfType) 
+                            group triple by triple.Graph into g
+                            select g;
+
+            foreach (var typeQuadGroup in typeQuads)
+            {
+                SetEntityTypeQuads(entityId, typeQuadGroup, typeQuadGroup.Key.Uri);
+            }
         }
 
         public void CopyTo(EntityQuad[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            _quads.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(EntityQuad quad)
@@ -134,7 +173,7 @@ namespace RomanticWeb.Model
                     _quads.RemoveAt(indexOf);
                     _subjects.Remove(key, indexOf);
                     UpdateStateAfterRemove(quad, key);
-                    
+
                     return true;
                 }
             }
@@ -169,7 +208,7 @@ namespace RomanticWeb.Model
             return result;
         }
 
-        public IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
+        public IEnumerable<EntityQuad> RemoveWhereObject(Node entityId)
         {
             IList<EntityQuad> result = new List<EntityQuad>();
             lock (_locker)
@@ -194,7 +233,7 @@ namespace RomanticWeb.Model
                     if (lastIndex != null)
                     {
                         EntityQuad quad = _quads[index];
-                        if ((!quad.Object.IsLiteral) && (quad.Object.ToEntityId() == entityId))
+                        if ((!quad.Object.IsLiteral) && (quad.Object == entityId))
                         {
                             result.Add(quad);
                             _quads.RemoveAt(index);
@@ -228,7 +267,7 @@ namespace RomanticWeb.Model
 
         public bool Contains(EntityQuad item)
         {
-            throw new NotImplementedException();
+            return _quads.Contains(item);
         }
 
         public IEnumerable<EntityQuad> GetEntityTypeQuads(EntityId entityId)
@@ -314,7 +353,7 @@ namespace RomanticWeb.Model
         private void GetEntityQuads(IList<EntityQuad> result, IList<BlankId> addedBlankNodes, EntityId entityId)
         {
             IList<BlankId> blanksToAdd = new List<BlankId>();
-            foreach (EntityQuad quad in GetEntityQuads(entityId))
+            foreach (EntityQuad quad in this[Node.FromEntityId(entityId)])
             {
                 result.Add(quad);
                 if (quad.Object.IsBlank)
@@ -418,7 +457,7 @@ namespace RomanticWeb.Model
             lock (_locker)
             {
                 AddEntity(quad.EntityId);
-                if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
+                if (quad.Predicate == RdfType)
                 {
                     ISet<EntityQuad> entityTypeQuads;
                     if (!_entityTypeQuads.TryGetValue(index.Key, out entityTypeQuads))
@@ -436,7 +475,7 @@ namespace RomanticWeb.Model
             lock (_locker)
             {
                 RemoveEntity(quad.EntityId);
-                if (quad.Predicate.Uri.AbsoluteUri == Rdf.type.AbsoluteUri)
+                if (quad.Predicate == RdfType)
                 {
                     ISet<EntityQuad> entityTypeQuads;
                     if (_entityTypeQuads.TryGetValue(key, out entityTypeQuads))

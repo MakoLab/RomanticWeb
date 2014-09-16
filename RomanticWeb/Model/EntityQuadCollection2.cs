@@ -3,25 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Entities;
-using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Model
 {
     internal sealed class EntityQuadCollection2 : IEntityQuadCollection
     {
-        private static readonly Node UriNode = Node.ForUri(Rdf.type);
-
         private readonly ISet<EntityQuad> _quads = new HashSet<EntityQuad>();
         private readonly IDictionary<EntityId, ISet<EntityQuad>> _entityQuads = new Dictionary<EntityId, ISet<EntityQuad>>();
-        private readonly IDictionary<EntityId, ISet<EntityQuad>> _entityTypeQuads = new Dictionary<EntityId, ISet<EntityQuad>>();
-
-        public IEnumerable<EntityId> Entities
-        {
-            get
-            {
-                return _entityQuads.Keys;
-            }
-        }
+        private readonly IDictionary<Node, ISet<EntityQuad>> _subjectQuads = new Dictionary<Node, ISet<EntityQuad>>();
+        private readonly IDictionary<Tuple<Node, Node>, ISet<EntityQuad>> _subjectPredicateQuads = new Dictionary<Tuple<Node, Node>, ISet<EntityQuad>>();
+        private readonly IDictionary<Node, ISet<EntityId>> _objectIndex = new Dictionary<Node, ISet<EntityId>>(); 
 
         public int Count
         {
@@ -39,18 +30,47 @@ namespace RomanticWeb.Model
             }
         }
 
-        public IEnumerable<EntityQuad> RemoveWhereObject(EntityId entityId)
+        IEnumerable<EntityQuad> IEntityQuadCollection.this[EntityId entityId]
         {
-            foreach (var entityQuad in _quads.Where(q => q.Object == Node.FromEntityId(entityId)))
+            get
+            {
+                return EntityQuads(entityId);
+            }
+        }
+
+        IEnumerable<EntityQuad> IEntityQuadCollection.this[Node entityId]
+        {
+            get
+            {
+                return SubjectQuads(entityId);
+            }
+        }
+
+        IEnumerable<EntityQuad> IEntityQuadCollection.this[Node entityId, Node predicate]
+        {
+            get
+            {
+                return SubjectPredicateQuads(entityId, predicate);
+            }
+        }
+
+        public IEnumerable<EntityQuad> RemoveWhereObject(Node obj)
+        {
+            if (!_objectIndex.ContainsKey(obj))
+            {
+                yield break;
+            }
+
+            var toRemove = from cotainingEntity in _objectIndex[obj]
+                           from quadWithSubject in SubjectQuads(Node.FromEntityId(cotainingEntity))
+                           where quadWithSubject.Object == obj
+                           select quadWithSubject;
+
+            foreach (var entityQuad in toRemove.ToList())
             {
                 Remove(entityQuad);
                 yield return entityQuad;
             }
-        }
-
-        public IEnumerable<EntityQuad> GetEntityTypeQuads(EntityId entityId)
-        {
-            return EntityTypeQuads(entityId);
         }
 
         public void Add(EntityId entityId, IEnumerable<EntityQuad> entityQuads)
@@ -61,30 +81,22 @@ namespace RomanticWeb.Model
             }
         }
 
-        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
-        {
-            return EntityQuads(entityId);
-        }
-
-        public void SetEntityTypeQuads(EntityId entityId, IEnumerable<EntityQuad> entityQuads, Uri graphUri)
-        {
-            foreach (var entityQuad in entityQuads)
-            {
-                Add(entityQuad);
-                EntityTypeQuads(entityQuad.EntityId).Add(entityQuad);
-            }
-        }
-
         public void Add(EntityQuad quad)
         {
             _quads.Add(quad);
             EntityQuads(quad.EntityId).Add(quad);
+            SubjectQuads(quad.Subject).Add(quad);
+            SubjectPredicateQuads(quad.Subject, quad.Predicate).Add(quad);
+            ObjectIndex(quad.Object).Add(quad.EntityId);
         }
 
         public void Clear()
         {
             _quads.Clear();
             _entityQuads.Clear();
+            _subjectQuads.Clear();
+            _subjectPredicateQuads.Clear();
+            _objectIndex.Clear();
         }
 
         public bool Contains(EntityQuad item)
@@ -99,8 +111,10 @@ namespace RomanticWeb.Model
 
         public bool Remove(EntityQuad entityTriple)
         {
-            _quads.Remove(entityTriple);
-            return EntityQuads(entityTriple.EntityId).Remove(entityTriple);
+            EntityQuads(entityTriple.EntityId).Remove(entityTriple);
+            SubjectQuads(entityTriple.Subject).Remove(entityTriple);
+            SubjectPredicateQuads(entityTriple.Subject, entityTriple.Predicate).Remove(entityTriple);
+            return _quads.Remove(entityTriple);
         }
 
         IEnumerator<EntityQuad> IEnumerable<EntityQuad>.GetEnumerator()
@@ -123,14 +137,35 @@ namespace RomanticWeb.Model
             return _entityQuads[entityId];
         }
 
-        private ISet<EntityQuad> EntityTypeQuads(EntityId entityId)
+        private ISet<EntityQuad> SubjectQuads(Node subject)
         {
-            if (!_entityTypeQuads.ContainsKey(entityId))
+            if (!_subjectQuads.ContainsKey(subject))
             {
-                _entityTypeQuads[entityId] = new HashSet<EntityQuad>();
+                _subjectQuads[subject] = new HashSet<EntityQuad>();
             }
 
-            return _entityTypeQuads[entityId];
+            return _subjectQuads[subject];
+        }
+
+        private ISet<EntityQuad> SubjectPredicateQuads(Node entityId, Node predicate)
+        {
+            var key = Tuple.Create(entityId, predicate);
+            if (!_subjectPredicateQuads.ContainsKey(key))
+            {
+                _subjectPredicateQuads[key] = new HashSet<EntityQuad>();
+            }
+
+            return _subjectPredicateQuads[key];
+        }
+
+        private ISet<EntityId> ObjectIndex(Node entityId)
+        {
+            if (!_objectIndex.ContainsKey(entityId))
+            {
+                _objectIndex[entityId] = new HashSet<EntityId>();
+            }
+
+            return _objectIndex[entityId];
         }
     }
 }

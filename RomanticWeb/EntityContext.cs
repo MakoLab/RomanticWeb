@@ -164,7 +164,7 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T Create<T>(EntityId entityId) where T : class, IEntity
         {
-            if ((typeof(T) == typeof(IEntity)) || (typeof(T) == typeof(Entity)))
+            if (typeof(T) == typeof(Entity))
             {
                 return (T)(IEntity)CreateInternal(entityId, true);
             }

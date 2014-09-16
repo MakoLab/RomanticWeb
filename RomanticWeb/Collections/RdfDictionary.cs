@@ -23,10 +23,7 @@ namespace RomanticWeb.Collections
         public RdfDictionary(EntityId ownerId, IEntityContext context, IEnumerable<KeyValuePair<TKey, TValue>> existingDictionary)
             : this(ownerId, context)
         {
-            foreach (var pair in existingDictionary)
-            {
-                Add(pair);
-            }
+            InitializeFromExisitingDictionary(existingDictionary);
         }
 
         public int Count
@@ -85,7 +82,16 @@ namespace RomanticWeb.Collections
 
             set
             {
-                Add(key, value);
+                var entry = _dictionaryOwner.DictionaryEntries.SingleOrDefault(e => Equals(e.Key, key));
+
+                if (entry == null)
+                {
+                    Add(key, value);
+                }
+                else
+                {
+                    entry.Value = value;
+                }
             }
         }
 
@@ -153,10 +159,12 @@ namespace RomanticWeb.Collections
 
         public void Add(TKey key, TValue value)
         {
-            var pair = _context.Create<TEntry>(new BlankId(_context.BlankIdGenerator.Generate(), _dictionaryOwner.Id));
-            pair.Key = key;
-            pair.Value = value;
-            _dictionaryOwner.DictionaryEntries.Add(pair);
+            var existingPairs = new KeyValuePair<TKey, TValue>[Count + 1];
+            CopyTo(existingPairs, 0);
+            existingPairs[Count] = new KeyValuePair<TKey, TValue>(key, value);
+
+            // todo: this is very not optimal, must find a way to leave existing pairs intact when adding to collection
+            InitializeFromExisitingDictionary(existingPairs);
         }
 
         public bool Remove(TKey key)
@@ -195,6 +203,19 @@ namespace RomanticWeb.Collections
         private TEntry GetPair(TKey key)
         {
             return _dictionaryOwner.DictionaryEntries.SingleOrDefault(entry => Equals(entry.Key, key));
+        }
+
+        private TEntry CreatePair(TKey key, TValue value)
+        {
+            var pair = _context.Create<TEntry>(new BlankId(_context.BlankIdGenerator.Generate(), _dictionaryOwner.Id));
+            pair.Key = key;
+            pair.Value = value;
+            return pair;
+        }
+
+        private void InitializeFromExisitingDictionary(IEnumerable<KeyValuePair<TKey, TValue>> existingDictionary)
+        {
+            _dictionaryOwner.DictionaryEntries = existingDictionary.Select(pair => CreatePair(pair.Key, pair.Value)).ToList();
         }
 
         private class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>

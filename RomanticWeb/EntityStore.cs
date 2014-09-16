@@ -12,6 +12,7 @@ namespace RomanticWeb
     internal class EntityStore : IEntityStore
     {
         private readonly IDatasetChangesTracker _changesTracker;
+        private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
         private readonly IEntityQuadCollection _entityQuads;
         private readonly IEntityQuadCollection _initialQuads;
 
@@ -34,9 +35,7 @@ namespace RomanticWeb
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId, Uri predicate, [AllowNull] Uri graph)
         {
-            var quads = from triple in _entityQuads.GetEntityQuads(entityId)
-                        where triple.Predicate.Uri.AbsoluteUri == predicate.AbsoluteUri
-                        select triple;
+            var quads = _entityQuads[Node.FromEntityId(entityId), Node.ForUri(predicate)];
 
             if (graph != null)
             {
@@ -53,7 +52,7 @@ namespace RomanticWeb
 
         public void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples)
         {
-            if (_entityQuads.Entities.Contains(entityId))
+            if (_assertedEntities.Contains(entityId))
             {
                 LogTo.Info("Skipping entity {0}. Entity already added to store", entityId);
                 return;
@@ -62,47 +61,30 @@ namespace RomanticWeb
             var entityQuads = entityTriples as EntityQuad[] ?? entityTriples.ToArray();
             _entityQuads.Add(entityId, entityQuads);
             _initialQuads.Add(entityId, entityQuads);
+
+            _assertedEntities.Add(entityId);
         }
 
         public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
         {
-            EntityQuad[] newQuads;
-            EntityQuad[] removedQuads;
             var subjectNode = Node.FromEntityId(entityId);
+            var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri).ToArray();
+            var newQuads = (from node in newValues()
+                            select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
-            ////if ((propertyUri.IsUri) && (propertyUri.Uri.AbsoluteUri == Rdf.type.AbsoluteUri))
-            ////{
-            ////    removedQuads = _entityQuads.GetEntityTypeQuads(entityId).ToArray();
-            ////    newQuads = (from node in newValues()
-            ////               select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
-
-            ////    _entityQuads.SetEntityTypeQuads(entityId, newQuads, graphUri);
-            ////}
-            ////else
-            {
-                removedQuads = RemoveTriples(entityId, subjectNode, propertyUri, graphUri).ToArray();
-
-                newQuads = (from node in newValues()
-                           select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
-
-                foreach (var triple in newQuads)
-                {
-                    _entityQuads.Add(triple);
-                }
-            }
-
+            _entityQuads.Add(entityId, newQuads);
             _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
-            var deletes = from entityQuad in _entityQuads.GetEntityQuads(entityId).ToList()
+            var deletes = from entityQuad in _entityQuads[Node.FromEntityId(entityId)].ToList()
                           from removedQuad in RemoveTriple(entityQuad)
                           select removedQuad;
 
             if (entityId is BlankId)
             {
-                deletes = deletes.Union(_entityQuads.RemoveWhereObject(entityId));
+                deletes = deletes.Union(_entityQuads.RemoveWhereObject(Node.FromEntityId(entityId)));
             }
 
             var deletesGrouped = from removedQuad in deletes 
@@ -115,9 +97,9 @@ namespace RomanticWeb
         public void ResetState()
         {
             _initialQuads.Clear();
-            foreach (var entityId in _entityQuads.Entities)
+            foreach (var entityId in _entityQuads)
             {
-                _initialQuads.Add(entityId, _entityQuads.GetEntityQuads(entityId));
+                _initialQuads.Add(entityId.EntityId, _entityQuads[entityId.EntityId]);
             }
 
             _changesTracker.Clear();
@@ -127,15 +109,17 @@ namespace RomanticWeb
         /// Removes triple and blank node's subgraph if present
         /// </summary>
         /// <returns>a value indicating that the was a blank node object value</returns>
-        private IEnumerable<EntityQuad> RemoveTriples(EntityId entityId, Node subjectNode, Node propertyUri = null, Uri graphUri = null)
+        private IEnumerable<EntityQuad> RemoveTriples(Node entityId, Node predicate = null, Uri graphUri = null)
         {
-            var quadsRemoved = from quad in Quads
-                               where quad.EntityId == entityId && quad.Subject == subjectNode
-                               select quad;
+            IEnumerable<EntityQuad> quadsRemoved;
 
-            if (propertyUri != null)
+            if (predicate == null)
             {
-                quadsRemoved = quadsRemoved.Where(quad => quad.Predicate == propertyUri);
+                quadsRemoved = _entityQuads[entityId];
+            }
+            else
+            {
+                quadsRemoved = _entityQuads[entityId, predicate];
             }
 
             if (graphUri != null)
@@ -152,7 +136,7 @@ namespace RomanticWeb
 
             if (entityTriple.Object.IsBlank)
             {
-                foreach (var removedQuad in RemoveTriples(entityTriple.EntityId, entityTriple.Object))
+                foreach (var removedQuad in RemoveTriples(entityTriple.Object))
                 {
                     yield return removedQuad;
                 }
@@ -184,7 +168,7 @@ namespace RomanticWeb
 
             if (!(entityId is BlankId) && deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
             {
-                _entityQuads.RemoveWhereObject(entityId);
+                _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
                 _changesTracker.Add(new RemoveReferences(entityId));
             }
         }

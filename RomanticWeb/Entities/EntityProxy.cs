@@ -99,6 +99,11 @@ namespace RomanticWeb.Entities
                     var resultTransformer = _resultTransformers.GetTransformer(property);
                     result = resultTransformer.FromNodes(this, property, Context, objects);
 
+                    if (result == null && property.ReturnType.IsValueType)
+                    {
+                        result = Activator.CreateInstance(property.ReturnType);
+                    }
+
                     if (result is IEntity)
                     {
                         var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;

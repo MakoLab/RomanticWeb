@@ -58,7 +58,7 @@ namespace RomanticWeb.Model
         {
             if (!_objectIndex.ContainsKey(obj))
             {
-                yield break;
+                return new EntityQuad[0];
             }
 
             var toRemove = from cotainingEntity in _objectIndex[obj]
@@ -66,11 +66,7 @@ namespace RomanticWeb.Model
                            where quadWithSubject.Object == obj
                            select quadWithSubject;
 
-            foreach (var entityQuad in toRemove.ToList())
-            {
-                Remove(entityQuad);
-                yield return entityQuad;
-            }
+            return toRemove.ToList().Where(Remove).ToList();
         }
 
         public void Add(EntityId entityId, IEnumerable<EntityQuad> entityQuads)

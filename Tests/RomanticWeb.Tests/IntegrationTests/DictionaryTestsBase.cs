@@ -149,6 +149,35 @@ namespace RomanticWeb.Tests.IntegrationTests
             quads.Should().HaveCount(6, "Actual triples were: {0}", SerializeStore());
         }
 
+        [Test]
+        public void Should_allow_setting_values_to_existing_dictionary_keys()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKeyValue");
+
+            // when
+            entity.CustomKeyValueUriDictionary[10] = 100;
+            entity.CustomKeyValueUriDictionary[20] = 88;
+
+            // then
+            entity.CustomKeyValueUriDictionary.Should().Equal(new Dictionary<int, int> { { 10, 100 }, { 20, 88 } });
+        }
+
+        [Test]
+        public void Should_allow_adding_keys_to_existing_dictionary()
+        {
+            // given
+            LoadTestFile("Dictionary.trig");
+            var entity = EntityContext.Load<IEntityWithDictionary>("http://magi/element/CustomKeyValue");
+
+            // when
+            entity.CustomKeyValueUriDictionary[30] = 50;
+
+            // then
+            entity.CustomKeyValueUriDictionary.Should().Equal(new Dictionary<int, int> { { 10, 15 }, { 20, 31 }, { 30, 50 } });
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

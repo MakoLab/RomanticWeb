@@ -191,6 +191,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>String length.</summary>
         Length = 0x00000900,
+
+        /// <summary>Conversion to string.</summary>
+        String = 0x00000A00,
         #endregion
         #region Date-time functions
         /// <summary>Gets current date and time.</summary>

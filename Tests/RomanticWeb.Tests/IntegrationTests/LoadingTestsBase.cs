@@ -297,6 +297,16 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Select_with_type_check()
+        {
+            LoadTestFile("LargeDataset.nq");
+            IEnumerable<IEntity> products = (from product in EntityContext.AsQueryable()
+                                              where product.Is(new Uri("http://chem.com/vocab/Product"))
+                                              select product).ToList();
+            Assert.That(products.Count(), Is.Not.EqualTo(0));
+        }
+
+        [Test]
         [TestCase("http://chem.com/vocab/tensile", 400.0, 600.0)]
         public void Select_with_predicate_value_type_casted_to_collection_of_IQuantitativeFloatProperty(string predicateUriString, double minValue, double maxValue)
         {

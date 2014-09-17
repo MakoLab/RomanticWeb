@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using RomanticWeb.DotNetRDF;
 using RomanticWeb.Mapping;
 using RomanticWeb.TestEntities.FluentMappings;
 using RomanticWeb.Tests.Helpers;
@@ -13,7 +12,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
     {
         private TripleStore _store;
 
-        protected TripleStore Store
+        protected override ITripleStore Store
         {
             get
             {
@@ -36,11 +35,6 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         {
             m.Fluent.FromAssemblyOf<AnimalMap>();
             m.AddMapping(GetType().Assembly, Mappings);
-        }
-
-        protected override IEntitySource CreateEntitySource()
-        {
-            return new TripleStoreAdapter(Store);
         }
 
         protected override void ChildTeardown()

@@ -2,28 +2,29 @@ using System;
 using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
-using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
     /// <summary>Behavior that should be applied when deleting entities.</summary>
     [Flags]
-    public enum DeleteBehaviours
+    public enum DeleteBehaviour
     {
-        /// <summary>Default delete behavior set to <see cref="DeleteBehaviours.DeleteVolatileChildren" /> and <see cref="DeleteBehaviours.NullifyVolatileChildren" />.</summary>
-        Default = 0x0000011,
+        /// <summary>Default delete behavior set to <see cref="DoNothing" /></summary>
+        Default = 0x0000000,
 
         /// <summary>Nothing special should happen.</summary>
         DoNothing = 0x00000000,
 
         /// <summary>Delete other blank node entities referenced by the deleted entity.</summary>
+        [Obsolete]
         DeleteVolatileChildren = 0x00000001,
 
         /// <summary>Delete other entities referenced by the deleted entity.</summary>
         DeleteChildren = 0x00000003,
 
         /// <summary>Remove statements that referenced removed blank node entities.</summary>
+        [Obsolete]
         NullifyVolatileChildren = 0x00000010,
 
         /// <summary>Remove statements that referenced removed entities.</summary>
@@ -46,17 +47,16 @@ namespace RomanticWeb
         /// <summary>Gets the <see cref="IOntologyProvider" />.</summary>
         IOntologyProvider Ontologies { get; }
 
-        /// <summary>Gets the <see cref="INamedGraphSelector" />.</summary>
-        INamedGraphSelector GraphSelector { get; }
-
-        /// <summary>Gets the transformer catalog.</summary>
-        IResultTransformerCatalog TransformerCatalog { get; }
-
         /// <summary>Gets the <see cref="IMappingsRepository" />.</summary>
         IMappingsRepository Mappings { get; }
 
         /// <summary>Gets the <see cref="IBaseUriSelectionPolicy" />.</summary>
         IBaseUriSelectionPolicy BaseUriSelector { get; }
+
+        /// <summary>
+        /// Gets the changes.
+        /// </summary>
+        Updates.IDatasetChanges Changes { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>
         /// <returns>A LINQ querable data source.</returns>
@@ -89,7 +89,7 @@ namespace RomanticWeb
         /// <summary>Marks an entity for deletion.</summary>
         /// <param name="entityId">Target entity to be deleted.</param>
         /// <param name="deleteBehaviour">Entity deletion behaviour.</param>
-        void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour);
+        void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour);
 
         /// <summary>Initializes the enitity.</summary>
         /// <param name="entity">The entity.</param>

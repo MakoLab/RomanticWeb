@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Collections;
@@ -22,6 +23,9 @@ namespace RomanticWeb.Entities
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMapping;
         private readonly IResultTransformerCatalog _resultTransformers;
+
+        private readonly INamedGraphSelector _selector;
+
         private ISourceGraphSelectionOverride _overrideSourceGraph;
         private IDictionary<int, object> _memberCache = new Dictionary<int, object>();
         #endregion
@@ -34,12 +38,18 @@ namespace RomanticWeb.Entities
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
-        public EntityProxy(Entity entity, IEntityMapping entityMapping, IResultTransformerCatalog resultTransformers)
+        /// <param name="selector">The named graph selector.</param>
+        public EntityProxy(
+            Entity entity,
+            IEntityMapping entityMapping, 
+            IResultTransformerCatalog resultTransformers,
+            INamedGraphSelector selector)
         {
             _store = entity.Context.Store;
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
+            _selector = selector;
         }
 
         #endregion
@@ -89,6 +99,11 @@ namespace RomanticWeb.Entities
                     var resultTransformer = _resultTransformers.GetTransformer(property);
                     result = resultTransformer.FromNodes(this, property, Context, objects);
 
+                    if (result == null && property.ReturnType.IsValueType)
+                    {
+                        result = Activator.CreateInstance(property.ReturnType);
+                    }
+
                     if (result is IEntity)
                     {
                         var entityProxy = ((IEntity)result).UnwrapProxy() as IEntityProxy;
@@ -115,10 +130,7 @@ namespace RomanticWeb.Entities
         /// <inheritdoc />
         public override bool TrySetMember(SetMemberBinder binder, [AllowNull]object value)
         {
-            if ((_entity.Id is BlankId) && (((BlankId)_entity.Id).RootEntityId == null))
-            {
-                throw new InvalidOperationException(System.String.Format("Entity <'{0}'> is a blank node not attached to any non-blank node resource and is in a read-only mode.", _entity.Id));
-            }
+            CheckIsNotReadonly();
 
             try
             {
@@ -136,7 +148,7 @@ namespace RomanticWeb.Entities
                 Func<IEnumerable<Node>> newValues = () => new Node[0];
                 if (value != null)
                 {
-                    newValues = () => resultTransformer.ToNodes(value, this, property, Context);
+                    newValues = () => resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
                 _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
@@ -215,11 +227,26 @@ namespace RomanticWeb.Entities
         {
             if (_overrideSourceGraph != null)
             {
-                return _overrideSourceGraph.SelectGraph(Context.GraphSelector);
+                return _overrideSourceGraph.SelectGraph(_selector);
             }
 
-            return Context.GraphSelector.SelectGraph(Id, _entityMapping, property);
+            return _selector.SelectGraph(Id, _entityMapping, property);
         }
+
+        private void CheckIsNotReadonly()
+        {
+            var id = _entity.Id as BlankId;
+            if (id == null)
+            {
+                return;
+            }
+            
+            if (id.RootEntityId == null && id.Graph == null)
+            {
+                throw new InvalidOperationException(String.Format("Blank node entity <{0}> is read-only.", id));
+            }
+        }
+
         #endregion
 
         private class DebuggerDisplayProxy

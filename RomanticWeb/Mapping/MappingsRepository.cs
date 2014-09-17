@@ -28,7 +28,7 @@ namespace RomanticWeb.Mapping
             IEnumerable<IMappingModelVisitor> modelVisitors)
         {
             _modelVisitors = modelVisitors.ToList();
-            _providerVisitors = providerVisitors.OrderBy(OrderProviderVisitors).ToList();
+            _providerVisitors = providerVisitors.ToList();
             _sources = sources.ToList();
             _mappings = new Dictionary<Type, IEntityMapping>();
             _openGenericProviders = new Dictionary<Type, IEntityMappingProvider>();
@@ -127,11 +127,6 @@ namespace RomanticWeb.Mapping
             {
                 mapping.Accept(mappingModelVisitor);
             }
-        }
-
-        private object OrderProviderVisitors(IMappingProviderVisitor arg)
-        {
-            return arg.GetType().Name;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
@@ -112,7 +114,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(entity.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(entity.Id, DeleteBehaviour.DeleteChildren | DeleteBehaviour.NullifyChildren);
             EntityContext.Commit();
 
             // then
@@ -131,11 +133,28 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // when
-            EntityContext.Delete(someAgent.Id, DeleteBehaviours.DeleteChildren | DeleteBehaviours.NullifyChildren);
+            EntityContext.Delete(someAgent.Id, DeleteBehaviour.DeleteChildren | DeleteBehaviour.NullifyChildren);
             EntityContext.Commit();
 
             // then
             AssertStoreCounts(6, 1);
+        }
+
+        [Test]
+        public void Should_correctly_delete_and_create_an_entity()
+        {
+            // given 
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            EntityContext.Delete(new Uri("http://magi/people/Karol"));
+            var person = EntityContext.Create<IPerson>(new Uri("http://magi/people/Karol"));
+            person.Name = "Charles";
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Where(q => q.Graph.Uri == new Uri("http://data.magi/people/Karol"))
+                         .Should().HaveCount(3);
         }
 
         protected override void ChildSetup()

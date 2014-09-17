@@ -134,7 +134,7 @@ namespace RomanticWeb.Entities
                 return true;
             }
 
-            return _uri.ToString() == ((EntityId)obj)._uri.ToString();
+            return AbsoluteUriComparer.Default.Compare(_uri, ((EntityId)obj)._uri) == 0;
         }
 
         /// <summary>Creates a string representation of this entity identifier.</summary>

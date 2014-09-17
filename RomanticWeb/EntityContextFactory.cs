@@ -19,9 +19,11 @@ namespace RomanticWeb
     /// <summary>
     /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
     /// </summary>
-    public class EntityContextFactory : IEntityContextFactory
+    public class EntityContextFactory : IEntityContextFactory, IComponentRegistryFacade
     {
+        private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
+        private readonly IList<Scope> _trackedScopes = new List<Scope>();
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
@@ -29,9 +31,6 @@ namespace RomanticWeb
         public EntityContextFactory()
             : this(new ServiceContainer())
         {
-            LogTo.Info("Created entity context factory");
-
-            WithMappings(DefaultMappings);
         }
 
         internal EntityContextFactory(IServiceContainer container)
@@ -39,6 +38,10 @@ namespace RomanticWeb
             _container = container;
             _container.RegisterAssembly(GetType().Assembly);
             _container.RegisterInstance<IEntityContextFactory>(this);
+
+            WithMappings(DefaultMappings);
+
+            LogTo.Info("Created entity context factory");
         }
 
         /// <inheritdoc/>
@@ -86,6 +89,22 @@ namespace RomanticWeb
             }
         }
 
+        public IResultTransformerCatalog TransformerCatalog
+        {
+            get
+            {
+                return _container.GetInstance<IResultTransformerCatalog>();
+            }
+        }
+
+        public INamedGraphSelector NamedGraphSelector
+        {
+            get
+            {
+                return _container.GetInstance<INamedGraphSelector>();
+            }
+        }
+
         /// <summary>
         /// Creates a factory defined in the configuration section.
         /// </summary>
@@ -117,16 +136,19 @@ namespace RomanticWeb
         public IEntityContext CreateContext()
         {
             LogTo.Debug("Creating entity context");
-            
-            return _container.GetInstance<IEntityContext>();
+
+            lock (Locker)
+            {
+                _trackedScopes.Add(_container.BeginScope());
+                return _container.GetInstance<IEntityContext>();
+            }
         }
 
         /// <summary>Includes a given <see cref="IEntitySource" /> in context that will be created.</summary>
-        /// <param name="entitySource">Target entity source.</param>
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithEntitySource(Func<IEntitySource> entitySource)
+        public EntityContextFactory WithEntitySource<TSource>() where TSource : IEntitySource
         {
-            _container.Register(f => entitySource(), "EntitySource");
+            _container.Register<IEntitySource, TSource>("EntitySource");
             return this;
         }
 
@@ -138,15 +160,6 @@ namespace RomanticWeb
             // todo: get rid of Guid by refatoring how ontolgies are added
             _container.RegisterInstance(ontologyProvider, Guid.NewGuid().ToString());
 
-            return this;
-        }
-
-        /// <summary>Includes a given <see cref="IEntityStore" /> in context that will be created.</summary>
-        /// <param name="entityStoreFactory">Target entity store.</param>
-        /// <returns>This <see cref="EntityContextFactory" /> </returns>
-        public EntityContextFactory WithEntityStore(Func<IEntityStore> entityStoreFactory)
-        {
-            _container.Register(f => entityStoreFactory());
             return this;
         }
 
@@ -191,9 +204,22 @@ namespace RomanticWeb
             return this;
         }
 
+        /// <summary>
+        /// Registers dependencies from a given <see cref="CompositionRootBase"/> type
+        /// </summary>
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
             return WithDependenciesInternal<T>();
+        }
+
+        void IComponentRegistryFacade.Register<TService, TComponent>()
+        {
+            _container.Register<TService, TComponent>();
+        }
+
+        void IComponentRegistryFacade.Register<TService>(TService instance)
+        {
+            _container.RegisterInstance(instance);
         }
 
         internal EntityContextFactory WithDependenciesInternal<T>() where T : ICompositionRoot, new()

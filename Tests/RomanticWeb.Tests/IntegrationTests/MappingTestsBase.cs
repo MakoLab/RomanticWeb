@@ -10,6 +10,7 @@ using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Updates;
 using RomanticWeb.Vocabularies;
 using IPerson = RomanticWeb.TestEntities.IPerson;
 
@@ -366,28 +367,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             // given
             Mappings.Add(new DefaultGraphPersonMapping());
-            var entityUri = new Uri("http://magi/people/Tomasz");
-            var entityId = new EntityId(entityUri);
+            EntityId entityId = "http://magi/people/Tomasz";
+            EntityId graphUri = "http://data.magi/people/Tomasz";
 
             // then
             EntityContext.Create<TestEntities.Foaf.IPerson>(entityId);
 
             // then
-            Assert.That(EntityContext.HasChanges);
-            var agentTriple = new EntityQuad(
-                entityId,
-                Node.ForUri(entityUri),
-                Node.ForUri(Rdf.type),
-                Node.ForUri(Foaf.Person),
-                Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
-            var personTriple = new EntityQuad(
-                entityId,
-                Node.ForUri(entityUri),
-                Node.ForUri(Rdf.type),
-                Node.ForUri(Foaf.Agent),
-                Node.ForUri(new Uri("http://data.magi/people/Tomasz")));
-            EntityContext.Store.Changes.QuadsAdded.Should().Contain(personTriple);
-            EntityContext.Store.Changes.QuadsAdded.Should().Contain(agentTriple);
+            EntityContext.Changes[graphUri].Should().Contain(change => GraphUpdateSettingRdfTypes(change));
         }
 
         [Test]
@@ -502,6 +489,15 @@ namespace RomanticWeb.Tests.IntegrationTests
         private string SerializeStore()
         {
             return String.Join(Environment.NewLine, EntityStore.Quads);
+        }
+
+        private static bool GraphUpdateSettingRdfTypes(DatasetChange change)
+        {
+            var update = change as GraphUpdate;
+            return update != null
+                && update.AddedQuads.All(q => q.Predicate == Node.ForUri(Rdf.type))
+                && (update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Person))
+                || update.AddedQuads.Any(q => q.Object == Node.ForUri(Foaf.Agent)));
         }
 
         [Obsolete]

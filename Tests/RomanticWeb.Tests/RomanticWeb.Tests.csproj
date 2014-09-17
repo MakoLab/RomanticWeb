@@ -58,23 +58,23 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
-      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.core.dll</HintPath>
+      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.core.interfaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util">
-      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\nunit.util.dll</HintPath>
+      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\nunit.util.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.1\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <HintPath>..\..\packages\NUnitTestAdapter.WithFramework.1.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="OpenLink.Data.Virtuoso">
@@ -119,6 +119,7 @@
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\LiteralConversionMatchTests.cs" />
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
+    <Compile Include="dotNetRDF\DefaultSparqlCommandFactoryTests.cs" />
     <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
@@ -129,6 +130,8 @@
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
+    <Compile Include="Updates\DatasetChangesOptimizerTests.cs" />
+    <Compile Include="Updates\GraphUpdateTests.cs" />
     <None Include="IntegrationTests\Virtuoso\LoadingTests.cs" />
     <Compile Include="IntegrationTests\WritingTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\WritingTests.cs" />
@@ -192,7 +195,6 @@
     <Compile Include="Stubs\TestPropertyMapping.cs" />
     <Compile Include="EntityTripleTests.cs" />
     <Compile Include="Stubs\TestTransformerCatalog.cs" />
-    <Compile Include="TriplesStoreAdapterTests.cs" />
     <Compile Include="TurtleGraphConversionTests.cs" />
     <Compile Include="TypeExtensionsTests.cs" />
     <EmbeddedResource Include="TurtleGraphConversionTests.ttl">

@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using RomanticWeb.DotNetRDF;
 using RomanticWeb.Tests.Helpers;
 using VDS.RDF;
 
@@ -11,7 +10,7 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
     {
         private TripleStore _store;
 
-        protected TripleStore Store
+        protected override ITripleStore Store
         {
             get
             {
@@ -28,11 +27,6 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         {
             Console.WriteLine("Reading dataset file '{0}'", fileName);
             Store.LoadTestFile(fileName);
-        }
-
-        protected override IEntitySource CreateEntitySource()
-        {
-            return new TripleStoreAdapter(Store);
         }
 
         protected override void ChildTeardown()

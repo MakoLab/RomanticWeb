@@ -16,11 +16,24 @@ namespace RomanticWeb.ComponentModel
     /// </summary>
     public abstract class CompositionRootBase : ICompositionRoot
     {
-        private const string EntityStoreServiceName = "EntityStore";
-
         private readonly IList<Action<IServiceRegistry>> _registrations = new List<Action<IServiceRegistry>>(16);
-        private readonly IDictionary<Type, object> _instances = new Dictionary<Type, object>();
-        
+
+        private MappingProviderVisitorChain _mappingProviderVisitorChain;
+
+        private MappingProviderVisitorChain MappingProviderVisitorChain
+        {
+            get
+            {
+                if (_mappingProviderVisitorChain == null)
+                {
+                    _mappingProviderVisitorChain = new MappingProviderVisitorChain();
+                    AddInstanceRegistration(_mappingProviderVisitorChain, "Mapping provider visitors " + Guid.NewGuid());
+                }
+
+                return _mappingProviderVisitorChain;
+            }
+        }
+
         void ICompositionRoot.Compose(IServiceRegistry serviceRegistry)
         {
             foreach (var registration in _registrations)
@@ -32,78 +45,88 @@ namespace RomanticWeb.ComponentModel
         /// <summary>
         /// Sets the <see cref="IEntityContext"/> implementation type
         /// </summary>
-        protected void EntityContext<TContext>() where TContext : IEntityContext
+        protected void EntityContext<TContext>() 
+            where TContext : IEntityContext
         {
-            AddRegistration<IEntityContext, TContext>();
+            TransientComponent<IEntityContext, TContext>();
         }
 
         /// <summary>
         /// Sets the <see cref="IBlankNodeIdGenerator"/> implementation type
         /// </summary>
-        protected void BlankNodeIdGenerator<TGenerator>() where TGenerator : IBlankNodeIdGenerator
+        protected void BlankNodeIdGenerator<TGenerator>() 
+            where TGenerator : IBlankNodeIdGenerator
         {
-            AddRegistration<IBlankNodeIdGenerator, TGenerator>();
+            SharedComponent<IBlankNodeIdGenerator, TGenerator>();
         }
 
         /// <summary>
         /// Adds a <see cref="IOntologyProvider"/> 
         /// </summary>
-        protected void Ontology<TProvider>() where TProvider : IOntologyProvider
+        protected void Ontology<TProvider>() 
+            where TProvider : IOntologyProvider
         {
-            AddNamedRegistration<IOntologyProvider, TProvider>();
+            SharedComponent<IOntologyProvider, TProvider>(typeof(TProvider).FullName);
         }
 
         /// <summary>
         /// Sets the <see cref="INamedGraphSelector"/> implementation type
         /// </summary>
-        protected void NamedGraphSelector<TSelector>() where TSelector : INamedGraphSelector
+        protected void NamedGraphSelector<TSelector>() 
+            where TSelector : INamedGraphSelector
         {
-            AddRegistration<INamedGraphSelector, TSelector>();
+            SharedComponent<INamedGraphSelector, TSelector>();
         }
 
         /// <summary>
         /// Sets the <see cref="IEntityStore"/> implementation type
         /// </summary>
-        protected void EntityStore<TStore>() where TStore : IEntityStore
+        protected void EntityStore<TStore>()
+            where TStore : IEntityStore
         {
-            AddRegistration<IEntityStore, TStore>(EntityStoreServiceName);
+            PerEntityContextComponent<IEntityStore, TStore>();
         }
 
         /// <summary>
         /// Adds <see cref="IConvention"/> implementation type, with optional setup
         /// </summary>
-        protected void Convention<TConvention>(Action<TConvention> setup = null) where TConvention : IConvention, new()
+        protected void Convention<TConvention>(Action<TConvention> setup = null) 
+            where TConvention : IConvention, new()
         {
-            var convention = AddInstanceRegistration<IConvention, TConvention>();
+            _registrations.Add(registry => registry.Register<TConvention>(new PerContainerLifetime()));
+            _registrations.Add(registry => registry.Register<IConvention>(factory => CreateConvention<TConvention>(factory), typeof(TConvention).FullName, new PerContainerLifetime()));
 
             if (setup != null)
             {
-                setup(convention);
+                SharedComponent(setup, typeof(TConvention).FullName + " setup " + Guid.NewGuid());
             }
         }
 
         /// <summary>
         /// Sets the <see cref="IFallbackNodeConverter"/> implementation type
         /// </summary>
-        protected void FallbackNodeConverter<TConverter>() where TConverter : IFallbackNodeConverter
+        protected void FallbackNodeConverter<TConverter>() 
+            where TConverter : IFallbackNodeConverter
         {
-            AddRegistration<IFallbackNodeConverter, TConverter>(lifetime: new PerContainerLifetime());
+            SharedComponent<IFallbackNodeConverter, TConverter>();
         }
 
         /// <summary>
         /// Adds a <see cref="IMappingModelVisitor"/>
         /// </summary>
-        protected void MappingModelVisitor<TVisitor>() where TVisitor : IMappingModelVisitor
+        protected void MappingModelVisitor<TVisitor>() 
+            where TVisitor : IMappingModelVisitor
         {
-            AddNamedRegistration<IMappingModelVisitor, TVisitor>(new PerContainerLifetime());
+            SharedComponent<IMappingModelVisitor, TVisitor>();
         }
 
         /// <summary>
         /// Adds a <see cref="IOntologyLoader"/>
         /// </summary>
-        protected void OntologyLoader<TLoader>() where TLoader : IOntologyLoader
+        protected void OntologyLoader<TLoader>() 
+            where TLoader : IOntologyLoader
         {
-            AddNamedRegistration<IOntologyLoader, TLoader>();
+            SharedComponent<IOntologyLoader, TLoader>();
         }
 
         /// <summary>
@@ -112,42 +135,81 @@ namespace RomanticWeb.ComponentModel
         protected void RdfTypeCache<TCache>() 
             where TCache : IRdfTypeCache
         {
-            AddRegistration<IRdfTypeCache, TCache>(lifetime: new PerContainerLifetime());
+            SharedComponent<IRdfTypeCache, TCache>();
         }
 
         /// <summary>
         /// Adds a <see cref="IMappingProviderVisitor"/>
         /// </summary>
-        protected void MappingProviderVisitor<TVisitor>() where TVisitor : IMappingProviderVisitor
+        protected void MappingProviderVisitor<TVisitor>() 
+            where TVisitor : IMappingProviderVisitor
         {
-            var chain = AddInstanceRegistration<MappingProviderVisitorChain, MappingProviderVisitorChain>();
-
-            chain.Add<TVisitor>();
-            _registrations.Add(registry => registry.Register<TVisitor>());
+            MappingProviderVisitorChain.Add<TVisitor>();
+            _registrations.Add(registry => registry.Register<TVisitor>(new PerContainerLifetime()));
         }
 
-        private void AddNamedRegistration<TService, TImpl>(ILifetime lifetime = null) 
-            where TImpl : TService
+        /// <summary>
+        /// Registers a custom dependency type. It will be shared between all <see cref="EntityContext"/>s
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
+        /// <param name="name">Optional name.</param>
+        protected void SharedComponent<TComponent, TImplementation>(string name = null) 
+            where TImplementation : TComponent
         {
-            AddRegistration<TService, TImpl>(typeof(TImpl).FullName, lifetime);   
+            AddRegistration<TComponent, TImplementation>(name, new PerContainerLifetime());
         }
 
-        private void AddRegistration<TService, TImpl>(string name = null, ILifetime lifetime = null)
-            where TImpl : TService
+        /// <summary>
+        /// Registers a custom dependency instance. It will be shared between all <see cref="EntityContext"/>s
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <param name="instance">An instance of <typeparamref name="TComponent"/></param>
+        /// <param name="name">Optional name.</param>
+        protected void SharedComponent<TComponent>(TComponent instance, string name = null)
         {
-            _registrations.Add(registry => registry.Register<TService, TImpl>(name ?? string.Empty, lifetime));
+            AddInstanceRegistration(instance, name);
         }
 
-        private TImpl AddInstanceRegistration<TService, TImpl>() where TImpl : TService, new()
+        /// <summary>
+        /// Registers a custom dependency type. A new instance will be created for each <see cref="EntityContext"/>
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
+        /// <param name="name">Optional name.</param>
+        protected void TransientComponent<TComponent, TImplementation>(string name = null) 
+            where TImplementation : TComponent
         {
-            if (!_instances.ContainsKey(typeof(TImpl)))
+            AddRegistration<TComponent, TImplementation>(name, new PerRequestLifeTime());
+        }
+
+        protected void PerEntityContextComponent<TComponent, TImplementation>(string name = null)
+            where TImplementation : TComponent
+        {
+            AddRegistration<TComponent, TImplementation>(name, new PerScopeLifetime());
+        }
+
+        private void AddRegistration<TComponent, TImplementation>(string name, ILifetime lifetime)
+            where TImplementation : TComponent
+        {
+            _registrations.Add(registry => registry.Register<TComponent, TImplementation>(name ?? string.Empty, lifetime));
+        }
+
+        private void AddInstanceRegistration<TComponent>(TComponent instance, string name)
+        {
+            _registrations.Add(registry => registry.RegisterInstance(instance, name ?? string.Empty));
+        }
+
+        private TConvention CreateConvention<TConvention>(IServiceFactory factory)
+            where TConvention : IConvention
+        {
+            var convention = factory.GetInstance<TConvention>();
+            foreach (var setup in factory.GetAllInstances<Action<TConvention>>())
             {
-                var convention = new TImpl();
-                _registrations.Add(registry => registry.RegisterInstance<TService>(convention, typeof(TImpl).FullName));
-                _instances[typeof(TImpl)] = convention;
+                setup(convention);
             }
 
-            return (TImpl)_instances[typeof(TImpl)];
+            return convention;
         }
     }
 }

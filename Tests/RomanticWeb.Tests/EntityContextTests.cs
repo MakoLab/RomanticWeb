@@ -29,7 +29,6 @@ namespace RomanticWeb.Tests
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
         private Mock<IDatasetChangesOptimizer> _changesOptimizer;
-
         private Mock<IDatasetChangesTracker> _changesTracker;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
@@ -352,6 +351,21 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(store => store.Commit(changes));
+        }
+
+        [Test]
+        public void Rollback_should_reset_entity_source()
+        {
+            // given
+            _entityStore.Setup(s => s.Rollback());
+            _changesTracker.Setup(s => s.Clear());
+
+            // when
+            _entityContext.Rollback();
+
+            // then
+            _entityStore.Verify(s => s.Rollback());
+            _changesTracker.Verify(s => s.Clear());
         }
 
         private static PropertyMapping GetMapping(string propertyName)

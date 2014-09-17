@@ -8,7 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      * Significant performance improvement
+      * Rollback on IEntityContext
     </releaseNotes>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>

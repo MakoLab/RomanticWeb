@@ -8,11 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      * Linq improvements
-      * Refactoring internal component composition
-      * Crude API for extending RomanticWeb
-      * Debugging directly from GitHub 
-      * Fix for saving entities with blank ids
+      * Significant performance improvement
     </releaseNotes>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>

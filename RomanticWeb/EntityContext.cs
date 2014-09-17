@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
-using ImpromptuInterface;
 using NullGuard;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
-using RomanticWeb.Mapping.Model;
-using RomanticWeb.Model;
-using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
-using RomanticWeb.Vocabularies;
+using RomanticWeb.Updates;
 
 namespace RomanticWeb
 {
@@ -23,7 +18,6 @@ namespace RomanticWeb
     internal class EntityContext : IEntityContext
     {
         #region Fields
-        private static readonly EntityMapping EntityMapping = new EntityMapping(typeof(IEntity));
         private readonly IEntityContextFactory _factory;
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
@@ -33,6 +27,11 @@ namespace RomanticWeb
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
+        private readonly IEntityCaster _caster;
+
+        private readonly IDatasetChangesOptimizer _optimizer;
+
+        private readonly IDatasetChangesTracker _changeTracker;
 
         #endregion
 
@@ -45,10 +44,12 @@ namespace RomanticWeb
             IEntityStore entityStore,
             IEntitySource entitySource,
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
-            INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog) : this()
+            IResultTransformerCatalog transformerCatalog, 
+            IEntityCaster caster, 
+            IDatasetChangesTracker changeTracker,
+            IDatasetChangesOptimizer optimizer) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -56,10 +57,11 @@ namespace RomanticWeb
             _baseUriSelector = baseUriSelector;
             _mappings = mappings;
             _mappingContext = mappingContext;
-            GraphSelector = namedGraphSelector;
             _typeCache = typeCache;
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
+            _caster = caster;
+            _optimizer = optimizer;
 
             if (_baseUriSelector == null)
             {
@@ -73,10 +75,12 @@ namespace RomanticWeb
             MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            INamedGraphSelector namedGraphSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog)
+            IResultTransformerCatalog transformerCatalog, 
+            IEntityCaster caster,
+            IDatasetChangesTracker changeTracker, 
+            IDatasetChangesOptimizer optimizer)
             : this(
                 factory,
                 mappings,
@@ -84,15 +88,18 @@ namespace RomanticWeb
                 entityStore,
                 entitySource,
                 null,
-                namedGraphSelector,
                 typeCache,
                 blankIdGenerator,
-                transformerCatalog)
+                transformerCatalog, 
+                caster, 
+                changeTracker,
+                optimizer)
         {
         }
 
-        private EntityContext()
+        private EntityContext(IDatasetChangesTracker changeTracker)
         {
+            _changeTracker = changeTracker;
             LogTo.Info("Creating entity context");
             EntityCache = new InMemoryEntityCache();
         }
@@ -105,7 +112,7 @@ namespace RomanticWeb
         public IEntityStore Store { get { return _entityStore; } }
 
         /// <summary>Gets a value indicating whether the underlying store has any changes.</summary>
-        public bool HasChanges { get { return Store.Changes.Any; } }
+        public bool HasChanges { get { return _changeTracker.HasChanges; } }
 
         /// <inheritdoc />
         public IBlankNodeIdGenerator BlankIdGenerator { get { return _blankIdGenerator; } }
@@ -114,23 +121,19 @@ namespace RomanticWeb
         public IOntologyProvider Ontologies { get { return _factory.Ontologies; } }
 
         /// <inheritdoc />
-        public INamedGraphSelector GraphSelector { get; private set; }
-
-        /// <inheritdoc />
-        public IResultTransformerCatalog TransformerCatalog
-        {
-            get
-            {
-                return _transformerCatalog;
-            }
-        }
-
-        /// <inheritdoc />
         public IMappingsRepository Mappings { get { return _mappings; } }
 
         /// <inheritdoc />
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
+
+        public IDatasetChanges Changes
+        {
+            get
+            {
+                return _changeTracker;
+            }
+        }
 
         internal IEntityCache EntityCache { get; private set; }
         #endregion
@@ -139,13 +142,13 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IQueryable<IEntity> AsQueryable()
         {
-            return new EntityQueryable<IEntity>(this, _entitySource, _mappings, _baseUriSelector);
+            return new EntityQueryable<IEntity>(this, _entitySource, _entityStore);
         }
 
         /// <inheritdoc />
         public IQueryable<T> AsQueryable<T>() where T : class, IEntity
         {
-            return new EntityQueryable<T>(this, _entitySource, _mappings, _baseUriSelector);
+            return new EntityQueryable<T>(this, _entitySource, _entityStore);
         }
 
         /// <summary>Loads an entity from the underlying data source.</summary>
@@ -161,13 +164,12 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T Create<T>(EntityId entityId) where T : class, IEntity
         {
-            if ((typeof(T) == typeof(IEntity)) || (typeof(T) == typeof(Entity)))
+            if (typeof(T) == typeof(Entity))
             {
                 return (T)(IEntity)CreateInternal(entityId, true);
             }
 
             var entity = CreateInternal(entityId, true);
-            AssertEntityTypes<T>(entity);
             return EntityAs<T>(entity);
         }
 
@@ -175,18 +177,18 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.ApplyChanges(_entityStore.Changes);
+            _entitySource.Commit(_optimizer.Optimize(Changes));
             _entityStore.ResetState();
         }
 
         /// <inheritdoc />
         public void Delete(EntityId entityId)
         {
-            Delete(entityId, DeleteBehaviours.Default);
+            Delete(entityId, DeleteBehaviour.Default);
         }
 
         /// <inheritdoc />
-        public void Delete(EntityId entityId, DeleteBehaviours deleteBehaviour)
+        public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour)
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Deleting entity {0}", entityId);
@@ -209,11 +211,11 @@ namespace RomanticWeb
         /// <inheritdoc />
         public T EntityAs<T>(IEntity entity) where T : class, IEntity
         {
-            Entity rootEntity = (Entity)entity;
+            var rootEntity = (Entity)entity;
             rootEntity.EnsureIsInitialized();
-            IEnumerable<Uri> entityTypeUris = _entityStore.GetObjectsForPredicate(rootEntity.Id, Rdf.type, GraphSelector.SelectGraph(rootEntity.Id, null, null)).Select(item => item.Uri);
-            var entityTypes = _typeCache.GetMostDerivedMappedTypes(entityTypeUris, typeof(T));
-            return EntityAs((Entity)rootEntity, typeof(T), entityTypes.ToArray());
+            var typedEntity = _caster.EntityAs<ITypedEntity>(rootEntity, new Type[0]);
+            var entityTypes = _typeCache.GetMostDerivedMappedTypes(typedEntity.Types.Select(id => id.Uri), typeof(T));
+            return _caster.EntityAs<T>(rootEntity, entityTypes.ToArray());
         }
 
         /// <inheritdoc />
@@ -241,7 +243,7 @@ namespace RomanticWeb
 
                 foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
                 {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, TransformerCatalog);
+                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, _transformerCatalog);
                     entity[ontology.Prefix] = ontologyAccessor;
                 }
 
@@ -256,27 +258,6 @@ namespace RomanticWeb
             return EntityCache.Get(entityId);
         }
 
-        private void AssertEntityTypes<T>(Entity entity)
-        {
-            var entityMapping = _mappings.MappingFor<T>();
-            if (entityMapping == null)
-            {
-                throw new UnMappedTypeException(typeof(T));
-            }
-
-            AssertEntityTypes(entity, entityMapping);
-        }
-
-        private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
-        {
-            var graph = GraphSelector.SelectGraph(entity.Id, entityMapping, null);
-            var currentTypes = Store.GetObjectsForPredicate(entity.Id, Rdf.type, graph);
-
-            var rdfTypes = currentTypes.Union(entityMapping.Classes.Select(c => Node.ForUri(c.Uri)));
-
-            Store.ReplacePredicateValues(entity.Id, Node.ForUri(Rdf.type), rdfTypes.ToList, graph);
-        }
-
         private EntityId EnsureAbsoluteEntityId(EntityId entityId)
         {
             if (!entityId.Uri.IsAbsoluteUri)
@@ -285,50 +266,6 @@ namespace RomanticWeb
             }
 
             return entityId;
-        }
-
-        private dynamic EntityAs(Entity entity, Type requested, Type[] types)
-        {
-            IEntityMapping mapping;
-            if (types.Length == 1)
-            {
-                mapping = GetMapping(types[0]);
-            }
-            else if (types.Length == 0)
-            {
-                types = new[] { requested };
-                mapping = GetMapping(requested);
-            }
-            else
-            {
-                mapping = new MultiMapping(types.Select(GetMapping).ToArray());
-            }
-
-            return EntityAs(entity, mapping, types);
-        }
-
-        private dynamic EntityAs(Entity entity, IEntityMapping mapping, Type[] types)
-        {
-            AssertEntityTypes(entity, mapping);
-
-            var proxy = new EntityProxy(entity, mapping, TransformerCatalog);
-            return Impromptu.DynamicActLike(proxy, types);
-        }
-
-        private IEntityMapping GetMapping(Type type)
-        {
-            if (type == typeof(IEntity))
-            {
-                return EntityMapping;
-            }
-
-            var mapping = _mappings.MappingFor(type);
-            if (mapping == null)
-            {
-                throw new UnMappedTypeException(type);
-            }
-
-            return mapping;
         }
         #endregion
     }

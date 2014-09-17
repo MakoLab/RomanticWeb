@@ -9,6 +9,7 @@ namespace RomanticWeb.Model
     /// </summary>
     public sealed class EntityQuad : Triple, IComparable, IComparable<EntityQuad>
     {
+        private readonly int _hashCode;
         private readonly Node _graph;
         private readonly EntityId _entityId;
 
@@ -35,6 +36,7 @@ namespace RomanticWeb.Model
             : base(s, p, o)
         {
             _entityId = entityId;
+            _hashCode = ComputeHashCode();
         }
 
         /// <summary>Gets the named graph node or null, if triple is in named graph.</summary>
@@ -154,13 +156,7 @@ namespace RomanticWeb.Model
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_graph != null ? _graph.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ _entityId.GetHashCode();
-                return hashCode;
-            }
+            return _hashCode;
         }
 
         public override string ToString()
@@ -199,6 +195,17 @@ namespace RomanticWeb.Model
         private bool Equals(EntityQuad other)
         {
             return (base.Equals(other)) && (Equals(_graph, other._graph)) && (_entityId.Equals(other._entityId));
+        }
+
+        private int ComputeHashCode()
+        {
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_graph != null ? _graph.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _entityId.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }

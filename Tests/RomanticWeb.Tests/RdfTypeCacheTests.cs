@@ -168,7 +168,7 @@ namespace RomanticWeb.Tests
                 }
             }
 
-            public ICollection<EntityId> Types { get; set; }
+            public IList<EntityId> Types { get; set; }
         }
     }
 }

@@ -8,6 +8,7 @@ using RomanticWeb.TestEntities;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
+using VDS.RDF;
 
 namespace RomanticWeb.Tests.IntegrationTests.FileBased
 {
@@ -17,7 +18,7 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
         private FileTripleStore _store;
         private string filePath;
 
-        protected FileTripleStore Store
+        protected override ITripleStore Store
         {
             get
             {
@@ -73,11 +74,6 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
         {
             Console.WriteLine("Reading dataset file '{0}'", fileName);
             this.Store.LoadTestFile(fileName);
-        }
-
-        protected override IEntitySource CreateEntitySource()
-        {
-            return new TripleStoreAdapter(this.Store);
         }
 
         protected override void ChildTeardown()

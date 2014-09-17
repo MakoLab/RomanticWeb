@@ -23,12 +23,15 @@ namespace RomanticWeb.Model
         private readonly string _identifier;
         private readonly Uri _graphUri;
         private readonly EntityId _entityId;
+        private readonly int _hashCode;
+
         #endregion
 
         #region Constructors
         private Node(Uri uri)
         {
             _uri = uri;
+            _hashCode = CalculateHashCode();
         }
 
         private Node(string literal, string language, Uri dataType)
@@ -41,6 +44,7 @@ namespace RomanticWeb.Model
             _literal = literal;
             _language = language;
             _dataType = dataType;
+            _hashCode = CalculateHashCode();
         }
 
         private Node(string identifier, Uri graphUri, [AllowNull]EntityId entityId)
@@ -50,7 +54,9 @@ namespace RomanticWeb.Model
             _entityId = entityId;
             _blankNodeId = new BlankId(identifier, entityId, graphUri);
             _uri = _blankNodeId.Uri;
+            _hashCode = CalculateHashCode();
         }
+
         #endregion
 
         #region Properties
@@ -240,23 +246,7 @@ namespace RomanticWeb.Model
         /// <summary>Gets hash code for the node.</summary>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hashCode;
-
-                if (IsLiteral)
-                {
-                    hashCode = _literal.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (_language != null ? _language.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (_dataType != null ? _dataType.GetHashCode() : 0);
-                }
-                else
-                {
-                    hashCode = _uri.AbsoluteUri.GetHashCode();
-                }
-
-                return hashCode;
-            }
+            return _hashCode;
         }
 
         int IComparable.CompareTo(object obj)
@@ -355,7 +345,28 @@ namespace RomanticWeb.Model
                 return string.Equals(_literal, other._literal) && string.Equals(_language, other._language) && Equals(_dataType, other._dataType);
             }
 
-            return Uri.Compare(_uri, other._uri, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.Ordinal) == 0;
+            return AbsoluteUriComparer.Default.Compare(_uri, other._uri) == 0;
+        }
+
+        private int CalculateHashCode()
+        {
+            unchecked
+            {
+                int hashCode;
+
+                if (IsLiteral)
+                {
+                    hashCode = _literal.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (_language != null ? _language.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ (_dataType != null ? _dataType.GetHashCode() : 0);
+                }
+                else
+                {
+                    hashCode = _uri.AbsoluteUri.GetHashCode();
+                }
+
+                return hashCode;
+            }
         }
         #endregion
 

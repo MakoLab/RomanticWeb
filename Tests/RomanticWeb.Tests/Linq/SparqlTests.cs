@@ -50,9 +50,11 @@ namespace RomanticWeb.Tests.Linq
             _store.LoadTestFile("TriplesWithLiteralSubjects.trig");
 
             IServiceContainer container = new ServiceContainer();
+            container.RegisterInstance<ITripleStore>(_store);
+
             IEntityContextFactory factory = new EntityContextFactory(container)
                 .WithDefaultOntologies()
-                .WithEntitySource(() => new TripleStoreAdapter(_store))
+                .WithEntitySource<TripleStoreAdapter>()
                 .WithMetaGraphUri(new Uri("http://app.magi/graphs"))
                 .WithDependenciesInternal<Dependencies>();
 
@@ -191,16 +193,6 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(address, Is.Not.Null);
             Assert.That(address.City, Is.EqualTo("Łódź"));
             Assert.That(address.Street, Is.EqualTo("Rzgowska 30"));
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Selected_entitys_blank_node_IEntity_property_should_be_read_only()
-        {
-            IAddress address = (from resources in _entityContext.AsQueryable<IPerson>()
-                                where resources.Id == (EntityId)"http://magi/people/Gniewoslaw"
-                                select resources.Address).FirstOrDefault();
-            address.Street = "test";
         }
 
         [Test]

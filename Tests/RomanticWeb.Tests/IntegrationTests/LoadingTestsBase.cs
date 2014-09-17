@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -99,37 +100,32 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [TestCase(2)]
-        [Category("Slow tests")]
-        public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
+        public void Should_list_entities_from_large_dataset_in_a_timely_fashion_way()
         {
-            Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
-
             // given
             LoadTestFile("LargeDataset.nq");
-            DateTime startedAt = DateTime.Now;
+            var stopwatch = new Stopwatch();
 
             // when
+            stopwatch.Start();
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();
+            stopwatch.Stop();
 
             // then
-            TimeSpan testLength = DateTime.Now - startedAt;
-            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
+            Console.Write("Time taken: {0}", stopwatch.ElapsedMilliseconds);
+            stopwatch.ElapsedMilliseconds.Should().BeLessOrEqualTo(2000);
         }
 
         [Test]
-        [TestCase(2)]
-        [Category("Slow tests")]
-        public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way(int maxLoadTime)
+        public void Should_enumerate_entities_from_large_dataset_in_a_timely_fashion_way()
         {
-            Assert.Inconclusive("This test is for forcing optimizations only. It's supposed to always fail.");
-
             // given
             LoadTestFile("LargeDataset.nq");
             IEnumerable<IProduct> entities = EntityContext.AsQueryable<IProduct>().ToList();
-            DateTime startedAt = DateTime.Now;
+            var stopwatch = new Stopwatch();
 
             // when
+            stopwatch.Start();
             foreach (IProduct product in entities)
             {
                 string name = product.Name;
@@ -151,9 +147,11 @@ namespace RomanticWeb.Tests.IntegrationTests
                 string function = System.String.Join(", ", product.Function.Select(item => item.ToString()));
             }
 
+            stopwatch.Stop();
+
             // then
-            TimeSpan testLength = DateTime.Now - startedAt;
-            testLength.TotalSeconds.Should().BeLessOrEqualTo(maxLoadTime);
+            Console.Write("Time taken: {0}", stopwatch.ElapsedMilliseconds);
+            stopwatch.ElapsedMilliseconds.Should().BeLessOrEqualTo(2000);
         }
 
         [Test]
@@ -207,16 +205,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [TestCase("Northrop Grumman")]
-        public void Should_return_filtered_entities(params string[] groups)
+        public void Should_return_filtered_entities()
         {
             // given
             LoadTestFile("LargeDataset.nq");
 
             // when
             IList<IProduct> products = (from product in EntityContext.AsQueryable<IProduct>()
-                                        from userGroup in groups
-                                        where (product.Group.Contains(userGroup)) || (!product.Group.Any())
+                                        where (product.Group.Contains("Northrop Grumman")) || (!product.Group.Any())
                                         select product).ToList();
 
             // then

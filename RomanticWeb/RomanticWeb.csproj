@@ -65,6 +65,7 @@
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\CompositionRootBase.cs" />
+    <Compile Include="ComponentModel\IComponentRegistry.cs" />
     <Compile Include="ComponentModel\OntologyLoaderCompositionRoot.cs" />
     <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
     <Compile Include="ComponentModel\EntityIdTypeConverter.cs" />
@@ -94,8 +95,6 @@
     <Compile Include="Converters\LiteralConversionMatch.cs" />
     <Compile Include="Converters\FallbackNodeConverter.cs" />
     <Compile Include="Converters\StringConverter.cs" />
-    <Compile Include="DatasetChanges.cs" />
-    <Compile Include="DatasetChangesGenerator.cs" />
     <Compile Include="DefaultUriBuilder.cs" />
     <Compile Include="DictionaryCache.cs" />
     <Compile Include="Duration.cs" />
@@ -139,6 +138,8 @@
     <Compile Include="Entities\ResultPostprocessing\ObservableCollectionTransformer.cs" />
     <Compile Include="Entities\ResultPostprocessing\RdfListTransformer.cs" />
     <Compile Include="IEntityCache.cs" />
+    <Compile Include="Entities\IEntityCaster.cs" />
+    <Compile Include="Entities\ImpromptuInterfaceCaster.cs" />
     <Compile Include="InMemoryEntityCache.cs" />
     <Compile Include="EntityContextFactory.cs" />
     <Compile Include="EntityContextFactoryExtensions.cs" />
@@ -292,6 +293,8 @@
     <Compile Include="Mapping\Visitors\IMappingModelVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
     <Compile Include="Model\EntityQuadCollection.cs" />
+    <Compile Include="Model\EntityQuadCollection2.cs" />
+    <Compile Include="Model\IEntityQuadCollection.cs" />
     <Compile Include="Model\Index.cs" />
     <Compile Include="Model\IndexCollection.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
@@ -418,6 +421,16 @@
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
+    <Compile Include="Updates\DatasetChange.cs" />
+    <Compile Include="Updates\DatasetChanges.cs" />
+    <Compile Include="Updates\DatasetChangesOptimizer.cs" />
+    <Compile Include="Updates\GraphDelete.cs" />
+    <Compile Include="Updates\GraphReconstruct.cs" />
+    <Compile Include="Updates\GraphUpdate.cs" />
+    <Compile Include="Updates\IDatasetChanges.cs" />
+    <Compile Include="Updates\IDatasetChangesOptimizer.cs" />
+    <Compile Include="Updates\IDatasetChangesTracker.cs" />
+    <Compile Include="Updates\RemoveReferences.cs" />
     <Compile Include="Vocabularies\Schema.cs" />
     <Compile Include="Vocabularies\Rdf.cs" />
     <Compile Include="Vocabularies\Xhtml.cs" />

@@ -6,6 +6,6 @@ namespace RomanticWeb.TestEntities.Foaf
     public interface IPerson : IAgent
     {
         [Property("foaf", "givenName")]
-        string Name { get; }
+        string Name { get; set; }
     }
 }

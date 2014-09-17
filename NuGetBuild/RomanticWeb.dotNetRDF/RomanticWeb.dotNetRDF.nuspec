@@ -9,6 +9,7 @@
     <description>$description$</description>
     <releaseNotes>
       * Significant performance improvement
+      * Change setup with EntityContextFactory
     </releaseNotes>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using RomanticWeb.Converters;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Visitors;
+using RomanticWeb.NamedGraphs;
 using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
@@ -24,6 +26,12 @@ namespace RomanticWeb
 
         /// <summary>Gets the mapping model visitors.</summary>
         IEnumerable<IMappingModelVisitor> MappingModelVisitors { get; }
+
+        /// <summary>Gets the transformer catalog.</summary>
+        IResultTransformerCatalog TransformerCatalog { get; }
+
+        /// <summary>Gets the transformer catalog.</summary>
+        INamedGraphSelector NamedGraphSelector { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

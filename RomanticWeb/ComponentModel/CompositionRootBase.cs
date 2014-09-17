@@ -16,8 +16,6 @@ namespace RomanticWeb.ComponentModel
     /// </summary>
     public abstract class CompositionRootBase : ICompositionRoot
     {
-        private const string EntityStoreServiceName = "EntityStore";
-
         private readonly IList<Action<IServiceRegistry>> _registrations = new List<Action<IServiceRegistry>>(16);
 
         private MappingProviderVisitorChain _mappingProviderVisitorChain;
@@ -86,7 +84,7 @@ namespace RomanticWeb.ComponentModel
         protected void EntityStore<TStore>()
             where TStore : IEntityStore
         {
-            SharedComponent<IEntityStore, TStore>(EntityStoreServiceName);
+            PerEntityContextComponent<IEntityStore, TStore>();
         }
 
         /// <summary>
@@ -183,6 +181,12 @@ namespace RomanticWeb.ComponentModel
             where TImplementation : TComponent
         {
             AddRegistration<TComponent, TImplementation>(name, new PerRequestLifeTime());
+        }
+
+        protected void PerEntityContextComponent<TComponent, TImplementation>(string name = null)
+            where TImplementation : TComponent
+        {
+            AddRegistration<TComponent, TImplementation>(name, new PerScopeLifetime());
         }
 
         private void AddRegistration<TComponent, TImplementation>(string name, ILifetime lifetime)

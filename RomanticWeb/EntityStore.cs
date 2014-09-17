@@ -108,6 +108,11 @@ namespace RomanticWeb
         public void Rollback()
         {
             _changesTracker.Clear();
+            _entityQuads.Clear();
+            foreach (var entityId in _initialQuads)
+            {
+                _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
+            }
         }
 
         /// <summary>

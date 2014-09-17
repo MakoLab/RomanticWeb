@@ -45,9 +45,14 @@ namespace RomanticWeb
             return quads.Select(triple => triple.Object).ToList();
         }
 
+        public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId)
+        {
+            return _entityQuads[entityId];
+        }
+
         public IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId, bool includeBlankNodes = true)
         {
-            throw new NotImplementedException();
+            return GetEntityQuads(entityId);
         }
 
         public void AssertEntity(EntityId entityId, IEnumerable<EntityQuad> entityTriples)

@@ -18,7 +18,9 @@ namespace RomanticWeb
         /// <param name="entityId">Entity identifier for which to retrieve quads.</param>
         /// <param name="includeBlankNodes">Includes all quads for blank-node entities.</param>
         /// <returns>Enumeration of quads describing given entity.</returns>
-        [Obsolete]
+        IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId);
+
+        [Obsolete("Second parameter is ignored")]
         IEnumerable<EntityQuad> GetEntityQuads(EntityId entityId, bool includeBlankNodes = true);
 
         /// <summary>Adds a triple to the store.</summary>

@@ -28,10 +28,8 @@ namespace RomanticWeb
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
-
         private readonly IDatasetChangesOptimizer _optimizer;
-
-        private readonly IDatasetChangesTracker _changeTracker;
+        private readonly IDatasetChanges _changeTracker;
 
         #endregion
 
@@ -223,6 +221,11 @@ namespace RomanticWeb
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             return _entitySource.EntityExist(entityId);
+        }
+
+        public void Rollback()
+        {
+            _entityStore.Rollback();
         }
 
         #endregion

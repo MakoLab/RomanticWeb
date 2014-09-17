@@ -365,7 +365,6 @@ namespace RomanticWeb.Tests
 
             // then
             _entityStore.Verify(s => s.Rollback());
-            _changesTracker.Verify(s => s.Clear());
         }
 
         private static PropertyMapping GetMapping(string propertyName)

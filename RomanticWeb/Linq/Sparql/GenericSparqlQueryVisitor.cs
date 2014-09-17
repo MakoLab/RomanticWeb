@@ -49,6 +49,7 @@ namespace RomanticWeb.Linq.Sparql
             MethodNameMap[MethodNames.Milisecond] = "SECONDS";
             MethodNameMap[MethodNames.RandomFloat] = "RAND";
             MethodNameMap[MethodNames.RandomInt] = "RAND";
+            MethodNameMap[MethodNames.String] = "STR";
         }
         #endregion
 

@@ -105,6 +105,11 @@ namespace RomanticWeb
             _changesTracker.Clear();
         }
 
+        public void Rollback()
+        {
+            _changesTracker.Clear();
+        }
+
         /// <summary>
         /// Removes triple and blank node's subgraph if present
         /// </summary>

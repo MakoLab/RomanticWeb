@@ -103,5 +103,10 @@ namespace RomanticWeb
 
         /// <summary>Checks if the entity exists.</summary>
         bool Exists(EntityId entityId);
+
+        /// <summary>
+        /// Discards all changes made to the entity context
+        /// </summary>
+        void Rollback();
     }
 }

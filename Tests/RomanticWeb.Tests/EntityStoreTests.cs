@@ -91,7 +91,7 @@ namespace RomanticWeb.Tests
         public void Rollback_should_not_discard_loaded_entities()
         {
             // given
-            LoadEntities("TriplesInNamedGraphs.trig");
+            LoadEntities("TriplesWithLiteralSubjects.trig");
 
             // when
             _entityStore.Rollback();
@@ -104,7 +104,7 @@ namespace RomanticWeb.Tests
         public void Rollback_should_revert_changes()
         {
             // given
-            LoadEntities("TriplesInNamedGraphs.trig");
+            LoadEntities("TriplesWithLiteralSubjects.trig");
             var property = Node.ForUri(Foaf.givenName);
             var newValue = Node.ForLiteral("Tomek");
             _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri);

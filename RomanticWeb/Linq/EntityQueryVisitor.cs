@@ -267,6 +267,9 @@ namespace RomanticWeb.Linq
                 case "ToUpper":
                     if (expression.Method.DeclaringType == typeof(string)) { call = new Call((MethodNames)Enum.Parse(typeof(MethodNames), expression.Method.Name)); }
                     goto default;
+                case "ToString":
+                    call = new Call(MethodNames.String);
+                    goto default;
                 case "IsMatch":
                     if (expression.Method.DeclaringType == typeof(Regex)) { call = new Call(MethodNames.Regex); }
                     goto default;
@@ -308,25 +311,45 @@ namespace RomanticWeb.Linq
         protected virtual System.Linq.Expressions.Expression VisitIsMethodCall(System.Linq.Expressions.MethodCallExpression expression)
         {
             object objectValue = ((System.Linq.Expressions.ConstantExpression)expression.Arguments[1]).Value;
-            if ((objectValue is IEnumerable) && (objectValue.GetType().FindItemType() == typeof(EntityId)))
+            if (objectValue != null)
             {
-                var types = (IEnumerable<EntityId>)objectValue;
-                int count = types.Count();
-                if (count > 0)
+                if (objectValue is Uri)
                 {
-                    StrongEntityAccessor entityAccessor = this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
-                    if (entityAccessor != null)
-                    {
-                        EntityTypeConstrain constrain = new EntityTypeConstrain(
-                            types.Select(item => item.Uri).First(),
-                            entityAccessor.SourceExpression.FromExpression,
-                            (count > 1 ? types.Skip(1).Select(item => item.Uri).ToArray() : new Uri[0]));
-                        entityAccessor.Elements.Add(constrain);
-                        _lastComponent = constrain;
-                    }
+                    objectValue = new EntityId[] { new EntityId((Uri)objectValue) };
+                }
+                else if (objectValue is EntityId)
+                {
+                    objectValue = new EntityId[] { (EntityId)objectValue };
+                }
+                else if ((objectValue is IEnumerable) && (objectValue.GetType().FindItemType() == typeof(Uri)))
+                {
+                    objectValue = ((IEnumerable)objectValue).Cast<Uri>().Select(item => new EntityId(item));
                 }
 
-                return expression;
+                if ((objectValue is IEnumerable) && (objectValue.GetType().FindItemType() == typeof(EntityId)))
+                {
+                    var types = (IEnumerable<EntityId>)objectValue;
+                    int count = types.Count();
+                    if (count > 0)
+                    {
+                        StrongEntityAccessor entityAccessor = this.GetEntityAccessor(this.GetSourceExpression(expression.Arguments[0]));
+                        if (entityAccessor != null)
+                        {
+                            EntityTypeConstrain constrain = new EntityTypeConstrain(
+                                types.Select(item => item.Uri).First(),
+                                entityAccessor.SourceExpression.FromExpression,
+                                (count > 1 ? types.Skip(1).Select(item => item.Uri).ToArray() : new Uri[0]));
+                            entityAccessor.Elements.Add(constrain);
+                            _lastComponent = constrain;
+                        }
+                    }
+
+                    return expression;
+                }
+                else
+                {
+                    return base.VisitMethodCallExpression(expression);
+                }
             }
             else
             {
@@ -648,16 +671,19 @@ namespace RomanticWeb.Linq
         /// <returns>Expression visited</returns>
         protected virtual System.Linq.Expressions.Expression VisitEntityId(EntityIdentifierExpression expression)
         {
-            if ((_currentComponent.Count > 0) && (_currentComponent.Peek() is BinaryOperatorNavigator))
+            if (_currentComponent.Count > 0)
             {
                 StrongEntityAccessor entityAccessor = this.GetEntityAccessor(expression.Target);
-                HandleComponent(entityAccessor.About);
-                BinaryOperator binaryOperator = ((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
-                Filter filter = new Filter(binaryOperator);
-                _query.AddEntityAccessor(entityAccessor);
-                entityAccessor.Elements.Add(filter);
-                _currentComponent.Push(filter.GetQueryComponentNavigator());
-                _lastComponent = filter;
+                HandleComponent(_lastComponent = entityAccessor.About);
+                if (_currentComponent.Peek() is BinaryOperatorNavigator)
+                {
+                    BinaryOperator binaryOperator = ((BinaryOperatorNavigator)_currentComponent.Peek()).NavigatedComponent;
+                    Filter filter = new Filter(binaryOperator);
+                    _query.AddEntityAccessor(entityAccessor);
+                    entityAccessor.Elements.Add(filter);
+                    _currentComponent.Push(filter.GetQueryComponentNavigator());
+                    _lastComponent = filter;
+                }
             }
             else
             {

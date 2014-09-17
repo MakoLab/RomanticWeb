@@ -3155,6 +3155,7 @@
     <EmbeddedResource Include="Linq\Queries\SelectByName.rq" />
     <EmbeddedResource Include="Linq\Queries\SelectFriendByNameWithSubquery.rq" />
     <EmbeddedResource Include="Linq\Queries\SelectFriendByName.rq" />
+    <EmbeddedResource Include="Linq\Queries\SelectFriendByIdSubstring.rq" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

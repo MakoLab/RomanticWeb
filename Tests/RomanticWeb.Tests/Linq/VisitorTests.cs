@@ -72,6 +72,12 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        public void Test_correctness_of_query_selecting_person_that_has_a_friend_with_id_substring()
+        {
+            Test_correctness_of_query(7);
+        }
+
+        [Test]
         public void Test_correctness_of_query_selecting_person_that_has_a_friend_that_has_any_friend_with_name_starting_with_Ka()
         {
             Test_correctness_of_query(4);
@@ -220,7 +226,15 @@ namespace RomanticWeb.Tests.Linq
                     null,
                     null,
                     null,
-                    null)
+                    null),
+                new Tuple<System.Linq.IQueryable<IPerson>, string, string, string, string, string, string>(
+                    from person in _persons from friend in person.Friends where friend.Id.ToString().Contains("Karol") select person,
+                    Resourcer.Resource.AsString("Queries.SelectFriendByIdSubstring.rq"),
+                    "Gperson0",
+                    "person0",
+                    "s",
+                    "p",
+                    "o"),
             };
         }
 

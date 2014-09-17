@@ -19,7 +19,7 @@ namespace RomanticWeb
     /// <summary>
     /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
     /// </summary>
-    public class EntityContextFactory : IEntityContextFactory
+    public class EntityContextFactory : IEntityContextFactory, IComponentRegistryFacade
     {
         private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
@@ -89,6 +89,22 @@ namespace RomanticWeb
             }
         }
 
+        public IResultTransformerCatalog TransformerCatalog
+        {
+            get
+            {
+                return _container.GetInstance<IResultTransformerCatalog>();
+            }
+        }
+
+        public INamedGraphSelector NamedGraphSelector
+        {
+            get
+            {
+                return _container.GetInstance<INamedGraphSelector>();
+            }
+        }
+
         /// <summary>
         /// Creates a factory defined in the configuration section.
         /// </summary>
@@ -132,7 +148,7 @@ namespace RomanticWeb
         /// <returns>This <see cref="EntityContextFactory" /> </returns>
         public EntityContextFactory WithEntitySource<TSource>() where TSource : IEntitySource
         {
-            _container.Register<IEntitySource, TSource>();
+            _container.Register<IEntitySource, TSource>("EntitySource");
             return this;
         }
 
@@ -194,6 +210,16 @@ namespace RomanticWeb
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
             return WithDependenciesInternal<T>();
+        }
+
+        void IComponentRegistryFacade.Register<TService, TComponent>()
+        {
+            _container.Register<TService, TComponent>();
+        }
+
+        void IComponentRegistryFacade.Register<TService>(TService instance)
+        {
+            _container.RegisterInstance(instance);
         }
 
         internal EntityContextFactory WithDependenciesInternal<T>() where T : ICompositionRoot, new()

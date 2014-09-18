@@ -98,7 +98,14 @@ namespace RomanticWeb
 
             if (entityId is BlankId)
             {
-                TrackDeletes(entityId, deleteBehaviour, deletesGrouped);
+                foreach (var removed in deletesGrouped)
+                {
+                    if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
+                    {
+                        var removedQuads = removed;
+                        _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
+                    }
+                }
             }
             else
             {
@@ -177,22 +184,6 @@ namespace RomanticWeb
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
-        }
-
-        private void TrackDeletes(EntityId entityId, DeleteBehaviour deleteBehaviour, IEnumerable<IGrouping<Node, EntityQuad>> deletesGrouped)
-        {
-            foreach (var removed in deletesGrouped)
-            {
-                if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
-                {
-                    var removedQuads = removed;
-                    _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
-                }
-                else
-                {
-                    _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
-                }
-            }
         }
     }
 }

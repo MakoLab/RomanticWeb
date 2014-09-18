@@ -84,7 +84,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Queries\DeleteEntityGraph.ru" />
     <EmbeddedResource Include="Queries\ModifyEntityGraph.ru" />
     <EmbeddedResource Include="Queries\ReconstructGraph.ru" />
     <EmbeddedResource Include="Queries\RemoveReferences.ru" />

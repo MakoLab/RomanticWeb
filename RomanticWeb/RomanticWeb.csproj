@@ -423,13 +423,10 @@
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Updates\DatasetChange.cs" />
     <Compile Include="Updates\DatasetChanges.cs" />
-    <Compile Include="Updates\DatasetChangesOptimizer.cs" />
     <Compile Include="Updates\EntityDelete.cs" />
-    <Compile Include="Updates\GraphDelete.cs" />
     <Compile Include="Updates\GraphReconstruct.cs" />
     <Compile Include="Updates\GraphUpdate.cs" />
     <Compile Include="Updates\IDatasetChanges.cs" />
-    <Compile Include="Updates\IDatasetChangesOptimizer.cs" />
     <Compile Include="Updates\IDatasetChangesTracker.cs" />
     <Compile Include="Updates\RemoveReferences.cs" />
     <Compile Include="Vocabularies\Schema.cs" />

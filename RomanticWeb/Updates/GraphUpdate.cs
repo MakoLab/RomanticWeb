@@ -46,5 +46,19 @@ namespace RomanticWeb.Updates
         {
             return string.Format("Update graph {0}: +{1}/-{2} triples", Graph, _addedQuads.Count(), _removedQuads.Count());
         }
+
+        public override bool CanMergeWith(DatasetChange other)
+        {
+            return other is GraphUpdate && base.CanMergeWith(other);
+        }
+
+        public override DatasetChange MergeWith(DatasetChange other)
+        {
+            var otherUpdate = (GraphUpdate)other;
+            var removalsCombined = RemovedQuads.Union(otherUpdate.RemovedQuads);
+            var additionsCombined = AddedQuads.Union(otherUpdate.AddedQuads);
+
+            return new GraphUpdate(Entity, Graph, removalsCombined.ToArray(), additionsCombined.ToArray());
+        }
     }
 }

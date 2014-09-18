@@ -130,8 +130,9 @@
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
-    <Compile Include="Updates\DatasetChangesOptimizerTests.cs" />
+    <Compile Include="Updates\DatasetChangesTests.cs" />
     <Compile Include="Updates\GraphUpdateTests.cs" />
+    <Compile Include="Updates\GraphReconstructTests.cs" />
     <None Include="IntegrationTests\Virtuoso\LoadingTests.cs" />
     <Compile Include="IntegrationTests\WritingTestsBase.cs" />
     <Compile Include="IntegrationTests\InMemory\WritingTests.cs" />

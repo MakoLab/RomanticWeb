@@ -85,6 +85,11 @@ namespace RomanticWeb.Tests.DotNetRDF
                 : base("urn:test:entity", "urn:test:graph")
             {
             }
+
+            public override DatasetChange MergeWith(DatasetChange other)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

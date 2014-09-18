@@ -6,6 +6,7 @@ using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 using VDS.RDF.Query.Builder;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -172,6 +173,27 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             EntityContext.Store.Quads.Should().HaveCount(0);
             Store.Should().NotMatchAsk(b => b.Subject(new Uri("http://magi/people/Karol")).Predicate("p").Object("o"));
+        }
+
+        [Test]
+        public void Should_retain_changes_to_entity_initially_deleted()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Karol"); 
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            EntityContext.Delete(entityId);
+            var charles = EntityContext.Create<IGroup>(entityId);
+            charles.Gender = "male";
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Should().HaveCount(3);
+            Store.Should().MatchAsk(b =>
+                b.Subject(entityId).PredicateUri(Foaf.gender).Object("gender")
+                 .Subject(entityId).PredicateUri(Rdf.type).Object(Foaf.Agent)
+                 .Subject(entityId).PredicateUri(Rdf.type).Object(Foaf.Group));
         }
 
         protected override void ChildSetup()

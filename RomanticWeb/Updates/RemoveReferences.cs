@@ -21,5 +21,15 @@ namespace RomanticWeb.Updates
         {
             return string.Format("Removing references to {0}", Entity);
         }
+
+        public override bool CanMergeWith(DatasetChange other)
+        {
+            return false;
+        }
+
+        public override DatasetChange MergeWith(DatasetChange other)
+        {
+            throw new InvalidOperationException("Cannot merge RemoveReferences with any other change");
+        }
     }
 }

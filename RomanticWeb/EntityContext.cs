@@ -28,7 +28,6 @@ namespace RomanticWeb
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
-        private readonly IDatasetChangesOptimizer _optimizer;
         private readonly IDatasetChanges _changeTracker;
 
         #endregion
@@ -46,8 +45,7 @@ namespace RomanticWeb
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster, 
-            IDatasetChangesTracker changeTracker,
-            IDatasetChangesOptimizer optimizer) : this(changeTracker)
+            IDatasetChangesTracker changeTracker) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -59,7 +57,6 @@ namespace RomanticWeb
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
             _caster = caster;
-            _optimizer = optimizer;
 
             if (_baseUriSelector == null)
             {
@@ -77,8 +74,7 @@ namespace RomanticWeb
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster,
-            IDatasetChangesTracker changeTracker, 
-            IDatasetChangesOptimizer optimizer)
+            IDatasetChangesTracker changeTracker)
             : this(
                 factory,
                 mappings,
@@ -90,8 +86,7 @@ namespace RomanticWeb
                 blankIdGenerator,
                 transformerCatalog, 
                 caster, 
-                changeTracker,
-                optimizer)
+                changeTracker)
         {
         }
 
@@ -175,7 +170,7 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.Commit(_optimizer.Optimize(Changes));
+            _entitySource.Commit(Changes);
             _entityStore.ResetState();
         }
 

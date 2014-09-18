@@ -29,25 +29,6 @@ namespace RomanticWeb.Tests.DotNetRDF
         }
 
         [Test]
-        public void Should_create_drop_graph_command_for_GraphDelete()
-        {
-            // given
-            var update = new GraphDelete(EntityId, EntityGraph);
-
-            // when
-            var commands = _commandFactory.CreateCommands(update).ToList();
-
-            // then
-            commands.Should().HaveCount(2);
-            commands[0].Should().BeOfType<DropCommand>();
-            commands[0].AffectsSingleGraph.Should().BeTrue();
-            commands[0].AffectsGraph(new Uri(EntityGraph)).Should().BeTrue();
-            commands[1].Should().BeOfType<DeleteCommand>();
-            commands[1].AffectsSingleGraph.Should().BeTrue();
-            commands[1].AffectsGraph(MetaGraphUri).Should().BeTrue();
-        }
-
-        [Test]
         public void Should_create_modify_command_for_GraphUpdate()
         {
             // given

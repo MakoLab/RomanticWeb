@@ -28,7 +28,6 @@ namespace RomanticWeb.Tests
         private Mock<IEntityContextFactory> _factory;
         private PropertyMapping _typesMapping;
         private Mock<IBaseUriSelectionPolicy> _baseUriSelector;
-        private Mock<IDatasetChangesOptimizer> _changesOptimizer;
         private Mock<IDatasetChangesTracker> _changesTracker;
 
         private IEnumerable<Lazy<IEntity>> TypedAndUntypedEntities
@@ -77,7 +76,6 @@ namespace RomanticWeb.Tests
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             var mappingContext = new MappingContext(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
-            _changesOptimizer = new Mock<IDatasetChangesOptimizer>(MockBehavior.Strict);
             _changesTracker = new Mock<IDatasetChangesTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,
@@ -90,8 +88,7 @@ namespace RomanticWeb.Tests
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
                 new ImpromptuInterfaceCaster((entity, mapping) => new EntityProxy(entity, mapping, catalog, new TestGraphSelector()), _mappings.Object),
-                _changesTracker.Object,
-                _changesOptimizer.Object);
+                _changesTracker.Object);
         }
 
         [TearDown]
@@ -99,7 +96,6 @@ namespace RomanticWeb.Tests
         {
             _store.VerifyAll();
             _baseUriSelector.VerifyAll();
-            _changesOptimizer.VerifyAll();
         }
 
         [Test]
@@ -267,7 +263,6 @@ namespace RomanticWeb.Tests
         {
             // given
             var datasetChanges = new DatasetChange[0];
-            _changesOptimizer.Setup(co => co.Optimize(It.IsAny<IDatasetChanges>())).Returns(datasetChanges);
             _entityStore.Setup(store => store.ResetState());
 
             // when
@@ -344,7 +339,6 @@ namespace RomanticWeb.Tests
         {
             // given
             IEnumerable<DatasetChange> changes = new[] { new TestChange("urn:some:id", "urn:the:graph") };
-            _changesOptimizer.Setup(c => c.Optimize(_changesTracker.Object)).Returns(changes);
 
             // when
             _entityContext.Commit();
@@ -377,6 +371,11 @@ namespace RomanticWeb.Tests
             public TestChange(EntityId entity, EntityId graph)
                 : base(entity, graph)
             {
+            }
+
+            public override DatasetChange MergeWith(DatasetChange other)
+            {
+                throw new NotImplementedException();
             }
         }
     }

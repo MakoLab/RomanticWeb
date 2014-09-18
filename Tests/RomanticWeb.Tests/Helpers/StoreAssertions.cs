@@ -32,6 +32,23 @@ namespace RomanticWeb.Tests.Helpers
         /// <param name="buildPatterns">Action to set up triple patterns</param>
         public AndConstraint<StoreAssertions> MatchAsk(Action<ITriplePatternBuilder> buildPatterns, Func<ExpressionBuilder, BooleanExpression> filter = null)
         {
+            return VerifyAskQuery(buildPatterns, true, filter);
+        }
+
+        /// <summary>
+        /// Checks that triple store does not contain triples by evaluating an ASK query over union graph
+        /// </summary>
+        /// <param name="buildPatterns">Action to set up triple patterns</param>
+        public AndConstraint<StoreAssertions> NotMatchAsk(Action<ITriplePatternBuilder> buildPatterns, Func<ExpressionBuilder, BooleanExpression> filter = null)
+        {
+            return VerifyAskQuery(buildPatterns, false, filter);
+        }
+
+        private AndConstraint<StoreAssertions> VerifyAskQuery(
+            Action<ITriplePatternBuilder> buildPatterns, 
+            bool expectedResult,
+            Func<ExpressionBuilder, BooleanExpression> filter = null)
+        {
             var ask = QueryBuilder.Ask().Where(buildPatterns);
 
             if (filter != null)
@@ -41,9 +58,9 @@ namespace RomanticWeb.Tests.Helpers
 
             var sparqlQuery = ask.BuildQuery();
             var result = (SparqlResultSet)_queryProcessor.ProcessQuery(sparqlQuery);
-            result.Result.Should().Be(true, "RDF data should match query '{0}'", sparqlQuery);
+            result.Result.Should().Be(expectedResult, "RDF data should match query '{0}'", sparqlQuery);
 
             return new AndConstraint<StoreAssertions>(this);
-        }
+        }  
     }
 }

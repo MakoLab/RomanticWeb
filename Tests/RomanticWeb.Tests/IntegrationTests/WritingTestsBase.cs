@@ -4,7 +4,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
+using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
+using VDS.RDF.Query.Builder;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -155,6 +157,21 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             EntityContext.Store.Quads.Where(q => q.Graph.Uri == new Uri("http://data.magi/people/Karol"))
                          .Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Should_delete_entity_even_if_wasnt_loaded()
+        {
+            // given 
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            EntityContext.Delete(new Uri("http://magi/people/Karol"));
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Should().HaveCount(0);
+            Store.Should().NotMatchAsk(b => b.Subject(new Uri("http://magi/people/Karol")).Predicate("p").Object("o"));
         }
 
         protected override void ChildSetup()

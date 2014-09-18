@@ -424,6 +424,7 @@
     <Compile Include="Updates\DatasetChange.cs" />
     <Compile Include="Updates\DatasetChanges.cs" />
     <Compile Include="Updates\DatasetChangesOptimizer.cs" />
+    <Compile Include="Updates\EntityDelete.cs" />
     <Compile Include="Updates\GraphDelete.cs" />
     <Compile Include="Updates\GraphReconstruct.cs" />
     <Compile Include="Updates\GraphUpdate.cs" />

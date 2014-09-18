@@ -9,7 +9,7 @@ namespace RomanticWeb.Updates
     public class RemoveReferences : DatasetChange
     {
         internal RemoveReferences(EntityId entity)
-            : base(entity, null)
+            : base(entity)
         {
             if (entity is BlankId)
             {

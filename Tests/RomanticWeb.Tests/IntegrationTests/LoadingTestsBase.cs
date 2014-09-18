@@ -529,6 +529,23 @@ namespace RomanticWeb.Tests.IntegrationTests
             Assert.That(result.Count(), Is.Not.EqualTo(0));
         }
 
+        [Test]
+        public void Rollback_should_revert_changes_to_entities()
+        {
+            // given
+            LoadTestFile("InheritingEntities.trig");
+            var entity = EntityContext.Load<IPerson>(EntityId);
+            entity.Name = "Tomek";
+            entity.Gender = "male";
+
+            // when
+            EntityContext.Rollback();
+
+            // then
+            entity.Name.Should().Be("Tomasz");
+            entity.Gender.Should().BeNull();
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

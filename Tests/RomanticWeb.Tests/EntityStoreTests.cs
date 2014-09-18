@@ -77,6 +77,50 @@ namespace RomanticWeb.Tests
             _changesTracker.Verify(ct => ct.Add(It.Is<GraphDelete>(gd => gd.Graph == "personal://magi/people/Tomasz")));
         }
 
+        [Test]
+        public void Rollback_should_clear_changes()
+        {
+            // when
+            _entityStore.Rollback();
+
+            // then
+            _changesTracker.Verify(c => c.Clear());
+        }
+
+        [Test]
+        public void Rollback_should_not_discard_loaded_entities()
+        {
+            // given
+            LoadEntities("TriplesWithLiteralSubjects.trig");
+
+            // when
+            _entityStore.Rollback();
+
+            // then
+            _entityStore.Quads.Where(q => q.Graph.Uri == GraphUri).Should().HaveCount(6);
+        }
+
+        [Test]
+        public void Rollback_should_revert_changes()
+        {
+            // given
+            LoadEntities("TriplesWithLiteralSubjects.trig");
+            var property = Node.ForUri(Foaf.givenName);
+            var newValue = Node.ForLiteral("Tomek");
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri);
+
+            // when
+            _entityStore.Rollback();
+
+            // then
+            _entityStore.Quads.Where(q => q.Graph.Uri == GraphUri).Should().HaveCount(6);
+            (from quad in _entityStore.Quads 
+             where quad.Predicate == property 
+                && quad.Object == newValue 
+             select quad)
+             .Should().HaveCount(0);
+        }
+
         private void LoadEntities(string fileName)
         {
             var store = new TripleStore();

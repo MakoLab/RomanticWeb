@@ -40,5 +40,10 @@ namespace RomanticWeb
 
         /// <summary>Forces the store to use current state as it's initial state.</summary>
         void ResetState();
+
+        /// <summary>
+        /// Discards all changes made to the entity store
+        /// </summary>
+        void Rollback();
     }
 }

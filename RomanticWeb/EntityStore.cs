@@ -110,6 +110,16 @@ namespace RomanticWeb
             _changesTracker.Clear();
         }
 
+        public void Rollback()
+        {
+            _changesTracker.Clear();
+            _entityQuads.Clear();
+            foreach (var entityId in _initialQuads)
+            {
+                _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
+            }
+        }
+
         /// <summary>
         /// Removes triple and blank node's subgraph if present
         /// </summary>

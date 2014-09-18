@@ -92,11 +92,24 @@ namespace RomanticWeb
                 deletes = deletes.Union(_entityQuads.RemoveWhereObject(Node.FromEntityId(entityId)));
             }
 
-            var deletesGrouped = from removedQuad in deletes 
-                                 group removedQuad by removedQuad.Graph into g 
-                                 select g;
+            var deletesGrouped = (from removedQuad in deletes 
+                                  group removedQuad by removedQuad.Graph into g 
+                                  select g).ToList();
 
-            TrackChanges(entityId, deleteBehaviour, deletesGrouped);
+            if (entityId is BlankId)
+            {
+                TrackDeletes(entityId, deleteBehaviour, deletesGrouped);
+            }
+            else
+            {
+                _changesTracker.Add(new EntityDelete(entityId));
+
+                if (deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
+                {
+                    _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
+                    _changesTracker.Add(new RemoveReferences(entityId));
+                }
+            }
         }
 
         public void ResetState()
@@ -166,9 +179,9 @@ namespace RomanticWeb
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
         }
 
-        private void TrackChanges(EntityId entityId, DeleteBehaviour deleteBehaviour, IEnumerable<IGrouping<Node, EntityQuad>> deletesGrouped)
+        private void TrackDeletes(EntityId entityId, DeleteBehaviour deleteBehaviour, IEnumerable<IGrouping<Node, EntityQuad>> deletesGrouped)
         {
-            foreach (var removed in deletesGrouped.ToList())
+            foreach (var removed in deletesGrouped)
             {
                 if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
                 {
@@ -179,12 +192,6 @@ namespace RomanticWeb
                 {
                     _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
                 }
-            }
-
-            if (!(entityId is BlankId) && deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
-            {
-                _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
-                _changesTracker.Add(new RemoveReferences(entityId));
             }
         }
     }

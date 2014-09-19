@@ -36,6 +36,20 @@ namespace RomanticWeb.Tests.Updates
             _changes.Single().Should().Match((GraphUpdate g) => g.AddedQuads.Count() == 8 && g.RemovedQuads.Count() == 3);
         }
 
+        [Test]
+        public void Should_ignore_empty_changes()
+        {
+            // given
+            var change = new GraphUpdate(Entity, GraphA, new EntityQuad[0], new EntityQuad[0]);
+
+            // when
+            _changes.Add(change);
+
+            // then
+            _changes.HasChanges.Should().BeFalse();
+            _changes.Should().HaveCount(0);
+        }
+
         private IEnumerable<EntityQuad> RandomQuads(int count)
         {
             var randomNode = new Func<Node>(() => Node.ForUri(new Uri("node://" + Guid.NewGuid().ToString("N"))));

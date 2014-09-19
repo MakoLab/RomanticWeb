@@ -23,6 +23,7 @@ namespace RomanticWeb.DotNetRDF
         private readonly INamespaceMapper _namespaces;
         private readonly IEntityStore _entityStore;
         private readonly ISparqlCommandFactory _sparqlCommandFactory;
+        private bool _disposed;
 
         /// <summary>
         /// Creates a new instance of <see cref="TripleStoreAdapter" />
@@ -116,6 +117,17 @@ namespace RomanticWeb.DotNetRDF
 
             LogTo.Debug("Executing SPARQL Update:{0}{1}", Environment.NewLine, commands);
             ExecuteCommandSet(commands);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _store.Dispose();
+            _disposed = true;
         }
 
         private SparqlQuery GetSparqlQuery(Query sparqlQuery)

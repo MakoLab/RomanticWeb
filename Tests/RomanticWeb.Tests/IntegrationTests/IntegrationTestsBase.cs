@@ -18,6 +18,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         private IEntityContext _entityContext;
         private IEntityContextFactory _factory;
         private IServiceContainer _container;
+        private ITripleStore _store;
 
         public virtual bool IncludeFoaf { get { return false; } }
 
@@ -54,7 +55,13 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
-        protected abstract ITripleStore Store { get; }
+        protected ITripleStore Store
+        {
+            get
+            {
+                return _store;
+            }
+        }
 
         [SetUp]
         public void Setup()
@@ -62,7 +69,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             Mappings = SetupMappings();
 
             _container = new ServiceContainer();
-            _container.Register(factory => Store);
+            _store = CreateTripleStore();
             _factory = new EntityContextFactory(_container)
                                                  .WithOntology(new DefaultOntologiesProvider())
                                                  .WithOntology(new LifeOntology())
@@ -70,7 +77,7 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithOntology(new ChemOntology())
                                                  .WithMappings(BuildMappings)
                                                  .WithMetaGraphUri(MetaGraphUri)
-                                                 .WithDotNetRDF();
+                                                 .WithDotNetRDF(_store);
 
             ChildSetup();
         }
@@ -79,6 +86,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Teardown()
         {
             ChildTeardown();
+            _factory.Dispose();
             _entityContext = null;
         }
 
@@ -101,6 +109,11 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected virtual void ChildSetup()
         {
+        }
+
+        protected virtual ITripleStore CreateTripleStore()
+        {
+            return new TripleStore();
         }
 
         protected abstract void LoadTestFile(string fileName);

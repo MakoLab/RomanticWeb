@@ -15,21 +15,7 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
     [TestFixture]
     public class NamedGraphMappingTests : NamedGraphMappingTestsBase
     {
-        private FileTripleStore _store;
-        private string filePath;
-
-        protected override ITripleStore Store
-        {
-            get
-            {
-                if (_store == null)
-                {
-                    _store = new FileTripleStore(filePath);
-                }
-
-                return _store;
-            }
-        }
+        private readonly string filePath = Path.Combine(AppDomain.CurrentDomain.GetApplicationStoragePath(), "test.trig");
 
         [Test]
         public void Should_store_blank_nodes_correctly()
@@ -41,11 +27,11 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
             friend.FirstName = "D";
 
             // when
-            this.EntityContext.Commit();
+            EntityContext.Commit();
 
             // then
-            this._store.Should().MatchAsk(b => b.Subject(new Uri("urn:t:p")).PredicateUri(Foaf.knows).Object("blank")
-                                                .Subject("blank").PredicateUri(Foaf.givenName).ObjectLiteral("D", Xsd.String));
+            Store.Should().MatchAsk(b => b.Subject(new Uri("urn:t:p")).PredicateUri(Foaf.knows).Object("blank")
+                                          .Subject("blank").PredicateUri(Foaf.givenName).ObjectLiteral("D", Xsd.String));
         }
 
         protected override RomanticWeb.Mapping.Sources.IMappingProviderSource SetupMappings()
@@ -55,19 +41,25 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
 
         protected override void ChildSetup()
         {
-            base.ChildSetup();
-            this.filePath = Path.Combine(AppDomain.CurrentDomain.GetApplicationStoragePath(), "test.trig");
             if (!Directory.Exists(AppDomain.CurrentDomain.GetApplicationStoragePath()))
             {
                 Directory.CreateDirectory(AppDomain.CurrentDomain.GetApplicationStoragePath());
             }
 
-            if (File.Exists(this.filePath))
+            if (File.Exists(filePath))
             {
-                File.Delete(this.filePath);
+                File.Delete(filePath);
             }
 
-            File.Create(this.filePath).Close();
+            File.Create(filePath).Close();
+        }
+
+        protected override void ChildTeardown()
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
         }
 
         protected override void LoadTestFile(string fileName)
@@ -76,9 +68,10 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
             this.Store.LoadTestFile(fileName);
         }
 
-        protected override void ChildTeardown()
+        protected override ITripleStore CreateTripleStore()
         {
-            this._store = null;
+            Console.WriteLine("Creating store");
+            return new FileTripleStore(filePath);
         }
 
         protected override void AsserGraphIntDataSource(Uri graphUri)

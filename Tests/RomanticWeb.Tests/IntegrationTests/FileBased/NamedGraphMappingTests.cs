@@ -9,13 +9,15 @@ using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
+using VDS.RDF.Parsing;
+using VDS.RDF.Writing;
 
 namespace RomanticWeb.Tests.IntegrationTests.FileBased
 {
     [TestFixture]
     public class NamedGraphMappingTests : NamedGraphMappingTestsBase
     {
-        private readonly string filePath = Path.Combine(AppDomain.CurrentDomain.GetApplicationStoragePath(), "test.trig");
+        private string filePath;
 
         [Test]
         public void Should_store_blank_nodes_correctly()
@@ -39,21 +41,6 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
             return new TestMappingSource(new PersonMap());
         }
 
-        protected override void ChildSetup()
-        {
-            if (!Directory.Exists(AppDomain.CurrentDomain.GetApplicationStoragePath()))
-            {
-                Directory.CreateDirectory(AppDomain.CurrentDomain.GetApplicationStoragePath());
-            }
-
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-
-            File.Create(filePath).Close();
-        }
-
         protected override void ChildTeardown()
         {
             if (File.Exists(filePath))
@@ -70,8 +57,8 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
 
         protected override ITripleStore CreateTripleStore()
         {
-            Console.WriteLine("Creating store");
-            return new FileTripleStore(filePath);
+            filePath = Path.GetTempFileName();
+            return new FileTripleStore(filePath, new TriGParser(), new TriGWriter());
         }
 
         protected override void AsserGraphIntDataSource(Uri graphUri)

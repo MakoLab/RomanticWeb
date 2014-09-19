@@ -8,7 +8,7 @@ using RomanticWeb.Updates;
 namespace RomanticWeb
 {
     /// <summary>A source for triples, loaded from physical triple stores.</summary>
-    public interface IEntitySource
+    public interface IEntitySource : IDisposable
     {
         /// <summary>Gets or sets the meta graph URI.</summary>
         Uri MetaGraphUri { get; set; }

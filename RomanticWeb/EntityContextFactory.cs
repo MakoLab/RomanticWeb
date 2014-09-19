@@ -24,6 +24,7 @@ namespace RomanticWeb
         private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
         private readonly IList<Scope> _trackedScopes = new List<Scope>();
+        private bool _disposed;
 
         /// <summary>
         /// Creates a new instance of <see cref="EntityContextFactory"/>
@@ -37,7 +38,7 @@ namespace RomanticWeb
         {
             _container = container;
             _container.RegisterAssembly(GetType().Assembly);
-            _container.RegisterInstance<IEntityContextFactory>(this);
+            _container.Register<IEntityContextFactory>(f => this);
 
             WithMappings(DefaultMappings);
 
@@ -220,6 +221,23 @@ namespace RomanticWeb
         void IComponentRegistryFacade.Register<TService>(TService instance)
         {
             _container.RegisterInstance(instance);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            foreach (var trackedScope in _trackedScopes)
+            {
+                trackedScope.Dispose();
+            }
+
+            _container.Dispose();
+
+            _disposed = true;
         }
 
         internal EntityContextFactory WithDependenciesInternal<T>() where T : ICompositionRoot, new()

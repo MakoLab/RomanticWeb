@@ -12,7 +12,7 @@ namespace RomanticWeb.Updates
     {
         private readonly ISet<EntityQuad> _addedQuads;
 
-        internal GraphReconstruct(EntityId entity, EntityId graph, IEnumerable<EntityQuad> addedQuads)
+        public GraphReconstruct(EntityId entity, EntityId graph, IEnumerable<EntityQuad> addedQuads)
             : base(entity, graph)
         {
             _addedQuads = new HashSet<EntityQuad>(addedQuads);

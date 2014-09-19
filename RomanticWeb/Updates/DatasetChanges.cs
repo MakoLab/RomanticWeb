@@ -99,7 +99,7 @@ namespace RomanticWeb.Updates
             {
                 var current = ChangesFor(datasetChange.Graph);
 
-                while (current.Count > 0 && current.Peek().CanMergeWith(nextChange))
+                if (current.Count > 0 && current.Peek().CanMergeWith(nextChange))
                 {
                     var previousChange = current.Pop();
                     nextChange = previousChange.MergeWith(nextChange);

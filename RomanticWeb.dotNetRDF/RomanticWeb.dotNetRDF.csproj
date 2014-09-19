@@ -88,6 +88,7 @@
     <EmbeddedResource Include="Queries\ReconstructGraph.ru" />
     <EmbeddedResource Include="Queries\RemoveReferences.ru" />
     <EmbeddedResource Include="Queries\DeleteEntity.ru" />
+    <EmbeddedResource Include="Queries\InsertBlankEntityData.ru" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Anotar.NLog">

@@ -4,7 +4,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
+using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -141,6 +143,26 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Should_reconstruct_entity2()
+        {
+            // given
+            var entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            var someAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
+            someAgent.Gender = "male";
+            entity.KnowsOne = someAgent;
+            EntityContext.Commit();
+
+            // when
+            var anotherAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
+            anotherAgent.Gender = "female";
+            entity.KnowsOne = anotherAgent;
+            EntityContext.Commit();
+
+            // then
+            AssertStoreCounts(4, 1);
+        }
+
+        [Test]
         public void Should_correctly_delete_and_create_an_entity()
         {
             // given 
@@ -157,6 +179,59 @@ namespace RomanticWeb.Tests.IntegrationTests
                          .Should().HaveCount(3);
         }
 
+        [Test]
+        public void Should_delete_entity_even_if_wasnt_loaded()
+        {
+            // given 
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            EntityContext.Delete(new Uri("http://magi/people/Karol"));
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Should().HaveCount(0);
+            Store.Should().NotMatchAsk(b => b.Subject(new Uri("http://magi/people/Karol")).Predicate("p").Object("o"));
+        }
+
+        [Test]
+        public void Should_retain_changes_to_entity_initially_deleted()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Karol"); 
+            LoadTestFile("AssociatedInstances.trig");
+
+            // when
+            EntityContext.Delete(entityId);
+            var charles = EntityContext.Create<IGroup>(entityId);
+            charles.Gender = "male";
+            EntityContext.Commit();
+
+            // then
+            EntityContext.Store.Quads.Should().HaveCount(3);
+            Store.Should().MatchAsk(b =>
+                b.Subject(entityId).PredicateUri(Foaf.gender).Object("gender")
+                 .Subject(entityId).PredicateUri(Rdf.type).Object(Foaf.Agent)
+                 .Subject(entityId).PredicateUri(Rdf.type).Object(Foaf.Group));
+        }
+
+        [Test]
+        public void Must_not_update_meta_graph_with_blank_entity_id()
+        {
+            // given
+            var entity = EntityContext.Create<IAgent>("http://magi/people/Tomasz");
+            var someAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
+            entity.KnowsOne = someAgent;
+            EntityContext.Commit();
+
+            // when
+            someAgent.Gender = "male";
+            EntityContext.Commit();
+
+            // then
+            MetagraphTripleCount.Should().Be(1);
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());
@@ -164,9 +239,9 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         private void AssertStoreCounts(int dataQuadsCount, int metagraphQuads)
         {
-            EntityContext.Store.Quads.Should().HaveCount(dataQuadsCount);
-            MetagraphTripleCount.Should().Be(metagraphQuads);
-            AllTriplesCount.Should().Be(metagraphQuads + dataQuadsCount);
+            EntityContext.Store.Quads.Should().HaveCount(dataQuadsCount, "that's how many quads internal store should contain");
+            MetagraphTripleCount.Should().Be(metagraphQuads, "that's how many quads external store should contain");
+            AllTriplesCount.Should().Be(metagraphQuads + dataQuadsCount, "that's how many quads meta graph should contain");
         }
     }
 }

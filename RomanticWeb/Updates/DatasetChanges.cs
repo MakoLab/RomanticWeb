@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Entities;
@@ -10,8 +9,9 @@ namespace RomanticWeb.Updates
     public sealed class DatasetChanges : IDatasetChangesTracker
     {
         private const int GraphChangesCapacity = 16;
-        private readonly IList<DatasetChange> _datesetWideChanges = new List<DatasetChange>();
-        private readonly IDictionary<EntityId, IList<DatasetChange>> _graphChanges = new ConcurrentDictionary<EntityId, IList<DatasetChange>>();
+        private readonly object _syncLock = new object();
+        private readonly List<DatasetChange> _frozenChanges = new List<DatasetChange>(16);
+        private readonly IDictionary<EntityId, Stack<DatasetChange>> _graphChanges = new Dictionary<EntityId, Stack<DatasetChange>>();
 
         /// <inheritdoc/>
         public bool HasChanges
@@ -19,6 +19,14 @@ namespace RomanticWeb.Updates
             get
             {
                 return _graphChanges.Any() && _graphChanges.All(changes => changes.Value.Any());
+            }
+        }
+
+        private IEnumerable<DatasetChange> CurrentChanges
+        {
+            get
+            {
+                return _graphChanges.SelectMany(changes => changes.Value);
             }
         }
 
@@ -34,26 +42,35 @@ namespace RomanticWeb.Updates
         /// <inheritdoc/>
         public void Add(DatasetChange datasetChange)
         {
-            ChangesFor(datasetChange.Graph).Add(datasetChange);
+            if (datasetChange.IsEmpty)
+            {
+                return;
+            }
+
+            if (datasetChange.Graph == null)
+            {
+                FreezeCurrentChanges();
+                _frozenChanges.Add(datasetChange);
+            }
+            else
+            {
+                AppendAndMerge(datasetChange);
+            }
         }
 
         /// <inheritdoc/>
         public void Clear()
         {
             _graphChanges.Clear();
+            _frozenChanges.Clear();
         }
 
         /// <summary>
-        /// Gets the enumerator of changes grouped by named graphs
+        /// Gets the enumerator of changes
         /// </summary>
-        public IEnumerator<IEnumerable<DatasetChange>> GetEnumerator()
+        public IEnumerator<DatasetChange> GetEnumerator()
         {
-            foreach (var changes in _graphChanges)
-            {
-                yield return changes.Value;
-            }
-
-            yield return _datesetWideChanges;
+            return _frozenChanges.Union(CurrentChanges).GetEnumerator();
         }
 
         /// <summary>
@@ -64,19 +81,37 @@ namespace RomanticWeb.Updates
             return GetEnumerator();
         }
 
-        private IList<DatasetChange> ChangesFor(EntityId graph)
+        private Stack<DatasetChange> ChangesFor(EntityId graph)
         {
-            if (graph == null)
-            {
-                return _datesetWideChanges;
-            }
-
             if (!_graphChanges.ContainsKey(graph))
             {
-                _graphChanges[graph] = new List<DatasetChange>(GraphChangesCapacity);
+                _graphChanges[graph] = new Stack<DatasetChange>(GraphChangesCapacity);
             }
 
             return _graphChanges[graph];
+        }
+
+        private void FreezeCurrentChanges()
+        {
+            _frozenChanges.AddRange(CurrentChanges);
+        }
+
+        private void AppendAndMerge(DatasetChange datasetChange)
+        {
+            var nextChange = datasetChange;
+
+            lock (_syncLock)
+            {
+                var current = ChangesFor(datasetChange.Graph);
+
+                if (current.Count > 0 && current.Peek().CanMergeWith(nextChange))
+                {
+                    var previousChange = current.Pop();
+                    nextChange = previousChange.MergeWith(nextChange);
+                }
+
+                current.Push(nextChange);
+            }
         }
     }
 }

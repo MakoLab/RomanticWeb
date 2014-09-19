@@ -9,7 +9,7 @@ namespace RomanticWeb.Updates
     public class RemoveReferences : DatasetChange
     {
         internal RemoveReferences(EntityId entity)
-            : base(entity, null)
+            : base(entity)
         {
             if (entity is BlankId)
             {
@@ -20,6 +20,16 @@ namespace RomanticWeb.Updates
         public override string ToString()
         {
             return string.Format("Removing references to {0}", Entity);
+        }
+
+        public override bool CanMergeWith(DatasetChange other)
+        {
+            return false;
+        }
+
+        public override DatasetChange MergeWith(DatasetChange other)
+        {
+            throw new InvalidOperationException("Cannot merge RemoveReferences with any other change");
         }
     }
 }

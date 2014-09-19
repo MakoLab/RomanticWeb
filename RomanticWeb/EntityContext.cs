@@ -2,7 +2,6 @@
 using System.Linq;
 using Anotar.NLog;
 using NullGuard;
-using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
@@ -22,15 +21,13 @@ namespace RomanticWeb
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
-        private readonly MappingContext _mappingContext;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
-        private readonly IDatasetChangesOptimizer _optimizer;
         private readonly IDatasetChanges _changeTracker;
-
+        private bool _disposed;
         #endregion
 
         #region Constructors
@@ -38,7 +35,6 @@ namespace RomanticWeb
         public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
@@ -46,20 +42,17 @@ namespace RomanticWeb
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster, 
-            IDatasetChangesTracker changeTracker,
-            IDatasetChangesOptimizer optimizer) : this(changeTracker)
+            IDatasetChangesTracker changeTracker) : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
             _entitySource = entitySource;
             _baseUriSelector = baseUriSelector;
             _mappings = mappings;
-            _mappingContext = mappingContext;
             _typeCache = typeCache;
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
             _caster = caster;
-            _optimizer = optimizer;
 
             if (_baseUriSelector == null)
             {
@@ -70,19 +63,16 @@ namespace RomanticWeb
         public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster,
-            IDatasetChangesTracker changeTracker, 
-            IDatasetChangesOptimizer optimizer)
+            IDatasetChangesTracker changeTracker)
             : this(
                 factory,
                 mappings,
-                mappingContext,
                 entityStore,
                 entitySource,
                 null,
@@ -90,8 +80,7 @@ namespace RomanticWeb
                 blankIdGenerator,
                 transformerCatalog, 
                 caster, 
-                changeTracker,
-                optimizer)
+                changeTracker)
         {
         }
 
@@ -175,7 +164,7 @@ namespace RomanticWeb
         public void Commit()
         {
             LogTo.Info("Committing changes to triple store");
-            _entitySource.Commit(_optimizer.Optimize(Changes));
+            _entitySource.Commit(Changes);
             _entityStore.ResetState();
         }
 
@@ -195,7 +184,15 @@ namespace RomanticWeb
 
         void IDisposable.Dispose()
         {
-            // todo: implement
+            if (_disposed)
+            {
+                return;
+            }
+
+            _entityStore.Dispose();
+            _entitySource.Dispose();
+
+            _disposed = true;
         }
 
         /// <summary>Initializes given entity with data.</summary>
@@ -242,13 +239,7 @@ namespace RomanticWeb
             if (!EntityCache.HasEntity(entityId))
             {
                 LogTo.Info("Creating entity {0}", entityId);
-                var entity = new Entity(entityId, this);
-
-                foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
-                {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, _transformerCatalog);
-                    entity[ontology.Prefix] = ontologyAccessor;
-                }
+                var entity = new Entity(entityId, this, _factory.FallbackNodeConverter, _transformerCatalog);
 
                 if (markAsInitialized)
                 {

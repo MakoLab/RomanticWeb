@@ -2,7 +2,6 @@
 using System.Linq;
 using Anotar.NLog;
 using NullGuard;
-using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
@@ -22,7 +21,6 @@ namespace RomanticWeb
         private readonly IEntityStore _entityStore;
         private readonly IEntitySource _entitySource;
         private readonly IMappingsRepository _mappings;
-        private readonly MappingContext _mappingContext;
         private readonly IBaseUriSelectionPolicy _baseUriSelector;
         private readonly IResultTransformerCatalog _transformerCatalog;
         private readonly IRdfTypeCache _typeCache;
@@ -37,7 +35,6 @@ namespace RomanticWeb
         public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
@@ -52,7 +49,6 @@ namespace RomanticWeb
             _entitySource = entitySource;
             _baseUriSelector = baseUriSelector;
             _mappings = mappings;
-            _mappingContext = mappingContext;
             _typeCache = typeCache;
             _blankIdGenerator = blankIdGenerator;
             _transformerCatalog = transformerCatalog;
@@ -67,7 +63,6 @@ namespace RomanticWeb
         public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
-            MappingContext mappingContext,
             IEntityStore entityStore,
             IEntitySource entitySource,
             IRdfTypeCache typeCache,
@@ -78,7 +73,6 @@ namespace RomanticWeb
             : this(
                 factory,
                 mappings,
-                mappingContext,
                 entityStore,
                 entitySource,
                 null,
@@ -245,7 +239,7 @@ namespace RomanticWeb
             if (!EntityCache.HasEntity(entityId))
             {
                 LogTo.Info("Creating entity {0}", entityId);
-                var entity = new Entity(entityId, this);
+                var entity = new Entity(entityId, this, _factory.FallbackNodeConverter, _transformerCatalog);
 
                 if (markAsInitialized)
                 {

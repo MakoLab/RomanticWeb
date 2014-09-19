@@ -20,10 +20,9 @@ namespace RomanticWeb.Entities
         private readonly IEntityContext _context;
         private readonly EntityId _entityId;
         private readonly IDictionary<string, OntologyAccessor> _ontologyAccessors;
+        private readonly INodeConverter _fallbackNodeConverter;
+        private readonly IResultTransformerCatalog _transformerCatalog;
         private bool _isInitialized;
-        private INodeConverter _fallbackNodeConverter;
-        private IResultTransformerCatalog _transformerCatalog;
-
         #endregion
 
         #region Constructors
@@ -48,6 +47,13 @@ namespace RomanticWeb.Entities
             : this(entityId)
         {
             _context = context;
+        }
+
+        internal Entity(EntityId entityId, IEntityContext context, IFallbackNodeConverter fallbackNodeConverter, IResultTransformerCatalog transformerCatalog)
+            : this(entityId, context)
+        {
+            _fallbackNodeConverter = fallbackNodeConverter;
+            _transformerCatalog = transformerCatalog;
         }
         #endregion
 
@@ -122,9 +128,11 @@ namespace RomanticWeb.Entities
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             EnsureIsInitialized();
-            bool gettingMemberSucceeded = TryGetOntologyAccessor(binder, out result);
+            OntologyAccessor accessor;
+            bool gettingMemberSucceeded = TryGetOntologyAccessor(binder.Name, out accessor);
             if (gettingMemberSucceeded)
             {
+                result = accessor;
                 return true;
             }
 
@@ -188,11 +196,20 @@ namespace RomanticWeb.Entities
             _isInitialized = true;
         }
 
-        private bool TryGetOntologyAccessor(GetMemberBinder binder, out object result)
+        private bool TryGetOntologyAccessor(string prefix, out OntologyAccessor result)
         {
-            if (_ontologyAccessors.ContainsKey(binder.Name))
+            if (_ontologyAccessors.ContainsKey(prefix))
             {
-                result = _ontologyAccessors[binder.Name];
+                result = _ontologyAccessors[prefix];
+                return true;
+            }
+
+            var ontology = _context.Ontologies.Ontologies.FirstOrDefault(o => o.Prefix == prefix);
+
+            if (ontology != null)
+            {
+                _ontologyAccessors[prefix] = new OntologyAccessor(this, ontology, _fallbackNodeConverter, _transformerCatalog);
+                result = _ontologyAccessors[prefix];
                 return true;
             }
 
@@ -202,16 +219,20 @@ namespace RomanticWeb.Entities
 
         private bool TryGetPropertyFromOntologies(GetMemberBinder binder, out object result)
         {
-            var matchingPredicates = (from accessor in _ontologyAccessors.Values
-                                      let property = accessor.GetProperty(binder.Name)
-                                      where property != null
-                                      select new { accessor, property }).ToList();
+            var matchingPredicates = (from ontology in _context.Ontologies.Ontologies
+                                      from property in ontology.Properties
+                                      where property.PropertyName == binder.Name
+                                      select new { ontology, property }).ToList();
 
             if (matchingPredicates.Count == 1)
             {
                 var singleMatch = matchingPredicates.Single();
-                result = singleMatch.accessor.GetObjects(Id, singleMatch.property, new DynamicPropertyAggregate(binder.Name));
-                return result != null;
+                OntologyAccessor accessor;
+                if (TryGetOntologyAccessor(singleMatch.ontology.Prefix, out accessor))
+                {
+                    result = accessor.GetObjects(Id, singleMatch.property, new DynamicPropertyAggregate(binder.Name));
+                    return result != null;
+                }
             }
 
             if (matchingPredicates.Count == 0)
@@ -224,26 +245,6 @@ namespace RomanticWeb.Entities
             throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
         }
 
-        private bool TryGetAccessor(string prefix, out OntologyAccessor accessor)
-        {
-            if (_ontologyAccessors.ContainsKey(prefix))
-            {
-                accessor = _ontologyAccessors[prefix];
-                return true;
-            }
-
-            var ontology = _context.Ontologies.Ontologies.FirstOrDefault(o => o.Prefix == prefix);
-
-            if (ontology != null)
-            {
-                _ontologyAccessors[prefix] = new OntologyAccessor(this, ontology, _fallbackNodeConverter, _transformerCatalog);
-                accessor = _ontologyAccessors[prefix];
-                return true;
-            }
-
-            accessor = null;
-            return false;
-        }
         #endregion
 
         private class DebuggerDisplayProxy

@@ -74,13 +74,12 @@ namespace RomanticWeb.Tests
                      .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
             _store = new Mock<IEntitySource>();
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
-            var mappingContext = new MappingContext(_ontologyProvider);
+            _factory.Setup(f => f.Ontologies).Returns(_ontologyProvider);
             var catalog = new TestTransformerCatalog();
             _changesTracker = new Mock<IDatasetChangesTracker>(MockBehavior.Strict);
             _entityContext = new EntityContext(
                 _factory.Object,
                 _mappings.Object,
-                mappingContext,
                 _entityStore.Object,
                 _store.Object,
                 _baseUriSelector.Object,

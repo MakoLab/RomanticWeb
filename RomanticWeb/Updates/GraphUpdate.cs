@@ -42,6 +42,14 @@ namespace RomanticWeb.Updates
             }
         }
 
+        public override bool IsEmpty
+        {
+            get
+            {
+                return !_removedQuads.Any() && !_addedQuads.Any();
+            }
+        }
+
         public override string ToString()
         {
             return string.Format("Update graph {0}: +{1}/-{2} triples", Graph, _addedQuads.Count(), _removedQuads.Count());

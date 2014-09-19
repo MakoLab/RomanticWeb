@@ -29,7 +29,7 @@ namespace RomanticWeb
         private readonly IBlankNodeIdGenerator _blankIdGenerator;
         private readonly IEntityCaster _caster;
         private readonly IDatasetChanges _changeTracker;
-
+        private bool _disposed;
         #endregion
 
         #region Constructors
@@ -190,7 +190,15 @@ namespace RomanticWeb
 
         void IDisposable.Dispose()
         {
-            // todo: implement
+            if (_disposed)
+            {
+                return;
+            }
+
+            _entityStore.Dispose();
+            _entitySource.Dispose();
+
+            _disposed = true;
         }
 
         /// <summary>Initializes given entity with data.</summary>
@@ -238,12 +246,6 @@ namespace RomanticWeb
             {
                 LogTo.Info("Creating entity {0}", entityId);
                 var entity = new Entity(entityId, this);
-
-                foreach (var ontology in _mappingContext.OntologyProvider.Ontologies)
-                {
-                    var ontologyAccessor = new OntologyAccessor(entity, ontology, _factory.FallbackNodeConverter, _transformerCatalog);
-                    entity[ontology.Prefix] = ontologyAccessor;
-                }
 
                 if (markAsInitialized)
                 {

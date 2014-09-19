@@ -15,6 +15,7 @@ namespace RomanticWeb
         private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
         private readonly IEntityQuadCollection _entityQuads;
         private readonly IEntityQuadCollection _initialQuads;
+        private bool _disposed;
 
         public EntityStore(IDatasetChangesTracker changesTracker)
         {
@@ -138,6 +139,19 @@ namespace RomanticWeb
             {
                 _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _entityQuads.Clear();
+            _initialQuads.Clear();
+
+            _disposed = true;
         }
 
         /// <summary>

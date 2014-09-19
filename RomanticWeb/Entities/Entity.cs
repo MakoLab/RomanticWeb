@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 
 namespace RomanticWeb.Entities
@@ -20,6 +21,9 @@ namespace RomanticWeb.Entities
         private readonly EntityId _entityId;
         private readonly IDictionary<string, OntologyAccessor> _ontologyAccessors;
         private bool _isInitialized;
+        private INodeConverter _fallbackNodeConverter;
+        private IResultTransformerCatalog _transformerCatalog;
+
         #endregion
 
         #region Constructors
@@ -34,7 +38,7 @@ namespace RomanticWeb.Entities
             }
 
             _entityId = entityId;
-            _ontologyAccessors = new ConcurrentDictionary<string, OntologyAccessor>();
+            _ontologyAccessors = new ConcurrentDictionary<string, OntologyAccessor>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         /// <summary>Creates a new instance of <see cref="Entity"/> with given entity context.</summary>
@@ -82,30 +86,6 @@ namespace RomanticWeb.Entities
                 }
 
                 return format;
-            }
-        }
-
-        /// <summary>Gets or sets ontology based members.</summary>
-        /// <param name="member">Ontology based member.</param>
-        /// <returns>Ontology based member.</returns>
-        public object this[string member]
-        {
-            get
-            {
-                return _ontologyAccessors[member];
-            }
-
-            internal set
-            {
-                var accessor = value as OntologyAccessor;
-                if (accessor != null)
-                {
-                    _ontologyAccessors.Add(member, accessor);
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("value", "Must be OntologyAccessor");
-                }
             }
         }
         #endregion
@@ -242,6 +222,27 @@ namespace RomanticWeb.Entities
 
             var matchedPropertiesQNames = matchingPredicates.Select(pair => pair.property.Ontology.Prefix);
             throw new AmbiguousPropertyException(binder.Name, matchedPropertiesQNames);
+        }
+
+        private bool TryGetAccessor(string prefix, out OntologyAccessor accessor)
+        {
+            if (_ontologyAccessors.ContainsKey(prefix))
+            {
+                accessor = _ontologyAccessors[prefix];
+                return true;
+            }
+
+            var ontology = _context.Ontologies.Ontologies.FirstOrDefault(o => o.Prefix == prefix);
+
+            if (ontology != null)
+            {
+                _ontologyAccessors[prefix] = new OntologyAccessor(this, ontology, _fallbackNodeConverter, _transformerCatalog);
+                accessor = _ontologyAccessors[prefix];
+                return true;
+            }
+
+            accessor = null;
+            return false;
         }
         #endregion
 

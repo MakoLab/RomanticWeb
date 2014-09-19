@@ -6,7 +6,7 @@ using RomanticWeb.Model;
 namespace RomanticWeb
 {
     /// <summary>Represents an in-memory quad cache, which are organized in per-entity quads.</summary>
-    public interface IEntityStore
+    public interface IEntityStore : IDisposable
     {
         /// <summary>Gets all quads from the store.</summary>
         IEnumerable<EntityQuad> Quads { get; }

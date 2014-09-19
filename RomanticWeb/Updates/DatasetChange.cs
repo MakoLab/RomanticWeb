@@ -55,6 +55,14 @@ namespace RomanticWeb.Updates
             }
         }
 
+        public virtual bool IsEmpty
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual bool CanMergeWith(DatasetChange other)
         {
             return Graph == other.Graph;

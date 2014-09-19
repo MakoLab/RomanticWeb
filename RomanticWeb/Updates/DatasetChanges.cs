@@ -42,6 +42,11 @@ namespace RomanticWeb.Updates
         /// <inheritdoc/>
         public void Add(DatasetChange datasetChange)
         {
+            if (datasetChange.IsEmpty)
+            {
+                return;
+            }
+
             if (datasetChange.Graph == null)
             {
                 FreezeCurrentChanges();

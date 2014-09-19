@@ -1,10 +1,9 @@
 ﻿DROP SILENT GRAPH @graph ;
 	
-INSERT 
+INSERT DATA
 {{ 
 	GRAPH @graph 
 	{{
 		{0} 
 	}}
-}}
-WHERE {{ }};
+}};

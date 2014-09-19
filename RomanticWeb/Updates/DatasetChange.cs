@@ -57,7 +57,7 @@ namespace RomanticWeb.Updates
 
         public virtual bool CanMergeWith(DatasetChange other)
         {
-            return Entity == other.Entity && Graph == other.Graph;
+            return Graph == other.Graph;
         }
 
         public abstract DatasetChange MergeWith(DatasetChange other);

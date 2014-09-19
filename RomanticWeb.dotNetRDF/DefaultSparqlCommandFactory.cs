@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Resourcer;
+using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using RomanticWeb.Updates;
 using VDS.RDF;
@@ -16,6 +17,7 @@ namespace RomanticWeb.DotNetRDF
     internal class DefaultSparqlCommandFactory : ISparqlCommandFactory
     {
         private static readonly string ModifyEntityCommandText = Resource.AsString("Queries.ModifyEntityGraph.ru");
+        private static readonly string InsterBlankEntityCommandText = Resource.AsString("Queries.InsertBlankEntityData.ru");
         private static readonly string ReconstructCommandText = Resource.AsString("Queries.ReconstructGraph.ru");
         private static readonly string RemoveReferencesCommandText = Resource.AsString("Queries.RemoveReferences.ru");
         private static readonly string DeleteEntityCommandText = Resource.AsString("Queries.DeleteEntity.ru");
@@ -71,13 +73,18 @@ namespace RomanticWeb.DotNetRDF
             var removedTriples = ConvertTriples(change.RemovedQuads, factory);
             var addedTriples = ConvertTriples(change.AddedQuads, factory);
 
-            var commandText = string.Format(ModifyEntityCommandText, removedTriples, addedTriples);
-            var deleteCommands = new SparqlParameterizedString(commandText);
-            deleteCommands.SetUri("graph", change.Graph.Uri);
-            deleteCommands.SetUri("metaGraph", MetaGraphUri);
-            deleteCommands.SetUri("entity", change.Entity.Uri);
+            var format = change.Entity is BlankId ? InsterBlankEntityCommandText : ModifyEntityCommandText;
+            var commandText = string.Format(format, removedTriples, addedTriples);
+            var commands = new SparqlParameterizedString(commandText);
+            commands.SetUri("graph", change.Graph.Uri);
 
-            return GetParsedCommands(deleteCommands);
+            if (!(change.Entity is BlankId))
+            {
+                commands.SetUri("metaGraph", MetaGraphUri);
+                commands.SetUri("entity", change.Entity.Uri);
+            }
+
+            return GetParsedCommands(commands);
         }
 
         private IEnumerable<SparqlUpdateCommand> CreateReconstructCommand(GraphReconstruct change)

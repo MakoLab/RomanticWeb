@@ -111,7 +111,7 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="changes"></param>
         public void Commit(IEnumerable<DatasetChange> changes)
         {
-            var updateCommands = changes.SelectMany(_sparqlCommandFactory.CreateCommands);
+            var updateCommands = changes.SelectMany(CreateCommands);
             var commands = new SparqlUpdateCommandSet(updateCommands);
 
             LogTo.Debug("Executing SPARQL Update:{0}{1}", Environment.NewLine, commands);
@@ -170,6 +170,24 @@ namespace RomanticWeb.DotNetRDF
             }
 
             return (SparqlResultSet)((INativelyQueryableStore)_store).ExecuteQuery(query.ToString());
+        }
+
+        private IEnumerable<SparqlUpdateCommand> CreateCommands(DatasetChange change)
+        {
+            var update = change as GraphUpdate;
+            if (update != null)
+            {
+                if (update.RemovedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
+                {
+                    var graphQuads = from entityQuad in _entityStore.Quads
+                                     where entityQuad.Graph == Node.FromEntityId(update.Graph)
+                                     select entityQuad;
+                    change = new GraphReconstruct(update.Entity, update.Graph, graphQuads);
+                }
+            }
+
+            LogTo.Info("Creating update command for change '{0}'", change);
+            return _sparqlCommandFactory.CreateCommands(change);
         }
     }
 }

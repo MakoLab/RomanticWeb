@@ -39,12 +39,10 @@ namespace RomanticWeb.Tests.DotNetRDF
 
             // then
             commands.Should().HaveCount(2);
-            commands[0].Should().BeOfType<ModifyCommand>();
+            commands[0].Should().BeOfType<DeleteCommand>();
             commands[0].AffectsSingleGraph.Should().BeTrue();
             commands[0].AffectsGraph(new Uri(EntityGraph)).Should().BeTrue();
-            commands[1].Should().BeOfType<InsertCommand>();
-            commands[1].AffectsSingleGraph.Should().BeTrue();
-            commands[1].AffectsGraph(MetaGraphUri).Should().BeTrue();
+            commands[1].Should().BeOfType<InsertDataCommand>();
         }
     }
 }

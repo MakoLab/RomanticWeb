@@ -262,14 +262,15 @@ namespace RomanticWeb.Tests
         public void Should_apply_changes_to_underlying_store_when_committing()
         {
             // given
-            var datasetChanges = new DatasetChange[0];
-            _entityStore.Setup(store => store.ResetState());
+            IEnumerable<DatasetChange> datasetChanges = new DatasetChange[0];
+            _changesTracker.Setup(ct => ct.GetEnumerator()).Returns(datasetChanges.GetEnumerator);
 
             // when
             _entityContext.Commit();
 
             // then
             _store.Verify(store => store.Commit(datasetChanges), Times.Once);
+            _entityStore.Verify(store => store.ResetState());
         }
 
         [Test]
@@ -335,16 +336,18 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Committing_should_process_changes_and_pass_them_to_triple_source()
+        public void Committing_should_process_changes_and_reset_entity_store()
         {
             // given
             IEnumerable<DatasetChange> changes = new[] { new TestChange("urn:some:id", "urn:the:graph") };
+            _changesTracker.Setup(ct => ct.GetEnumerator()).Returns(changes.GetEnumerator);
 
             // when
             _entityContext.Commit();
 
             // then
             _store.Verify(store => store.Commit(changes));
+            _entityStore.Verify(store => store.ResetState());
         }
 
         [Test]

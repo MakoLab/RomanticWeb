@@ -493,6 +493,23 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityStore.Quads.Should().HaveCount(13, "Should contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
         }
 
+        [Test]
+        public void Should_allow_replacing_existing_collection()
+        {
+            // given
+            LoadTestFile("BlankNodes.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.IPerson>(EntityId);
+
+            // when
+            var newFriend = EntityContext.Create<TestEntities.Foaf.IPerson>("urn:new:friend");
+            var otherNewFriend = EntityContext.Create<TestEntities.Foaf.IPerson>("urn:other:friend");
+            entity.Knows = new[] { newFriend, otherNewFriend };
+
+            // then
+            entity.Knows.Should().HaveCount(2);
+            EntityStore.Quads.Should().HaveCount(8, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+        }
+
         protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();

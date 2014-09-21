@@ -29,20 +29,6 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Should_replace_whole_subgraph_for_blank_node_values()
-        {
-            // given
-            LoadEntities("BlankNodes.trig");
-            var property = Node.ForUri(Foaf.knows);
-
-            // when
-            _entityStore.ReplacePredicateValues(EntityId, property, () => new Node[0], GraphUri);
-
-            // then
-            _entityStore.Quads.Should().HaveCount(0);
-        }
-
-        [Test]
         public void Replacing_triples_should_track_graph_change()
         {
             // given

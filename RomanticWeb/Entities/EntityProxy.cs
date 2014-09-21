@@ -128,7 +128,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <inheritdoc />
-        public override bool TrySetMember(SetMemberBinder binder, [AllowNull]object value)
+        public override bool TrySetMember(SetMemberBinder binder, [AllowNull] object value)
         {
             CheckIsNotReadonly();
 
@@ -151,7 +151,16 @@ namespace RomanticWeb.Entities
                     newValues = () => resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
-                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
+                IEnumerable<Node> removedNodes = _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
+
+                foreach (var removedNode in removedNodes)
+                {
+                    if (removedNode.IsBlank)
+                    {
+                        _entity.Context.Delete(removedNode.ToEntityId());
+                    }
+                }
+
                 return true;
             }
             catch

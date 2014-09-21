@@ -71,7 +71,7 @@ namespace RomanticWeb
             _assertedEntities.Add(entityId);
         }
 
-        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
+        public IEnumerable<Node> ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
         {
             var subjectNode = Node.FromEntityId(entityId);
             var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri).ToArray();
@@ -79,13 +79,16 @@ namespace RomanticWeb
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
             _entityQuads.Add(entityId, newQuads);
-            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
+            var graphUpdate = new GraphUpdate(entityId, graphUri, removedQuads, newQuads);
+            _changesTracker.Add(graphUpdate);
+
+            return graphUpdate.RemovedQuads.Select(quad => quad.Object);
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
             var deletes = from entityQuad in _entityQuads[Node.FromEntityId(entityId)].ToList()
-                          from removedQuad in RemoveTriple(entityQuad)
+                          from removedQuad in RemoveTriple(entityQuad, true)
                           select removedQuad;
 
             if (entityId is BlankId)
@@ -176,14 +179,14 @@ namespace RomanticWeb
                 quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad, graphUri));
             }
 
-            return quadsRemoved.ToList().SelectMany(RemoveTriple);
+            return quadsRemoved.ToList().SelectMany(entityTriple => RemoveTriple(entityTriple, false));
         }
 
-        private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple)
+        private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple, bool traverseBlankNodes)
         {
             _entityQuads.Remove(entityTriple);
 
-            if (entityTriple.Object.IsBlank)
+            if (traverseBlankNodes && entityTriple.Object.IsBlank)
             {
                 foreach (var removedQuad in RemoveTriples(entityTriple.Object))
                 {

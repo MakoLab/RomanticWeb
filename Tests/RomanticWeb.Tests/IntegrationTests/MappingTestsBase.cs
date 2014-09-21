@@ -476,6 +476,23 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                     && quad.Object == Node.ForUri(Rdf.nil));
         }
 
+        [Test]
+        public void Should_allow_adding_element_to_existing_collection()
+        {
+            // given
+            LoadTestFile("BlankNodes.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.IPerson>(EntityId);
+
+            // when
+            var newFriend = EntityContext.Create<TestEntities.Foaf.IPerson>("urn:other:friend");
+            newFriend.Name = "Dominik";
+            entity.Knows.Add(newFriend);
+
+            // then
+            entity.Knows.Should().HaveCount(2);
+            EntityStore.Quads.Should().HaveCount(13, "Should contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+        }
+
         protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();

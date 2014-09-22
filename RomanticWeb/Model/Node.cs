@@ -321,6 +321,11 @@ namespace RomanticWeb.Model
 
         public string ToString(bool nQuadFormat)
         {
+            if (!nQuadFormat)
+            {
+                return ToString();
+            }
+
             if (IsLiteral)
             {
                 string suffix = string.Empty;
@@ -343,7 +348,7 @@ namespace RomanticWeb.Model
 
             if (IsBlank)
             {
-                return _blankNodeId.ToString();
+                return _blankNodeId.ToString(true);
             }
 
             throw new InvalidOperationException("Invalid node state");

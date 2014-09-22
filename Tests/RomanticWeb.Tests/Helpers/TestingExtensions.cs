@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests.Helpers
@@ -12,7 +13,7 @@ namespace RomanticWeb.Tests.Helpers
 
         public static string Serialize(this IEntityStore entityStore)
         {
-            return String.Join(Environment.NewLine, entityStore.Quads);
+            return String.Join(Environment.NewLine, entityStore.Quads.Select(q => q.ToString(true)));
         } 
 
         public static StoreAssertions Should(this ITripleStore store)

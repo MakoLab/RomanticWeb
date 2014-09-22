@@ -96,7 +96,7 @@ namespace RomanticWeb
 
             var orphanedBlankNodes = from removedQuad in datasetChange.RemovedQuads 
                                      where removedQuad.Object.IsBlank
-                                     where DecrementRefCount(removedQuad.Object) == 0
+                                     where !IsReferenced(removedQuad.Object)
                                      select removedQuad.Object;
 
             foreach (var orphan in orphanedBlankNodes)
@@ -140,6 +140,15 @@ namespace RomanticWeb
                     _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
                     _changesTracker.Add(new RemoveReferences(entityId));
                 }
+            }
+
+            var orphanedBlankEntities = from removed in deletesGrouped 
+                                        from quad in removed
+                                        where quad.Object.IsBlank && !IsReferenced(quad.Object) 
+                                        select quad;
+            foreach (var quad in orphanedBlankEntities)
+            {
+                Delete(quad.Object.ToEntityId(), deleteBehaviour);
             }
         }
 
@@ -204,14 +213,9 @@ namespace RomanticWeb
 
         private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple)
         {
-            _entityQuads.Remove(entityTriple);
-
-            if (entityTriple.Object.IsBlank && !IsReferenced(entityTriple.Object))
+            if (_entityQuads.Remove(entityTriple) && entityTriple.Object.IsBlank)
             {
-                foreach (var removedQuad in RemoveTriples(entityTriple.Object))
-                {
-                    yield return removedQuad;
-                }
+                DecrementRefCount(entityTriple.Object);
             }
 
             yield return entityTriple;
@@ -223,10 +227,10 @@ namespace RomanticWeb
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
         }
 
-        private int DecrementRefCount(Node node)
+        private void DecrementRefCount(Node node)
         {
             AssertIsBlankNode(node);
-            return _blankNodeRefCounts[node] -= 1;
+            _blankNodeRefCounts[node] -= 1;
         }
 
         private void IncrementRefCount(Node node)

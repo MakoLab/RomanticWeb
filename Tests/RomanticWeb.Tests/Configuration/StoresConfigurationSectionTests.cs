@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.DotNetRDF;
 using RomanticWeb.DotNetRDF.Configuration;
 
 namespace RomanticWeb.Tests.Configuration
@@ -36,6 +37,16 @@ namespace RomanticWeb.Tests.Configuration
 
             // then
             store.CreateTripleStore().Should().BeOfType<VDS.RDF.ThreadSafeTripleStore>();
+        }
+
+        [Test]
+        public void Should_allow_to_load_file_store()
+        {
+            // given
+            var store = _configuration.Stores.Single(t => t.Name == "file");
+
+            // then
+            store.CreateTripleStore().Should().BeOfType<FileTripleStore>();
         }
 
         [TestCaseSource("GetProviderConfigurations")]

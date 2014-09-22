@@ -52,6 +52,7 @@
     </Compile>
     <Compile Include="Configuration\ConfigurationFileElement.cs" />
     <Compile Include="Configuration\ConfigurationFilesCollection.cs" />
+    <Compile Include="Configuration\FileStoreElement.cs" />
     <Compile Include="Configuration\ExternallyConfiguredStoreElement.cs" />
     <Compile Include="Configuration\StorageProviders\AllegroGraphConnectorElement.cs" />
     <Compile Include="Configuration\StorageProviders\CustomProviderElement.cs" />

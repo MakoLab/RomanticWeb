@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
+using NullGuard;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
+using RomanticWeb.NamedGraphs;
 
 namespace RomanticWeb.Entities
 {
@@ -12,13 +15,23 @@ namespace RomanticWeb.Entities
 
         private readonly Func<Entity, IEntityMapping, IEntityProxy> _createProxy;
         private readonly IMappingsRepository _mappings;
+        private readonly INamedGraphSelector _graphSelector;
+        private readonly IEntityStore _store;
+        private readonly IEntityMapping _typedEntityMapping;
+        private readonly IPropertyMapping _typesPropertyMapping;
 
         public ImpromptuInterfaceCaster(
             Func<Entity, IEntityMapping, IEntityProxy> proxyFactory,
-            IMappingsRepository mappings)
+            IMappingsRepository mappings,
+            [AllowNull] INamedGraphSelector graphSelector,
+            IEntityStore store)
         {
             _createProxy = proxyFactory;
             _mappings = mappings;
+            _graphSelector = graphSelector;
+            _store = store;
+            _typedEntityMapping = _mappings.MappingFor<ITypedEntity>();
+            _typesPropertyMapping = _typedEntityMapping.PropertyFor("Types");
         }
 
         public T EntityAs<T>(Entity entity, Type[] types) where T : IEntity
@@ -55,14 +68,14 @@ namespace RomanticWeb.Entities
 
         private void AssertEntityTypes(Entity entity, IEntityMapping entityMapping)
         {
-            var typed = (ITypedEntity)EntityAs(entity, _mappings.FindEntityMapping<ITypedEntity>(), new[] { typeof(ITypedEntity) });
-            var currentTypes = typed.Types;
-            var additionalTypes = entityMapping.Classes.Select(c => (EntityId)c.Uri);
+            Uri graphName = (_graphSelector != null ? _graphSelector.SelectGraph(entity.Id, _typedEntityMapping, _typesPropertyMapping) : null);
+            var currentTypes = _store.GetObjectsForPredicate(entity.Id, RomanticWeb.Vocabularies.Rdf.type, graphName);
+            var additionalTypes = entityMapping.Classes.Select(c => Model.Node.ForUri(c.Uri));
 
             var entityIds = currentTypes.Union(additionalTypes).ToList();
-            if (entityIds.Any())
+            if (entityIds.Count > 0)
             {
-                typed.Types = entityIds;
+                _store.ReplacePredicateValues(entity.Id, Model.Node.ForUri(RomanticWeb.Vocabularies.Rdf.type), () => entityIds, graphName);
             }
         }
 

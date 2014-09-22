@@ -152,7 +152,8 @@ valid parameters.
     </persistent>
     <persistent name="allegro-baseUri-catalogID-storeID-user">
       <allegroGraphConnector baseUri="http://some/uri" storeID="store1234"
-                             catalogID="catalog09876" username="user" password="password" />
+                             catalogID="catalog09876" username="user"
+                             password="password" />
     </persistent>
   </stores>
 </romanticWeb.dotNetRDF>

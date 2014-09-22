@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
@@ -13,6 +14,7 @@ namespace RomanticWeb
     {
         private readonly IDatasetChangesTracker _changesTracker;
         private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
+        private readonly IDictionary<Node, int> _blankNodeRefCounts = new ConcurrentDictionary<Node, int>();
         private readonly IEntityQuadCollection _entityQuads;
         private readonly IEntityQuadCollection _initialQuads;
         private bool _disposed;
@@ -69,6 +71,11 @@ namespace RomanticWeb
             _initialQuads.Add(entityId, entityQuads);
 
             _assertedEntities.Add(entityId);
+
+            foreach (var entityQuad in entityQuads.Where(entityQuad => entityQuad.Object.IsBlank))
+            {
+                IncrementRefCount(entityQuad.Object);
+            }
         }
 
         public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
@@ -79,7 +86,23 @@ namespace RomanticWeb
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
             _entityQuads.Add(entityId, newQuads);
-            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
+            var datasetChange = new GraphUpdate(entityId, graphUri, removedQuads, newQuads);
+            _changesTracker.Add(datasetChange);
+
+            foreach (var newQuad in datasetChange.AddedQuads.Where(q => q.Object.IsBlank))
+            {
+                IncrementRefCount(newQuad.Object);
+            }
+
+            var orphanedBlankNodes = from removedQuad in datasetChange.RemovedQuads 
+                                     where removedQuad.Object.IsBlank
+                                     where !IsReferenced(removedQuad.Object)
+                                     select removedQuad.Object;
+
+            foreach (var orphan in orphanedBlankNodes)
+            {
+                Delete(orphan.ToEntityId());
+            }
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
@@ -117,6 +140,15 @@ namespace RomanticWeb
                     _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
                     _changesTracker.Add(new RemoveReferences(entityId));
                 }
+            }
+
+            var orphanedBlankEntities = from removed in deletesGrouped 
+                                        from quad in removed
+                                        where quad.Object.IsBlank && !IsReferenced(quad.Object) 
+                                        select quad;
+            foreach (var quad in orphanedBlankEntities)
+            {
+                Delete(quad.Object.ToEntityId(), deleteBehaviour);
             }
         }
 
@@ -181,14 +213,9 @@ namespace RomanticWeb
 
         private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple)
         {
-            _entityQuads.Remove(entityTriple);
-
-            if (entityTriple.Object.IsBlank)
+            if (_entityQuads.Remove(entityTriple) && entityTriple.Object.IsBlank)
             {
-                foreach (var removedQuad in RemoveTriples(entityTriple.Object))
-                {
-                    yield return removedQuad;
-                }
+                DecrementRefCount(entityTriple.Object);
             }
 
             yield return entityTriple;
@@ -198,6 +225,39 @@ namespace RomanticWeb
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
+        }
+
+        private void DecrementRefCount(Node node)
+        {
+            AssertIsBlankNode(node);
+            _blankNodeRefCounts[node] -= 1;
+        }
+
+        private void IncrementRefCount(Node node)
+        {
+            AssertIsBlankNode(node);
+
+            if (!_blankNodeRefCounts.ContainsKey(node))
+            {
+                _blankNodeRefCounts[node] = 0;
+            }
+
+            _blankNodeRefCounts[node] += 1;
+        }
+
+        private bool IsReferenced(Node node)
+        {
+            AssertIsBlankNode(node);
+
+            return _blankNodeRefCounts.ContainsKey(node) && _blankNodeRefCounts[node] > 0;
+        }
+
+        private void AssertIsBlankNode(Node node)
+        {
+            if (!node.IsBlank)
+            {
+                throw new ArgumentOutOfRangeException("node", "Must be blank node");
+            }
         }
     }
 }

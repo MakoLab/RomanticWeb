@@ -144,6 +144,11 @@ namespace RomanticWeb.Entities
             return _uri.ToString();
         }
 
+        public virtual string ToString(bool nQuadFormat)
+        {
+            return ToString();
+        }
+
         /// <summary>This method is reserved and should not be used.
         /// When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.</summary>
         /// <returns></returns>

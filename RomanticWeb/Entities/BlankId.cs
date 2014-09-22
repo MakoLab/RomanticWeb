@@ -62,6 +62,11 @@ namespace RomanticWeb.Entities
 
         internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
         {
+            if (string.IsNullOrWhiteSpace(blankNodeId) && graphUri == null)
+            {
+                throw new ArgumentException("BlankId must be created with blankNodeId or graphUri");
+            }
+
             return new Uri(String.Format("node://{0}/{1}", blankNodeId, graphUri));
         }
 

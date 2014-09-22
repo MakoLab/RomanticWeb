@@ -270,13 +270,16 @@ namespace RomanticWeb.Collections
 
         private void Initialize()
         {
-            foreach (var element in this)
+            IEnumerator<IRdfListNode<T>> nodeEnumerator = new Enumerator(_head);
+
+            while (nodeEnumerator.MoveNext())
             {
+                _tail = nodeEnumerator.Current;
                 Count++;
             }
         }
 
-        private class Enumerator : IEnumerator<T>
+        private class Enumerator : IEnumerator<T>, IEnumerator<IRdfListNode<T>>
         {
             private readonly IRdfListNode<T> _firstNode;
             private IRdfListNode<T> _currentNode;
@@ -296,6 +299,14 @@ namespace RomanticWeb.Collections
                     }
 
                     return _currentNode.First;
+                }
+            }
+
+            IRdfListNode<T> IEnumerator<IRdfListNode<T>>.Current
+            {
+                get
+                {
+                    return _currentNode;
                 }
             }
 

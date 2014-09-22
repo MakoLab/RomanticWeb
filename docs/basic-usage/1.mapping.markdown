@@ -96,7 +96,7 @@ Please click the link on the left to read more about to learn more about differe
 
 ## RDF classes
 
-An entity type can optionally be mapped to an RDF class.
+An entity type can optionally be mapped to one or more RDF classes.
 
 <ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#attrs-class" role="tab" data-toggle="tab">Attributes</a></li>
@@ -111,6 +111,7 @@ using RomanticWeb.Mapping.Attributes;
 using RomanticWeb.Mapping.Model;
 
 [Class("foaf", "Person")]
+[Class("foaf", "Agent")]
 public interface IPerson : IEntity
 {
 }
@@ -127,6 +128,7 @@ public class PersonMap : EntityMap<IPerson>
     public PersonMap()
     {
         Class.Is("foaf", "Person");
+        Class.Is("foaf", "Agent");
     }
 }
 {% endhighlight %}

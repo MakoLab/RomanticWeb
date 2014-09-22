@@ -579,6 +579,25 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityStore.Quads.Should().HaveCount(4, "Should not remove referenced blank nodes. Actual triples were: {0}", EntityStore.Serialize());
         }
 
+        [Test]
+        public void Should_not_blank_peserved_in_a_new_relation()
+        {
+            // given
+            LoadTestFile("SharedBlankNodes.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.INoTypeAgent>(EntityId);
+
+            // when
+            var theOnlyFriend = EntityContext.Create<TestEntities.Foaf.INoTypeAgent>(entity.CreateBlankId());
+            theOnlyFriend.KnowsCollection = entity.KnowsCollection.First().KnowsCollection;
+            entity.KnowsCollection.Clear();
+            entity.KnowsCollection.Add(theOnlyFriend);
+
+            // then
+            entity.KnowsCollection.Should().HaveCount(1);
+            entity.KnowsCollection.Single().KnowsCollection.Single().Name.Should().Be("Gniewosław");
+            EntityStore.Quads.Should().HaveCount(3, "Should not remove referenced blank nodes. Actual triples were: {0}", EntityStore.Serialize());
+        }
+
         protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();

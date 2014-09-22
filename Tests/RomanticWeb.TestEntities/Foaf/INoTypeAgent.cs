@@ -10,7 +10,7 @@ namespace RomanticWeb.TestEntities.Foaf
         IList<INoTypeAgent> Knows { get; }
 
         [Collection("foaf", "knows")]
-        ICollection<INoTypeAgent> KnowsCollection { get; }
+        ICollection<INoTypeAgent> KnowsCollection { get; set; }
 
         [Property("foaf", "givenName")]
         string Name { get; set; }

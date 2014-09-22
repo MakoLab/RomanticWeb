@@ -86,17 +86,18 @@ namespace RomanticWeb
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
             _entityQuads.Add(entityId, newQuads);
-            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
+            var datasetChange = new GraphUpdate(entityId, graphUri, removedQuads, newQuads);
+            _changesTracker.Add(datasetChange);
 
-            var orphanedBlankNodes = from removedQuad in removedQuads 
-                                     where removedQuad.Object.IsBlank
-                                     where DecrementRefCount(removedQuad.Object) == 0
-                                     select removedQuad.Object;
-
-            foreach (var newQuad in newQuads.Where(q => q.Object.IsBlank))
+            foreach (var newQuad in datasetChange.AddedQuads.Where(q => q.Object.IsBlank))
             {
                 IncrementRefCount(newQuad.Object);
             }
+
+            var orphanedBlankNodes = from removedQuad in datasetChange.RemovedQuads 
+                                     where removedQuad.Object.IsBlank
+                                     where DecrementRefCount(removedQuad.Object) == 0
+                                     select removedQuad.Object;
 
             foreach (var orphan in orphanedBlankNodes)
             {
@@ -107,7 +108,7 @@ namespace RomanticWeb
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
             var deletes = from entityQuad in _entityQuads[Node.FromEntityId(entityId)].ToList()
-                          from removedQuad in RemoveTriple(entityQuad, true)
+                          from removedQuad in RemoveTriple(entityQuad)
                           select removedQuad;
 
             if (entityId is BlankId)
@@ -198,14 +199,14 @@ namespace RomanticWeb
                 quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad, graphUri));
             }
 
-            return quadsRemoved.ToList().SelectMany(entityTriple => RemoveTriple(entityTriple, false));
+            return quadsRemoved.ToList().SelectMany(RemoveTriple);
         }
 
-        private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple, bool traverseBlankNodes)
+        private IEnumerable<EntityQuad> RemoveTriple(EntityQuad entityTriple)
         {
             _entityQuads.Remove(entityTriple);
 
-            if (traverseBlankNodes && entityTriple.Object.IsBlank)
+            if (entityTriple.Object.IsBlank && !IsReferenced(entityTriple.Object))
             {
                 foreach (var removedQuad in RemoveTriples(entityTriple.Object))
                 {
@@ -224,17 +225,35 @@ namespace RomanticWeb
 
         private int DecrementRefCount(Node node)
         {
+            AssertIsBlankNode(node);
             return _blankNodeRefCounts[node] -= 1;
         }
 
         private void IncrementRefCount(Node node)
         {
+            AssertIsBlankNode(node);
+
             if (!_blankNodeRefCounts.ContainsKey(node))
             {
                 _blankNodeRefCounts[node] = 0;
             }
 
             _blankNodeRefCounts[node] += 1;
+        }
+
+        private bool IsReferenced(Node node)
+        {
+            AssertIsBlankNode(node);
+
+            return _blankNodeRefCounts.ContainsKey(node) && _blankNodeRefCounts[node] > 0;
+        }
+
+        private void AssertIsBlankNode(Node node)
+        {
+            if (!node.IsBlank)
+            {
+                throw new ArgumentOutOfRangeException("node", "Must be blank node");
+            }
         }
     }
 }

@@ -142,4 +142,4 @@ find out more on the [entity context page][ec].
 [foaf]: http://www.foaf-project.org/
 [foaf-doc]: http://xmlns.com/foaf/spec/
 [fnh]: http://www.fluentnhibernate.org/
-[ec]: ../entities/
+[ec]: ../rdf-types

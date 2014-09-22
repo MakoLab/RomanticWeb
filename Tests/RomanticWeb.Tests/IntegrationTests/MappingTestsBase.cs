@@ -510,6 +510,74 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityStore.Quads.Should().HaveCount(8, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
         }
 
+        [Test]
+        public void Should_retain_list_blank_node_elements_when_appending_new_items()
+        {
+            // given
+            LoadTestFile("ComplexRdfLists.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.INoTypeAgent>(EntityId);
+
+            // when
+            var newFriend = EntityContext.Create<TestEntities.Foaf.INoTypeAgent>("urn:new:friend");
+            newFriend.Name = "Wojtek";
+            entity.Knows.Add(newFriend);
+
+            // then
+            entity.Knows.Should().HaveCount(6);
+            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            entity.Knows.Select(f => f.Name).Should().ContainInOrder(new[]
+                                                                       {
+                                                                           "Karol",
+                                                                           "Gniewosław",
+                                                                           "Monika",
+                                                                           "Dominik",
+                                                                           "Przemek",
+                                                                           "Wojtek"
+                                                                       });
+        }
+
+        [Test]
+        public void Should_retain_list_blank_node_elements_when_inserting_new_items()
+        {
+            // given
+            LoadTestFile("ComplexRdfLists.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.INoTypeAgent>(EntityId);
+
+            // when
+            var newFriend = EntityContext.Create<TestEntities.Foaf.INoTypeAgent>("urn:new:friend");
+            newFriend.Name = "Wojtek";
+            entity.Knows.Insert(3, newFriend);
+
+            // then
+            entity.Knows.Should().HaveCount(6);
+            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            entity.Knows.Select(f => f.Name).Should().ContainInOrder(new[]
+                                                                       {
+                                                                           "Karol",
+                                                                           "Gniewosław",
+                                                                           "Monika",
+                                                                           "Wojtek",
+                                                                           "Dominik",
+                                                                           "Przemek"
+                                                                       });
+        }
+
+        [Test]
+        public void Should_not_delete_shared_blank_node_when_its_still_used()
+        {
+            // given
+            LoadTestFile("SharedBlankNodes.trig");
+            var entity = EntityContext.Load<TestEntities.Foaf.INoTypeAgent>(EntityId);
+
+            // when
+            entity.KnowsCollection.Remove(entity.KnowsCollection.First());
+
+            // then
+            entity.KnowsCollection.Should().HaveCount(1);
+            entity.KnowsCollection.Single().KnowsCollection.Single().Name.Should().Be("Gniewosław");
+            EntityStore.Quads.Should().HaveCount(4, "Should not remove referenced blank nodes. Actual triples were: {0}", SerializeStore());
+        }
+
         protected override IMappingProviderSource SetupMappings()
         {
             return new TestMappingSource();

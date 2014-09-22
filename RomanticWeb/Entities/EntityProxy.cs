@@ -151,16 +151,7 @@ namespace RomanticWeb.Entities
                     newValues = () => resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
-                IEnumerable<Node> removedNodes = _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
-
-                foreach (var removedNode in removedNodes)
-                {
-                    if (removedNode.IsBlank)
-                    {
-                        _entity.Context.Delete(removedNode.ToEntityId());
-                    }
-                }
-
+                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
                 return true;
             }
             catch

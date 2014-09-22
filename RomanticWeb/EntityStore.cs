@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
@@ -13,6 +14,7 @@ namespace RomanticWeb
     {
         private readonly IDatasetChangesTracker _changesTracker;
         private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
+        private readonly IDictionary<Node, int> _blankNodeRefCounts = new ConcurrentDictionary<Node, int>();
         private readonly IEntityQuadCollection _entityQuads;
         private readonly IEntityQuadCollection _initialQuads;
         private bool _disposed;
@@ -69,9 +71,14 @@ namespace RomanticWeb
             _initialQuads.Add(entityId, entityQuads);
 
             _assertedEntities.Add(entityId);
+
+            foreach (var entityQuad in entityQuads.Where(entityQuad => entityQuad.Object.IsBlank))
+            {
+                IncrementRefCount(entityQuad.Object);
+            }
         }
 
-        public IEnumerable<Node> ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
         {
             var subjectNode = Node.FromEntityId(entityId);
             var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri).ToArray();
@@ -79,10 +86,22 @@ namespace RomanticWeb
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
 
             _entityQuads.Add(entityId, newQuads);
-            var graphUpdate = new GraphUpdate(entityId, graphUri, removedQuads, newQuads);
-            _changesTracker.Add(graphUpdate);
+            _changesTracker.Add(new GraphUpdate(entityId, graphUri, removedQuads, newQuads));
 
-            return graphUpdate.RemovedQuads.Select(quad => quad.Object);
+            var orphanedBlankNodes = from removedQuad in removedQuads 
+                                     where removedQuad.Object.IsBlank
+                                     where DecrementRefCount(removedQuad.Object) == 0
+                                     select removedQuad.Object;
+
+            foreach (var newQuad in newQuads.Where(q => q.Object.IsBlank))
+            {
+                IncrementRefCount(newQuad.Object);
+            }
+
+            foreach (var orphan in orphanedBlankNodes)
+            {
+                Delete(orphan.ToEntityId());
+            }
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
@@ -201,6 +220,21 @@ namespace RomanticWeb
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
+        }
+
+        private int DecrementRefCount(Node node)
+        {
+            return _blankNodeRefCounts[node] -= 1;
+        }
+
+        private void IncrementRefCount(Node node)
+        {
+            if (!_blankNodeRefCounts.ContainsKey(node))
+            {
+                _blankNodeRefCounts[node] = 0;
+            }
+
+            _blankNodeRefCounts[node] += 1;
         }
     }
 }

@@ -8,6 +8,7 @@ using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.IntegrationTests.TestMappings;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Updates;
@@ -268,9 +269,9 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.FirstName, Is.EqualTo("Dominik"));
             Assert.That(Entity.LastName, Is.EqualTo("Kuziński"));
-            Assert.That(EntityStore.Quads, Has.Count.EqualTo(5), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads, Has.Count.EqualTo(5), "Actual triples were: {0}", EntityStore.Serialize());
             var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("personal://magi/people/Tomasz")));
-            Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", SerializeStore());
+            Assert.That(quads.ToList(), Has.Count.EqualTo(2), "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -287,7 +288,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Entity.Interests.Should().ContainInOrder("semantic web", "linked data");
             var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("interestsOf://magi/people/Tomasz")));
-            Assert.That(quads.ToList(), Has.Count.EqualTo(5), "Actual triples were: {0}", SerializeStore());
+            Assert.That(quads.ToList(), Has.Count.EqualTo(5), "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -306,7 +307,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.Entity, Is.Not.Null);
             Assert.That(Entity.Entity.Id, Is.EqualTo(new EntityId("urn:possibly:external")));
-            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 1), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 1), "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -324,7 +325,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.Interests, Contains.Item("semantic web"));
             Assert.That(Entity.Interests, Contains.Item("linked data"));
-            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 2), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 2), "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -344,7 +345,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             Assert.That(Entity.Friends, Contains.Item(someEntity));
             Assert.That(Entity.Friends, Contains.Item(otherEntity));
-            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 4), "Actual triples were: {0}", SerializeStore());
+            Assert.That(EntityStore.Quads.Count(), Is.EqualTo(quadsInitially + 4), "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -463,7 +464,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             entity.DefaultListMapping.Should().HaveCount(1);
             entity.DefaultListMapping.Should().Contain("test string");
-            EntityStore.Quads.Should().HaveCount(3, "Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(3, "Actual triples were: {0}", EntityStore.Serialize());
             EntityStore.Quads.Should().Contain(quad => quad.Subject.IsBlank
                                                     && quad.Predicate == Node.ForUri(Rdf.first)
                                                     && quad.Object.IsLiteral
@@ -490,7 +491,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             entity.Knows.Should().HaveCount(2);
-            EntityStore.Quads.Should().HaveCount(13, "Should contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(13, "Should contain preexisting blank node subgraphs. Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -507,7 +508,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             entity.Knows.Should().HaveCount(2);
-            EntityStore.Quads.Should().HaveCount(8, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(8, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -524,7 +525,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             entity.Knows.Should().HaveCount(6);
-            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", EntityStore.Serialize());
             entity.Knows.Select(f => f.Name).Should().ContainInOrder(new[]
                                                                        {
                                                                            "Karol",
@@ -550,7 +551,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             entity.Knows.Should().HaveCount(6);
-            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(19, "Should not contain preexisting blank node subgraphs. Actual triples were: {0}", EntityStore.Serialize());
             entity.Knows.Select(f => f.Name).Should().ContainInOrder(new[]
                                                                        {
                                                                            "Karol",
@@ -575,7 +576,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // then
             entity.KnowsCollection.Should().HaveCount(1);
             entity.KnowsCollection.Single().KnowsCollection.Single().Name.Should().Be("Gniewosław");
-            EntityStore.Quads.Should().HaveCount(4, "Should not remove referenced blank nodes. Actual triples were: {0}", SerializeStore());
+            EntityStore.Quads.Should().HaveCount(4, "Should not remove referenced blank nodes. Actual triples were: {0}", EntityStore.Serialize());
         }
 
         protected override IMappingProviderSource SetupMappings()
@@ -586,11 +587,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());
-        }
-
-        private string SerializeStore()
-        {
-            return String.Join(Environment.NewLine, EntityStore.Quads);
         }
 
         private static bool GraphUpdateSettingRdfTypes(DatasetChange change)

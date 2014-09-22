@@ -50,6 +50,16 @@ namespace RomanticWeb.Entities
         [AllowNull]
         public Uri Graph { get { return _graph; } }
 
+        public override string ToString(bool nQuadFormat)
+        {
+            if (!nQuadFormat)
+            {
+                return ToString();
+            }
+
+            return string.Format("_:{0}", _identifier);
+        }
+
         internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
         {
             return new Uri(String.Format("node://{0}/{1}", blankNodeId, graphUri));

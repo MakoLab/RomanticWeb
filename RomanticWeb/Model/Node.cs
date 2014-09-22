@@ -319,6 +319,36 @@ namespace RomanticWeb.Model
             throw new InvalidOperationException("Invalid node state");
         }
 
+        public string ToString(bool nQuadFormat)
+        {
+            if (IsLiteral)
+            {
+                string suffix = string.Empty;
+                if (DataType != null)
+                {
+                    suffix = string.Format("^^{0}", DataType);
+                }
+                else if (Language != null)
+                {
+                    suffix = string.Format("@{0}", DataType);
+                }
+
+                return string.Format("\"{0}\"{1}", Literal, suffix);
+            }
+
+            if (IsUri)
+            {
+                return string.Format("<{0}>", Uri);
+            }
+
+            if (IsBlank)
+            {
+                return _blankNodeId.ToString();
+            }
+
+            throw new InvalidOperationException("Invalid node state");
+        }
+
         /// <summary>Creates an <see cref="EntityId"/> for a <see cref="Node"/>.</summary>
         public EntityId ToEntityId()
         {

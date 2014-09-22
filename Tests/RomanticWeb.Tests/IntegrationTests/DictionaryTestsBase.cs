@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Model;
 using RomanticWeb.TestEntities;
+using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -146,7 +147,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             dict.Should().HaveCount(2);
             dict.Should().Contain(5, 10).And.Contain(15, 25);
             var quads = EntityStore.Quads.Where(q => q.Graph == Node.ForUri(new Uri("http://data.magi/element/CustomKeyValue")));
-            quads.Should().HaveCount(6, "Actual triples were: {0}", SerializeStore());
+            quads.Should().HaveCount(6, "Actual triples were: {0}", EntityStore.Serialize());
         }
 
         [Test]
@@ -181,11 +182,6 @@ namespace RomanticWeb.Tests.IntegrationTests
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());
-        }
-
-        private string SerializeStore()
-        {
-            return String.Join(Environment.NewLine, EntityStore.Quads);
         }
     }
 }

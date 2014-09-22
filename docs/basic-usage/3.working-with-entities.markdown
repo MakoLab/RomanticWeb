@@ -151,6 +151,38 @@ IPerson tim = //...
 context.Delete(tim.Id);
 {% endhighlight %}
 
+### Removing references
+
+By default deleting an entity will only remove its representation, but if it referenced in other graphs, these references
+will remain. For example given some quads describing two entities
+
+{% highlight css linenos=table %}
+<about:Tim-Berners-Lee>
+{
+    <Tim-Berners-Lee>
+        foaf:givenName "Tim" ;
+        foaf:LastName "Berners-Lee" .
+}
+
+<about:Norman-Walsh>
+{
+    <Norman-Walsh>
+        foaf:givenName "Norman" ;
+        foaf:LastName "Walsh" ;
+        foaf:knows <Tim-Berners-Lee>.
+}
+{% endhighlight %}
+
+calling `context.Delete("Tim-Berners-Lee")` will not remove the `foaf:knows` triple from the second graph. To do that a
+second parameter must be passed to that method
+
+{% highlight java linenos=table %}
+IPerson tim = //...
+context.Delete(tim.Id, DeleteBehaviour.NullifyChildren);
+{% endhighlight %}
+
+In RDF terms, it will remove all triples where the deleted entity is the `object`.
+
 ## Transforming entities
 
 One consequence of [open-world assumption][owa] is that each resource can be an instance of many types at the same time.

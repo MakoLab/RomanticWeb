@@ -303,12 +303,22 @@ namespace RomanticWeb.Model
         {
             if (IsLiteral)
             {
-                return Literal;
+                string suffix = string.Empty;
+                if (DataType != null)
+                {
+                    suffix = string.Format("^^{0}", DataType);
+                }
+                else if (Language != null)
+                {
+                    suffix = string.Format("@{0}", DataType);
+                }
+
+                return string.Format("\"{0}\"{1}", Literal, suffix);
             }
 
             if (IsUri)
             {
-                return Uri.ToString();
+                return string.Format("<{0}>", Uri);
             }
 
             if (IsBlank)

@@ -56,6 +56,7 @@
     <Compile Include="Foaf\IAlsoPerson.cs" />
     <Compile Include="Foaf\IAgent.cs" />
     <Compile Include="Foaf\IGroup.cs" />
+    <Compile Include="Foaf\INoTypeAgent.cs" />
     <Compile Include="Foaf\IOrganization.cs" />
     <Compile Include="Foaf\IPerson.cs" />
     <Compile Include="Generic\IGenericEntity.cs" />

@@ -128,7 +128,7 @@ namespace RomanticWeb.Entities
         }
 
         /// <inheritdoc />
-        public override bool TrySetMember(SetMemberBinder binder, [AllowNull]object value)
+        public override bool TrySetMember(SetMemberBinder binder, [AllowNull] object value)
         {
             CheckIsNotReadonly();
 

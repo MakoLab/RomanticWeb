@@ -203,6 +203,8 @@
       <DependentUpon>TurtleGraphConversionTests.cs</DependentUpon>
       <LogicalName>RomanticWeb.Tests.TurtleGraphConversionTests.ttl</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="TestGraphs\ComplexRdfLists.trig" />
+    <EmbeddedResource Include="TestGraphs\SharedBlankNodes.trig" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestGraphs\LargeDataset.nq" />
@@ -3168,7 +3170,6 @@
     <EmbeddedResource Include="TestGraphs\MixedCollections.trig" />
     <EmbeddedResource Include="TestGraphs\TriplesInUnmappedGraphs.trig" />
     <EmbeddedResource Include="TestGraphs\Dictionary.trig" />
-    <EmbeddedResource Include="TestGraphs\BlankNodes2.trig" />
     <EmbeddedResource Include="TestGraphs\RdfLists.trig" />
     <EmbeddedResource Include="TestGraphs\EntityWithManyTypes.trig" />
     <EmbeddedResource Include="TestGraphs\InheritingEntities.trig" />

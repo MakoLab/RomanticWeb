@@ -50,8 +50,23 @@ namespace RomanticWeb.Entities
         [AllowNull]
         public Uri Graph { get { return _graph; } }
 
+        public override string ToString(bool nQuadFormat)
+        {
+            if (!nQuadFormat)
+            {
+                return ToString();
+            }
+
+            return string.Format("_:{0}", _identifier);
+        }
+
         internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
         {
+            if (string.IsNullOrWhiteSpace(blankNodeId) && graphUri == null)
+            {
+                throw new ArgumentException("BlankId must be created with blankNodeId or graphUri");
+            }
+
             return new Uri(String.Format("node://{0}/{1}", blankNodeId, graphUri));
         }
 

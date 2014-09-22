@@ -11,7 +11,7 @@ namespace RomanticWeb.TestEntities.Foaf
         IAgent KnowsOne { get; set; }
 
         [Collection("foaf", "knows")]
-        ICollection<IAgent> Knows { get; }
+        ICollection<IAgent> Knows { get; set; }
 
         [Property("foaf", "gender")]
         string Gender { get; set; }

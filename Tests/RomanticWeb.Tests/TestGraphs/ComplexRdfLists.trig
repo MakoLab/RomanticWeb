@@ -1,0 +1,34 @@
+﻿@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix people: <http://magi/people/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix math: <http://example/maths/>.
+@prefix temp: <http://example/temp/>.
+@prefix test: <http://magi/math/> .
+
+<http://data.magi/people/Tomasz> 
+{
+	_:friend1 rdf:first _:Karol;
+			  rdf:rest _:friend2.
+	_:friend2 rdf:first _:Gniewko;
+			  rdf:rest _:friend3.
+	_:friend3 rdf:first _:Monika;
+			  rdf:rest _:friend4.
+	_:friend4 rdf:first _:Dominik;
+			  rdf:rest _:friend5.
+	_:friend5 rdf:first _:Przemek;
+			  rdf:rest rdf:nil.
+	people:Tomasz foaf:knows _:friend1 .
+
+	_:Karol foaf:givenName "Karol" .
+	_:Gniewko foaf:givenName "Gniewosław" .
+	_:Monika foaf:givenName "Monika" .
+	_:Dominik foaf:givenName "Dominik" .
+	_:Przemek foaf:givenName "Przemek" .
+}
+
+<http://app.magi/graphs>
+{
+	<http://data.magi/people/Tomasz> foaf:primaryTopic people:Tomasz.
+}

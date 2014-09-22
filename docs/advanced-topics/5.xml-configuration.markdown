@@ -163,7 +163,7 @@ valid parameters.
 
 The advantage of tailored configuration nodes that are available is that they can control setup validity at configuration
 section level. The section will throw as soon as possible if a required parameter is missing or a value is invalid.
-Currently other stores don't have their specialized configuration node bit there is a way to configure any dotNetRDF
+Currently other stores don't have their specialized configuration node but there is a way to configure any dotNetRDF
 storage manager, by supplying its type name and constructor parameters.
 
 {% highlight xml linenos=table %}

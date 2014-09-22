@@ -161,7 +161,7 @@ namespace RomanticWeb.Model
 
         public override string ToString()
         {
-            return String.Format("{0} {1} {2} {3} .", Subject, Predicate, Object, Graph);
+            return String.Format("{0} {1} {2} {3}", Subject, Predicate, Object, Graph);
         }
 
         int IComparable<EntityQuad>.CompareTo(EntityQuad other)

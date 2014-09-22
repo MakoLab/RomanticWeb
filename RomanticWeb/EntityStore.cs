@@ -15,6 +15,7 @@ namespace RomanticWeb
         private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
         private readonly IEntityQuadCollection _entityQuads;
         private readonly IEntityQuadCollection _initialQuads;
+        private bool _disposed;
 
         public EntityStore(IDatasetChangesTracker changesTracker)
         {
@@ -92,11 +93,31 @@ namespace RomanticWeb
                 deletes = deletes.Union(_entityQuads.RemoveWhereObject(Node.FromEntityId(entityId)));
             }
 
-            var deletesGrouped = from removedQuad in deletes 
-                                 group removedQuad by removedQuad.Graph into g 
-                                 select g;
+            var deletesGrouped = (from removedQuad in deletes 
+                                  group removedQuad by removedQuad.Graph into g 
+                                  select g).ToList();
 
-            TrackChanges(entityId, deleteBehaviour, deletesGrouped);
+            if (entityId is BlankId)
+            {
+                foreach (var removed in deletesGrouped)
+                {
+                    if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
+                    {
+                        var removedQuads = removed;
+                        _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
+                    }
+                }
+            }
+            else
+            {
+                _changesTracker.Add(new EntityDelete(entityId));
+
+                if (deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
+                {
+                    _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
+                    _changesTracker.Add(new RemoveReferences(entityId));
+                }
+            }
         }
 
         public void ResetState()
@@ -118,6 +139,19 @@ namespace RomanticWeb
             {
                 _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _entityQuads.Clear();
+            _initialQuads.Clear();
+
+            _disposed = true;
         }
 
         /// <summary>
@@ -164,28 +198,6 @@ namespace RomanticWeb
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
             return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
-        }
-
-        private void TrackChanges(EntityId entityId, DeleteBehaviour deleteBehaviour, IEnumerable<IGrouping<Node, EntityQuad>> deletesGrouped)
-        {
-            foreach (var removed in deletesGrouped.ToList())
-            {
-                if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
-                {
-                    var removedQuads = removed;
-                    _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
-                }
-                else
-                {
-                    _changesTracker.Add(new GraphDelete(entityId, removed.Key.Uri));
-                }
-            }
-
-            if (!(entityId is BlankId) && deleteBehaviour.HasFlag(DeleteBehaviour.NullifyChildren))
-            {
-                _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
-                _changesTracker.Add(new RemoveReferences(entityId));
-            }
         }
     }
 }

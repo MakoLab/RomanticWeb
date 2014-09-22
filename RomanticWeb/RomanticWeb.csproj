@@ -15,6 +15,7 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <GitVersionOnlyMajorAndMinorInAssemblyVersion>true</GitVersionOnlyMajorAndMinorInAssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -423,12 +424,10 @@
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Updates\DatasetChange.cs" />
     <Compile Include="Updates\DatasetChanges.cs" />
-    <Compile Include="Updates\DatasetChangesOptimizer.cs" />
-    <Compile Include="Updates\GraphDelete.cs" />
+    <Compile Include="Updates\EntityDelete.cs" />
     <Compile Include="Updates\GraphReconstruct.cs" />
     <Compile Include="Updates\GraphUpdate.cs" />
     <Compile Include="Updates\IDatasetChanges.cs" />
-    <Compile Include="Updates\IDatasetChangesOptimizer.cs" />
     <Compile Include="Updates\IDatasetChangesTracker.cs" />
     <Compile Include="Updates\RemoveReferences.cs" />
     <Compile Include="Vocabularies\Schema.cs" />
@@ -569,7 +568,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets'))" />
-    <Error Condition="!Exists('..\packages\Zoltu.Versioning.1.1.10.0\build\Zoltu.Versioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Zoltu.Versioning.1.1.10.0\build\Zoltu.Versioning.targets'))" />
+    <Error Condition="!Exists('..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets'))" />
   </Target>
-  <Import Project="..\packages\Zoltu.Versioning.1.1.10.0\build\Zoltu.Versioning.targets" Condition="Exists('..\packages\Zoltu.Versioning.1.1.10.0\build\Zoltu.Versioning.targets')" />
+  <Import Project="..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets" Condition="Exists('..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets')" />
 </Project>

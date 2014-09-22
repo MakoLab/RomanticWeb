@@ -13,7 +13,7 @@ categories: ['docs', 'basic-usage']
 
 Next step is to create an entity context factory. Here we'll show how it is done in code. This method is,
 much like the fluent mapping API, inspired by [Fluent NHibernate][fnh]. It is also possible to define the configuration
-in a `app.config`/`web.config` file. Please refer to the relevant doc page.
+in a `app.config`/`web.config` file. Please refer to the relevant [this page][xml_config].
 
 We start off with a `EntityContextFactory` instance.
 
@@ -25,8 +25,7 @@ var contextFactory = new EntityContextFactory();
 
 ## Add entity mappings
 
-The `MappingBuilder` type contains a number of methods, with which it's possible to add Fluent/Attribute/both mappings
-from selected assemblies.
+The `MappingBuilder` type contains a number of methods, with which it's possible to add mappings from selected assemblies.
 
 Here's how to add all mappings _from assembly of_ type `IPerson`.
 
@@ -47,7 +46,7 @@ using RomanticWeb;
 using RomanticWeb.DotNetRDF;
 
 var dnrTripleStore = new VDS.RDF.TripleStore();
-contextFactory.WithEntitySource(() => new TripleStoreAdapter(dnrTripleStore));
+contextFactory.WithDotNetRDF(dnrTripleStore);
 {% endhighlight %}
 
 ## Configure a meta graph URI
@@ -67,3 +66,4 @@ contextFactory.WithMetaGraphUri(new Uri("http://example.com/data/"));
 [fnh]: http://www.fluentnhibernate.org/
 [concepts]: ../../getting-started/concepts
 [dnr]: http://dotnetrdf.org
+[xml_config]: ../../advanced-topics/xml-config/

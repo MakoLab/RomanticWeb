@@ -3,12 +3,15 @@
   <PropertyGroup Condition=" '$(TEAMCITY_BUILD_PROPERTIES_FILE)' != ''">
     <TeamCityBuild>true</TeamCityBuild>
   </PropertyGroup>
+  
+  <UsingTask AssemblyFile="$(MSBuildProjectDirectory)\FileVersionExtractor\bin\FileVersionExtractor.dll" 
+             TaskName="GetAssemblyFileVersion"/>
 
   <Target Name="Update TeamCity Version" AfterTargets="Build">
-    <GetAssemblyIdentity AssemblyFiles="$(MSBuildProjectDirectory)\RomanticWeb\bin\Release\RomanticWeb.dll">
-      <Output TaskParameter="Assemblies" ItemName="AssemblyIdentities"/>
-    </GetAssemblyIdentity>
-    <Message Condition="$(TeamCityBuild) == 'true'" Text="##teamcity[buildNumber '%(AssemblyIdentities.Version)']" />
+    <GetAssemblyFileVersion FilePathAssemblyInfo="$(MSBuildProjectDirectory)\RomanticWeb\Properties\VersionAssemblyInfo.cs">
+      <Output TaskParameter="AssemblyFileVersion" PropertyName="AssemblyFileVersion" />
+    </GetAssemblyFileVersion>
+    <Message Condition="$(TeamCityBuild) == 'true'" Text="##teamcity[buildNumber '$(AssemblyFileVersion)']" />
   </Target>
 
   <Target Name="GitHubLink" AfterTargets="Build">

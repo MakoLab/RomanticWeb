@@ -43,6 +43,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{5510EA
 		NuGetBuild\NugetBuild.targets = NuGetBuild\NugetBuild.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileVersionExtractor", "FileVersionExtractor\FileVersionExtractor.csproj", "{93C850A3-C878-4A6D-9B31-215ECF31C6E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{E45367F8-A2D5-4B06-8400-99E89DB133A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,10 @@ Global
 		{BB89FC1F-FA9C-4D6D-BD12-0A0297692863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB89FC1F-FA9C-4D6D-BD12-0A0297692863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB89FC1F-FA9C-4D6D-BD12-0A0297692863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C850A3-C878-4A6D-9B31-215ECF31C6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C850A3-C878-4A6D-9B31-215ECF31C6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C850A3-C878-4A6D-9B31-215ECF31C6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C850A3-C878-4A6D-9B31-215ECF31C6E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +98,6 @@ Global
 		{6B8F4D5C-36E9-4952-B719-AF80E5171276} = {F04E013B-0C40-4811-9AF1-4197D086D7CC}
 		{BB89FC1F-FA9C-4D6D-BD12-0A0297692863} = {F04E013B-0C40-4811-9AF1-4197D086D7CC}
 		{AF4CCD1D-3FEF-4F5A-9A89-94D0E7E6D3B5} = {F04E013B-0C40-4811-9AF1-4197D086D7CC}
+		{93C850A3-C878-4A6D-9B31-215ECF31C6E1} = {E45367F8-A2D5-4B06-8400-99E89DB133A9}
 	EndGlobalSection
 EndGlobal

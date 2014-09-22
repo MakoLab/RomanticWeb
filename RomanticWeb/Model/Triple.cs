@@ -84,7 +84,7 @@ namespace RomanticWeb.Model
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2} .", Subject, Predicate, Object);
+            return string.Format("{0} {1} {2}", Subject, Predicate, Object);
         }
 
         protected bool Equals(Triple other)

@@ -65,6 +65,74 @@ This would assert the following triple in the store
 <Tim-Berners-Lee> foaf:knows <Norman-Walsh> .
 {% endhighlight %}
 
+### Inheritance
+
+It would be common for entity types to derive from one another. For example if we were to map the `foaf` vocabulary, there
+would be an `IPerson` and an `IAgent` types, matching the equivalent RDF classes. Moreover the Person class is defined
+as subclass of the class Agent. Hence the mapping would look like below.
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#attrs" role="tab" data-toggle="tab">Attributes</a></li>
+  <li><a href="#fluent" role="tab" data-toggle="tab">Fluent</a></li>
+</ul>
+
+<dd class="tab-content">
+  <div class="tab-pane fade in active" id="attrs">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Attributes;
+using RomanticWeb.Mapping.Model;
+
+[Class("foaf", "Person")]
+public interface IPerson : IEntity
+{
+}
+
+[Class("foaf", "Agent")]
+public interface IAgent : IEntity
+{
+}
+{% endhighlight %}
+
+  </div>
+  <div class="tab-pane fade" id="fluent">
+
+{% highlight java linenos=table %}
+using RomanticWeb.Mapping.Fluent;
+
+public class PersonMap : EntityMap<IPerson>
+{
+    public PersonMap()
+    {
+        Class.Is("foaf", "Person");
+    }
+}
+
+public class AgentMap : EntityMap<IAgent>
+{
+    public AgentMap()
+    {
+        Class.Is("foaf", "Agent");
+    }
+}
+{% endhighlight %}
+
+  </div>
+</dd>
+
+In such setup loading loading any entity would create an instance of a correct most derived type. Thus the code below
+works. This works even if we decide to load the the entity as the base type `IEntity`.
+
+{% highlight java linenos=table %}
+EntityId identifier = new Uri("Tim-Berners-Lee");
+var sirTim = context.Load<IEntity>(identifier);
+
+Assert.That(sirTim is IPerson);
+Assert.That(sirTim is IAgent);
+{% endhighlight %}
+
+__NOTE__ The above is of course true only if relevant `rdf:type` triples are present in the store.
+
 ## Deleting entities
 
 Lastly of course there is a `Delete` method, which removes all triples about a given entity. Because entity data is

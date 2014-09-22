@@ -1,0 +1,11 @@
+---
+layout: tutorial
+title:  "Entity context factory configuration"
+permalink: 'factory-config/'
+prev: 'docs/advanced-topics/conventions/'
+next: 'docs/advanced-topics/xml-config/'
+categories: ['docs', 'advanced-topics']
+---
+
+# Configuring EntityContextFactory
+

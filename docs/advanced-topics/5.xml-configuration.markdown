@@ -67,6 +67,14 @@ When a store is defined an instance is created simply running
 ITripleStore store = StoresConfigurationSection.Default.CreateStore("store name");
 {% endhighlight %}
 
+Or, even better, this can be configured directly on the `EntityContextFactory` using a handy overload of a method
+mentioned earlier:
+
+{% highlight java linenos=table %}
+var factory = EntityContextFactory.FromConfiguration("the-factory")
+                                  .WithDotNetRDF("store name");
+{% endhighlight %}
+
 The following sections explain how to configure various dotNetRDF triple stores.
 
 ### In-memory store

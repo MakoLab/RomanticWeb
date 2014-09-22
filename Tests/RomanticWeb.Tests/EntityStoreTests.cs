@@ -62,7 +62,7 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
-        public void Deleting_entity_should_remove_graphs()
+        public void Deleting_entity_should_remove_whole_entity()
         {
             // given
             LoadEntities("TriplesInNamedGraphs.trig");
@@ -72,9 +72,8 @@ namespace RomanticWeb.Tests
 
             // then
             _entityStore.Quads.Should().HaveCount(0);
-            _changesTracker.Verify(ct => ct.Add(It.IsAny<GraphDelete>()), Times.Exactly(2));
-            _changesTracker.Verify(ct => ct.Add(It.Is<GraphDelete>(gd => gd.Graph == "friendsOf://magi/people/Tomasz")));
-            _changesTracker.Verify(ct => ct.Add(It.Is<GraphDelete>(gd => gd.Graph == "personal://magi/people/Tomasz")));
+            _changesTracker.Verify(ct => ct.Add(It.IsAny<EntityDelete>()), Times.Exactly(1));
+            _changesTracker.Verify(ct => ct.Add(It.Is<EntityDelete>(gd => gd.Entity == EntityId)));
         }
 
         [Test]

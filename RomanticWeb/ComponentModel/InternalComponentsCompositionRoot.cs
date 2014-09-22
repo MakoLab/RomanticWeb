@@ -42,7 +42,6 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateEntityProxy(factory));
 
             registry.Register<IDatasetChangesTracker, DatasetChanges>(new PerScopeLifetime());
-            registry.Register<IDatasetChangesOptimizer, DatasetChangesOptimizer>(new PerContainerLifetime());
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)

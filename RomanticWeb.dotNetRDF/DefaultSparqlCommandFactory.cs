@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Resourcer;
+using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using RomanticWeb.Updates;
 using VDS.RDF;
@@ -15,10 +16,11 @@ namespace RomanticWeb.DotNetRDF
 {
     internal class DefaultSparqlCommandFactory : ISparqlCommandFactory
     {
-        private static readonly string DeleteEntityGraphCommandText = Resource.AsString("Queries.DeleteEntityGraph.ru");
         private static readonly string ModifyEntityCommandText = Resource.AsString("Queries.ModifyEntityGraph.ru");
+        private static readonly string InsterBlankEntityCommandText = Resource.AsString("Queries.InsertBlankEntityData.ru");
         private static readonly string ReconstructCommandText = Resource.AsString("Queries.ReconstructGraph.ru");
         private static readonly string RemoveReferencesCommandText = Resource.AsString("Queries.RemoveReferences.ru");
+        private static readonly string DeleteEntityCommandText = Resource.AsString("Queries.DeleteEntity.ru");
 
         private readonly Dictionary<Type, Func<dynamic, IEnumerable<SparqlUpdateCommand>>> _commandFactories;
         private readonly Uri _metaGraphUri;
@@ -28,10 +30,10 @@ namespace RomanticWeb.DotNetRDF
         {
             _metaGraphUri = metaGraphUri;
             _commandFactories = new Dictionary<Type, Func<dynamic, IEnumerable<SparqlUpdateCommand>>>();
-            _commandFactories[typeof(GraphDelete)] = delete => CreateGraphDeleteCommand(delete);
             _commandFactories[typeof(GraphUpdate)] = update => CreateGraphUpdateCommand(update);
             _commandFactories[typeof(GraphReconstruct)] = reconstruct => CreateReconstructCommand(reconstruct);
             _commandFactories[typeof(RemoveReferences)] = remove => CreateRemoveReferencesCommand(remove);
+            _commandFactories[typeof(EntityDelete)] = delete => CreateDeleteEntityCommand(delete);
         }
 
         protected Uri MetaGraphUri
@@ -65,29 +67,24 @@ namespace RomanticWeb.DotNetRDF
             return string.Join(Environment.NewLine, quads);
         }
 
-        private IEnumerable<SparqlUpdateCommand> CreateGraphDeleteCommand(GraphDelete change)
-        {
-            var deleteCommands = new SparqlParameterizedString(DeleteEntityGraphCommandText);
-            deleteCommands.SetUri("graph", change.Graph.Uri);
-            deleteCommands.SetUri("metaGraph", MetaGraphUri);
-            deleteCommands.SetUri("entity", change.Entity.Uri);
-
-            return GetParsedCommands(deleteCommands);
-        }
-
         private IEnumerable<SparqlUpdateCommand> CreateGraphUpdateCommand(GraphUpdate change)
         {
             INodeFactory factory = new NodeFactory();
             var removedTriples = ConvertTriples(change.RemovedQuads, factory);
             var addedTriples = ConvertTriples(change.AddedQuads, factory);
 
-            var commandText = string.Format(ModifyEntityCommandText, removedTriples, addedTriples);
-            var deleteCommands = new SparqlParameterizedString(commandText);
-            deleteCommands.SetUri("graph", change.Graph.Uri);
-            deleteCommands.SetUri("metaGraph", MetaGraphUri);
-            deleteCommands.SetUri("entity", change.Entity.Uri);
+            var format = change.Entity is BlankId ? InsterBlankEntityCommandText : ModifyEntityCommandText;
+            var commandText = string.Format(format, removedTriples, addedTriples);
+            var commands = new SparqlParameterizedString(commandText);
+            commands.SetUri("graph", change.Graph.Uri);
 
-            return GetParsedCommands(deleteCommands);
+            if (!(change.Entity is BlankId))
+            {
+                commands.SetUri("metaGraph", MetaGraphUri);
+                commands.SetUri("entity", change.Entity.Uri);
+            }
+
+            return GetParsedCommands(commands);
         }
 
         private IEnumerable<SparqlUpdateCommand> CreateReconstructCommand(GraphReconstruct change)
@@ -110,6 +107,15 @@ namespace RomanticWeb.DotNetRDF
 
             return GetParsedCommands(removeReferenceCommand);
         }
+
+        private IEnumerable<SparqlUpdateCommand> CreateDeleteEntityCommand(EntityDelete deleteEntity)
+        {
+            var deleteCommand = new SparqlParameterizedString(DeleteEntityCommandText);
+            deleteCommand.SetUri("entity", deleteEntity.Entity.Uri);
+            deleteCommand.SetUri("metaGraph", MetaGraphUri);
+
+            return GetParsedCommands(deleteCommand);
+        } 
 
         private IEnumerable<SparqlUpdateCommand> GetParsedCommands(SparqlParameterizedString commandString)
         {

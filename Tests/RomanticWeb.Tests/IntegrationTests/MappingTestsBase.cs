@@ -374,7 +374,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Create<TestEntities.Foaf.IPerson>(entityId);
 
             // then
-            EntityContext.Changes[graphUri].Should().Contain(change => GraphUpdateSettingRdfTypes(change));
+            EntityContext.Changes.Should().Contain(change => GraphUpdateSettingRdfTypes(change));
         }
 
         [Test]

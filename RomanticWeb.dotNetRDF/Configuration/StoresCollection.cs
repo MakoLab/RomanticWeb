@@ -17,6 +17,7 @@ namespace RomanticWeb.DotNetRDF.Configuration
         {
             StoreElementFactories = new Dictionary<string, Func<StoresCollection, StoreElement>>();
             StoreElementFactories["inMemory"] = self => new InMemoryStoreElement();
+            StoreElementFactories["file"] = self => new FileStoreElement();
             StoreElementFactories["persistent"] = self => new PersistentStoreElement();
             StoreElementFactories["external"] = self => new ExternallyConfiguredStoreElement(self._parent);
         }

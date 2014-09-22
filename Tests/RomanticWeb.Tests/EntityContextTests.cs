@@ -89,7 +89,7 @@ namespace RomanticWeb.Tests
                 new TestCache(),
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
-                new ImpromptuInterfaceCaster((entity, mapping) => new EntityProxy(entity, mapping, catalog, new TestGraphSelector()), _mappings.Object),
+                new ImpromptuInterfaceCaster((entity, mapping) => new EntityProxy(entity, mapping, catalog, new TestGraphSelector()), _mappings.Object, new TestGraphSelector(), _entityStore.Object),
                 _changesTracker.Object,
                 _changesOptimizer.Object);
         }

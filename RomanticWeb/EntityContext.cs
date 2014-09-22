@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Anotar.NLog;
 using NullGuard;
@@ -6,6 +7,7 @@ using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
+using RomanticWeb.Mapping.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Updates;
 
@@ -30,7 +32,8 @@ namespace RomanticWeb
         private readonly IEntityCaster _caster;
         private readonly IDatasetChangesOptimizer _optimizer;
         private readonly IDatasetChanges _changeTracker;
-
+        private readonly IEntityMapping _typedEntityMapping;
+        private readonly IPropertyMapping _typesPropertyMapping;
         #endregion
 
         #region Constructors
@@ -44,10 +47,11 @@ namespace RomanticWeb
             [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog, 
-            IEntityCaster caster, 
+            IResultTransformerCatalog transformerCatalog,
+            IEntityCaster caster,
             IDatasetChangesTracker changeTracker,
-            IDatasetChangesOptimizer optimizer) : this(changeTracker)
+            IDatasetChangesOptimizer optimizer)
+            : this(changeTracker)
         {
             _factory = factory;
             _entityStore = entityStore;
@@ -60,11 +64,13 @@ namespace RomanticWeb
             _transformerCatalog = transformerCatalog;
             _caster = caster;
             _optimizer = optimizer;
+            _typedEntityMapping = _mappings.MappingFor<ITypedEntity>();
+            _typesPropertyMapping = _typedEntityMapping.PropertyFor("Types");
 
             if (_baseUriSelector == null)
             {
                 LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
-            } 
+            }
         }
 
         public EntityContext(
@@ -75,9 +81,9 @@ namespace RomanticWeb
             IEntitySource entitySource,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
-            IResultTransformerCatalog transformerCatalog, 
+            IResultTransformerCatalog transformerCatalog,
             IEntityCaster caster,
-            IDatasetChangesTracker changeTracker, 
+            IDatasetChangesTracker changeTracker,
             IDatasetChangesOptimizer optimizer)
             : this(
                 factory,
@@ -88,8 +94,8 @@ namespace RomanticWeb
                 null,
                 typeCache,
                 blankIdGenerator,
-                transformerCatalog, 
-                caster, 
+                transformerCatalog,
+                caster,
                 changeTracker,
                 optimizer)
         {
@@ -211,8 +217,9 @@ namespace RomanticWeb
         {
             var rootEntity = (Entity)entity;
             rootEntity.EnsureIsInitialized();
-            var typedEntity = _caster.EntityAs<ITypedEntity>(rootEntity, new Type[0]);
-            var entityTypes = _typeCache.GetMostDerivedMappedTypes(typedEntity.Types.Select(id => id.Uri), typeof(T));
+            Uri graphName = (_factory.NamedGraphSelector != null ? _factory.NamedGraphSelector.SelectGraph(rootEntity.Id, _typedEntityMapping, _typesPropertyMapping) : null);
+            IEnumerable<Uri> types = _entityStore.GetObjectsForPredicate(rootEntity.Id, RomanticWeb.Vocabularies.Rdf.type, graphName).Select(item => item.Uri);
+            var entityTypes = _typeCache.GetMostDerivedMappedTypes(types, typeof(T));
             return _caster.EntityAs<T>(rootEntity, entityTypes.ToArray());
         }
 

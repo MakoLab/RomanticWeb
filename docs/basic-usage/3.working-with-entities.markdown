@@ -41,7 +41,7 @@ This will create some triples describing sir Tim Berners-Lee (assuming mappings 
 {% endhighlight %}
 
 You may notice that for simplicity relative URIs are used. This is totally supported by Romantic Web, but requires
-configuration. Please read more on the detailed page about entity context factory configuration.
+configuration. Please read more on the [detailed page][factory-config] about entity context factory configuration.
 
 ## Loading entities
 
@@ -177,3 +177,4 @@ representations.
 [concepts]: ../../getting-started/concepts
 [dnr]: http://dotnetrdf.org
 [owa]: http://wiki.opensemanticframework.org/index.php/Overview_of_the_Open_World_Assumption
+[factory-config]: ../../advanced-topics/factory-config/

@@ -10,6 +10,11 @@ namespace RomanticWeb.Tests.Helpers
             return new StoreAssertions(store);
         }
 
+        public static string Serialize(this IEntityStore entityStore)
+        {
+            return String.Join(Environment.NewLine, entityStore.Quads);
+        } 
+
         public static StoreAssertions Should(this ITripleStore store)
         {
             var queryableStore = store as IInMemoryQueryableStore;

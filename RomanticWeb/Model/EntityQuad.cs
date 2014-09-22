@@ -164,6 +164,16 @@ namespace RomanticWeb.Model
             return String.Format("{0} {1} {2} {3}", Subject, Predicate, Object, Graph);
         }
 
+        public string ToString(bool nQuadFormat)
+        {
+            if (!nQuadFormat)
+            {
+                return ToString();
+            }
+
+            return String.Format("{0} {1} {2} {3} . ", Subject.ToString(true), Predicate.ToString(true), Object.ToString(true), Graph.ToString(true));
+        }
+
         int IComparable<EntityQuad>.CompareTo(EntityQuad other)
         {
             return ((IComparable)this).CompareTo(other);

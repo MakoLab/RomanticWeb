@@ -16,6 +16,7 @@
     <StartProgram>$(MSBuildBinPath)\msbuild.exe</StartProgram>
     <StartArguments>"$(SolutionDir)Magi.sln" /t:Rebuild</StartArguments>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <GitVersionOnlyMajorAndMinorInAssemblyVersion>true</GitVersionOnlyMajorAndMinorInAssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

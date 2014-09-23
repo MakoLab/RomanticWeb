@@ -9,3 +9,67 @@ categories: ['docs', 'advanced-topics']
 
 # Configuring EntityContextFactory
 
+## Configuration API
+
+The `EntityContextFactoryClass` comes with a number of methods, which are used to configure its behaviour. Previous pages
+have already shown the methods to configure entity mappings and define the meta graph URI.
+
+{% highlight java linenos=table %}
+var factory = new EntityContextFactory()
+                  .WithMetaGraphUri(new Uri("http://example.org/graphs/"))
+                  .WithMappings((MappingBuilder builder) =>
+                                {
+                                    builder.FromAssemblyOf<IPerson>();
+                                });
+{% endhighlight %}
+
+__TODO__: describe the rest when API is final
+
+## Internal components
+
+Internally Romantic Web uses an IoC container and most, if not all, components can be replaced. This is done by defining
+the components in a class derived from `CompositionRootBase` and registering that class with an entity context factory.
+Classes implementing `CompositionRootBase` may be internal but must declare public parameterless constructor. The base
+class exposes a number of methods, which change specific parts of Romantic Web.
+
+{% highlight java linenos=table %}
+
+public class MyComponents : CompositionRootBase
+{
+    public MyComponents()
+    {
+        BlankNodeIdGenerator<CustomGenerator>();
+        NamedGraphSelector<CustomSelector>();
+    }
+}
+
+{% endhighlight %}
+
+It is also possible to register any custom component shall it be required. These components can be registered in a
+number of lifestyles:
+
+ * shared - only one instance will ever be created
+ * per-entity context - a new instance will be created for each `CreateContext()` call
+ * transient - a new instance will be created every time it is requested
+
+{% highlight java linenos=table %}
+
+public class MyComponents : CompositionRootBase
+{
+    public MyComponents()
+    {
+        // shared registration by type
+        SharedComponent<IShared, Shared>();
+
+        // shared instance
+        SharedComponent<IShared>(new Shared());
+
+        // new instance for each `IEntityContext`
+        PerEntityContextComponent<IScoped, Scoped>();
+
+        // transient
+        TransientComponent<ITransient, Transient>();
+    }
+}
+
+{% endhighlight %}

@@ -31,7 +31,7 @@ namespace RomanticWeb.Tests.IntegrationTests.Virtuoso
 
         protected override IEntitySource CreateEntitySource()
         {
-            return new TripleStoreAdapter(Store);
+            return new TripleStoreAdapter();
         }
 
         protected override void ChildTeardown()

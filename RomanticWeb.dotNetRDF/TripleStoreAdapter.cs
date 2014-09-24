@@ -21,7 +21,6 @@ namespace RomanticWeb.DotNetRDF
     {
         private readonly ITripleStore _store;
         private readonly INamespaceMapper _namespaces;
-        private readonly IEntityStore _entityStore;
         private readonly ISparqlCommandFactory _sparqlCommandFactory;
         private bool _disposed;
 
@@ -29,12 +28,10 @@ namespace RomanticWeb.DotNetRDF
         /// Creates a new instance of <see cref="TripleStoreAdapter" />
         /// </summary>
         /// <param name="store">The underlying triple store</param>
-        /// <param name="entityStore">The entity store.</param>
         /// <param name="sparqlCommandFactory"></param>
-        public TripleStoreAdapter(ITripleStore store, IEntityStore entityStore, ISparqlCommandFactory sparqlCommandFactory)
+        public TripleStoreAdapter(ITripleStore store, ISparqlCommandFactory sparqlCommandFactory)
         {
             _store = store;
-            _entityStore = entityStore;
             _sparqlCommandFactory = sparqlCommandFactory;
             _namespaces = new NamespaceMapper(true);
             _namespaces.AddNamespace("foaf", new Uri("http://xmlns.com/foaf/0.1/"));
@@ -43,22 +40,19 @@ namespace RomanticWeb.DotNetRDF
         /// <summary>Uri of the meta graph, which contains information about Entities' named graphs.</summary>
         public Uri MetaGraphUri { get; set; }
 
-        /// <summary>Loads an entity using SPARQL query and loads the resulting triples to the <paramref name="store"/>.</summary>
-        public void LoadEntity(IEntityStore store, EntityId entityId)
+        /// <summary>Loads an entity using SPARQL query and returns the resulting triples.</summary>
+        public IEnumerable<EntityQuad> LoadEntity(EntityId entityId)
         {
-            // todo: maybe this should return EntityTriples instead and they should be asserted in EntityContext?
             var sparql = QueryBuilder.Select("s", "p", "o", "g")
                                    .Graph("?g", graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")))
                                    .Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri));
             sparql.Prefixes.Import(_namespaces);
-            var triples = from result in ExecuteSelect(sparql.BuildQuery())
-                          let subject = result["s"].WrapNode(entityId)
-                          let predicate = result["p"].WrapNode(entityId)
-                          let @object = result["o"].WrapNode(entityId)
-                          let graph = result.HasBoundValue("g") ? result["g"].WrapNode(entityId) : null
-                          select new EntityQuad(entityId, subject, predicate, @object, graph);
-
-            _entityStore.AssertEntity(entityId, triples);
+            return (from result in ExecuteSelect(sparql.BuildQuery())
+                    let subject = result["s"].WrapNode(entityId)
+                    let predicate = result["p"].WrapNode(entityId)
+                    let @object = result["o"].WrapNode(entityId)
+                    let graph = result.HasBoundValue("g") ? result["g"].WrapNode(entityId) : null
+                    select new EntityQuad(entityId, subject, predicate, @object, graph)).AsParallel();
         }
 
         /// <summary>Executes an ASK query to perform existence check.</summary>
@@ -186,18 +180,6 @@ namespace RomanticWeb.DotNetRDF
 
         private IEnumerable<SparqlUpdateCommand> CreateCommands(DatasetChange change)
         {
-            var update = change as GraphUpdate;
-            if (update != null)
-            {
-                if (update.RemovedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
-                {
-                    var graphQuads = from entityQuad in _entityStore.Quads
-                                     where entityQuad.Graph == Node.FromEntityId(update.Graph)
-                                     select entityQuad;
-                    change = new GraphReconstruct(update.Entity, update.Graph, graphQuads);
-                }
-            }
-
             LogTo.Info("Creating update command for change '{0}'", change);
             return _sparqlCommandFactory.CreateCommands(change);
         }

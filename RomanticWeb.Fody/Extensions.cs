@@ -104,7 +104,7 @@ namespace RomanticWeb.Fody
 
         internal static bool HasNoTypeConverter(this TypeDefinition type)
         {
-            return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.ComponentModel.TypeConverterAttribute");
+            return !type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.ComponentModel.TypeConverterAttribute");
         }
 
         internal static bool HasRequiredConstructor(this TypeDefinition type)

@@ -144,6 +144,10 @@ namespace RomanticWeb.Entities
             return _uri.ToString();
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public virtual string ToString(bool nQuadFormat)
         {
             return ToString();

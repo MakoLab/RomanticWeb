@@ -319,6 +319,10 @@ namespace RomanticWeb.Model
             throw new InvalidOperationException("Invalid node state");
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public string ToString(bool nQuadFormat)
         {
             if (!nQuadFormat)

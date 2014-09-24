@@ -293,7 +293,6 @@
     <Compile Include="Mapping\Visitors\IMappingAttributesVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingModelVisitor.cs" />
     <Compile Include="Mapping\Visitors\IMappingProviderVisitor.cs" />
-    <Compile Include="Model\EntityQuadCollection.cs" />
     <Compile Include="Model\EntityQuadCollection2.cs" />
     <Compile Include="Model\IEntityQuadCollection.cs" />
     <Compile Include="Model\Index.cs" />

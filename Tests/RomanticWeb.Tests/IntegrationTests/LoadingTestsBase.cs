@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using FluentAssertions;
+using ImpromptuInterface;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.LightInject;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.TestEntities.LargeDataset;
 using RomanticWeb.Tests.Stubs;
@@ -14,6 +16,11 @@ namespace RomanticWeb.Tests.IntegrationTests
     public abstract class LoadingTestsBase : IntegrationTestsBase
     {
         private static readonly EntityId EntityId = new EntityId("http://magi/people/Tomasz");
+
+        internal interface ITrackedScopes
+        {
+            IList<Scope> TrackedScopes { get; }
+        }
 
         [Test]
         public void Should_load_as_best_derived_type_in_inheritance_tree()
@@ -566,6 +573,23 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             person.Name.Should().Be("Tomasz");
+        }
+
+        [Test]
+        public void Disposing_contexts_should_be_possble_in_any_order()
+        {
+            // given
+            var first = Factory.CreateContext();
+            var second = Factory.CreateContext();
+            var third = Factory.CreateContext();
+
+            // when
+            second.Dispose();
+            third.Dispose();
+            first.Dispose();
+
+            // then
+            Factory.ActLike<ITrackedScopes>().TrackedScopes.Should().BeEmpty();
         }
 
         protected override void ChildSetup()

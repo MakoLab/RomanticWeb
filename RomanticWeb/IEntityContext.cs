@@ -34,6 +34,11 @@ namespace RomanticWeb
     /// <summary>Defines methods for factories, which produce <see cref="Entity"/> instances.</summary>
     public interface IEntityContext : IDisposable
     {
+        /// <summary>
+        /// Occurs when the entity context is disposed.
+        /// </summary>
+        event Action Disposed;
+
         /// <summary>Gets the underlying in-memory store.</summary>
         IEntityStore Store { get; }
 

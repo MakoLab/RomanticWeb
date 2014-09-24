@@ -55,6 +55,9 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance actually represents a change to the store.
+        /// </summary>
         public virtual bool IsEmpty
         {
             get
@@ -63,11 +66,18 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Determines whether this instance can be merged with another.
+        /// </summary>
+        /// <param name="other">The other change.</param>
         public virtual bool CanMergeWith(DatasetChange other)
         {
             return Graph == other.Graph;
         }
 
+        /// <summary>
+        /// Merges this change the with another change.
+        /// </summary>
         public abstract DatasetChange MergeWith(DatasetChange other);
     }
 }

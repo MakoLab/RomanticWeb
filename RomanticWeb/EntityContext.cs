@@ -197,7 +197,6 @@ namespace RomanticWeb
             }
 
             _entityStore.Dispose();
-            _entitySource.Dispose();
 
             _disposed = true;
         }
@@ -207,7 +206,7 @@ namespace RomanticWeb
         public void InitializeEnitity(IEntity entity)
         {
             LogTo.Debug("Initializing entity {0}", entity.Id);
-            _entitySource.LoadEntity(Store, entity.Id);
+            _entityStore.AssertEntity(entity.Id, _entitySource.LoadEntity(entity.Id));
         }
 
         /// <inheritdoc />
@@ -216,7 +215,7 @@ namespace RomanticWeb
             var rootEntity = (Entity)entity;
             rootEntity.EnsureIsInitialized();
             Uri graphName = (_factory.NamedGraphSelector != null ? _factory.NamedGraphSelector.SelectGraph(rootEntity.Id, _typedEntityMapping, _typesPropertyMapping) : null);
-            IEnumerable<Uri> types = _entityStore.GetObjectsForPredicate(rootEntity.Id, RomanticWeb.Vocabularies.Rdf.type, graphName).Select(item => item.Uri);
+            IEnumerable<Uri> types = _entityStore.GetObjectsForPredicate(rootEntity.Id, Vocabularies.Rdf.type, graphName).Select(item => item.Uri);
             var entityTypes = _typeCache.GetMostDerivedMappedTypes(types, typeof(T));
             return _caster.EntityAs<T>(rootEntity, entityTypes.ToArray());
         }

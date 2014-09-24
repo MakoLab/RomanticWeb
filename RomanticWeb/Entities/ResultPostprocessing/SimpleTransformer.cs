@@ -21,6 +21,9 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             _aggregator = aggregator;
         }
 
+        /// <summary>
+        /// Gets the result aggregator.
+        /// </summary>
         protected IResultAggregator Aggregator { get { return _aggregator; } }
 
         /// <summary>Converts <paramref name="nodes"/> and returns the aggregated the result.</summary>

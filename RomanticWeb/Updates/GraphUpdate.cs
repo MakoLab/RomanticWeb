@@ -42,6 +42,7 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <inheritdoc />
         public override bool IsEmpty
         {
             get
@@ -50,16 +51,21 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Returns a description of the change
+        /// </summary>
         public override string ToString()
         {
             return string.Format("Update graph {0}: +{1}/-{2} triples", Graph, _addedQuads.Count(), _removedQuads.Count());
         }
 
+        /// <inheritdoc />
         public override bool CanMergeWith(DatasetChange other)
         {
             return other is GraphUpdate && base.CanMergeWith(other);
         }
 
+        /// <inheritdoc />
         public override DatasetChange MergeWith(DatasetChange other)
         {
             var otherUpdate = (GraphUpdate)other;

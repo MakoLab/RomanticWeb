@@ -17,6 +17,9 @@ namespace RomanticWeb.Ontologies
         private readonly IServiceContainer _container;
         private readonly ContentTypeResolver _contentTypeResolver;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OntologyFactory"/> class.
+        /// </summary>
         public OntologyFactory()
         {
             _container = new ServiceContainer();

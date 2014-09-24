@@ -16,12 +16,19 @@ namespace RomanticWeb.DotNetRDF
                           .WithEntitySource<TripleStoreAdapter>();
         }
 
+        /// <summary>
+        /// Sets up the <paramref name="factory"/> with components required to use dotNetRDF and supplies a triple store instance
+        /// </summary>
         public static EntityContextFactory WithDotNetRDF(this EntityContextFactory factory, ITripleStore store)
         {
             ((IComponentRegistryFacade)factory).Register(store);
             return WithDotNetRDF(factory);
         }
 
+        /// <summary>
+        /// Sets up the <paramref name="factory"/> with components required to use dotNetRDF 
+        /// and supplies a triple store name configured in app.config/web.config
+        /// </summary>
         public static EntityContextFactory WithDotNetRDF(this EntityContextFactory factory, string storeName)
         {
             ((IComponentRegistryFacade)factory).Register(Configuration.StoresConfigurationSection.Default.CreateStore(storeName));

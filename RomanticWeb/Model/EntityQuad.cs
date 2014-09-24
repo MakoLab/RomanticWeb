@@ -164,6 +164,10 @@ namespace RomanticWeb.Model
             return String.Format("{0} {1} {2} {3}", Subject, Predicate, Object, Graph);
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad.</param>
         public string ToString(bool nQuadFormat)
         {
             if (!nQuadFormat)

@@ -50,6 +50,10 @@ namespace RomanticWeb.Entities
         [AllowNull]
         public Uri Graph { get { return _graph; } }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public override string ToString(bool nQuadFormat)
         {
             if (!nQuadFormat)

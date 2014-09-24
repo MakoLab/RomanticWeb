@@ -49,7 +49,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         {
             get
             {
-                return _container.GetInstance<IEntityStore>();
+                return EntityContext.Store;
             }
         }
 

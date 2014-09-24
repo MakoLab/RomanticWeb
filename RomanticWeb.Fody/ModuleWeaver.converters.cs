@@ -44,7 +44,7 @@ namespace RomanticWeb.Fody
         private IEnumerable<TypeDefinition> GetEntityIdImplementationsWithoutConverter()
         {
             return from typeDefinition in ModuleDefinition.Types
-                   where typeDefinition.HasEntityIdAncestor() || typeDefinition.HasNoTypeConverter()
+                   where typeDefinition.HasEntityIdAncestor() && typeDefinition.HasNoTypeConverter()
                    select typeDefinition;
         }
     }

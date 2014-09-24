@@ -550,9 +550,11 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Having_disposed_a_context_should_be_able_to_use_a_next_one()
         {
             // given
+            LoadTestFile("InheritingEntities.trig");
+            IPerson person;
             using (var context = Factory.CreateContext())
             {
-                context.Load<IPerson>(EntityId);
+                person = context.Load<IPerson>(EntityId);
             }
 
             Factory.CreateContext();
@@ -560,7 +562,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             Factory.CreateContext();
 
             // when
-            var person = EntityContext.Load<IPerson>(EntityId);
+            person = EntityContext.Load<IPerson>(EntityId);
 
             // then
             person.Name.Should().Be("Tomasz");

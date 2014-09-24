@@ -546,6 +546,28 @@ namespace RomanticWeb.Tests.IntegrationTests
             entity.Gender.Should().BeNull();
         }
 
+        [Test]
+        public void Having_disposed_a_context_should_be_able_to_use_a_next_one()
+        {
+            // given
+            LoadTestFile("InheritingEntities.trig");
+            IPerson person;
+            using (var context = Factory.CreateContext())
+            {
+                person = context.Load<IPerson>(EntityId);
+            }
+
+            Factory.CreateContext();
+            Factory.CreateContext();
+            Factory.CreateContext();
+
+            // when
+            person = EntityContext.Load<IPerson>(EntityId);
+
+            // then
+            person.Name.Should().Be("Tomasz");
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

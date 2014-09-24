@@ -100,6 +100,7 @@ namespace RomanticWeb
         }
         #endregion
 
+        /// <inheritdoc />
         public event Action Disposed;
         
         #region Properties

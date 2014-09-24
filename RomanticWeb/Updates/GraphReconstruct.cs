@@ -6,13 +6,13 @@ using RomanticWeb.Model;
 namespace RomanticWeb.Updates
 {
     /// <summary>
-    /// Represents a change with recreates a named graph
+    /// Represents a change which recreates a named graph
     /// </summary>
     public class GraphReconstruct : DatasetChange
     {
         private readonly ISet<EntityQuad> _addedQuads;
 
-        public GraphReconstruct(EntityId entity, EntityId graph, IEnumerable<EntityQuad> addedQuads)
+        internal GraphReconstruct(EntityId entity, EntityId graph, IEnumerable<EntityQuad> addedQuads)
             : base(entity, graph)
         {
             _addedQuads = new HashSet<EntityQuad>(addedQuads);
@@ -29,16 +29,21 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Returns a description of the change
+        /// </summary>
         public override string ToString()
         {
             return string.Format("Recreating graph {0} with {1} triples", Graph, AddedQuads.Count());
         }
 
+        /// <inheritdoc />
         public override bool CanMergeWith(DatasetChange other)
         {
             return (other is GraphUpdate || other is GraphReconstruct) && base.CanMergeWith(other);
         }
 
+        /// <inheritdoc />
         public override DatasetChange MergeWith(DatasetChange other)
         {
             return MergeWith((dynamic)other);

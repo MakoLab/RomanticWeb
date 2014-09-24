@@ -113,6 +113,9 @@ namespace RomanticWeb.DotNetRDF
             ExecuteCommandSet(commands);
         }
 
+        /// <summary>
+        /// Disposes this instance and the underlying store
+        /// </summary>
         public void Dispose()
         {
             if (_disposed)

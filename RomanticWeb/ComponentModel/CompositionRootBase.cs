@@ -172,7 +172,7 @@ namespace RomanticWeb.ComponentModel
         }
 
         /// <summary>
-        /// Registers a custom dependency type. A new instance will be created for each <see cref="EntityContext"/>
+        /// Registers a custom dependency type. A new instance will be created every time it is requested
         /// </summary>
         /// <typeparam name="TComponent">The type of the dependency.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
@@ -183,6 +183,12 @@ namespace RomanticWeb.ComponentModel
             AddRegistration<TComponent, TImplementation>(name, new PerRequestLifeTime());
         }
 
+        /// <summary>
+        /// Registers a custom dependency type. A new instance will be created for each <see cref="EntityContext"/>
+        /// </summary>
+        /// <typeparam name="TComponent">The type of the dependency.</typeparam>
+        /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
+        /// <param name="name">Optional name.</param>
         protected void PerEntityContextComponent<TComponent, TImplementation>(string name = null)
             where TImplementation : TComponent
         {

@@ -10,6 +10,9 @@ namespace RomanticWeb.DotNetRDF.Configuration
     {
         private const string FilePathAttributeName = "filePath";
 
+        /// <summary>
+        /// Gets or sets the dataset file path.
+        /// </summary>
         [ConfigurationProperty(FilePathAttributeName, IsRequired = true)]
         public string FilePath
         {

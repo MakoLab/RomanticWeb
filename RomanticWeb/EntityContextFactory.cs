@@ -90,6 +90,7 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc />
         public IResultTransformerCatalog TransformerCatalog
         {
             get
@@ -98,6 +99,7 @@ namespace RomanticWeb
             }
         }
 
+        /// <inheritdoc />
         public INamedGraphSelector NamedGraphSelector
         {
             get
@@ -239,6 +241,9 @@ namespace RomanticWeb
             _container.RegisterInstance(instance);
         }
 
+        /// <summary>
+        /// Dispose this entity context factory and all components
+        /// </summary>
         public void Dispose()
         {
             if (_disposed)

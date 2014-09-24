@@ -83,6 +83,9 @@ namespace RomanticWeb.Linq.Model
         /// <summary>Gets a list of entity accessor elements.</summary>
         public IList<QueryElement> Elements { get { return _elements; } }
 
+        /// <summary>
+        /// Gets or sets the name of the unbound graph.
+        /// </summary>
         [AllowNull]
         public Identifier UnboundGraphName { [return: AllowNull] get; set; }
 

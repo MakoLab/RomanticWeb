@@ -23,7 +23,7 @@ namespace RomanticWeb
     {
         private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
-        private readonly Stack<Scope> _trackedScopes = new Stack<Scope>();
+        private readonly IList<Scope> _trackedScopes = new List<Scope>();
         private bool _disposed;
 
         /// <summary>
@@ -106,6 +106,14 @@ namespace RomanticWeb
             }
         }
 
+        internal IList<Scope> TrackedScopes
+        {
+            get
+            {
+                return _trackedScopes;
+            }
+        }
+
         /// <summary>
         /// Creates a factory defined in the configuration section.
         /// </summary>
@@ -140,8 +148,16 @@ namespace RomanticWeb
 
             lock (Locker)
             {
-                _trackedScopes.Push(_container.BeginScope());
-                return _container.GetInstance<IEntityContext>();
+                var scope = _container.BeginScope();
+                TrackedScopes.Add(scope);
+                var context = _container.GetInstance<IEntityContext>();
+                context.Disposed += () =>
+                    {
+                        scope.Dispose();
+                        _trackedScopes.Remove(scope);
+                    };
+                _container.ScopeManagerProvider.GetScopeManager().EndScope(scope);
+                return context;
             }
         }
 
@@ -230,9 +246,9 @@ namespace RomanticWeb
                 return;
             }
 
-            while (_trackedScopes.Any())
+            foreach (var scope in TrackedScopes.ToList())
             {
-                _trackedScopes.Pop().Dispose();
+                scope.Dispose();
             }
 
             _container.Dispose();

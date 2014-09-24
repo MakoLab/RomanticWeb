@@ -100,6 +100,8 @@ namespace RomanticWeb
         }
         #endregion
 
+        public event Action Disposed;
+        
         #region Properties
 
         /// <summary>Gets the underlying in-memory store.</summary>
@@ -199,6 +201,11 @@ namespace RomanticWeb
             _entityStore.Dispose();
 
             _disposed = true;
+
+            if (Disposed != null)
+            {
+                Disposed();
+            }
         }
 
         /// <summary>Initializes given entity with data.</summary>

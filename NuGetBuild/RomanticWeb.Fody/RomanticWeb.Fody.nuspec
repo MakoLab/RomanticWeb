@@ -8,8 +8,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial release</releaseNotes>
+    <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
-    <projectUrl>http://makolab.github.io/RomanticWeb</projectUrl>
+    <projectUrl>http://romanticweb.net</projectUrl>
     <copyright>Copyright MakoLab © 2013 - 2014</copyright>
     <dependencies>
       <dependency id="Fody" />

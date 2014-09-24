@@ -14,17 +14,15 @@ namespace RomanticWeb.Tests.DotNetRDF
     {
         private TripleStoreAdapter _tripleStore;
         private Mock<IUpdateableTripleStore> _realStore;
-        private Mock<IEntityStore> _entityStore;
         private Mock<ISparqlCommandFactory> _factory;
 
         [SetUp]
         public void Setup()
         {
             _realStore = new Mock<IUpdateableTripleStore>();
-            _entityStore = new Mock<IEntityStore>(MockBehavior.Strict);
             _factory = new Mock<ISparqlCommandFactory>(MockBehavior.Strict);
 
-            _tripleStore = new TripleStoreAdapter(_realStore.Object, _entityStore.Object, _factory.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
+            _tripleStore = new TripleStoreAdapter(_realStore.Object, _factory.Object) { MetaGraphUri = new Uri("urn:meta:graph") };
         }
 
         [Test]

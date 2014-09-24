@@ -84,25 +84,17 @@ namespace RomanticWeb
             var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri).ToArray();
             var newQuads = (from node in newValues()
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
-
             _entityQuads.Add(entityId, newQuads);
-            var datasetChange = new GraphUpdate(entityId, graphUri, removedQuads, newQuads);
-            _changesTracker.Add(datasetChange);
 
-            foreach (var newQuad in datasetChange.AddedQuads.Where(q => q.Object.IsBlank))
+            foreach (var newQuad in newQuads.Where(q => q.Object.IsBlank))
             {
                 IncrementRefCount(newQuad.Object);
             }
 
-            var orphanedBlankNodes = from removedQuad in datasetChange.RemovedQuads 
-                                     where removedQuad.Object.IsBlank
-                                     where !IsReferenced(removedQuad.Object)
-                                     select removedQuad.Object;
+            DeleteOrphanedBlankNodes(removedQuads);
 
-            foreach (var orphan in orphanedBlankNodes)
-            {
-                Delete(orphan.ToEntityId());
-            }
+            dynamic datasetChange = CreateChangeForUpdate(entityId, graphUri, removedQuads, newQuads);
+            _changesTracker.Add(datasetChange);
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
@@ -184,6 +176,32 @@ namespace RomanticWeb
             _initialQuads.Clear();
 
             _disposed = true;
+        }
+
+        private DatasetChange CreateChangeForUpdate(EntityId entityId, EntityId graphUri, EntityQuad[] removedQuads, EntityQuad[] addedQuads)
+        {
+            if (removedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
+            {
+                var graphQuads = from entityQuad in GetEntityQuads(entityId)
+                                 where entityQuad.Graph == Node.FromEntityId(graphUri)
+                                 select entityQuad;
+                return new GraphReconstruct(entityId, graphUri, graphQuads);
+            }
+
+            return new GraphUpdate(entityId, graphUri, removedQuads, addedQuads);
+        }
+
+        private void DeleteOrphanedBlankNodes(IEnumerable<EntityQuad> removedQuads)
+        {
+            var orphanedBlankNodes = from removedQuad in removedQuads
+                                     where removedQuad.Object.IsBlank
+                                     where !IsReferenced(removedQuad.Object)
+                                     select removedQuad.Object;
+
+            foreach (var orphan in orphanedBlankNodes)
+            {
+                Delete(orphan.ToEntityId());
+            }
         }
 
         /// <summary>

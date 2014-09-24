@@ -172,7 +172,7 @@ namespace RomanticWeb.Tests
             id = dynEntity.Id;
 
             // then
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), It.IsAny<EntityId>()), Times.Never);
+            _store.Verify(s => s.LoadEntity(It.IsAny<EntityId>()), Times.Never);
         }
 
         [Test]
@@ -188,7 +188,7 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(
-                s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+                s => s.LoadEntity(new EntityId("http://magi/people/Tomasz")), Times.Once);
         }
 
         [Test]
@@ -209,7 +209,7 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(
-                s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+                s => s.LoadEntity(new EntityId("http://magi/people/Tomasz")), Times.Once);
         }
 
         [Test]
@@ -227,7 +227,7 @@ namespace RomanticWeb.Tests
 
             // then
             _store.Verify(
-                s => s.LoadEntity(It.IsAny<IEntityStore>(), new EntityId("http://magi/people/Tomasz")), Times.Once);
+                s => s.LoadEntity(new EntityId("http://magi/people/Tomasz")), Times.Once);
         }
 
         [Test]
@@ -243,7 +243,7 @@ namespace RomanticWeb.Tests
 
             // then
             Assert.That(page, Is.Empty);
-            _store.Verify(s => s.LoadEntity(It.IsAny<IEntityStore>(), It.IsAny<EntityId>()), Times.Never);
+            _store.Verify(s => s.LoadEntity(It.IsAny<EntityId>()), Times.Never);
         }
 
         [Test]

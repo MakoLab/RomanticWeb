@@ -37,8 +37,7 @@ namespace RomanticWeb.Mapping.Sources
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             var builder = new AttributeMappingProviderBuilder();
-            return from type in Assembly.GetTypes()
-                   where typeof(IEntity).IsAssignableFrom(type)
+            return from type in Assembly.GetTypesWhere(type => typeof(IEntity).IsAssignableFrom(type))
                    select builder.Visit(type);
         }
     }

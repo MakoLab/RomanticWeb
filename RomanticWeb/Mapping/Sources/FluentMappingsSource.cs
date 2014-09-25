@@ -38,8 +38,7 @@ namespace RomanticWeb.Mapping.Sources
         public override IEnumerable<IEntityMappingProvider> GetMappingProviders()
         {
             Visitors.IFluentMapsVisitor visitor = new FluentMappingProviderBuilder();
-            var maps = (from type in Assembly.GetTypes()
-                        where type.IsConstructableEntityMap()
+            var maps = (from type in Assembly.GetTypesWhere(t => t.IsConstructableEntityMap())
                         let map = (EntityMap)Activator.CreateInstance(type, true)
                         select map.Accept(visitor));
 

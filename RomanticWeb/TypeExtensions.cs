@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping;
 
 namespace System
 {
@@ -160,8 +161,7 @@ namespace System
 
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     where !assembly.IsDynamic
-                    from type in assembly.GetTypes()
-                    where (type != @interface) && (@interface.IsAssignableFrom(type)) && (type.IsInterface)
+                    from type in assembly.GetTypesWhere(type => (type != @interface) && (@interface.IsAssignableFrom(type)) && (type.IsInterface))
                     select type);
         } 
     }

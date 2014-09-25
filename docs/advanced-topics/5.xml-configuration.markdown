@@ -92,6 +92,19 @@ The simplest possible store is the native in-memory implementation, which is def
 
 By default a thread safe store is created unless the `threadSafe` attribute is set to false.
 
+### File store
+
+Because DotNetRDF doesn't come with a writable triple store backed by a dataset file RomanticWeb.dotNetRDF comes with
+its own simple implementation `RomanticWeb.DotNetRDF.FileTripleStore`. It also can be configured in XML:
+
+{% highlight xml linenos=table %}
+<romanticWeb.dotNetRDF>
+  <stores>
+    <file name="data-file" filePath="App_Data/store.nq" />
+  </stores>
+</romanticWeb.dotNetRDF>
+{% endhighlight %}
+
 ### Persistent triple stores
 
 DotNetRDF supports a wide variety of 3rd party triple stores. Romantic Web's XML configuration currently supports a

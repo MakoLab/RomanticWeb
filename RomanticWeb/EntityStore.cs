@@ -180,7 +180,9 @@ namespace RomanticWeb
 
         private DatasetChange CreateChangeForUpdate(EntityId entityId, EntityId graphUri, EntityQuad[] removedQuads, EntityQuad[] addedQuads)
         {
-            if (removedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
+            var update = new GraphUpdate(entityId, graphUri, removedQuads, addedQuads);
+
+            if (update.RemovedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
             {
                 var graphQuads = from entityQuad in GetEntityQuads(entityId)
                                  where entityQuad.Graph == Node.FromEntityId(graphUri)
@@ -188,7 +190,7 @@ namespace RomanticWeb
                 return new GraphReconstruct(entityId, graphUri, graphQuads);
             }
 
-            return new GraphUpdate(entityId, graphUri, removedQuads, addedQuads);
+            return update;
         }
 
         private void DeleteOrphanedBlankNodes(IEnumerable<EntityQuad> removedQuads)

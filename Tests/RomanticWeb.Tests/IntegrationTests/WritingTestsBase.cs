@@ -7,6 +7,7 @@ using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
+using VDS.RDF.Query.Builder;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -230,6 +231,50 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             MetagraphTripleCount.Should().Be(1);
+        }
+
+        [Test]
+        public void Should_write_correct_data_when_recreating_entity_with_blank_node()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Tomasz");
+            LoadTestFile("BlankNodes.trig");
+            
+            // when
+            EntityContext.Delete(entityId);
+            var person = EntityContext.Create<IPerson>(entityId);
+            var friend = EntityContext.Create<IPerson>(person.CreateBlankId());
+            person.KnowsOne = friend;
+            friend.Name = "Karol";
+            EntityContext.Commit();
+
+            // then
+            Store.Should().MatchAsk(
+                b => b.Subject(entityId).PredicateUri(Foaf.knows).Object("blank")
+                      .Subject("blank").PredicateUri(Foaf.givenName).Object("name"),
+                f => f.Str(f.Variable("name")) == "Karol" && f.IsBlank("blank"));
+        }
+
+        [Test]
+        public void Should_not_loose_triples_when_setting_same_blank()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Tomasz");
+            LoadTestFile("BlankNodes.trig");
+
+            // when
+            var person = EntityContext.Load<IPerson>(entityId);
+            var friend = person.KnowsOne;
+            person.KnowsOne = friend;
+
+            // then
+            Store.Should().MatchAsk(
+                b => b.Subject(entityId).PredicateUri(Foaf.knows).Object("blank")
+                      .Subject("blank").PredicateUri(Foaf.givenName).Object("name")
+                      .Subject("blank").PredicateUri(Foaf.knows).Object("nextBlank")
+                      .Subject("nextBlank").PredicateUri(Foaf.givenName).Object("secondName"),
+                f => f.Str(f.Variable("name")) == "Karol" && f.IsBlank("blank")
+                  && f.Str(f.Variable("secondName")) == "Gniewosław" && f.IsBlank("nextBlank"));
         }
 
         protected override void ChildSetup()

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 using RomanticWeb.Updates;
+using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Tests.Updates
 {
@@ -37,6 +38,19 @@ namespace RomanticWeb.Tests.Updates
         }
 
         [Test]
+        public void Should_combine_graph_update_after_reconstruct()
+        {
+            // when
+            _changes.Add(new GraphReconstruct(Entity, GraphA, new[] { GetQuad(1), GetQuad(2) }));
+            _changes.Add(new GraphUpdate(Entity, GraphA, new[] { GetQuad(1) }, new[] { GetQuad(3), GetQuad(2) }));
+
+            // then
+            _changes.Should().HaveCount(1);
+            _changes[GraphA].Should().HaveCount(1);
+            _changes.Single().Should().Match((GraphReconstruct g) => g.AddedQuads.Count() == 2);
+        }
+
+        [Test]
         public void Should_ignore_empty_changes()
         {
             // given
@@ -58,6 +72,11 @@ namespace RomanticWeb.Tests.Updates
             {
                 yield return new EntityQuad(Entity, randomNode(), randomNode(), randomNode());
             }
+        }
+
+        private EntityQuad GetQuad(int i)
+        {
+            return new EntityQuad(Entity, Node.ForUri(Rdf.Statement), Node.ForUri(Rdf.predicate), Node.ForLiteral(i.ToString()));
         }
     }
 }

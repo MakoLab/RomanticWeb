@@ -5,6 +5,9 @@ namespace RomanticWeb.Model
 {
     internal interface IEntityQuadCollection : ICollection<EntityQuad>
     {
+        /// <summary>
+        /// Gets 
+        /// </summary>
         IEnumerable<EntityQuad> this[EntityId entityId] { get; }
         
         IEnumerable<EntityQuad> this[Node entityId] { get; }

@@ -79,7 +79,10 @@ namespace RomanticWeb.Model
 
         public void Add(EntityQuad quad)
         {
+            var entity = GetEntityId(quad.EntityId);
+
             _quads.Add(quad);
+            EntityQuads(entity).Add(quad);
             EntityQuads(quad.EntityId).Add(quad);
             SubjectQuads(quad.Subject).Add(quad);
             SubjectPredicateQuads(quad.Subject, quad.Predicate).Add(quad);
@@ -107,7 +110,9 @@ namespace RomanticWeb.Model
 
         public bool Remove(EntityQuad entityTriple)
         {
+            var entity = GetEntityId(entityTriple.EntityId);
             EntityQuads(entityTriple.EntityId).Remove(entityTriple);
+            EntityQuads(entity).Remove(entityTriple);
             SubjectQuads(entityTriple.Subject).Remove(entityTriple);
             SubjectPredicateQuads(entityTriple.Subject, entityTriple.Predicate).Remove(entityTriple);
             return _quads.Remove(entityTriple);
@@ -121,6 +126,18 @@ namespace RomanticWeb.Model
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _quads.GetEnumerator();
+        }
+
+        private static EntityId GetEntityId(EntityId entityId)
+        {
+            var blankId = entityId as BlankId;
+            while (blankId != null)
+            {
+                entityId = blankId.RootEntityId;
+                blankId = entityId as BlankId;
+            }
+
+            return entityId;
         }
 
         private ISet<EntityQuad> EntityQuads(EntityId entityId)

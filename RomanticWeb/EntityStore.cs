@@ -119,7 +119,7 @@ namespace RomanticWeb
                     if (removed.Any(quad => quad.Object.IsBlank || quad.Subject.IsBlank))
                     {
                         var removedQuads = removed;
-                        _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), Quads.Where(q => q.Graph == removedQuads.Key)));
+                        _changesTracker.Add(new GraphReconstruct(entityId, removed.Key.ToEntityId(), _entityQuads.Where(q => q.Graph == removedQuads.Key)));
                     }
                 }
             }
@@ -187,7 +187,7 @@ namespace RomanticWeb
                 var graphQuads = from entityQuad in GetEntityQuads(entityId)
                                  where entityQuad.Graph == Node.FromEntityId(graphUri)
                                  select entityQuad;
-                return new GraphReconstruct(entityId, graphUri, Quads.Where(q => q.Graph == Node.FromEntityId(graphUri)));
+                return new GraphReconstruct(entityId, graphUri, graphQuads);
             }
 
             return update;

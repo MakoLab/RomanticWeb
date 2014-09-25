@@ -10,7 +10,7 @@ using RomanticWeb.Vocabularies;
 
 namespace RomanticWeb.Linq.Sparql
 {
-    /// <summary>Povides a SPARQL query parsing mechanism.</summary>
+    /// <summary>Provides a SPARQL query parsing mechanism.</summary>
     public class GenericSparqlQueryVisitor : QueryVisitorBase
     {
         #region Fields

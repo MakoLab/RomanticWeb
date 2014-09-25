@@ -9,11 +9,3 @@
 		?g <http://xmlns.com/foaf/0.1/primaryTopic> @entity . 
 	}
 };
-
-DELETE WHERE 
-{ 
-	GRAPH @metaGraph 
-	{ 
-		?g <http://xmlns.com/foaf/0.1/primaryTopic> @entity . 
-	} 
-}; 

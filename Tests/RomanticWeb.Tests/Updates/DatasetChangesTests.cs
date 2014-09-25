@@ -64,6 +64,21 @@ namespace RomanticWeb.Tests.Updates
             _changes.Should().HaveCount(0);
         }
 
+        [Test]
+        public void Should_replace_update_with_recreate()
+        {
+            // given
+            _changes.Add(new GraphUpdate(Entity, GraphA, new[] { GetQuad(1) }, new[] { GetQuad(3), GetQuad(2) }));
+
+            // when
+            _changes.Add(new GraphReconstruct(Entity, GraphA, new[] { GetQuad(1), GetQuad(2) }));
+
+            // then
+            _changes.HasChanges.Should().BeTrue();
+            _changes.Should().HaveCount(1);
+            _changes.Single().Should().Match((GraphReconstruct g) => g.AddedQuads.Count() == 2);
+        }
+
         private IEnumerable<EntityQuad> RandomQuads(int count)
         {
             var randomNode = new Func<Node>(() => Node.ForUri(new Uri("node://" + Guid.NewGuid().ToString("N"))));

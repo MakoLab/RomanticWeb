@@ -29,6 +29,14 @@ namespace RomanticWeb.Updates
             }
         }
 
+        public override bool IsEmpty
+        {
+            get
+            {
+                return _addedQuads.Count == 0;
+            }
+        }
+
         /// <summary>
         /// Returns a description of the change
         /// </summary>

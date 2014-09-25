@@ -96,6 +96,7 @@ namespace RomanticWeb.DotNetRDF
             var deleteCommands = new SparqlParameterizedString(commandText);
             deleteCommands.SetUri("graph", change.Graph.Uri);
             deleteCommands.SetUri("metaGraph", MetaGraphUri);
+            deleteCommands.SetUri("entity", change.Entity.Uri);
 
             return GetParsedCommands(deleteCommands);
         }

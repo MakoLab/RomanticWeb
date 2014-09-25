@@ -62,12 +62,17 @@ namespace RomanticWeb.Updates
         /// <inheritdoc />
         public override bool CanMergeWith(DatasetChange other)
         {
-            return other is GraphUpdate && base.CanMergeWith(other);
+            return (other is GraphUpdate || other is GraphReconstruct) && base.CanMergeWith(other);
         }
 
         /// <inheritdoc />
         public override DatasetChange MergeWith(DatasetChange other)
         {
+            if (other is GraphReconstruct)
+            {
+                return other;
+            }
+
             var otherUpdate = (GraphUpdate)other;
             var removalsCombined = RemovedQuads.Union(otherUpdate.RemovedQuads);
             var additionsCombined = AddedQuads.Union(otherUpdate.AddedQuads);

@@ -86,6 +86,7 @@ namespace RomanticWeb.Collections
             }
 
             _head = _tail = _context.Load<TNode>(Vocabularies.Rdf.nil);
+            Count = 0;
         }
 
         public bool Contains(T item)
@@ -183,9 +184,11 @@ namespace RomanticWeb.Collections
             else
             {
                 _head = nodeToDelete.Rest;
+                _owner.ListHead = _head;
             }
 
             _context.Delete(nodeToDelete.Id);
+            Count--;
         }
 
         private Tuple<IRdfListNode<T>, IRdfListNode<T>> GetNodeForItemWithPredecessor(T item)

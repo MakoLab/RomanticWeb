@@ -7,6 +7,7 @@ using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
+using VDS.RDF;
 using VDS.RDF.Query.Builder;
 
 namespace RomanticWeb.Tests.IntegrationTests
@@ -125,10 +126,11 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        public void Should_reconstruct_entity()
+        public void Should_reconstruct_graph_when_deleting_blank()
         {
             // given
-            IAlsoAgent entity = EntityContext.Create<IAlsoAgent>("http://magi/people/Tomasz");
+            Uri tomasz = new Uri("http://magi/people/Tomasz");
+            IAlsoAgent entity = EntityContext.Create<IAlsoAgent>(tomasz);
             IAgent someAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
             IAgent anotherAgent = EntityContext.Create<IAgent>(entity.CreateBlankId());
             entity.Knows.Add(someAgent);
@@ -136,11 +138,15 @@ namespace RomanticWeb.Tests.IntegrationTests
             EntityContext.Commit();
 
             // when
+            entity.Knows.Remove(someAgent);
             EntityContext.Delete(someAgent.Id, DeleteBehaviour.DeleteChildren | DeleteBehaviour.NullifyChildren);
             EntityContext.Commit();
 
             // then
-            AssertStoreCounts(6, 1);
+            AssertStoreCounts(5, 1);
+            IGraph dataGraph = Store[new Uri("http://data.magi/people/Tomasz")];
+            INode root = dataGraph.GetTriplesWithPredicate(Foaf.knows).Single().Object;
+            dataGraph.GetListItems(root).Should().HaveCount(1);
         }
 
         [Test]
@@ -277,6 +283,28 @@ namespace RomanticWeb.Tests.IntegrationTests
                   && f.Str(f.Variable("secondName")) == "Gniewosław" && f.IsBlank("nextBlank"));
         }
 
+        [Test]
+        public void Should_recreate_graph_with_complete_data()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Tomasz");
+            LoadTestFile("BlankNodes.trig");
+
+            // when
+            var person = EntityContext.Load<IPerson>(entityId);
+            var friend = EntityContext.Create<IPerson>(person.CreateBlankId());
+            friend.Name = "Jan";
+            person.Knows = new[] { friend };
+            EntityContext.Commit();
+
+            // then
+            Store.Triples.Should().HaveCount(7);
+            Store.Should().MatchAsk(
+                b => b.Subject(entityId).PredicateUri(Foaf.knows).Object("blank")
+                      .Subject("blank").PredicateUri(Foaf.givenName).Object("name"),
+                f => f.Str(f.Variable("name")) == "Jan" && f.IsBlank("blank"));
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());
@@ -285,8 +313,8 @@ namespace RomanticWeb.Tests.IntegrationTests
         private void AssertStoreCounts(int dataQuadsCount, int metagraphQuads)
         {
             EntityContext.Store.Quads.Should().HaveCount(dataQuadsCount, "that's how many quads internal store should contain");
-            MetagraphTripleCount.Should().Be(metagraphQuads, "that's how many quads external store should contain");
-            AllTriplesCount.Should().Be(metagraphQuads + dataQuadsCount, "that's how many quads meta graph should contain");
+            MetagraphTripleCount.Should().Be(metagraphQuads, "that's how many quads meta graph should contain");
+            AllTriplesCount.Should().Be(metagraphQuads + dataQuadsCount, "that's how many quads external store should contain");
         }
     }
 }

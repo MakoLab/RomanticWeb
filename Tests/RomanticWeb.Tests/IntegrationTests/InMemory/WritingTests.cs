@@ -12,6 +12,11 @@ namespace RomanticWeb.Tests.IntegrationTests.InMemory
         {
             get
             {
+                if (!Store.HasGraph(MetaGraphUri))
+                {
+                    return 0;
+                }
+                
                 return Store[MetaGraphUri].Triples.Count;
             }
         }

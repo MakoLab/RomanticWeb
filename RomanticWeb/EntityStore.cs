@@ -187,7 +187,7 @@ namespace RomanticWeb
                 var graphQuads = from entityQuad in GetEntityQuads(entityId)
                                  where entityQuad.Graph == Node.FromEntityId(graphUri)
                                  select entityQuad;
-                return new GraphReconstruct(entityId, graphUri, graphQuads);
+                return new GraphReconstruct(entityId, graphUri, Quads.Where(q => q.Graph == Node.FromEntityId(graphUri)));
             }
 
             return update;

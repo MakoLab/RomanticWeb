@@ -28,6 +28,13 @@ namespace RomanticWeb.Updates
         /// <param name="entity">The changed entity.</param>
         protected DatasetChange(EntityId entity)
         {
+            var blankId = entity as BlankId;
+            while (blankId != null)
+            {
+                entity = blankId.RootEntityId;
+                blankId = blankId.RootEntityId as BlankId;
+            }
+
             _entity = entity;
         }
 

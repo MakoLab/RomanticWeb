@@ -142,13 +142,67 @@ namespace RomanticWeb.Tests.Collections
         }
 
         [Test]
-        public void Should_calculate_count()
+        public void Should_calculate_count_for_new_list()
         {
             // given
             var list = new RdfListAdapter<IRdfListOwner, IRdfListNode<int>, int>(_context, _entity.Object, _override) { 4, 5, 6, 7, 8 };
 
             // then
             list.Count.Should().Be(5);
+        }
+
+        [Test]
+        public void Should_update_count_when_removing_elements()
+        {
+            // given
+            var list = new RdfListAdapter<IRdfListOwner, IRdfListNode<int>, int>(_context, _entity.Object, _override) { 4, 5, 6, 7, 8 };
+
+            // then
+            list.Remove(6);
+            list.Remove(8);
+
+            // then
+            list.Count.Should().Be(3);
+        }
+
+        [Test]
+        public void Should_update_count_when_adding_elements()
+        {
+            // given
+            var list = new RdfListAdapter<IRdfListOwner, IRdfListNode<int>, int>(_context, _entity.Object, _override) { 4, 5, 6, 7, 8 };
+
+            // then
+            list.Add(10);
+
+            // then
+            list.Count.Should().Be(6);
+        }
+
+        [Test]
+        public void Should_update_count_when_adding_and_removing_elements()
+        {
+            // given
+            var list = new RdfListAdapter<IRdfListOwner, IRdfListNode<int>, int>(_context, _entity.Object, _override) { 4, 5, 6, 7, 8 };
+
+            // then
+            list.Remove(6);
+            list.Remove(4);
+
+            // then
+            list.Count.Should().Be(3);
+        }
+
+        [Test]
+        public void Should_update_count_when_cleared()
+        {
+            // given
+            var list = new RdfListAdapter<IRdfListOwner, IRdfListNode<int>, int>(_context, _entity.Object, _override) { 4, 5, 6, 7, 8 };
+
+            // then
+            list.Clear();
+
+            // then
+            list.Count.Should().Be(0);
         }
 
         [TestCase(4, new[] { 8, 8, 41, 666 }, true)]

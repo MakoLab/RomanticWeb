@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
-using RomanticWeb.Tests.Linq;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
@@ -325,6 +324,33 @@ namespace RomanticWeb.Tests.IntegrationTests
                 tb => tb.Subject(hniewo.Uri).PredicateUri("schema:address").Object("addr")
                         .Subject("addr").PredicateUri("schema:streetAddress").Object("street"),
                 eb => eb.Str(eb.Variable("street")) == "Demokratyczna 46");
+        }
+
+        [Test]
+        public void Should_allow_modifying_retrieved_nodes_where_some_are_blank()
+        {
+            // given
+            EntityId hniewo = new Uri("http://magi/people/Gniewoslaw");
+            LoadTestFile("TriplesWithLiteralSubjects.trig");
+            var addresses = (from resources in EntityContext.AsQueryable<IPerson>()
+                             select resources.Address).ToList();
+
+            // when
+            foreach (var address in addresses)
+            {
+                address.City = "Litzmannstadt";
+            }
+
+            EntityContext.Commit();
+
+            // then
+            Store.Should().MatchAsk(
+                tb => tb.Subject(hniewo.Uri).PredicateUri("schema:address").Object("addr")
+                        .Subject("addr").PredicateUri("schema:addressLocality").Object("city"),
+                eb => eb.Str(eb.Variable("street")) == "Litzmannstadt");
+            Store.Should().MatchAsk(
+                tb => tb.Subject(new Uri("http://data.magi/addresses/Address")).PredicateUri("schema:addressLocality").Object("city"),
+                eb => eb.Str(eb.Variable("city")) == "Litzmannstadt");
         }
 
         protected override void ChildSetup()

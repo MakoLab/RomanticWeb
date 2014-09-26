@@ -196,6 +196,22 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
+        public void Selecting_entitys_blank_node_IEntity_property_multiple()
+        {
+            // given
+            var query = from resources in _entityContext.AsQueryable<IPerson>() 
+                          select resources.Address;
+
+            // when
+            var addresses = query.ToList();
+
+            // then
+            addresses.Should().HaveCount(2);
+            addresses.Should().Contain(addr => addr.City == "Łódź" && addr.Street == "Demokratyczna 46");
+            addresses.Should().Contain(addr => addr.City == "Łódź" && addr.Street == "Rzgowska 30");
+        }
+
+        [Test]
         public void Selecting_entitys_IEntity_property()
         {
             IAddress address = (from resources in _entityContext.AsQueryable<IPerson>()

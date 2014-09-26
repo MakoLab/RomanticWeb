@@ -50,7 +50,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// </summary>
         public IEnumerable<Node> ToNodes(object value, IEntityProxy proxy, IPropertyMapping property, IEntityContext context)
         {
-            var dictionaryIface = typeof(IDictionary<,>).MakeGenericType(property.ReturnType.GenericTypeArguments);
+            var dictionaryIface = typeof(IDictionary<,>).MakeGenericType(property.ReturnType.GetGenericArguments());
             var dictionaryType = GetDictionaryType(property);
 
             if (!dictionaryIface.IsInstanceOfType(value))
@@ -71,8 +71,9 @@ namespace RomanticWeb.Entities.ResultPostprocessing
 
         private Type GetDictionaryType(IPropertyMapping property)
         {
-            Type keyType = property.ReturnType.GenericTypeArguments[0];
-            Type valueType = property.ReturnType.GenericTypeArguments[1];
+            var genericTypeArguments = property.ReturnType.GetGenericArguments();
+            Type keyType = genericTypeArguments[0];
+            Type valueType = genericTypeArguments[1];
             Type pairEntityType = _typeProvider.GetEntryType(property);
             Type ownerType = _typeProvider.GetOwnerType(property);
 

@@ -11,12 +11,12 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Gets the URI node converters.
         /// </summary>
-        IReadOnlyCollection<INodeConverter> UriNodeConverters { get; }
+        IEnumerable<INodeConverter> UriNodeConverters { get; }
 
         /// <summary>
         /// Gets the literal node converters.
         /// </summary>
-        IReadOnlyCollection<ILiteralNodeConverter> LiteralNodeConverters { get; }
+        IEnumerable<ILiteralNodeConverter> LiteralNodeConverters { get; }
 
         /// <summary>
         /// Gets the converter.

@@ -104,7 +104,7 @@ namespace RomanticWeb.Mapping
         private IEntityMapping CreateMappingFromGenericDefinition(Type genericDefinition, Type entityType)
         {
             var openGenericProvider = _openGenericProviders[genericDefinition];
-            var provider = new ClosedGenericEntityMappingProvider(openGenericProvider, entityType.GenericTypeArguments);
+            var provider = new ClosedGenericEntityMappingProvider(openGenericProvider, entityType.GetGenericArguments());
 
             foreach (var visitor in _providerVisitors)
             {

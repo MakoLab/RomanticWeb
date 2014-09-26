@@ -74,7 +74,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
 
             if (typeof(IRdfListAdapter<>).IsAssignableFromSpecificGeneric(value.GetType()))
             {
-                yield return Node.FromEntityId(((IEntity)value.GetType().GetProperty("Head").GetValue(value)).Id);
+                yield return Node.FromEntityId(((IEntity)value.GetType().GetProperty("Head").GetValue(value, null)).Id);
             }
             else
             {

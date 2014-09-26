@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using VDS.RDF;
 using VDS.RDF.Parsing;
-using VDS.RDF.Query.Datasets;
 using VDS.RDF.Update;
 using VDS.RDF.Writing;
 
@@ -75,7 +74,7 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="storeWriter">Store writer to write the file.</param>
         public FileTripleStore(Stream fileStream, IStoreReader storeReader, IStoreWriter storeWriter)
         {
-            _fileStream = fileStream;
+            _fileStream = new NonClosingStreamWrapper(fileStream);
             _storeReader = storeReader;
             _storeWriter = storeWriter;
             Read();
@@ -87,7 +86,7 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="rdfWriter">RDF writer to write the file.</param>
         public FileTripleStore(Stream fileStream, IRdfReader rdfReader, IRdfWriter rdfWriter)
         {
-            _fileStream = fileStream;
+            _fileStream = new NonClosingStreamWrapper(fileStream);
             _rdfReader = rdfReader;
             _rdfWriter = rdfWriter;
             Read();
@@ -195,7 +194,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.Seek(0, SeekOrigin.Begin);
-                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096);
                 _storeReader.Load(this, fileReader);
             }
         }
@@ -216,7 +215,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.Seek(0, SeekOrigin.Begin);
-                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096, true);
+                TextReader fileReader = new StreamReader(_fileStream, System.Text.UTF8Encoding.UTF8, true, 4096);
                 _rdfReader.Load(graph, fileReader);
             }
         }
@@ -256,7 +255,7 @@ namespace RomanticWeb.DotNetRDF
             else
             {
                 _fileStream.SetLength(0);
-                TextWriter fileWriter = new StreamWriter(_fileStream, System.Text.UTF8Encoding.UTF8, 4096, true);
+                TextWriter fileWriter = new StreamWriter(_fileStream, System.Text.UTF8Encoding.UTF8, 4096);
                 _storeWriter.Save(this, fileWriter);
                 _fileStream.Flush();
             }

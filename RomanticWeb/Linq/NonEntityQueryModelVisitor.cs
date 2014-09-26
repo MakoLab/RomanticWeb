@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Remotion.Linq;
@@ -191,7 +190,7 @@ namespace RomanticWeb.Linq
         /// <summary>Visits body clauses.</summary>
         /// <param name="bodyClauses">Body clause to be visited.</param>
         /// <param name="queryModel">Query model containing given body clause.</param>
-        protected override void VisitBodyClauses(ObservableCollection<IBodyClause> bodyClauses, Remotion.Linq.QueryModel queryModel)
+        protected override void VisitBodyClauses(ObservableCollection<IBodyClause> bodyClauses, QueryModel queryModel)
         {
             foreach (var indexValuePair in bodyClauses.AsChangeResistantEnumerableWithIndex())
             {

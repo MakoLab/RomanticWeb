@@ -7,5 +7,8 @@ namespace RomanticWeb.TestEntities.Foaf
     {
         [Property("foaf", "givenName")]
         string Name { get; set; }
+
+        [Property("http://schema.org/address")]
+        IAddress Address { get; }
     }
 }

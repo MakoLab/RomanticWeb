@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RomanticWeb.Entities;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
+using RomanticWeb.Tests.Linq;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
@@ -303,6 +304,27 @@ namespace RomanticWeb.Tests.IntegrationTests
                 b => b.Subject(entityId).PredicateUri(Foaf.knows).Object("blank")
                       .Subject("blank").PredicateUri(Foaf.givenName).Object("name"),
                 f => f.Str(f.Variable("name")) == "Jan" && f.IsBlank("blank"));
+        }
+
+        [Test]
+        public void Should_allow_modifying_retrieved_blank_nodes()
+        {
+            // given
+            EntityId hniewo = new Uri("http://magi/people/Gniewoslaw");
+            LoadTestFile("TriplesWithLiteralSubjects.trig");
+            var address = (from resources in EntityContext.AsQueryable<IPerson>()
+                           where resources.Id == hniewo
+                           select resources.Address).Single();
+
+            // when
+            address.Street = "Demokratyczna 46";
+            EntityContext.Commit();
+
+            // then
+            Store.Should().MatchAsk(
+                tb => tb.Subject(hniewo.Uri).PredicateUri("schema:address").Object("addr")
+                        .Subject("addr").PredicateUri("schema:streetAddress").Object("street"),
+                eb => eb.Str(eb.Variable("street")) == "Demokratyczna 46");
         }
 
         protected override void ChildSetup()

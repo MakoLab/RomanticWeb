@@ -592,6 +592,19 @@ namespace RomanticWeb.Tests.IntegrationTests
             Factory.ActLike<ITrackedScopes>().TrackedScopes.Should().BeEmpty();
         }
 
+        [Test]
+        public void Should_load_multiple_levels_of_nested_blanks_to_store()
+        {
+            // given
+            LoadTestFile("BlankNodes.trig");
+
+            // when
+            EntityContext.Load<INoTypeAgent>(EntityId);
+
+            // then
+            EntityContext.Store.GetEntityQuads(EntityId).Should().HaveCount(6);
+        }
+
         protected override void ChildSetup()
         {
             Factory.WithNamedGraphSelector(new TestGraphSelector());

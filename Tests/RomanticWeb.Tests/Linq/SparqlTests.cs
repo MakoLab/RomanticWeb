@@ -38,6 +38,8 @@ namespace RomanticWeb.Tests.Linq
 
             List<IPerson> Knows { get; }
 
+            IPerson Known { get; }
+
             IAddress Address { get; }
 
             DateTime CreatedOn { get; }
@@ -196,11 +198,11 @@ namespace RomanticWeb.Tests.Linq
         }
 
         [Test]
-        public void Selecting_entitys_blank_node_IEntity_property_multiple()
+        public void Selecting_entitys_IEntity_property_no_matter_if_blank_or_not()
         {
             // given
             var query = from resources in _entityContext.AsQueryable<IPerson>() 
-                          select resources.Address;
+                        select resources.Address;
 
             // when
             var addresses = query.ToList();
@@ -209,6 +211,21 @@ namespace RomanticWeb.Tests.Linq
             addresses.Should().HaveCount(2);
             addresses.Should().Contain(addr => addr.City == "Łódź" && addr.Street == "Demokratyczna 46");
             addresses.Should().Contain(addr => addr.City == "Łódź" && addr.Street == "Rzgowska 30");
+        }
+
+        [Test]
+        public void Selecting_entitys_IEntity_property_with_complete_resource_graph()
+        {
+            // given
+            var query = (from resources in _entityContext.AsQueryable<IPerson>()
+                         select resources.Known);
+
+            // when
+            var people = query.ToList();
+
+            // then
+            people.Should().HaveCount(2);
+            people.Should().Contain(known => (known.Id is BlankId) && (known.Known.Id.Uri.AbsoluteUri == "http://magi/people/Dominik"));
         }
 
         [Test]
@@ -380,6 +397,7 @@ namespace RomanticWeb.Tests.Linq
                 Property("Surname", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
                 Property("Address", new Uri("http://schema.org/address"), typeof(IAddress), new AsEntityConverter<IAddress>());
                 Property("CreatedOn", new Uri("http://purl.org/dc/elements/1.1/date"), typeof(DateTime), new DateTimeConverter());
+                Property("Known", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>());
             }
         }
 

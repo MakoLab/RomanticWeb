@@ -156,6 +156,9 @@ namespace RomanticWeb.Linq.Model
 
         /// <summary>Checks if the given variable is bound.</summary>
         Bound = 0x00000011,
+
+        /// <summary>Inline conditional evaluator.</summary>
+        If = 0x00000012,
         #endregion
         #region Result modifiers
         /// <summary>Offset operator.</summary>

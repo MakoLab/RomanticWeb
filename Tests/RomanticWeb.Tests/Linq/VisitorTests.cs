@@ -135,7 +135,8 @@ namespace RomanticWeb.Tests.Linq
             string computedSubjectVariableName = string.Empty;
             string computedPredicateVariableName = string.Empty;
             string computedObjectVariableName = string.Empty;
-            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>())).Returns<Query>(model =>
+            IEnumerable<EntityId> actualEntities = new HashSet<EntityId>();
+            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>(), out actualEntities)).Returns<Query, IEnumerable<EntityId>>((model, resultingEntities) =>
             {
                 GenericSparqlQueryVisitor visitor = VisitModel(model);
                 computedCommandText = visitor.CommandText;
@@ -144,6 +145,7 @@ namespace RomanticWeb.Tests.Linq
                 computedSubjectVariableName = visitor.Variables.Subject;
                 computedPredicateVariableName = visitor.Variables.Predicate;
                 computedObjectVariableName = visitor.Variables.Object;
+                resultingEntities = actualEntities;
                 return GetSamplePersonTriples(5);
             });
 

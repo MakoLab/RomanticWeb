@@ -21,8 +21,9 @@ namespace RomanticWeb
 
         /// <summary>Executes a SPARQL query and returns resulting quads</summary>
         /// <param name="queryModel">Query model to be executed.</param>
+        /// <param name="resultingEntities">Enumeration of entity identifiers beeing in fact the resulting ones.</param>
         /// <returns>Enumeration of entity quads beeing a result of the query.</returns>
-        IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel);
+        IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel, out IEnumerable<EntityId> resultingEntities);
 
         /// <summary>Executes a SPARQL query with scalar result.</summary>
         /// <param name="queryModel">Query model to be executed.</param>

@@ -13,14 +13,16 @@ namespace RomanticWeb.Linq.Sparql
         private readonly string _predicate;
         private readonly string _object;
         private readonly string _metaGraph;
+        private readonly string _owner;
         private readonly string _scalar;
 
-        internal SparqlQueryVariables(string entity, string subject, string predicate, string o, string metaGraph, string scalar)
+        internal SparqlQueryVariables(string entity, string subject, string predicate, string @object, string owner, string metaGraph, string scalar)
         {
             _entity = entity;
             _subject = subject;
             _predicate = predicate;
-            _object = o;
+            _object = @object;
+            _owner = owner;
             _metaGraph = metaGraph;
             _scalar = scalar;
         }
@@ -66,6 +68,17 @@ namespace RomanticWeb.Linq.Sparql
             get
             {
                 return _object;
+            }
+        }
+
+        /// <summary>
+        /// Gets the owning entity variable name.
+        /// </summary>
+        public string Owner
+        {
+            get
+            {
+                return _owner;
             }
         }
 

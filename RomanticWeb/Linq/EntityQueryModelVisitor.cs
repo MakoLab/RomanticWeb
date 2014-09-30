@@ -424,19 +424,18 @@ namespace RomanticWeb.Linq
                                                    from constrain in accessor.Elements.OfType<EntityConstrain>()
                                                    where (constrain.Value is Identifier) && ((Identifier)constrain.Value == identifier)
                                                    select accessor.About).FirstOrDefault() ?? identifier;
-                UnboundConstrain genericConstrain = new UnboundConstrain();
-                genericConstrain.Subject = identifier;
-                genericConstrain.Predicate = new Identifier(identifier.Name + "P");
-                genericConstrain.Value = new Identifier(identifier.Name + "O");
+                UnboundConstrain genericConstrain = new UnboundConstrain() { Subject = new Identifier(identifier.Name + "_s"), Predicate = new Identifier(identifier.Name + "_p"), Value = new Identifier(identifier.Name + "_o") };
                 entityAccessor.Elements.Add(genericConstrain);
+                UnboundConstrain targetConstrain = new UnboundConstrain() { Subject = identifier, Predicate = new Identifier(identifier.Name + "p"), Value = new Identifier(identifier.Name + "o") };
+                entityAccessor.Elements.Add(targetConstrain);
                 _query.Select.Clear();
-                _query.Select.Add(genericConstrain);
-                _query.Select.Add(entityAccessor);
-
                 if (_mainFromComponent.Elements[0] is UnboundConstrain)
                 {
-                    _mainFromComponent.Elements.RemoveAt(0);
+                    ConditionalConstrainSelector selector = new ConditionalConstrainSelector(entityAccessor, genericConstrain, (UnboundConstrain)_mainFromComponent.Elements[0]);
+                    _query.Select.Add(selector);
                 }
+
+                _query.Select.Add(entityAccessor);
             }
         }
 
@@ -444,7 +443,10 @@ namespace RomanticWeb.Linq
         {
             if (_mainFromComponent.Elements[0] is UnboundConstrain)
             {
-                entityAccessor.Elements.Add(new Filter(new BinaryOperator(MethodNames.Equal, ((UnboundConstrain)_mainFromComponent.Elements[0]).Predicate, new Literal(_propertyMapping.Uri))));
+                UnboundConstrain unboundConstrain = (UnboundConstrain)_mainFromComponent.Elements[0];
+                entityAccessor.Elements.Add(new Filter(new BinaryOperator(MethodNames.Equal, unboundConstrain.Subject, _mainFromComponent.About)));
+                entityAccessor.Elements.Add(new Filter(new BinaryOperator(MethodNames.Equal, unboundConstrain.Predicate, new Literal(_propertyMapping.Uri))));
+                _query.Select.Add((Identifier)unboundConstrain.Subject);
             }
         }
 

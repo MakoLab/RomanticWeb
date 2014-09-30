@@ -65,7 +65,14 @@ namespace RomanticWeb.Linq
         [return: AllowNull]
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            return (returnDefaultWhenEmpty ? ExecuteCollection<T>(queryModel).SingleOrDefault() : ExecuteCollection<T>(queryModel).Single());
+            if (queryModel.ResultOperators.OfType<FirstResultOperator>().Any())
+            {
+                return (returnDefaultWhenEmpty ? ExecuteCollection<T>(queryModel).FirstOrDefault() : ExecuteCollection<T>(queryModel).First());
+            }
+            else
+            {
+                return (returnDefaultWhenEmpty ? ExecuteCollection<T>(queryModel).SingleOrDefault() : ExecuteCollection<T>(queryModel).Single());
+            }
         }
 
         /// <summary>Returns a resulting collection of a query.</summary>
@@ -81,8 +88,9 @@ namespace RomanticWeb.Linq
             }
 
             Model.Query sparqlQuery = VisitQueryModel(queryModel);
-            IEnumerable<RomanticWeb.Model.EntityQuad> quads = _entitySource.ExecuteEntityQuery(sparqlQuery);
-            IEnumerable<T> result = (!typeof(IEntity).IsAssignableFrom(typeof(T)) ? CreateLiteralResultSet<T>(quads) : CreateEntityResultSet<T>(quads));
+            IEnumerable<EntityId> actualEntities;
+            IEnumerable<RomanticWeb.Model.EntityQuad> quads = _entitySource.ExecuteEntityQuery(sparqlQuery, out actualEntities);
+            IEnumerable<T> result = (!typeof(IEntity).IsAssignableFrom(typeof(T)) ? CreateLiteralResultSet<T>(quads, actualEntities) : CreateEntityResultSet<T>(quads, actualEntities));
 
             foreach (CastResultOperator resultOperator in resultOperators)
             {
@@ -102,7 +110,7 @@ namespace RomanticWeb.Linq
             return _queryOptimizer.Optimize(_modelVisitor.Query);
         }
 
-        private IEnumerable<T> CreateLiteralResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads)
+        private IEnumerable<T> CreateLiteralResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads, IEnumerable<EntityId> actualEntities)
         {
             IEnumerable<T> result;
             if (!(_modelVisitor.PropertyMapping is EntityQueryModelVisitor.IdentifierPropertyMapping))
@@ -117,21 +125,19 @@ namespace RomanticWeb.Linq
             return result;
         }
 
-        private IEnumerable<T> CreateEntityResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads)
+        private IEnumerable<T> CreateEntityResultSet<T>(IEnumerable<RomanticWeb.Model.EntityQuad> quads, IEnumerable<EntityId> actualEntities)
         {
-            ISet<EntityId> ids = new HashSet<EntityId>();
             var groupedTriples = from triple in quads
-                                 group triple by new { triple.EntityId } into tripleGroup
+                                 group triple by triple.EntityId into tripleGroup
                                  select tripleGroup;
 
             foreach (var triples in groupedTriples)
             {
-                ids.Add(triples.Key.EntityId);
-                _store.AssertEntity(triples.Key.EntityId, triples);
+                _store.AssertEntity(triples.Key, triples);
             }
 
             var createMethodInfo = EntityLoadMethod.MakeGenericMethod(new[] { typeof(T) });
-            return ids.Select(id => (T)createMethodInfo.Invoke(_entityContext, new object[] { id }));
+            return actualEntities.Select(id => (T)createMethodInfo.Invoke(_entityContext, new object[] { id }));
         }
         #endregion
     }

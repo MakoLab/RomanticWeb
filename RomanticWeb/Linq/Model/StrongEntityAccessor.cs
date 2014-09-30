@@ -22,7 +22,7 @@ namespace RomanticWeb.Linq.Model
 
     /// <summary>Provides details about entity accessor.</summary>
     [QueryComponentNavigator(typeof(StrongEntityAccessorNavigator))]
-    public class StrongEntityAccessor : QueryElement, ISelectableQueryComponent
+    public class StrongEntityAccessor : QueryElement, ISelectableQueryComponent, IExpression
     {
         #region Fields
         private Identifier _about;
@@ -90,7 +90,7 @@ namespace RomanticWeb.Linq.Model
         public Identifier UnboundGraphName { [return: AllowNull] get; set; }
 
         /// <summary>Gets an enumeration of selectable expressions.</summary>
-        IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return (_about != null ? new IExpression[] { _about } : new IExpression[0]); } }
+        IEnumerable<IExpression> ISelectableQueryComponent.Expressions { get { return new IExpression[] { this }; } }
 
         /// <summary>Gets a source type of this accessor.</summary>
         internal SourceTypes Source { get { return _source; } }

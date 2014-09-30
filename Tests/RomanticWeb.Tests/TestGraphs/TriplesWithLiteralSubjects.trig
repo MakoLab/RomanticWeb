@@ -30,16 +30,21 @@
 
 <http://data.magi/people/Gniewoslaw>
 {
-	<people/Gniewoslaw> a foaf:Person;
+	<people/Gniewoslaw> a foaf:Person ;
 						foaf:givenName "Gniewosław" ;
 						foaf:familyName "Rzepka" ;
-						foaf:knows <people/Tomasz> ;
+						foaf:knows <people/Tomasz> , _:person ;
 						dc:date "2014-04-21"^^xsd:dateTime ;
 						schema:address [
 							a schema:PostalAddress ;
 							schema:addressLocality "Łódź" ;
 							schema:streetAddress "Rzgowska 30" ;
 						] .
+	_:person a foaf:Person ;
+		foaf:familyName "Przemek" ;
+		foaf:givenName "Szadkowski" ;
+		schema:address <addreses/Address> ;
+		foaf:knows <people/Dominik> ;
 }
 
 <http://data.magi/people/Karol>

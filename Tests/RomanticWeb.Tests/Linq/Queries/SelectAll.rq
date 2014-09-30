@@ -1,6 +1,6 @@
 ﻿PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
 
-SELECT ?s ?p ?o ?Gperson0 ?person0 
+SELECT ?s ?p ?o ?Gperson0 ?person0 ?person0 
 WHERE 
 { 
 	GRAPH ?Gperson0 

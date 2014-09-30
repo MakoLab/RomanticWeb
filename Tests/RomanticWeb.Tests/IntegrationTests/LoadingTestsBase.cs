@@ -162,17 +162,17 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
-        [TestCase("mailto:RBall_Consult@msn.com")]
-        public void Should_select_entities_by_sub_query(string userId)
+        [TestCase("http://chem.com/product/CV1-2566/Cure")]
+        public void Should_select_entities_by_sub_query(string propertyId)
         {
             // given
             LoadTestFile("LargeDataset.nq");
 
-            IUser user = EntityContext.Load<IEntity>(new EntityId(new Uri(userId))).AsEntity<IUser>();
+            ICureComplex property = EntityContext.Load<ICureComplex>(new EntityId(new Uri(propertyId)));
 
             // when
             IList<IProduct> products = (from product in EntityContext.AsQueryable<IProduct>()
-                                        where user.FavoriteProduct.Contains(product)
+                                        where product.CureComplex.Contains(property)
                                         select product).ToList();
 
             // then

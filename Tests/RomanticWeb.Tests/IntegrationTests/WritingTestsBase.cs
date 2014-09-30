@@ -205,7 +205,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_retain_changes_to_entity_initially_deleted()
         {
             // given
-            var entityId = new Uri("http://magi/people/Karol"); 
+            var entityId = new Uri("http://magi/people/Karol");
             LoadTestFile("AssociatedInstances.trig");
 
             // when
@@ -245,7 +245,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             // given
             var entityId = new Uri("http://magi/people/Tomasz");
             LoadTestFile("BlankNodes.trig");
-            
+
             // when
             EntityContext.Delete(entityId);
             var person = EntityContext.Create<IPerson>(entityId);
@@ -309,10 +309,10 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_allow_modifying_retrieved_blank_nodes()
         {
             // given
-            EntityId hniewo = new Uri("http://magi/people/Gniewoslaw");
+            EntityId gniewo = new Uri("http://magi/people/Gniewoslaw");
             LoadTestFile("TriplesWithLiteralSubjects.trig");
             var address = (from resources in EntityContext.AsQueryable<IPerson>()
-                           where resources.Id == hniewo
+                           where resources.Id == gniewo
                            select resources.Address).Single();
 
             // when
@@ -321,8 +321,8 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Store.Should().MatchAsk(
-                tb => tb.Subject(hniewo.Uri).PredicateUri("schema:address").Object("addr")
-                        .Subject("addr").PredicateUri("schema:streetAddress").Object("street"),
+                tb => tb.Subject(gniewo.Uri).PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "address")).Object("addr")
+                        .Subject("addr").PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "streetAddress")).Object("street"),
                 eb => eb.Str(eb.Variable("street")) == "Demokratyczna 46");
         }
 
@@ -330,7 +330,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Should_allow_modifying_retrieved_nodes_where_some_are_blank()
         {
             // given
-            EntityId hniewo = new Uri("http://magi/people/Gniewoslaw");
+            EntityId gniewo = new Uri("http://magi/people/Gniewoslaw");
             LoadTestFile("TriplesWithLiteralSubjects.trig");
             var addresses = (from resources in EntityContext.AsQueryable<IPerson>()
                              select resources.Address).ToList();
@@ -345,12 +345,12 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             // then
             Store.Should().MatchAsk(
-                tb => tb.Subject(hniewo.Uri).PredicateUri("schema:address").Object("addr")
-                        .Subject("addr").PredicateUri("schema:addressLocality").Object("city"),
+                tb => tb.Subject(gniewo.Uri).PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "address")).Object("addr")
+                        .Subject("addr").PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "addressLocality")).Object("street"),
                 eb => eb.Str(eb.Variable("street")) == "Litzmannstadt");
             Store.Should().MatchAsk(
-                tb => tb.Subject(new Uri("http://data.magi/addresses/Address")).PredicateUri("schema:addressLocality").Object("city"),
-                eb => eb.Str(eb.Variable("city")) == "Litzmannstadt");
+                tb => tb.Subject(new Uri("http://magi/addresses/Address")).PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "addressLocality")).Object("street"),
+                eb => eb.Str(eb.Variable("street")) == "Litzmannstadt");
         }
 
         protected override void ChildSetup()

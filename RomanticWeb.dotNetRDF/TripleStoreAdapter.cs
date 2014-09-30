@@ -68,20 +68,30 @@ namespace RomanticWeb.DotNetRDF
 
         /// <summary>Executes a SPARQL query and returns resulting quads</summary>
         /// <param name="queryModel">Query model to be executed.</param>
+        /// <param name="resultingEntities">Enumeration of entity identifiers beeing in fact the resulting ones.</param>
         /// <returns>Enumeration of entity quads beeing a result of the query.</returns>
-        public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel)
+        public IEnumerable<EntityQuad> ExecuteEntityQuery(Query queryModel, out IEnumerable<EntityId> resultingEntities)
         {
             SparqlQueryVariables variables;
             var resultSet = ExecuteSelect(GetSparqlQuery(queryModel, out variables));
-            return from result in resultSet
-                   let id = (result[variables.Entity] is IBlankNode ?
-                    new BlankId(((IBlankNode)result[variables.Entity]).InternalID, null, ((IUriNode)result[variables.MetaGraph]).Uri) :
-                    new EntityId(((IUriNode)result[variables.Entity]).Uri))
-                   let s = result[variables.Subject].WrapNode(id)
-                   let p = result[variables.Predicate].WrapNode(id)
-                   let o = result[variables.Object].WrapNode(id)
-                   let g = result[variables.MetaGraph].WrapNode(id)
-                   select new EntityQuad(id, s, p, o, g);
+            ISet<EntityId> resultEntities = new HashSet<EntityId>();
+            resultingEntities = resultEntities;
+            IList<EntityQuad> result = new List<EntityQuad>(resultSet.Count);
+            foreach (var entry in resultSet)
+            {
+                EntityId owner = new EntityId(((IUriNode)entry[variables.Owner]).Uri);
+                EntityId id = (entry[variables.Entity] is IBlankNode ?
+                    new BlankId(((IBlankNode)entry[variables.Entity]).InternalID, owner, ((IUriNode)entry[variables.MetaGraph]).Uri) :
+                    new EntityId(((IUriNode)entry[variables.Entity]).Uri));
+                Model.Node s = entry[variables.Subject].WrapNode(owner);
+                Model.Node p = entry[variables.Predicate].WrapNode(owner);
+                Model.Node o = entry[variables.Object].WrapNode(owner);
+                Model.Node g = entry[variables.MetaGraph].WrapNode(owner);
+                result.Add(new EntityQuad(id, s, p, o, g));
+                resultEntities.Add(id);
+            }
+
+            return result;
         }
 
         /// <summary>Executes a SPARQL query with scalar result.</summary>

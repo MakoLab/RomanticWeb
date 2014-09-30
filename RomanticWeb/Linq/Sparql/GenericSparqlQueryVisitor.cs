@@ -22,6 +22,7 @@ namespace RomanticWeb.Linq.Sparql
         private string _subjectVariableName;
         private string _predicateVariableName;
         private string _objectVariableName;
+        private string _ownerVariableName;
         private string _scalarVariableName;
         private bool _cancelLast = false;
         private StrongEntityAccessor _entityAccessorToExpand = null;
@@ -30,6 +31,7 @@ namespace RomanticWeb.Linq.Sparql
         private IList<IQueryComponent> _injectedComponents = new List<IQueryComponent>();
         private VisitedComponentCollection _visitedComponents;
         private string _indentation = System.String.Empty;
+        private Action<StrongEntityAccessor> _currentStrongEntityAccessorVisitDelegate;
         #endregion
 
         #region Constructors
@@ -51,6 +53,11 @@ namespace RomanticWeb.Linq.Sparql
             MethodNameMap[MethodNames.RandomInt] = "RAND";
             MethodNameMap[MethodNames.String] = "STR";
         }
+
+        public GenericSparqlQueryVisitor()
+        {
+            _currentStrongEntityAccessorVisitDelegate = VisitStrongEntityAccessorInternal;
+        }
         #endregion
 
         #region Properties
@@ -69,6 +76,7 @@ namespace RomanticWeb.Linq.Sparql
                     _subjectVariableName,
                     _predicateVariableName,
                     _objectVariableName,
+                    _ownerVariableName,
                     _metaGraphVariableName,
                     _scalarVariableName);
             }
@@ -97,7 +105,7 @@ namespace RomanticWeb.Linq.Sparql
         public override void VisitQuery(Query query)
         {
             InitQuery(query.IsSubQuery ? null : query.Prefixes);
-            BeginQuery(query.IsSubQuery, query.QueryForm, query.Select, query.CreateVariableName);
+            BeginQuery(query.IsSubQuery, query.QueryForm, query.Select, query.CreateVariableName, query.Elements.OfType<StrongEntityAccessor>().FirstOrDefault());
             _entityAccessorToExpand = ((query.Limit >= 0) || (query.Offset >= 0) || (query.OrderBy.Count > 0) ? (StrongEntityAccessor)query.Elements.LastOrDefault(item => item is StrongEntityAccessor) : null);
             foreach (QueryElement element in query.Elements)
             {
@@ -470,101 +478,7 @@ namespace RomanticWeb.Linq.Sparql
         /// <param name="entityAccessor">Strong entity accessor to be visited.</param>
         protected override void VisitStrongEntityAccessor(StrongEntityAccessor entityAccessor)
         {
-            int startIndex = _commandText.Length;
-            _currentEntityAccessor.Push(entityAccessor);
-            _commandText.Append(_indentation);
-            _commandText.AppendFormat("GRAPH ?G{0} {{ ", entityAccessor.About.Name);
-            _commandText.AppendLine();
-            _indentation += "\t";
-            foreach (QueryElement element in entityAccessor.Elements)
-            {
-                VisitComponent(element);
-            }
-
-            foreach (IQueryComponent element in _injectedComponents)
-            {
-                VisitComponent(element);
-                if (element is Call)
-                {
-                    _commandText.Append(" ");
-                }
-            }
-
-            if ((_entityAccessorToExpand != null) && (_entityAccessorToExpand.Equals(entityAccessor)))
-            {
-                int currentStartIndex = _commandText.Length;
-                _entityAccessorToExpand.FindAllComponents<Identifier>().Select(item => _variableNameOverride[item] = item.Name + "_sub").ToList();
-                _commandText.Append(_indentation);
-                _commandText.AppendLine("{ ");
-                _indentation += "\t";
-                _commandText.Append(_indentation);
-                _commandText.Append("SELECT DISTINCT ");
-                VisitComponent(_entityAccessorToExpand.About);
-                _commandText.AppendLine();
-                _commandText.AppendLine(" WHERE { ");
-                _indentation += "\t";
-                _commandText.Append(_indentation);
-                _commandText.AppendFormat(" GRAPH ?G{0} {{ ", _variableNameOverride[_entityAccessorToExpand.About]);
-                _commandText.AppendLine();
-                _indentation += "\t";
-                foreach (QueryElement element in entityAccessor.Elements.SkipWhile(item => item is UnboundConstrain))
-                {
-                    VisitComponent(element);
-                }
-
-                if (_entityAccessorToExpand.UnboundGraphName == null)
-                {
-                    _commandText.AppendLine();
-                    _commandText.AppendLine("} ");
-                    _indentation = _indentation.Substring(0, _indentation.Length - 1);
-                    _commandText.Append(_indentation);
-                    _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, _variableNameOverride[_entityAccessorToExpand.About], Foaf.primaryTopic);
-                    _commandText.AppendLine();
-                    _indentation = _indentation.Substring(0, _indentation.Length - 1);
-                    _commandText.Append(_indentation);
-                    _commandText.AppendLine("} ");
-                }
-                else
-                {
-                    _commandText.AppendLine();
-                    _indentation = _indentation.Substring(0, _indentation.Length - 1);
-                    _commandText.Append(_indentation);
-                    _commandText.AppendLine("} ");
-                }
-
-                VisitQueryResultModifiers(_entityAccessorToExpand.OwnerQuery.OrderBy, _entityAccessorToExpand.OwnerQuery.Offset, _entityAccessorToExpand.OwnerQuery.Limit);
-                _commandText.AppendLine();
-                _commandText.Append(_indentation);
-                _commandText.Append("} FILTER (");
-                VisitComponent(_entityAccessorToExpand.About);
-                _variableNameOverride.Clear();
-                _commandText.Append("=");
-                VisitComponent(_entityAccessorToExpand.About);
-                _commandText.Append(") ");
-
-                int currentLength = _commandText.Length - currentStartIndex;
-                string expansionText = _commandText.ToString().Substring(currentStartIndex, currentLength);
-                _commandText = _commandText.Remove(currentStartIndex, currentLength).Insert(startIndex, expansionText);
-                _visitedComponents.Update(startIndex, currentLength);
-            }
-
-            if (entityAccessor.UnboundGraphName == null)
-            {
-                _indentation = _indentation.Substring(0, _indentation.Length - 1);
-                _commandText.Append(_indentation);
-                _commandText.AppendLine("} ");
-                _commandText.Append(_indentation);
-                _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, entityAccessor.About.Name, Foaf.primaryTopic);
-                _commandText.AppendLine();
-            }
-            else
-            {
-                _indentation = _indentation.Substring(0, _indentation.Length - 1);
-                _commandText.Append(_indentation);
-                _commandText.AppendLine("} ");
-            }
-
-            _currentEntityAccessor.Pop();
+            _currentStrongEntityAccessorVisitDelegate(entityAccessor);
         }
 
         /// <summary>Visit an optional patterns.</summary>
@@ -612,6 +526,115 @@ namespace RomanticWeb.Linq.Sparql
         #endregion
 
         #region Private methods
+        private void VisitStrongEntityAccessorInternal(StrongEntityAccessor entityAccessor)
+        {
+            int startIndex = _commandText.Length;
+            _currentEntityAccessor.Push(entityAccessor);
+            _commandText.Append(_indentation);
+            _commandText.AppendFormat("GRAPH ?G{0} {{ ", entityAccessor.About.Name);
+            _commandText.AppendLine();
+            _indentation += "\t";
+            foreach (QueryElement element in entityAccessor.Elements)
+            {
+                VisitComponent(element);
+            }
+
+            foreach (IQueryComponent element in _injectedComponents)
+            {
+                VisitComponent(element);
+                if (element is Call)
+                {
+                    _commandText.Append(" ");
+                }
+            }
+
+            if ((_entityAccessorToExpand != null) && (_entityAccessorToExpand.Equals(entityAccessor)))
+            {
+                ExpandEntityAccessor(entityAccessor, ref startIndex);
+            }
+
+            if (entityAccessor.UnboundGraphName == null)
+            {
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
+                _commandText.Append(_indentation);
+                _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, entityAccessor.About.Name, Foaf.primaryTopic);
+                _commandText.AppendLine();
+            }
+            else
+            {
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
+            }
+
+            _currentEntityAccessor.Pop();
+        }
+
+        private void VisitStrongEntityAccessorInternalQuick(StrongEntityAccessor entityAccessor)
+        {
+            VisitComponent(entityAccessor.About);
+        }
+
+        private void ExpandEntityAccessor(StrongEntityAccessor entityAccessor, ref int startIndex)
+        {
+            int currentStartIndex = _commandText.Length;
+            _entityAccessorToExpand.FindAllComponents<Identifier>().Select(item => _variableNameOverride[item] = item.Name + "_sub").ToList();
+            _commandText.Append(_indentation);
+            _commandText.AppendLine("{ ");
+            _indentation += "\t";
+            _commandText.Append(_indentation);
+            _commandText.Append("SELECT DISTINCT ");
+            VisitComponent(_entityAccessorToExpand.About);
+            _commandText.AppendLine();
+            _commandText.AppendLine(" WHERE { ");
+            _indentation += "\t";
+            _commandText.Append(_indentation);
+            _commandText.AppendFormat(" GRAPH ?G{0} {{ ", _variableNameOverride[_entityAccessorToExpand.About]);
+            _commandText.AppendLine();
+            _indentation += "\t";
+            foreach (QueryElement element in entityAccessor.Elements.SkipWhile(item => item is UnboundConstrain))
+            {
+                VisitComponent(element);
+            }
+
+            if (_entityAccessorToExpand.UnboundGraphName == null)
+            {
+                _commandText.AppendLine();
+                _commandText.AppendLine("} ");
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, _variableNameOverride[_entityAccessorToExpand.About], Foaf.primaryTopic);
+                _commandText.AppendLine();
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
+            }
+            else
+            {
+                _commandText.AppendLine();
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
+            }
+
+            VisitQueryResultModifiers(_entityAccessorToExpand.OwnerQuery.OrderBy, _entityAccessorToExpand.OwnerQuery.Offset, _entityAccessorToExpand.OwnerQuery.Limit);
+            _commandText.AppendLine();
+            _commandText.Append(_indentation);
+            _commandText.Append("} FILTER (");
+            VisitComponent(_entityAccessorToExpand.About);
+            _variableNameOverride.Clear();
+            _commandText.Append("=");
+            VisitComponent(_entityAccessorToExpand.About);
+            _commandText.Append(") ");
+
+            int currentLength = _commandText.Length - currentStartIndex;
+            string expansionText = _commandText.ToString().Substring(currentStartIndex, currentLength);
+            _commandText = _commandText.Remove(currentStartIndex, currentLength).Insert(startIndex, expansionText);
+            _visitedComponents.Update(startIndex, currentLength);
+        }
+
         private void VisitComplexEntityContrain(BinaryOperator binaryOperator)
         {
             string operatorString;
@@ -700,87 +723,172 @@ namespace RomanticWeb.Linq.Sparql
                 ((binaryOperator.LeftOperand is Literal) && (((Literal)binaryOperator.LeftOperand).Value == null)));
         }
 
-        private void ProcessSelectable(bool isSubQuery, ISelectableQueryComponent expression, Func<string, string> createVariableName)
+        private void ProcessSelectable(bool isSubQuery, ISelectableQueryComponent expression, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
         {
-            if (!isSubQuery)
+            System.Reflection.MethodInfo processSelectable = typeof(GenericSparqlQueryVisitor).GetMethod("ProcessSelectable" + expression.GetType().Name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (processSelectable != null)
             {
-                if (expression is IdentifierEntityAccessor)
-                {
-                    if ((_metaGraphVariableName == null) && (_entityVariableName == null))
-                    {
-                        _metaGraphVariableName = String.Format("G{0}", ((StrongEntityAccessor)expression).About.Name);
-                        _entityVariableName = ((StrongEntityAccessor)expression).About.Name + "_Distinct";
-                    }
-
-                    _subjectVariableName = ((StrongEntityAccessor)expression).About.Name;
-                    _predicateVariableName = ((StrongEntityAccessor)expression).About.Name + "_Predicate";
-                    _objectVariableName = ((StrongEntityAccessor)expression).About.Name + "_Object";
-                    _commandText.AppendFormat(
-                        "DISTINCT(?{2}) AS ?{1} ?{0} ?{3} ?{4} ",
-                        _metaGraphVariableName,
-                        _entityVariableName,
-                        ((StrongEntityAccessor)expression).About.Name,
-                        _predicateVariableName,
-                        _objectVariableName);
-                }
-                else if (expression is StrongEntityAccessor)
-                {
-                    StrongEntityAccessor entityAccessor = (StrongEntityAccessor)expression;
-                    if ((entityAccessor.UnboundGraphName != null) && (entityAccessor.UnboundGraphName != entityAccessor.About))
-                    {
-                        if ((_metaGraphVariableName == null) && (_entityVariableName == null))
-                        {
-                            _metaGraphVariableName = "graph";
-                            _entityVariableName = ((StrongEntityAccessor)expression).About.Name;
-                        }
-
-                        _commandText.AppendFormat(
-                            "IF(BOUND(?G{0}),?G{0},?G{1}) AS ?{2} ",
-                            entityAccessor.About.Name,
-                            entityAccessor.UnboundGraphName.Name,
-                            _metaGraphVariableName);
-                    }
-                    else
-                    {
-                        if ((_metaGraphVariableName == null) && (_entityVariableName == null))
-                        {
-                            _metaGraphVariableName = String.Format("G{0}", _entityVariableName = ((StrongEntityAccessor)expression).About.Name);
-                        }
-
-                        _commandText.AppendFormat("?{0} ", _metaGraphVariableName);
-                    }
-                }
-                else if (expression is UnboundConstrain)
-                {
-                    UnboundConstrain unboundConstrain = (UnboundConstrain)expression;
-                    if ((unboundConstrain.Subject is Identifier) && (unboundConstrain.Predicate is Identifier) && (unboundConstrain.Value is Identifier))
-                    {
-                        _subjectVariableName = ((Identifier)unboundConstrain.Subject).Name;
-                        _predicateVariableName = ((Identifier)unboundConstrain.Predicate).Name;
-                        _objectVariableName = ((Identifier)unboundConstrain.Value).Name;
-                    }
-                }
-                else if (expression is Call)
-                {
-                    if (_scalarVariableName == null)
-                    {
-                        _scalarVariableName = createVariableName(((Call)expression).Member.ToString());
-                    }
-                }
-                else if (expression is Alias)
-                {
-                    Alias alias = (Alias)expression;
-                    if ((_scalarVariableName == null) && (alias.Name != null))
-                    {
-                        _scalarVariableName = alias.Name.Name;
-                    }
-                }
+                processSelectable.Invoke(this, new object[] { expression, isSubQuery, createVariableName, mainEntityAccessor });
             }
 
             foreach (IExpression selectableExpression in expression.Expressions)
             {
                 VisitComponent(selectableExpression);
                 _commandText.Append(" ");
+            }
+        }
+
+        private void ProcessSelectableIdentifierEntityAccessor(IdentifierEntityAccessor expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if (_currentStrongEntityAccessorVisitDelegate == VisitStrongEntityAccessorInternal)
+            {
+                _currentStrongEntityAccessorVisitDelegate = VisitStrongEntityAccessorInternalQuick;
+            }
+
+            if (!isSubQuery)
+            {
+                if ((_metaGraphVariableName == null) && (_entityVariableName == null))
+                {
+                    _metaGraphVariableName = String.Format("G{0}", expression.About.Name);
+                    _entityVariableName = _ownerVariableName = expression.About.Name + "_Distinct";
+                }
+
+                _subjectVariableName = expression.About.Name;
+                _predicateVariableName = expression.About.Name + "_Predicate";
+                _objectVariableName = expression.About.Name + "_Object";
+
+                _commandText.AppendFormat(
+                    "DISTINCT(?{2}) AS ?{1} ?{0} ?{3} ?{4} ?{5} ",
+                    _metaGraphVariableName,
+                    _entityVariableName,
+                    expression.About.Name,
+                    _predicateVariableName,
+                    _objectVariableName,
+                    _ownerVariableName);
+            }
+        }
+
+        private void ProcessSelectableStrongEntityAccessor(StrongEntityAccessor expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if (_currentStrongEntityAccessorVisitDelegate == VisitStrongEntityAccessorInternal)
+            {
+                _currentStrongEntityAccessorVisitDelegate = VisitStrongEntityAccessorInternalQuick;
+            }
+
+            if (!isSubQuery)
+            {
+                if ((expression.UnboundGraphName != null) && (expression.UnboundGraphName != expression.About))
+                {
+                    _metaGraphVariableName = (_metaGraphVariableName == null ? "graph" : _metaGraphVariableName);
+                    _entityVariableName = (_entityVariableName == null ? expression.About.Name : _entityVariableName);
+                    _ownerVariableName = (_ownerVariableName == null ? expression.About.Name : _ownerVariableName);
+                    _commandText.AppendFormat("IF(BOUND(?G{0}),?G{0},?G{1}) AS ?{2} ", expression.About.Name, expression.UnboundGraphName.Name, _metaGraphVariableName);
+                }
+                else
+                {
+                    _entityVariableName = (_entityVariableName == null ? expression.About.Name : _entityVariableName);
+                    _metaGraphVariableName = (_metaGraphVariableName == null ? String.Format("G{0}", _entityVariableName) : _metaGraphVariableName);
+                    _ownerVariableName = (_ownerVariableName == null ? expression.About.Name : _ownerVariableName);
+                    _commandText.AppendFormat("?{0} ?{1} ", _metaGraphVariableName, _entityVariableName);
+                }
+            }
+        }
+
+        private void ProcessSelectableUnboundConstrain(UnboundConstrain expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if ((!isSubQuery) && (expression.Subject is Identifier) && (expression.Predicate is Identifier) && (expression.Value is Identifier))
+            {
+                _subjectVariableName = ((Identifier)expression.Subject).Name;
+                _predicateVariableName = ((Identifier)expression.Predicate).Name;
+                _objectVariableName = ((Identifier)expression.Value).Name;
+            }
+        }
+
+        private void ProcessSelectableCall(Call expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if ((!isSubQuery) && (_scalarVariableName == null))
+            {
+                _scalarVariableName = createVariableName(expression.Member.ToString());
+            }
+        }
+
+        private void ProcessSelectableAlias(Alias expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if ((!isSubQuery) && (_scalarVariableName == null) && (expression.Name != null))
+            {
+                _scalarVariableName = expression.Name.Name;
+            }
+        }
+
+        private void ProcessSelectableIdentifier(Identifier expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if (!isSubQuery)
+            {
+                if (_subjectVariableName == null)
+                {
+                    _subjectVariableName = expression.Name;
+                }
+                else if (_predicateVariableName == null)
+                {
+                    _predicateVariableName = expression.Name;
+                }
+                else if (_objectVariableName == null)
+                {
+                    _objectVariableName = expression.Name;
+                }
+                else if ((_entityVariableName == null) || (_entityVariableName == _ownerVariableName))
+                {
+                    _entityVariableName = expression.Name;
+                }
+            }
+        }
+
+        private void ProcessSelectableConditionalConstrainSelector(ConditionalConstrainSelector expression, bool isSubQuery, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
+        {
+            if (!isSubQuery)
+            {
+                if (mainEntityAccessor != null)
+                {
+                    _currentStrongEntityAccessorVisitDelegate = entityAccessor =>
+                        {
+                            if (_metaGraphVariableName == null)
+                            {
+                                _commandText.AppendFormat("?G{0}", entityAccessor.About.Name);
+                            }
+                            else
+                            {
+                                _commandText.Append("IF(ISBLANK(");
+                                VisitComponent(entityAccessor.About);
+                                _commandText.Append("),");
+                                VisitComponent(mainEntityAccessor.About);
+                                _commandText.Append(",");
+                                VisitComponent(entityAccessor.About);
+                                _commandText.AppendFormat(") AS ?{0} ?{1}", _ownerVariableName, _entityVariableName);
+                            }
+                        };
+
+                    _ownerVariableName = "entity";
+                }
+
+                _commandText.Append("DISTINCT ");
+                int index = 0;
+                foreach (IExpression selectable in ((ISelectableQueryComponent)expression).Expressions)
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            _subjectVariableName = (selectable is Alias ? ((Alias)selectable).Name.Name : (selectable is Identifier ? ((Identifier)selectable).Name : null));
+                            break;
+                        case 1:
+                            _predicateVariableName = (selectable is Alias ? ((Alias)selectable).Name.Name : (selectable is Identifier ? ((Identifier)selectable).Name : null));
+                            break;
+                        case 2:
+                            _objectVariableName = (selectable is Alias ? ((Alias)selectable).Name.Name : (selectable is Identifier ? ((Identifier)selectable).Name : null));
+                            break;
+                    }
+
+                    index++;
+                }
             }
         }
 
@@ -806,7 +914,7 @@ namespace RomanticWeb.Linq.Sparql
             }
         }
 
-        private void BeginQuery(bool isSubQuery, QueryForms queryForm, IList<ISelectableQueryComponent> select, Func<string, string> createVariableName)
+        private void BeginQuery(bool isSubQuery, QueryForms queryForm, IList<ISelectableQueryComponent> select, Func<string, string> createVariableName, StrongEntityAccessor mainEntityAccessor)
         {
             if ((_commandText.Length > 0) && (_commandText[_commandText.Length - 1] != '\n'))
             {
@@ -824,10 +932,13 @@ namespace RomanticWeb.Linq.Sparql
             {
                 if (select.Count > 0)
                 {
+                    Action<StrongEntityAccessor> temp = _currentStrongEntityAccessorVisitDelegate;
                     foreach (ISelectableQueryComponent expression in select)
                     {
-                        ProcessSelectable(isSubQuery, expression, createVariableName);
+                        ProcessSelectable(isSubQuery, expression, createVariableName, mainEntityAccessor);
                     }
+
+                    _currentStrongEntityAccessorVisitDelegate = temp;
                 }
                 else
                 {

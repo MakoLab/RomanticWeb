@@ -54,7 +54,15 @@ namespace RomanticWeb.Tests.Linq
         public void Should_assert_triples_resulting_from_query()
         {
             // given
-            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>())).Returns(GetSamplePersonTriples(5));
+            int totalCount = 5;
+            ISet<EntityId> actualEntities = new HashSet<EntityId>();
+            foreach (EntityId id in GetSamplePersonTriples(totalCount).Select(item => item.EntityId).Distinct())
+            {
+                actualEntities.Add(id);
+            }
+
+            IEnumerable<EntityId> resultingEntities = actualEntities;
+            _entitySource.Setup(e => e.ExecuteEntityQuery(It.IsAny<Query>(), out resultingEntities)).Returns(GetSamplePersonTriples(totalCount));
             var query = from p in persons
                         where p.FirstName.Substring(2, 1) == "A"
                         select p;
@@ -63,8 +71,8 @@ namespace RomanticWeb.Tests.Linq
             var result = query.ToList();
 
             // then
-            Assert.That(result, Has.Count.EqualTo(5));
-            _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t => t.Count() == 10)), Times.Exactly(5));
+            Assert.That(result, Has.Count.EqualTo(totalCount));
+            _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t => t.Count() == 10)), Times.Exactly(totalCount));
         }
 
         protected IEnumerable<EntityQuad> GetSamplePersonTriples(int count)

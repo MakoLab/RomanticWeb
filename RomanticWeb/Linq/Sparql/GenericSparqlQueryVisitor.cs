@@ -581,6 +581,13 @@ namespace RomanticWeb.Linq.Sparql
         {
             int currentStartIndex = _commandText.Length;
             _entityAccessorToExpand.FindAllComponents<Identifier>().Select(item => _variableNameOverride[item] = item.Name + "_sub").ToList();
+            bool indentationChanged = false;
+            if (_indentation.Length > 0)
+            {
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                indentationChanged = true;
+            }
+
             _commandText.Append(_indentation);
             _commandText.AppendLine("{ ");
             _indentation += "\t";
@@ -588,10 +595,11 @@ namespace RomanticWeb.Linq.Sparql
             _commandText.Append("SELECT DISTINCT ");
             VisitComponent(_entityAccessorToExpand.About);
             _commandText.AppendLine();
-            _commandText.AppendLine(" WHERE { ");
+            _commandText.Append(_indentation);
+            _commandText.AppendLine("WHERE { ");
             _indentation += "\t";
             _commandText.Append(_indentation);
-            _commandText.AppendFormat(" GRAPH ?G{0} {{ ", _variableNameOverride[_entityAccessorToExpand.About]);
+            _commandText.AppendFormat("GRAPH ?G{0} {{ ", _variableNameOverride[_entityAccessorToExpand.About]);
             _commandText.AppendLine();
             _indentation += "\t";
             foreach (QueryElement element in entityAccessor.Elements.SkipWhile(item => item is UnboundConstrain))
@@ -601,9 +609,9 @@ namespace RomanticWeb.Linq.Sparql
 
             if (_entityAccessorToExpand.UnboundGraphName == null)
             {
-                _commandText.AppendLine();
-                _commandText.AppendLine("} ");
                 _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
                 _commandText.Append(_indentation);
                 _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, _variableNameOverride[_entityAccessorToExpand.About], Foaf.primaryTopic);
                 _commandText.AppendLine();
@@ -613,26 +621,34 @@ namespace RomanticWeb.Linq.Sparql
             }
             else
             {
-                _commandText.AppendLine();
+                _indentation = _indentation.Substring(0, _indentation.Length - 1);
+                _commandText.Append(_indentation);
+                _commandText.AppendLine("} ");
                 _indentation = _indentation.Substring(0, _indentation.Length - 1);
                 _commandText.Append(_indentation);
                 _commandText.AppendLine("} ");
             }
 
             VisitQueryResultModifiers(_entityAccessorToExpand.OwnerQuery.OrderBy, _entityAccessorToExpand.OwnerQuery.Offset, _entityAccessorToExpand.OwnerQuery.Limit);
-            _commandText.AppendLine();
+            _indentation = _indentation.Substring(0, _indentation.Length - 1);
             _commandText.Append(_indentation);
-            _commandText.Append("} FILTER (");
+            _commandText.AppendLine("} ");
+            _commandText.Append(_indentation);
+            _commandText.Append("FILTER (");
             VisitComponent(_entityAccessorToExpand.About);
             _variableNameOverride.Clear();
             _commandText.Append("=");
             VisitComponent(_entityAccessorToExpand.About);
-            _commandText.Append(") ");
+            _commandText.AppendLine(") ");
 
             int currentLength = _commandText.Length - currentStartIndex;
             string expansionText = _commandText.ToString().Substring(currentStartIndex, currentLength);
             _commandText = _commandText.Remove(currentStartIndex, currentLength).Insert(startIndex, expansionText);
             _visitedComponents.Update(startIndex, currentLength);
+            if (indentationChanged)
+            {
+                _indentation += "\t";
+            }
         }
 
         private void VisitComplexEntityContrain(BinaryOperator binaryOperator)

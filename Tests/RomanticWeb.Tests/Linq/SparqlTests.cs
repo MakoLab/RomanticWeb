@@ -387,6 +387,16 @@ namespace RomanticWeb.Tests.Linq
             Assert.That(persons.Count(), Is.EqualTo(1));
         }
 
+        [Test]
+        [TestCase(Vocabularies.Foaf.BaseUri + "givenName")]
+        public void Select_by_unmapped_predicate(string predicateUri)
+        {
+            IEntity person = (from resource in _entityContext.AsQueryable()
+                              where (string)resource.Predicate(new Uri(predicateUri)) == "Tomasz"
+                              select resource).FirstOrDefault();
+            Assert.That(person, Is.Not.Null);
+        }
+
         private class TestPersonMap : TestEntityMapping<IPerson>
         {
             public TestPersonMap()

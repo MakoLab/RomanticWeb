@@ -211,6 +211,7 @@ namespace RomanticWeb.Linq
             System.Linq.Expressions.ExpressionType expressionType = expression.NodeType;
             switch (expression.NodeType)
             {
+                case System.Linq.Expressions.ExpressionType.Convert:
                 case System.Linq.Expressions.ExpressionType.TypeAs:
                     return VisitExpression(expression.Operand);
                 default:
@@ -395,38 +396,7 @@ namespace RomanticWeb.Linq
 
                 if (entityAccessor != null)
                 {
-                    Type type = null;
-                    string name = null;
-                    if (predicate == Rdf.subject)
-                    {
-                        name = "Id";
-                        type = typeof(IEntity);
-                    }
-                    else
-                    {
-                        IPropertyMapping propertyMapping = _entityContext.Mappings.MappingFor(expression.Arguments[0].Type).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
-
-                        if (propertyMapping == null)
-                        {
-                            ExceptionHelper.ThrowMappingException(predicate);
-                        }
-
-                        if (propertyMapping.DeclaringType != expression.Arguments[0].Type)
-                        {
-                            propertyMapping = _entityContext.Mappings.MappingFor(propertyMapping.DeclaringType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
-
-                            if (propertyMapping == null)
-                            {
-                                ExceptionHelper.ThrowMappingException(predicate);
-                            }
-                        }
-
-                        type = propertyMapping.EntityMapping.EntityType;
-                        name = propertyMapping.Name;
-                    }
-
-                    System.Linq.Expressions.MemberExpression propertyExpression = System.Linq.Expressions.Expression.Property(expression.Arguments[0], type, name);
-                    return VisitMemberExpression(propertyExpression);
+                    return VisitPredicateMethodCallInternal(expression, predicate, entityAccessor);
                 }
 
                 return expression;
@@ -779,6 +749,64 @@ namespace RomanticWeb.Linq
         #endregion
 
         #region Private methods
+        private System.Linq.Expressions.Expression VisitPredicateMethodCallInternal(System.Linq.Expressions.MethodCallExpression expression, Uri predicate, StrongEntityAccessor entityAccessor)
+        {
+            Type type = null;
+            string name = null;
+            if (predicate == Rdf.subject)
+            {
+                name = "Id";
+                type = typeof(IEntity);
+            }
+            else
+            {
+                IEntityMapping entityMapping = _entityContext.Mappings.MappingFor(expression.Arguments[0].Type);
+                if (entityMapping == null)
+                {
+                    return VisitPredicateMethodCallUnsafe(expression, predicate, entityAccessor);
+                }
+
+                IPropertyMapping propertyMapping = entityMapping.Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
+                if (propertyMapping == null)
+                {
+                    ExceptionHelper.ThrowMappingException(predicate);
+                }
+
+                if (propertyMapping.DeclaringType != expression.Arguments[0].Type)
+                {
+                    propertyMapping = _entityContext.Mappings.MappingFor(propertyMapping.DeclaringType).Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri);
+
+                    if (propertyMapping == null)
+                    {
+                        ExceptionHelper.ThrowMappingException(predicate);
+                    }
+                }
+
+                type = propertyMapping.EntityMapping.EntityType;
+                name = propertyMapping.Name;
+            }
+
+            System.Linq.Expressions.MemberExpression propertyExpression = System.Linq.Expressions.Expression.Property(expression.Arguments[0], type, name);
+            return VisitMemberExpression(propertyExpression);
+        }
+
+        private System.Linq.Expressions.Expression VisitPredicateMethodCallUnsafe(System.Linq.Expressions.MethodCallExpression expression, Uri predicate, StrongEntityAccessor entityAccessor)
+        {
+            _query.AddEntityAccessor(entityAccessor);
+            Identifier memberIdentifier = new Identifier(_query.CreateVariableName(predicate.GetFragmentOrLastSegment()));
+            EntityConstrain constrain = new EntityConstrain();
+            constrain.Predicate = new Literal(predicate);
+            constrain.Value = memberIdentifier;
+            if (!entityAccessor.Elements.Contains(constrain))
+            {
+                entityAccessor.Elements.Add(constrain);
+            }
+
+            HandleComponent(memberIdentifier);
+            _lastComponent = memberIdentifier;
+            return expression;
+        }
+
         private void HandleComponent(QueryComponent component)
         {
             if (_currentComponent.Count > 0)

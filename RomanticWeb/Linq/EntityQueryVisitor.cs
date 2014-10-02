@@ -341,6 +341,7 @@ namespace RomanticWeb.Linq
                                 entityAccessor.SourceExpression.FromExpression,
                                 (count > 1 ? types.Skip(1).Select(item => item.Uri).ToArray() : new Uri[0]));
                             entityAccessor.Elements.Add(constrain);
+                            HandleComponent(constrain);
                             _lastComponent = constrain;
                         }
                     }
@@ -800,6 +801,14 @@ namespace RomanticWeb.Linq
             if (!entityAccessor.Elements.Contains(constrain))
             {
                 entityAccessor.Elements.Add(constrain);
+            }
+
+            if (constrain.ShouldBeOptional(_currentComponent))
+            {
+                entityAccessor.Elements.Remove(constrain);
+                OptionalPattern optional = new OptionalPattern();
+                optional.Patterns.Add(constrain);
+                entityAccessor.Elements.Add(optional);
             }
 
             HandleComponent(memberIdentifier);

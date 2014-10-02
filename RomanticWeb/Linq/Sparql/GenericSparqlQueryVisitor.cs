@@ -666,27 +666,62 @@ namespace RomanticWeb.Linq.Sparql
                     throw new NotImplementedException(String.Format("Binary operator '{0}' is not supported.", binaryOperator.Member));
             }
 
-            switch (operatorString)
+            string currentIndentation = _indentation;
+            _indentation = System.String.Empty;
+            if ((binaryOperator.LeftOperand is EntityConstrain) && (binaryOperator.RightOperand is EntityConstrain))
             {
-                case "||":
+                _commandText.AppendFormat("{0}{{ ", (operatorString == "||" ? "EXISTS " : System.String.Empty));
+                VisitComponent(binaryOperator.LeftOperand);
+                TrimWhiteSpaces('.');
+                if (operatorString == "||")
+                {
+                    _commandText.Append(" } || EXISTS { ");
+                }
+
+                VisitComponent(binaryOperator.RightOperand);
+                TrimWhiteSpaces('.');
+                _commandText.Append("} ");
+            }
+            else
+            {
+                if (binaryOperator.LeftOperand is EntityConstrain)
+                {
+                    _commandText.Append("EXISTS { ");
+                    VisitComponent(binaryOperator.LeftOperand);
+                    TrimWhiteSpaces('.');
+                    _commandText.AppendFormat(" }} {0} ", operatorString);
+                    if (binaryOperator.RightOperand is BinaryOperator)
                     {
-                        _commandText.Append("EXISTS { ");
-                        VisitComponent(binaryOperator.LeftOperand);
-                        _commandText.Append(" } || EXISTS { ");
-                        VisitComponent(binaryOperator.RightOperand);
-                        _commandText.Append("} ");
-                        break;
+                        _commandText.Append("(");
                     }
 
-                case "&&":
+                    VisitComponent(binaryOperator.RightOperand);
+                    if (binaryOperator.RightOperand is BinaryOperator)
                     {
-                        _commandText.Append("{ ");
-                        VisitComponent(binaryOperator.LeftOperand);
-                        VisitComponent(binaryOperator.RightOperand);
-                        _commandText.Append("} ");
-                        break;
+                        _commandText.Append(")");
                     }
+                }
+                else
+                {
+                    if (binaryOperator.LeftOperand is BinaryOperator)
+                    {
+                        _commandText.Append("(");
+                    }
+
+                    VisitComponent(binaryOperator.LeftOperand);
+                    if (binaryOperator.LeftOperand is BinaryOperator)
+                    {
+                        _commandText.Append(")");
+                    }
+
+                    _commandText.AppendFormat(" {0} EXISTS {{ ", operatorString);
+                    VisitComponent(binaryOperator.RightOperand);
+                    TrimWhiteSpaces('.');
+                    _commandText.Append(" } ");
+                }
             }
+
+            _indentation = currentIndentation;
         }
 
         private void VisitEntityIsNullCheck(BinaryOperator binaryOperator)
@@ -1012,6 +1047,25 @@ namespace RomanticWeb.Linq.Sparql
         private void VisitNullLiteral(Type literalType)
         {
             throw new NotSupportedException("Null literals are not supported in SPARQL.");
+        }
+
+        private void TrimWhiteSpaces(params char[] optionalCharactersToTrim)
+        {
+            int startIndex = _commandText.Length;
+            for (int index = _commandText.Length - 1; index >= 0; index--)
+            {
+                if ((!Char.IsWhiteSpace(_commandText[index])) && ((optionalCharactersToTrim == null) ||
+                    ((optionalCharactersToTrim != null) && (!optionalCharactersToTrim.Contains(_commandText[index])))))
+                {
+                    startIndex = index + 1;
+                    break;
+                }
+            }
+
+            if ((startIndex >= 0) && (startIndex < _commandText.Length - 1))
+            {
+                _commandText.Remove(startIndex, _commandText.Length - startIndex);
+            }
         }
         #endregion
     }

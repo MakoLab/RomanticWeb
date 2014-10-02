@@ -12,6 +12,7 @@ using RomanticWeb.Mapping;
 using RomanticWeb.NamedGraphs;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
+using RomanticWeb.Vocabularies;
 using VDS.RDF;
 
 namespace RomanticWeb.Tests.Linq
@@ -385,6 +386,18 @@ namespace RomanticWeb.Tests.Linq
                                             select person).ToList();
             
             Assert.That(persons.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Select_filter_with_id_substring_and_type_constrain_check()
+        {
+            EntityId typeConstrain = new EntityId(RomanticWeb.Vocabularies.Foaf.Person);
+            IEnumerable<IEntity> resources = (from resource in _entityContext.AsQueryable()
+                                              where ((resource.Id.ToString().ToLower().Contains("tomasz")) || (((string)resource.Predicate(Foaf.givenName)).ToLower().Contains("tomasz"))) &&
+                                                (resource.Is(new EntityId[] { typeConstrain }))
+                                              select resource).ToList();
+
+            Assert.That(resources.Count(), Is.Not.EqualTo(0));
         }
 
         [Test]

@@ -15,7 +15,7 @@
   </Target>
 
   <Target Name="GitHubLink" AfterTargets="Build">
-    <Exec Command='"$(MSBuildProjectDirectory)\Tools\GitHubLink.exe" "$(MSBuildProjectDirectory)" -u https://github.com/MakoLab/RomanticWeb'
+    <Exec Command='"$(MSBuildProjectDirectory)\Tools\GitLink.exe" "$(MSBuildProjectDirectory)" -u https://github.com/MakoLab/RomanticWeb'
           ContinueOnError="true" IgnoreExitCode="true"></Exec>
   </Target>
 

@@ -19,7 +19,11 @@ Next you need to go to Visual Studio options and check the box shown below. Rest
 
 ![Visual Studio - Enable source server support](/images/visualstudio_enablesourceserversupport.png)
 
-You should now be ready to debug the project without local git and symbol server
+It is also important to set a writable symbols cache path.
+
+![Visual Studio - Symbols Cache path](/images/visualstudio_symbolscachepath.png)
+
+You should now be ready to debug the project without local git and symbol server.
 
 ## How it works?
 

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using ImpromptuInterface;
 using Moq;
 using NUnit.Framework;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.NamedGraphs;
@@ -18,15 +20,17 @@ namespace RomanticWeb.Tests.Entities
         private Mock<IEntityMapping> _mapping;
         private Mock<IEntityContext> _context;
         private Mock<INamedGraphSelector> _graphSelector;
+        private EntityStore _entityStore;
 
         [SetUp]
         public void Setup()
         {
+            _entityStore = new EntityStore(new Mock<RomanticWeb.Updates.IDatasetChangesTracker>().Object);
             _mapping = new Mock<IEntityMapping>(MockBehavior.Strict);
             _context = new Mock<IEntityContext>(MockBehavior.Strict);
             _graphSelector = new Mock<INamedGraphSelector>();
 
-            _context.Setup(c => c.Store).Returns(new EntityStore(new Mock<RomanticWeb.Updates.IDatasetChangesTracker>().Object));
+            _context.Setup(c => c.Store).Returns(_entityStore);
             _context.Setup(c => c.InitializeEnitity(It.IsAny<IEntity>()));
             _graphSelector.Setup(g => g.SelectGraph(It.IsAny<EntityId>(), It.IsAny<IEntityMapping>(), It.IsAny<IPropertyMapping>()))
                           .Returns(new Uri("urn:default:graph"));
@@ -74,6 +78,28 @@ namespace RomanticWeb.Tests.Entities
 
             // then
             _graphSelector.Verify(c => c.SelectGraph(_entityId, _mapping.Object, propertyMapping.Object), Times.Once);
+        }
+
+        [Test]
+        public void Should_convert_to_absolute_a_relative_uri_EntityId_property_value()
+        {
+            // given
+            var baseUri = new Uri("http://test.org/");
+            var baseUriSelectonPolicy = new Mock<IBaseUriSelectionPolicy>();
+            baseUriSelectonPolicy.Setup(instance => instance.SelectBaseUri(It.IsAny<EntityId>())).Returns(baseUri);
+
+            var propertyMapping = new Mock<IPropertyMapping>();
+            propertyMapping.SetupGet(instance => instance.Uri).Returns(Rdf.predicate);
+            propertyMapping.SetupGet(instance => instance.Converter).Returns(new EntityIdConverter(baseUriSelectonPolicy.Object));
+            _mapping.Setup(m => m.PropertyFor("property")).Returns(propertyMapping.Object);
+
+            var value = new Uri("/test", UriKind.Relative);
+
+            // when
+            Impromptu.InvokeSet(_entityProxy, "property", new EntityId(value));
+
+            // then
+            _entityStore.Quads.Any(item => (item.Object.IsUri) && (item.Object.Uri.AbsoluteUri == new Uri(baseUri, value).AbsoluteUri));
         }
     }
 }

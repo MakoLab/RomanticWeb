@@ -11,6 +11,13 @@ namespace RomanticWeb.Converters
     /// <summary>Statically typed converter for <see cref="EntityId"/>.</summary>
     public class EntityIdConverter : EntityIdConverter<EntityId>
     {
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter"/>.</summary>
+        /// <param name="baseUriSelectionPolicy"></param>
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
+        public EntityIdConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+            : base(baseUriSelectionPolicy)
+        {
+        }
     }
 
     /// <summary>Generic converter for any type of entity id.</summary>
@@ -19,6 +26,15 @@ namespace RomanticWeb.Converters
     public class EntityIdConverter<TEntityId> : INodeConverter where TEntityId : EntityId
     {
         private static TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TEntityId));
+
+        private IBaseUriSelectionPolicy _baseUriSelectionPolicy;
+
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter<TEntityId>"/>.</summary>
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
+        public EntityIdConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        {
+            _baseUriSelectionPolicy = baseUriSelectionPolicy;
+        }
 
         /// <inheritdoc />
         public object Convert(Node node, IEntityContext context)
@@ -40,7 +56,19 @@ namespace RomanticWeb.Converters
         /// <inheritdoc />
         public Node ConvertBack(object obj)
         {
-            return Node.ForUri(((TEntityId)obj).Uri);
+            if (obj is BlankId)
+            {
+                BlankId blank = (BlankId)obj;
+                return Node.ForBlank(blank.Identifier, blank.RootEntityId, blank.Graph);
+            }
+
+            Uri uri = ((TEntityId)obj).Uri;
+            if ((!uri.IsAbsoluteUri) && (_baseUriSelectionPolicy != null))
+            {
+                uri = new Uri(_baseUriSelectionPolicy.SelectBaseUri((TEntityId)obj), uri);
+            }
+
+            return Node.ForUri(uri);
         }
     }
 }

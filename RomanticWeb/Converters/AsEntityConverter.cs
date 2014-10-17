@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using NullGuard;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -10,14 +12,21 @@ namespace RomanticWeb.Converters
     public class AsEntityConverter<TEntity> : INodeConverter where TEntity : IEntity
     {
         private static readonly MethodInfo AsEntityMethod = Info.OfMethod("RomanticWeb", "RomanticWeb.Entities.EntityExtensions", "AsEntity", "IEntity").MakeGenericMethod(typeof(TEntity));
-        private static readonly INodeConverter EntityIdConverter = new EntityIdConverter();
+        private readonly INodeConverter _entityIdConverter;
+
+        /// <summary>Creates instance of the <see cref="IBaseUriSelectionPolicy"/>.</summary>
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
+        public AsEntityConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        {
+            _entityIdConverter = new EntityIdConverter(baseUriSelectionPolicy);
+        }
 
         /// <summary>
         /// Converts entity
         /// </summary>
         public object Convert(Node node, IEntityContext context)
         {
-            var entityId = (EntityId)EntityIdConverter.Convert(node, context);
+            var entityId = (EntityId)_entityIdConverter.Convert(node, context);
             return AsEntityMethod.Invoke(null, new object[] { context.Load<IEntity>(entityId) });
         }
 
@@ -26,7 +35,7 @@ namespace RomanticWeb.Converters
         /// </summary>
         public Node ConvertBack(object obj)
         {
-            return Node.FromEntityId(((IEntity)obj).Id);
+            return _entityIdConverter.ConvertBack(((IEntity)obj).Id);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace RomanticWeb.Tests.Linq
             public TestPersonMap()
             {
                 Class(Vocabularies.Foaf.Person);
-                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>());
+                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>(null));
                 Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
                 Property("Surname", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
             }
@@ -83,7 +83,7 @@ namespace RomanticWeb.Tests.Linq
         {
             public TestTypedEntityMap()
             {
-                Collection("Types", Vocabularies.Rdf.type, typeof(ICollection<EntityId>), new EntityIdConverter());
+                Collection("Types", Vocabularies.Rdf.type, typeof(ICollection<EntityId>), new EntityIdConverter(null));
             }
         }
 

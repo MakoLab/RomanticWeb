@@ -415,12 +415,12 @@ namespace RomanticWeb.Tests.Linq
             public TestPersonMap()
             {
                 Class(Vocabularies.Foaf.Person);
-                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>());
+                Collection("Knows", Vocabularies.Foaf.knows, typeof(List<IPerson>), new AsEntityConverter<IPerson>(null));
                 Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
                 Property("Surname", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
-                Property("Address", new Uri("http://schema.org/address"), typeof(IAddress), new AsEntityConverter<IAddress>());
+                Property("Address", new Uri("http://schema.org/address"), typeof(IAddress), new AsEntityConverter<IAddress>(null));
                 Property("CreatedOn", new Uri("http://purl.org/dc/elements/1.1/date"), typeof(DateTime), new DateTimeConverter());
-                Property("Known", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>());
+                Property("Known", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>(null));
             }
         }
 
@@ -439,7 +439,7 @@ namespace RomanticWeb.Tests.Linq
             public TestTypedEntityMap()
             {
                 Class(Vocabularies.Rdfs.Class);
-                Collection("Types", Vocabularies.Rdf.type, typeof(ICollection<EntityId>), new EntityIdConverter());
+                Collection("Types", Vocabularies.Rdf.type, typeof(ICollection<EntityId>), new EntityIdConverter(null));
             }
         }
 

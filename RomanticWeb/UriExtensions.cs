@@ -7,7 +7,7 @@ namespace RomanticWeb
     {
         /// <summary>Returns fragment or last segment as entity name.</summary>
         /// <param name="uri">Uri to be parsed.</param>
-        /// <returns><see cref="EntityName" /> instance or <b>null</b> if the passed uri is also null.</returns>
+        /// <returns><see cref="Uri" /> instance or <b>null</b> if the passed uri is also null.</returns>
         public static string GetFragmentOrLastSegment(this Uri uri)
         {
             string result = null;

@@ -6,6 +6,7 @@ using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Animals;
+using RomanticWeb.TestEntities.Inheritance;
 
 namespace RomanticWeb.Tests.Mapping
 {
@@ -79,6 +80,19 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             classMappings.Should().HaveCount(4);
+        }
+
+        [Test]
+        public void Subclass_should_inehrit_parent_generic_property_mapping()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<ISpecificContainer>();
+
+            // when
+            var itemsPropertyMapping = (ICollectionMapping)mapping.Properties.First(item => item.Name == "Items");
+
+            // then
+            itemsPropertyMapping.StoreAs.Should().Be(StoreAs.SimpleCollection);
         }
 
         [Test]

@@ -421,6 +421,7 @@
     <Compile Include="EntityStore.cs" />
     <Compile Include="Model\EntityQuad.cs" />
     <Compile Include="AbsoluteUriComparer.cs" />
+    <Compile Include="TypeComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Updates\DatasetChange.cs" />
     <Compile Include="Updates\DatasetChanges.cs" />

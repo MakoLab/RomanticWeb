@@ -54,6 +54,7 @@ namespace RomanticWeb.Linq.Sparql
             MethodNameMap[MethodNames.String] = "STR";
         }
 
+        /// <summary>Creates an instance of the <see cref="GenericSparqlQueryVisitor"/></summary>
         public GenericSparqlQueryVisitor()
         {
             _currentStrongEntityAccessorVisitDelegate = VisitStrongEntityAccessorInternal;

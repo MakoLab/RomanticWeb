@@ -23,7 +23,7 @@ namespace RomanticWeb.Mapping
 
         public MappingsRepository(
             MappingModelBuilder mappingBuilder,
-            IEnumerable<IMappingProviderSource> sources, 
+            IEnumerable<IMappingProviderSource> sources,
             IEnumerable<IMappingProviderVisitor> providerVisitors,
             IEnumerable<IMappingModelVisitor> modelVisitors)
         {
@@ -77,10 +77,11 @@ namespace RomanticWeb.Mapping
 
         private void CreateMappings(IMappingProviderSource[] sources)
         {
-            var mappings = from source in sources
-                           from provider in source.GetMappingProviders()
-                           group provider by provider.EntityType into g
-                           select new KeyValuePair<Type, IList<IEntityMappingProvider>>(g.Key, g.ToList());
+            var mappings = (from source in sources
+                            from provider in source.GetMappingProviders()
+                            group provider by provider.EntityType into g
+                            select new KeyValuePair<Type, IList<IEntityMappingProvider>>(g.Key, g.ToList()))
+                           .OrderByDescending(item => item.Key, TypeComparer.Default);
 
             var singleProviderPerType = mappings.Select(provider => provider.Value.Count > 1 ? new MultiMappingProvider(provider.Key, provider.Value) : provider.Value[0]).ToList();
 

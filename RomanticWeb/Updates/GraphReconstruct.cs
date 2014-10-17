@@ -29,6 +29,9 @@ namespace RomanticWeb.Updates
             }
         }
 
+        /// <summary>
+        /// Checks if the graph reconstruction is required.
+        /// </summary>
         public override bool IsEmpty
         {
             get

@@ -1,5 +1,4 @@
 ﻿using System;
-using RomanticWeb.Converters;
 
 namespace RomanticWeb.Mapping.Model
 {
@@ -17,9 +16,5 @@ namespace RomanticWeb.Mapping.Model
         /// Gets the value predicate mapping.
         /// </summary>
         Uri ValuePredicate { get; }
-
-        INodeConverter KeyConverter { get; }
-
-        INodeConverter ValueConverter { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
@@ -51,6 +52,16 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        public IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter
+        {
+            return this;
+        }
+
+        public IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter
+        {
+            return this;
+        }
+
         /// <inheritdoc/>
         public override IPropertyMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
         {
@@ -65,7 +76,7 @@ namespace RomanticWeb.Mapping.Fluent
             /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }
@@ -79,7 +90,7 @@ namespace RomanticWeb.Mapping.Fluent
             /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }

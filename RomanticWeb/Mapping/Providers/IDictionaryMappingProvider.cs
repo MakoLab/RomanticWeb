@@ -8,11 +8,11 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Gets the key mapping provider.
         /// </summary>
-        ITermMappingProvider Key { get; }
+        IPredicateMappingProvider Key { get; }
 
         /// <summary>
         /// Gets the value mapping provider.
         /// </summary>
-        ITermMappingProvider Value { get; }
+        IPredicateMappingProvider Value { get; }
     }
 }

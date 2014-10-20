@@ -170,7 +170,7 @@ namespace RomanticWeb.Tests.Mapping
         public void Explicit_setting_for_dictionary_key_converter_should_not_be_replaced_by_convention()
         {
             // given
-            var generatedEntityType = Type.GetType("RomanticWeb.TestEntities.IEntityWithDictionary_CustomQNameValueDictionary_Entry, RomanticWeb.TestEntities");
+            var generatedEntityType = Type.GetType("RomanticWeb.TestEntities.IEntityWithExplicitConverters_Dictionary_Entry, RomanticWeb.TestEntities"); 
             var mapping = MappingsRepository.MappingFor(generatedEntityType);
 
             // when
@@ -183,8 +183,8 @@ namespace RomanticWeb.Tests.Mapping
         [Test]
         public void Explicit_setting_for_dictionary_value_converter_should_not_be_replaced_by_convention()
         {
-            // give
-            var generatedEntityType = Type.GetType("RomanticWeb.TestEntities.IEntityWithDictionary_CustomQNameValueDictionary_Entry, RomanticWeb.TestEntities");
+            // given
+            var generatedEntityType = Type.GetType("RomanticWeb.TestEntities.IEntityWithExplicitConverters_Dictionary_Entry, RomanticWeb.TestEntities");
             var mapping = MappingsRepository.MappingFor(generatedEntityType);
 
             // when

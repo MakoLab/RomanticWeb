@@ -51,12 +51,16 @@ namespace RomanticWeb.Mapping.Attributes
                 return new KeyMappingProvider();
             }
 
-            if (keyAttribute.Uri != null)
+            var keyMappingProvider = keyAttribute.Uri != null 
+                ? new KeyMappingProvider(keyAttribute.Uri) 
+                : new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
+
+            if (keyAttribute.ConverterType != null)
             {
-                return new KeyMappingProvider(keyAttribute.Uri);
+                keyMappingProvider.ConverterType = keyAttribute.ConverterType;
             }
 
-            return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
+            return keyMappingProvider;
         }
 
         public IPredicateMappingProvider Visit(ValueAttribute valueAttribute)
@@ -66,12 +70,16 @@ namespace RomanticWeb.Mapping.Attributes
                 return new ValueMappingProvider();
             }
 
-            if (valueAttribute.Uri != null)
+            var valueMappingProvider = valueAttribute.Uri != null
+                ? new ValueMappingProvider(valueAttribute.Uri)
+                : new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
+
+            if (valueAttribute.ConverterType != null)
             {
-                return new ValueMappingProvider(valueAttribute.Uri);
+                valueMappingProvider.ConverterType = valueAttribute.ConverterType;
             }
 
-            return new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
+            return valueMappingProvider;
         }
 
         public IEntityMappingProvider Visit(Type entityType)

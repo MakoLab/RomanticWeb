@@ -14,7 +14,6 @@ namespace RomanticWeb.Converters
         public FallbackNodeConverter(IConverterCatalog converters)
         {
             _converters = converters;
-            _converters.AddConverter(this);
         }
 
         /// <summary>

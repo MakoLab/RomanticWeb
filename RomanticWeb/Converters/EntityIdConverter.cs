@@ -12,10 +12,13 @@ namespace RomanticWeb.Converters
     public class EntityIdConverter : EntityIdConverter<EntityId>
     {
         /// <summary>Creates an instance of the <see cref="EntityIdConverter"/>.</summary>
-        /// <param name="baseUriSelectionPolicy"></param>
+        public EntityIdConverter() : base()
+        {
+        }
+
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter"/>.</summary>
         /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
-        public EntityIdConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
-            : base(baseUriSelectionPolicy)
+        public EntityIdConverter(IBaseUriSelectionPolicy baseUriSelectionPolicy) : base(baseUriSelectionPolicy)
         {
         }
     }
@@ -27,11 +30,16 @@ namespace RomanticWeb.Converters
     {
         private static TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TEntityId));
 
-        private IBaseUriSelectionPolicy _baseUriSelectionPolicy;
+        private IBaseUriSelectionPolicy _baseUriSelectionPolicy = null;
+
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter<TEntityId>"/>.</summary>
+        public EntityIdConverter()
+        {
+        }
 
         /// <summary>Creates an instance of the <see cref="EntityIdConverter<TEntityId>"/>.</summary>
         /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
-        public EntityIdConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        public EntityIdConverter(IBaseUriSelectionPolicy baseUriSelectionPolicy)
         {
             _baseUriSelectionPolicy = baseUriSelectionPolicy;
         }

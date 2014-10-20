@@ -96,10 +96,10 @@ namespace RomanticWeb.Tests.Stubs
                 Name = name,
                 Uri = predicate,
                 ReturnType = returnType,
-                Converter = new AsEntityConverter<IEntity>(null),
+                Converter = new AsEntityConverter<IEntity>(),
                 EntityMapping = this,
                 StoreAs = StoreAs.RdfList,
-                ElementConverter = new AsEntityConverter<IEntity>(null)
+                ElementConverter = new AsEntityConverter<IEntity>()
             }.ActLike<ICollectionMapping>());
         }
     }

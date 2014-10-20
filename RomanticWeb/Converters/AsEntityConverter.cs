@@ -15,8 +15,14 @@ namespace RomanticWeb.Converters
         private readonly INodeConverter _entityIdConverter;
 
         /// <summary>Creates instance of the <see cref="IBaseUriSelectionPolicy"/>.</summary>
+        public AsEntityConverter()
+        {
+            _entityIdConverter = new EntityIdConverter();
+        }
+
+        /// <summary>Creates instance of the <see cref="IBaseUriSelectionPolicy"/>.</summary>
         /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
-        public AsEntityConverter([AllowNull] IBaseUriSelectionPolicy baseUriSelectionPolicy)
+        public AsEntityConverter(IBaseUriSelectionPolicy baseUriSelectionPolicy)
         {
             _entityIdConverter = new EntityIdConverter(baseUriSelectionPolicy);
         }

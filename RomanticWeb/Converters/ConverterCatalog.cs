@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
 
 namespace RomanticWeb.Converters
@@ -9,31 +10,27 @@ namespace RomanticWeb.Converters
     /// <summary>
     /// Default implementation of <see cref="IConverterCatalog"/>
     /// </summary>
-    public sealed class ConverterCatalog : IConverterCatalog
+    internal sealed class ConverterCatalog : IConverterCatalog
     {
         private readonly IDictionary<Type, INodeConverter> _nodeConverters = new Dictionary<Type, INodeConverter>();
-        private readonly IServiceContainer _container;
+        private readonly IServiceContainer _container = new ServiceContainer();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
         /// </summary>
-        public ConverterCatalog(IEnumerable<INodeConverter> converters)
-            : this(new ServiceContainer())
+        public ConverterCatalog()
         {
-            foreach (var converter in converters)
-            {
-                AddConverter(converter);
-            }
+            _container.RegisterAssembly(GetType().Assembly);
         }
 
-        internal ConverterCatalog()
-            : this(new INodeConverter[0])
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
+        /// </summary>
+        /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
+        public ConverterCatalog(IBaseUriSelectionPolicy baseUriSelectionPolicy) : this()
         {
-        }
-
-        private ConverterCatalog(IServiceContainer container)
-        {
-            _container = container;
+            _container.RegisterInstance<IBaseUriSelectionPolicy>(baseUriSelectionPolicy);
+            _nodeConverters = _container.GetAllInstances<INodeConverter>().ToDictionary(item => item.GetType(), item => item);
         }
 
         /// <inheritdoc/>
@@ -59,16 +56,11 @@ namespace RomanticWeb.Converters
         {
             if (!_nodeConverters.ContainsKey(converterType))
             {
-                AddConverter(CreateConverter(converterType));
+                INodeConverter nodeConverter = CreateConverter(converterType);
+                _nodeConverters[nodeConverter.GetType()] = nodeConverter;
             }
 
             return _nodeConverters[converterType];
-        }
-
-        /// <inheritdoc/>
-        public void AddConverter(INodeConverter nodeConverter)
-        {
-            _nodeConverters[nodeConverter.GetType()] = nodeConverter;
         }
 
         private INodeConverter CreateConverter(Type converterType)

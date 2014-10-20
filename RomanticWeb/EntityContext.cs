@@ -100,10 +100,9 @@ namespace RomanticWeb
         }
         #endregion
 
+        #region Properties
         /// <inheritdoc />
         public event Action Disposed;
-        
-        #region Properties
 
         /// <summary>Gets the underlying in-memory store.</summary>
         public IEntityStore Store { get { return _entityStore; } }

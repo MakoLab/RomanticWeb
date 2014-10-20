@@ -43,9 +43,20 @@ namespace RomanticWeb.ComponentModel
 
             registry.Register<IDatasetChangesTracker, DatasetChanges>(new PerScopeLifetime());
 
+            registry.Register<INodeConverter, DefaultUriConverter>(new PerContainerLifetime());
+            registry.Register<INodeConverter, GuidConverter>(new PerContainerLifetime());
+            registry.Register<INodeConverter, StringConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, Base64BinaryConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, BooleanConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, DateTimeConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, DecimalConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, DoubleConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, DurationConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, IntegerConverter>(new PerContainerLifetime());
+            registry.Register<ILiteralNodeConverter, StringConverter>(new PerContainerLifetime());
+            registry.Register<IFallbackNodeConverter, FallbackNodeConverter>(new PerContainerLifetime());
             registry.Register(typeof(EntityIdConverter<>), new PerContainerLifetime());
             registry.Register(typeof(AsEntityConverter<>), new PerContainerLifetime());
-            registry.RegisterFallback((type, serviceName) => type == typeof(IBaseUriSelectionPolicy), request => null);
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)

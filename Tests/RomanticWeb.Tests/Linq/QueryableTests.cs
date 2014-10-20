@@ -100,9 +100,9 @@ namespace RomanticWeb.Tests.Linq
                 Property("LastName", Vocabularies.Foaf.familyName, typeof(string), new StringConverter());
                 Property("Homepage", Vocabularies.Foaf.homepage, typeof(Uri), new DefaultUriConverter());
                 Property("FirstName", Vocabularies.Foaf.givenName, typeof(string), new StringConverter());
-                Property("Friend", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>(null));
+                Property("Friend", Vocabularies.Foaf.knows, typeof(IPerson), new AsEntityConverter<IPerson>());
                 Property("Age", Vocabularies.Foaf.age, typeof(int), new IntegerConverter());
-                Collection("Friends", new Uri("http://xmlns.com/foaf/0.1/friends"), typeof(IEnumerable<IPerson>), new AsEntityConverter<IPerson>(null));
+                Collection("Friends", new Uri("http://xmlns.com/foaf/0.1/friends"), typeof(IEnumerable<IPerson>), new AsEntityConverter<IPerson>());
 
                 Class(Vocabularies.Foaf.Person);
 

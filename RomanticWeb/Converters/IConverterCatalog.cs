@@ -23,11 +23,5 @@ namespace RomanticWeb.Converters
         /// </summary>
         /// <param name="converterType">Type of the converter.</param>
         INodeConverter GetConverter(Type converterType);
-
-        /// <summary>
-        /// Adds a converter.
-        /// </summary>
-        /// <param name="nodeConverter">The node converter.</param>
-        void AddConverter(INodeConverter nodeConverter);
     }
 }

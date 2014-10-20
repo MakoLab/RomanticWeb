@@ -134,7 +134,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         }
 
         [Test]
-        public void Should_apply_set_converter_for_explicitly_defined_array_type()
+        public void Applying_should_set_converter_for_explicitly_defined_array_type()
         {
             // given
             _convention.SetDefault<int[], Base64BinaryConverter>();
@@ -144,21 +144,23 @@ namespace RomanticWeb.Tests.Mapping.Conventions
                 ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();
 
             // when
-            ((ICollectionConvention)_convention).Apply(mapping);
+            ((IPropertyConvention)_convention).Apply(mapping);
 
             // then
             mapping.ConverterType.Should().Be(typeof(Base64BinaryConverter));
         }
 
         [Test]
-        public void Should_apply_converter_to_dictionary_key()
+        public void Applying_should_converter_to_dictionary_key()
         {
             // given
             _convention.SetDefault<int, IntegerConverter>();
+            var keyMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            var valueMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
             IDictionaryMappingProvider mapping = New.ExpandoObject(
-                PropertyInfo: new TestPropertyInfo(typeof(IList<int>)),
-                ConverterType: default(Type),
-                ElementConverterType: typeof(Type)).ActLike<IDictionaryMappingProvider>();
+                PropertyInfo: new TestPropertyInfo(typeof(IDictionary<int, int>)),
+                Key: keyMapping,
+                Value: valueMapping).ActLike<IDictionaryMappingProvider>();
 
             // when
             ((IDictionaryConvention)_convention).Apply(mapping);
@@ -168,15 +170,16 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         }
 
         [Test]
-        public void Should_apply_converter_to_dictionary_element()
+        public void Applying_should_converter_to_dictionary_element()
         {
             // given
             _convention.SetDefault<int, IntegerConverter>();
-            IDictionaryMappingProvider mapping =
-                New.ExpandoObject(
-                    PropertyInfo: new TestPropertyInfo(typeof(IList<int>)),
-                    ConverterType: default(Type),
-                    ElementConverterType: typeof(Type)).ActLike<IDictionaryMappingProvider>();
+            var keyMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            var valueMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            IDictionaryMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IDictionary<int, int>)),
+                Key: keyMapping,
+                Value: valueMapping).ActLike<IDictionaryMappingProvider>();
 
             // when
             ((IDictionaryConvention)_convention).Apply(mapping);

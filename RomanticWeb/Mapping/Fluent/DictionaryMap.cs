@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
@@ -54,11 +56,13 @@ namespace RomanticWeb.Mapping.Fluent
 
         public IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter
         {
+            _keyMap.ConverterType = typeof(TConverter);
             return this;
         }
 
         public IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter
         {
+            _valueMap.ConverterType = typeof(TConverter);
             return this;
         }
 
@@ -73,6 +77,8 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public class ValueMap : TermMap
         {
+            public Type ConverterType { [return: AllowNull] get; set; }
+
             /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
@@ -87,6 +93,8 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public class KeyMap : TermMap
         {
+            public Type ConverterType { [return: AllowNull] get; set; }
+
             /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>

@@ -50,32 +50,51 @@ namespace RomanticWeb.Mapping.Fluent
 
         public IPredicateMappingProvider Visit(DictionaryMap.KeyMap keyMap)
         {
+            KeyMappingProvider provider;
             if (keyMap.TermUri != null)
             {
-                return new KeyMappingProvider(keyMap.TermUri);
+                provider = new KeyMappingProvider(keyMap.TermUri);
             }
-
-            if (keyMap.NamespacePrefix != null && keyMap.TermName != null)
+            else if (keyMap.NamespacePrefix != null && keyMap.TermName != null)
             {
                 return new KeyMappingProvider(keyMap.NamespacePrefix, keyMap.TermName);
             }
+            else
+            {
+                provider = new KeyMappingProvider();
+            }
 
-            return new KeyMappingProvider();
+            if (keyMap.ConverterType != null)
+            {
+                provider.ConverterType = keyMap.ConverterType;
+            }
+
+            return provider;
         }
 
         public IPredicateMappingProvider Visit(DictionaryMap.ValueMap valueMap)
         {
+            ValueMappingProvider provider;
+
             if (valueMap.TermUri != null)
             {
-                return new ValueMappingProvider(valueMap.TermUri);
+                provider = new ValueMappingProvider(valueMap.TermUri);
             }
-
-            if (valueMap.NamespacePrefix != null && valueMap.TermName != null)
+            else if (valueMap.NamespacePrefix != null && valueMap.TermName != null)
             {
-                return new ValueMappingProvider(valueMap.NamespacePrefix, valueMap.TermName);
+                provider = new ValueMappingProvider(valueMap.NamespacePrefix, valueMap.TermName);
+            }
+            else
+            {
+                provider = new ValueMappingProvider();
             }
 
-            return new ValueMappingProvider();
+            if (valueMap.ConverterType != null)
+            {
+                provider.ConverterType = valueMap.ConverterType;
+            }
+
+            return provider;
         }
 
         private static PropertyMappingProvider CreatePropertyMapping(PropertyMapBase propertyMap)

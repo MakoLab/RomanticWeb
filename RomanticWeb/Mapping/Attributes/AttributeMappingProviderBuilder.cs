@@ -38,13 +38,13 @@ namespace RomanticWeb.Mapping.Attributes
             return result;
         }
 
-        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value)
+        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, IPredicateMappingProvider key, IPredicateMappingProvider value)
         {
             var prop = CreatePropertyMapping(dictionaryAttribute, property);
             return new DictionaryMappingProvider(prop, key, value);
         }
 
-        public ITermMappingProvider Visit(KeyAttribute keyAttribute)
+        public IPredicateMappingProvider Visit(KeyAttribute keyAttribute)
         {
             if (keyAttribute == null)
             {
@@ -59,7 +59,7 @@ namespace RomanticWeb.Mapping.Attributes
             return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
         }
 
-        public ITermMappingProvider Visit(ValueAttribute valueAttribute)
+        public IPredicateMappingProvider Visit(ValueAttribute valueAttribute)
         {
             if (valueAttribute == null)
             {

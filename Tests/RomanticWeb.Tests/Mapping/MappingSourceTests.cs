@@ -167,6 +167,32 @@ namespace RomanticWeb.Tests.Mapping
         }
 
         [Test]
+        public void Explicit_setting_for_dictionary_key_converter_should_not_be_replaced_by_convention()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IEntityWithExplicitConverters>();
+
+            // when
+            var property = (IDictionaryMapping)mapping.PropertyFor("Dictionary");
+
+            // then
+            property.KeyConverter.Should().BeOfType<BooleanConverter>();
+        }
+
+        [Test]
+        public void Explicit_setting_for_dictionary_value_converter_should_not_be_replaced_by_convention()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IEntityWithExplicitConverters>();
+
+            // when
+            var property = (IDictionaryMapping)mapping.PropertyFor("Dictionary");
+
+            // then
+            property.ValueConverter.Should().BeOfType<BooleanConverter>();
+        }
+
+        [Test]
         public void Multimapping_should_not_throw_when_getting_derived_properties()
         {
             // given

@@ -12,5 +12,10 @@ namespace RomanticWeb.TestEntities
 
         [Collection("urn:not:important", ConverterType = typeof(BooleanConverter))]
         IList<string> Collection { get; }
+
+        [Dictionary("urn:not:important")]
+        [Key("urn:key:predicate", ConverterType = typeof(BooleanConverter))]
+        [Value("urn:value:predicate", ConverterType = typeof(BooleanConverter))]
+        IDictionary<string, string> Dictionary { get; }
     }
 }

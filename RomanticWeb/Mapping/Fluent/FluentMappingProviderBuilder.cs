@@ -31,7 +31,7 @@ namespace RomanticWeb.Mapping.Fluent
             return CreatePropertyMapping(propertyMap);
         }
 
-        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value)
+        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, IPredicateMappingProvider key, IPredicateMappingProvider value)
         {
             var propertyMapping = CreatePropertyMapping(dictionaryMap);
             return new DictionaryMappingProvider(propertyMapping, key, value);
@@ -48,7 +48,7 @@ namespace RomanticWeb.Mapping.Fluent
             return result;
         }
 
-        public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)
+        public IPredicateMappingProvider Visit(DictionaryMap.KeyMap keyMap)
         {
             if (keyMap.TermUri != null)
             {
@@ -63,7 +63,7 @@ namespace RomanticWeb.Mapping.Fluent
             return new KeyMappingProvider();
         }
 
-        public ITermMappingProvider Visit(DictionaryMap.ValueMap valueMap)
+        public IPredicateMappingProvider Visit(DictionaryMap.ValueMap valueMap)
         {
             if (valueMap.TermUri != null)
             {

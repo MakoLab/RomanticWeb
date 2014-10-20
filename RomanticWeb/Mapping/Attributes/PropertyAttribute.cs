@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using NullGuard;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
@@ -8,7 +7,7 @@ namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps a property to an RDF predicate.</summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class PropertyAttribute : TermMappingAttribute
+    public class PropertyAttribute : PredicateMappingAttribute
     {
         /// <summary>Initializes a new instance of the <see cref="PropertyAttribute"/> class.</summary>
         /// <param name="prefix">The prefix.</param>
@@ -24,9 +23,6 @@ namespace RomanticWeb.Mapping.Attributes
             : base(propertyUri)
         {
         }
-
-        /// <summary>Gets or sets the type of the converter.</summary>
-        public virtual Type ConverterType { [return: AllowNull] get; set; }
 
         internal virtual IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor, PropertyInfo property)
         {

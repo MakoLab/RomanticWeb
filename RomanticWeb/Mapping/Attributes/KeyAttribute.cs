@@ -4,7 +4,7 @@ namespace RomanticWeb.Mapping.Attributes
 {
     /// <summary>Maps the dictionary's key property to an RDF predicate.</summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class KeyAttribute : TermMappingAttribute
+    public sealed class KeyAttribute : PredicateMappingAttribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyAttribute"/> class.

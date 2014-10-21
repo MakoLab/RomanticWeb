@@ -38,40 +38,48 @@ namespace RomanticWeb.Mapping.Attributes
             return result;
         }
 
-        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value)
+        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, IPredicateMappingProvider key, IPredicateMappingProvider value)
         {
             var prop = CreatePropertyMapping(dictionaryAttribute, property);
             return new DictionaryMappingProvider(prop, key, value);
         }
 
-        public ITermMappingProvider Visit(KeyAttribute keyAttribute)
+        public IPredicateMappingProvider Visit(KeyAttribute keyAttribute)
         {
             if (keyAttribute == null)
             {
                 return new KeyMappingProvider();
             }
 
-            if (keyAttribute.Uri != null)
+            var keyMappingProvider = keyAttribute.Uri != null 
+                ? new KeyMappingProvider(keyAttribute.Uri) 
+                : new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
+
+            if (keyAttribute.ConverterType != null)
             {
-                return new KeyMappingProvider(keyAttribute.Uri);
+                keyMappingProvider.ConverterType = keyAttribute.ConverterType;
             }
 
-            return new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
+            return keyMappingProvider;
         }
 
-        public ITermMappingProvider Visit(ValueAttribute valueAttribute)
+        public IPredicateMappingProvider Visit(ValueAttribute valueAttribute)
         {
             if (valueAttribute == null)
             {
                 return new ValueMappingProvider();
             }
 
-            if (valueAttribute.Uri != null)
+            var valueMappingProvider = valueAttribute.Uri != null
+                ? new ValueMappingProvider(valueAttribute.Uri)
+                : new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
+
+            if (valueAttribute.ConverterType != null)
             {
-                return new ValueMappingProvider(valueAttribute.Uri);
+                valueMappingProvider.ConverterType = valueAttribute.ConverterType;
             }
 
-            return new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
+            return valueMappingProvider;
         }
 
         public IEntityMappingProvider Visit(Type entityType)

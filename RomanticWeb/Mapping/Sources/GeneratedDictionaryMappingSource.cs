@@ -123,36 +123,38 @@ namespace RomanticWeb.Mapping.Sources
             IDictionaryMappingProvider map, ModuleBuilder defineDynamicModule, Type entry, Type ownerMapType)
         {
             var typeBuilderHelper = defineDynamicModule.DefineType(entry.Name + "Map", TypeAttributes.Public, ownerMapType);
-            var methodBuilderHelper = typeBuilderHelper.DefineMethod(
+            var setupKeyMethod = typeBuilderHelper.DefineMethod(
                 "SetupKeyProperty",
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                 typeof(void),
                 new[] { typeof(ITermPart<IPropertyMap>) });
+            EmitSetupPropertyOverride(setupKeyMethod, map.Key);
 
-            var ilGenerator = methodBuilderHelper.GetILGenerator();
-            ilGenerator.Emit(OpCodes.Nop);
-            ilGenerator.Emit(OpCodes.Ldarg_1);
-            ilGenerator.Emit(OpCodes.Ldstr, map.Key.GetTerm(_ontologyProvider).ToString());
-            ilGenerator.Emit(OpCodes.Newobj, typeof(Uri).GetConstructor(new[] { typeof(string) }));
-            ilGenerator.Emit(OpCodes.Callvirt, typeof(ITermPart<PropertyMap>).GetMethod("Is", new Type[] { typeof(Uri) }));
-            ilGenerator.Emit(OpCodes.Pop);
-            ilGenerator.Emit(OpCodes.Ret);
-
-            var methodBuilderHelper1 = typeBuilderHelper.DefineMethod(
+            var setupValueMethod = typeBuilderHelper.DefineMethod(
                 "SetupValueProperty",
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                 typeof(void),
                 new[] { typeof(ITermPart<IPropertyMap>) });
+            EmitSetupPropertyOverride(setupValueMethod, map.Value);
+            
+            return typeBuilderHelper;
+        }
 
-            ilGenerator = methodBuilderHelper1.GetILGenerator();
+        private void EmitSetupPropertyOverride(MethodBuilder methodBuilder, IPredicateMappingProvider termMapping)
+        {
+            var ilGenerator = methodBuilder.GetILGenerator();
             ilGenerator.Emit(OpCodes.Nop);
             ilGenerator.Emit(OpCodes.Ldarg_1);
-            ilGenerator.Emit(OpCodes.Ldstr, map.Value.GetTerm(_ontologyProvider).ToString());
+            ilGenerator.Emit(OpCodes.Ldstr, termMapping.GetTerm(_ontologyProvider).ToString());
             ilGenerator.Emit(OpCodes.Newobj, typeof(Uri).GetConstructor(new[] { typeof(string) }));
             ilGenerator.Emit(OpCodes.Callvirt, typeof(ITermPart<PropertyMap>).GetMethod("Is", new Type[] { typeof(Uri) }));
+            if (termMapping.ConverterType != null)
+            {
+                ilGenerator.Emit(OpCodes.Callvirt, typeof(IPropertyMap).GetMethod("ConvertWith").MakeGenericMethod(termMapping.ConverterType));
+            }
+
             ilGenerator.Emit(OpCodes.Pop);
-            ilGenerator.Emit(OpCodes.Ret);
-            return typeBuilderHelper;
+            ilGenerator.Emit(OpCodes.Ret);  
         }
     }
 }

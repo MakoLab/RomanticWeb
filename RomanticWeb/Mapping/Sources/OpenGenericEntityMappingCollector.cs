@@ -87,9 +87,9 @@ namespace RomanticWeb.Mapping.Sources
                 _openGeneric = openGeneric;
             }
 
-            public ITermMappingProvider Value { get { return _openGeneric.Value; } }
+            public IPredicateMappingProvider Value { get { return _openGeneric.Value; } }
 
-            public ITermMappingProvider Key { get { return _openGeneric.Key; } }
+            public IPredicateMappingProvider Key { get { return _openGeneric.Key; } }
         }
 
         private class CollectionMapping : PropertyMapping, ICollectionMappingProvider

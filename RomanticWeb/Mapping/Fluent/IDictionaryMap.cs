@@ -1,4 +1,6 @@
-﻿namespace RomanticWeb.Mapping.Fluent
+﻿using RomanticWeb.Converters;
+
+namespace RomanticWeb.Mapping.Fluent
 {
     /// <summary>
     /// A mapping definition for dictionary properties
@@ -17,5 +19,15 @@
         /// Gets the dictionary value predicate map part
         /// </summary>
         ITermPart<IDictionaryMap> ValuePredicate { get; }
+
+        /// <summary>
+        /// Sets the converter type for dictionary keys
+        /// </summary>
+        IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter;
+
+        /// <summary>
+        /// Sets the converter type for dictionary values
+        /// </summary>
+        IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter;
     }
 }

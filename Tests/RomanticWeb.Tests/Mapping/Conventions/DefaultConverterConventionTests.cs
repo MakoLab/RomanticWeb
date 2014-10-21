@@ -5,6 +5,7 @@ using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
 using NUnit.Framework;
 using RomanticWeb.Converters;
+using RomanticWeb.Entities;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
@@ -16,13 +17,12 @@ namespace RomanticWeb.Tests.Mapping.Conventions
     public class DefaultConverterConventionTests
     {
         private static readonly dynamic New = Builder.New();
-        private IConvention<IPropertyMappingProvider> _convention;
-        private DefaultConvertersConvention _defaultConvertersConvention;
+        private DefaultConvertersConvention _convention;
 
         [SetUp]
         public void Setup()
         {
-            _convention = (IConvention<IPropertyMappingProvider>)(_defaultConvertersConvention = new DefaultConvertersConvention());
+            _convention = new DefaultConvertersConvention();
         }
 
         [TearDown]
@@ -36,15 +36,15 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Should_be_applied_to_property_without_converter_with_known_property_type(Type type)
         {
             // given
-            _defaultConvertersConvention.SetDefault<int, IntegerConverter>();
-            var convention = new
+            _convention.SetDefault<int, IntegerConverter>();
+            var mapping = new
                                {
                                    ConverterType = default(Type),
                                    PropertyInfo = new TestPropertyInfo(type)
                                }.ActLike<IPropertyMappingProvider>();
 
             // when
-            var shouldApply = _convention.ShouldApply(convention);
+            var shouldApply = ((IPropertyConvention)_convention).ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeTrue();
@@ -54,51 +54,138 @@ namespace RomanticWeb.Tests.Mapping.Conventions
         public void Should_not_be_applied_to_property_with_unknown_property_type()
         {
             // given
-            var convention = new
+            var mapping = new
                                {
                                    ConverterType = default(Type),
                                    PropertyInfo = new TestPropertyInfo(typeof(float))
                                }.ActLike<IPropertyMappingProvider>();
 
             // when
-            var shouldApply = _convention.ShouldApply(convention);
+            var shouldApply = ((IPropertyConvention)_convention).ShouldApply(mapping);
 
             // then
             shouldApply.Should().BeFalse();
         }
 
-        [TestCase(typeof(int))]
-        [TestCase(typeof(IList<int>), Description = "Should work for collection type")]
-        public void Applying_should_set_default_converter_type_for_known_property_type(Type type)
+        [Test]
+        public void Applying_should_set_default_converter_type_for_known_property_type()
         {
             // given
-            _defaultConvertersConvention.SetDefault<int, IntegerConverter>();
+            _convention.SetDefault<int, IntegerConverter>();
             IPropertyMappingProvider mapping = New.ExpandoObject(
-                PropertyInfo: new TestPropertyInfo(type),
+                PropertyInfo: new TestPropertyInfo(typeof(int)),
                 ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();
 
             // when
-            _convention.Apply(mapping);
+            ((IPropertyConvention)_convention).Apply(mapping);
 
             // then
             mapping.ConverterType.Should().Be(typeof(IntegerConverter));
         }
 
         [Test]
-        public void Should_apply_set_converter_for_explicitly_defined_array_type()
+        public void Applying_should_set_default_converter_for_simple_collection()
         {
             // given
-            _defaultConvertersConvention.SetDefault<int[], Base64BinaryConverter>();
-            _defaultConvertersConvention.SetDefault<int, IntegerConverter>();
+            _convention.SetDefault<int, IntegerConverter>();
             IPropertyMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IList<int>)),
+                ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();
+
+            // when
+            ((IPropertyConvention)_convention).Apply(mapping);
+
+            // then
+            mapping.ConverterType.Should().Be(typeof(IntegerConverter));
+        }
+
+        [Test]
+        public void Applying_should_not_set_default_converter_for_rdf_list()
+        {
+            // given
+            _convention.SetDefault<int, IntegerConverter>();
+            IPropertyMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IList<int>)),
+                ConverterType: default(Type),
+                StoreAs: StoreAs.RdfList).ActLike<ICollectionMappingProvider>();
+
+            // when
+            ((IPropertyConvention)_convention).Apply(mapping);
+
+            // then
+            mapping.ConverterType.Should().Be(typeof(AsEntityConverter<IEntity>));
+        }
+
+        [Test]
+        public void Applying_should_set_default_converter_for_collection_elements()
+        {
+            // given
+            _convention.SetDefault<int, IntegerConverter>();
+            ICollectionMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IList<int>)),
+                ConverterType: default(Type),
+                ElementConverterType: typeof(Type)).ActLike<ICollectionMappingProvider>();
+
+            // when
+            ((ICollectionConvention)_convention).Apply(mapping);
+
+            // then
+            mapping.ElementConverterType.Should().Be(typeof(IntegerConverter));
+        }
+
+        [Test]
+        public void Applying_should_set_converter_for_explicitly_defined_array_type()
+        {
+            // given
+            _convention.SetDefault<int[], Base64BinaryConverter>();
+            _convention.SetDefault<int, IntegerConverter>();
+            ICollectionMappingProvider mapping = New.ExpandoObject(
                 PropertyInfo: new TestPropertyInfo(typeof(int[])),
                 ConverterType: default(Type)).ActLike<ICollectionMappingProvider>();
 
             // when
-            _convention.Apply(mapping);
+            ((IPropertyConvention)_convention).Apply(mapping);
 
             // then
             mapping.ConverterType.Should().Be(typeof(Base64BinaryConverter));
+        }
+
+        [Test]
+        public void Applying_should_converter_to_dictionary_key()
+        {
+            // given
+            _convention.SetDefault<int, IntegerConverter>();
+            var keyMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            var valueMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            IDictionaryMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IDictionary<int, int>)),
+                Key: keyMapping,
+                Value: valueMapping).ActLike<IDictionaryMappingProvider>();
+
+            // when
+            ((IDictionaryConvention)_convention).Apply(mapping);
+
+            // then
+            mapping.Key.ConverterType.Should().Be(typeof(IntegerConverter));
+        }
+
+        [Test]
+        public void Applying_should_converter_to_dictionary_element()
+        {
+            // given
+            _convention.SetDefault<int, IntegerConverter>();
+            var keyMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            var valueMapping = New.ExpandoObject(ConverterType: default(Type)).ActLike<IPredicateMappingProvider>();
+            IDictionaryMappingProvider mapping = New.ExpandoObject(
+                PropertyInfo: new TestPropertyInfo(typeof(IDictionary<int, int>)),
+                Key: keyMapping,
+                Value: valueMapping).ActLike<IDictionaryMappingProvider>();
+
+            // when
+            ((IDictionaryConvention)_convention).Apply(mapping);
+
+            // then
+            mapping.Key.ConverterType.Should().Be(typeof(IntegerConverter));
         }
     }
 }

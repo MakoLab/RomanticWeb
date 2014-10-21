@@ -11,9 +11,8 @@ namespace RomanticWeb.Mapping.Providers
     public class DictionaryMappingProvider : IDictionaryMappingProvider
     {
         private readonly IPropertyMappingProvider _property;
-
-        private readonly ITermMappingProvider _key;
-        private readonly ITermMappingProvider _value;
+        private readonly IPredicateMappingProvider _key;
+        private readonly IPredicateMappingProvider _value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryMappingProvider"/> class.
@@ -21,7 +20,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <param name="key">The key mapping provider.</param>
         /// <param name="value">The value mapping provider.</param>
         /// <param name="property">The property.</param>
-        public DictionaryMappingProvider(IPropertyMappingProvider property, ITermMappingProvider key, ITermMappingProvider value)
+        public DictionaryMappingProvider(IPropertyMappingProvider property, IPredicateMappingProvider key, IPredicateMappingProvider value)
         {
             _property = property;
             _key = key;
@@ -34,7 +33,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <value>
         /// The key mapping provider.
         /// </value>
-        public ITermMappingProvider Key
+        public IPredicateMappingProvider Key
         {
             get
             {
@@ -48,7 +47,7 @@ namespace RomanticWeb.Mapping.Providers
         /// <value>
         /// The value mapping provider.
         /// </value>
-        public ITermMappingProvider Value
+        public IPredicateMappingProvider Value
         {
             get
             {

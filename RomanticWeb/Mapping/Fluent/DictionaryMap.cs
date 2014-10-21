@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
@@ -29,9 +32,7 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        /// <summary>
-        /// Gets the dictionary key predicate map part
-        /// </summary>
+        /// <inheritdoc />
         public ITermPart<IDictionaryMap> KeyPredicate
         {
             get
@@ -40,15 +41,27 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        /// <summary>
-        /// Gets the dictionary value predicate map part
-        /// </summary>
+        /// <inheritdoc />
         public ITermPart<IDictionaryMap> ValuePredicate
         {
             get
             {
                 return new DictionaryPart(this, _valueMap);
             }
+        }
+
+        /// <inheritdoc />
+        public IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter
+        {
+            _keyMap.ConverterType = typeof(TConverter);
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter
+        {
+            _valueMap.ConverterType = typeof(TConverter);
+            return this;
         }
 
         /// <inheritdoc/>
@@ -63,9 +76,14 @@ namespace RomanticWeb.Mapping.Fluent
         public class ValueMap : TermMap
         {
             /// <summary>
+            /// Gets or sets the type of the converter.
+            /// </summary>
+            public Type ConverterType { [return: AllowNull] get; set; }
+
+            /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }
@@ -77,9 +95,14 @@ namespace RomanticWeb.Mapping.Fluent
         public class KeyMap : TermMap
         {
             /// <summary>
+            /// Gets or sets the type of the converter.
+            /// </summary>
+            public Type ConverterType { [return: AllowNull] get; set; }
+
+            /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }

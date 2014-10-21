@@ -32,9 +32,7 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        /// <summary>
-        /// Gets the dictionary key predicate map part
-        /// </summary>
+        /// <inheritdoc />
         public ITermPart<IDictionaryMap> KeyPredicate
         {
             get
@@ -43,9 +41,7 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
-        /// <summary>
-        /// Gets the dictionary value predicate map part
-        /// </summary>
+        /// <inheritdoc />
         public ITermPart<IDictionaryMap> ValuePredicate
         {
             get
@@ -54,12 +50,14 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        /// <inheritdoc />
         public IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter
         {
             _keyMap.ConverterType = typeof(TConverter);
             return this;
         }
 
+        /// <inheritdoc />
         public IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter
         {
             _valueMap.ConverterType = typeof(TConverter);
@@ -77,6 +75,9 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public class ValueMap : TermMap
         {
+            /// <summary>
+            /// Gets or sets the type of the converter.
+            /// </summary>
             public Type ConverterType { [return: AllowNull] get; set; }
 
             /// <summary>
@@ -93,6 +94,9 @@ namespace RomanticWeb.Mapping.Fluent
         /// </summary>
         public class KeyMap : TermMap
         {
+            /// <summary>
+            /// Gets or sets the type of the converter.
+            /// </summary>
             public Type ConverterType { [return: AllowNull] get; set; }
 
             /// <summary>

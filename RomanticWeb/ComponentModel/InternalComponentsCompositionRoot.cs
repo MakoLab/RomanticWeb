@@ -16,10 +16,13 @@ using RomanticWeb.Updates;
 
 namespace RomanticWeb.ComponentModel
 {
+    internal delegate void RegisterConverterDelegate(Type converterType);
+
     internal class InternalComponentsCompositionRoot : ICompositionRoot
     {
         public void Compose(IServiceRegistry registry)
         {
+            registry.RegisterInstance<RegisterConverterDelegate>(type => RegisterConverter(type, registry));
             registry.Register<IConverterCatalog, ConverterCatalog>(new PerContainerLifetime());
 
             registry.Register<IResultTransformerCatalog, ResultTransformerCatalog>(new PerContainerLifetime());
@@ -42,21 +45,6 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateEntityProxy(factory));
 
             registry.Register<IDatasetChangesTracker, DatasetChanges>(new PerScopeLifetime());
-
-            registry.Register<INodeConverter, DefaultUriConverter>(new PerContainerLifetime());
-            registry.Register<INodeConverter, GuidConverter>(new PerContainerLifetime());
-            registry.Register<INodeConverter, StringConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, Base64BinaryConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, BooleanConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, DateTimeConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, DecimalConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, DoubleConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, DurationConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, IntegerConverter>(new PerContainerLifetime());
-            registry.Register<ILiteralNodeConverter, StringConverter>(new PerContainerLifetime());
-            registry.Register<IFallbackNodeConverter, FallbackNodeConverter>(new PerContainerLifetime());
-            registry.Register(typeof(EntityIdConverter<>), new PerContainerLifetime());
-            registry.Register(typeof(AsEntityConverter<>), new PerContainerLifetime());
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)
@@ -98,6 +86,21 @@ namespace RomanticWeb.ComponentModel
                 factory.GetAllInstances<IMappingProviderSource>(),
                 visitors,
                 factory.GetAllInstances<IMappingModelVisitor>());
+        }
+
+        private void RegisterConverter(Type converterType, IServiceRegistry registry)
+        {
+            if (converterType == null || IsAlreadyRegistered(converterType, registry))
+            {
+                return;
+            }
+
+            registry.Register(typeof(INodeConverter), converterType, converterType.FullName, new PerContainerLifetime());
+        }
+
+        private bool IsAlreadyRegistered(Type converterType, IServiceRegistry registry)
+        {
+            return registry.AvailableServices.Any(s => s.ServiceName == converterType.FullName);
         }
     }
 }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using RomanticWeb.Entities;
-using RomanticWeb.LightInject;
 
 namespace RomanticWeb.Converters
 {
@@ -12,25 +10,14 @@ namespace RomanticWeb.Converters
     /// </summary>
     internal sealed class ConverterCatalog : IConverterCatalog
     {
-        private readonly IDictionary<Type, INodeConverter> _nodeConverters = new Dictionary<Type, INodeConverter>();
-        private readonly IServiceContainer _container = new ServiceContainer();
+        private readonly IDictionary<Type, INodeConverter> _converters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
         /// </summary>
-        public ConverterCatalog()
+        public ConverterCatalog(IEnumerable<INodeConverter> converters)
         {
-            _container.RegisterAssembly(GetType().Assembly);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
-        /// </summary>
-        /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
-        public ConverterCatalog(IBaseUriSelectionPolicy baseUriSelectionPolicy) : this()
-        {
-            _container.RegisterInstance<IBaseUriSelectionPolicy>(baseUriSelectionPolicy);
-            _nodeConverters = _container.GetAllInstances<INodeConverter>().ToDictionary(item => item.GetType(), item => item);
+            _converters = converters.ToDictionary(c => c.GetType(), c => c);
         }
 
         /// <inheritdoc/>
@@ -38,7 +25,7 @@ namespace RomanticWeb.Converters
         {
             get
             {
-                return new ReadOnlyCollection<INodeConverter>(_nodeConverters.Values.ToList());
+                return new ReadOnlyCollection<INodeConverter>(_converters.Values.ToList());
             }
         }
 
@@ -47,35 +34,24 @@ namespace RomanticWeb.Converters
         {
             get
             {
-                return new ReadOnlyCollection<ILiteralNodeConverter>(_nodeConverters.Values.Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
+                return new ReadOnlyCollection<ILiteralNodeConverter>(_converters.Values.Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
             }
         }
 
         /// <inheritdoc/>
         public INodeConverter GetConverter(Type converterType)
         {
-            if (!_nodeConverters.ContainsKey(converterType))
-            {
-                INodeConverter nodeConverter = CreateConverter(converterType);
-                _nodeConverters[nodeConverter.GetType()] = nodeConverter;
-            }
-
-            return _nodeConverters[converterType];
-        }
-
-        private INodeConverter CreateConverter(Type converterType)
-        {
             if (converterType == typeof(FallbackNodeConverter))
             {
                 return new FallbackNodeConverter(this);
             }
-
-            if (!_container.CanGetInstance(converterType, System.String.Empty))
+            
+            if (!_converters.ContainsKey(converterType))
             {
-                _container.RegisterInstance(converterType, (INodeConverter)Activator.CreateInstance(converterType));
+                _converters[converterType] = (INodeConverter)Activator.CreateInstance(converterType);
             }
 
-            return (INodeConverter)_container.GetInstance(converterType);
+            return _converters[converterType];
         }
     }
 }

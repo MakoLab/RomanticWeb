@@ -184,7 +184,7 @@ namespace RomanticWeb
 
             if (update.RemovedQuads.Any(q => q.Subject.IsBlank || q.Object.IsBlank))
             {
-                var graphQuads = from entityQuad in GetEntityQuads(entityId)
+                var graphQuads = from entityQuad in GetEntityQuads(entityId is BlankId ? ((BlankId)entityId).RootEntityId : entityId)
                                  where entityQuad.Graph == Node.FromEntityId(graphUri)
                                  select entityQuad;
                 return new GraphReconstruct(entityId, graphUri, graphQuads);

@@ -425,6 +425,28 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Mapped_collection_of_entities_should_add_new_members()
+        {
+            // given
+            Mappings.Add(new DefaultGraphPersonMapping(true));
+            EntityId karolId = new EntityId("http://test.org/karol");
+            IPerson karol = EntityContext.Load<IPerson>(karolId);
+            IPerson tomasz = EntityContext.Load<IPerson>(new EntityId("http://test.org/tomasz"));
+            IPerson gniewo = EntityContext.Load<IPerson>(new EntityId("http://test.org/gniewo"));
+            
+            // when
+            karol.Friends.Add(tomasz);
+            karol.Friends.Add(gniewo);
+
+            // then
+            Func<EntityQuad, bool> quadSearch = quad => (!quad.Subject.IsBlank) && (quad.Subject.Uri.AbsoluteUri == karolId.Uri.AbsoluteUri) && 
+                    (quad.Predicate.Uri.AbsoluteUri == "http://xmlns.com/foaf/0.1/knows") && (quad.Object.IsBlank);
+            Assert.That(karol.Friends, Has.Count.EqualTo(2));
+            Assert.That(EntityContext.Store.Quads.Any(quadSearch));
+            Assert.That(EntityContext.Changes.OfType<GraphReconstruct>().Any(item => (item.Entity == karolId) && (item.AddedQuads.Any(quadSearch))));
+        }
+
+        [Test]
         public void Setting_literal_should_convert_to_correct_node()
         {
             // given

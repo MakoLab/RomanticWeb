@@ -99,14 +99,7 @@ namespace RomanticWeb
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
-            var deletes = from entityQuad in _entityQuads[Node.FromEntityId(entityId)].ToList()
-                          from removedQuad in RemoveTriple(entityQuad)
-                          select removedQuad;
-
-            if (entityId is BlankId)
-            {
-                deletes = deletes.Union(_entityQuads.RemoveWhereObject(Node.FromEntityId(entityId)));
-            }
+            IEnumerable<EntityQuad> deletes = DeleteQuads(entityId);
 
             var deletesGrouped = (from removedQuad in deletes 
                                   group removedQuad by removedQuad.Graph into g 
@@ -132,15 +125,6 @@ namespace RomanticWeb
                     _entityQuads.RemoveWhereObject(Node.FromEntityId(entityId));
                     _changesTracker.Add(new RemoveReferences(entityId));
                 }
-            }
-
-            var orphanedBlankEntities = from removed in deletesGrouped 
-                                        from quad in removed
-                                        where quad.Object.IsBlank && !IsReferenced(quad.Object) 
-                                        select quad;
-            foreach (var quad in orphanedBlankEntities)
-            {
-                Delete(quad.Object.ToEntityId(), deleteBehaviour);
             }
         }
 
@@ -177,6 +161,28 @@ namespace RomanticWeb
 
             _disposed = true;
         }
+
+        private IEnumerable<EntityQuad> DeleteQuads(EntityId entityId)
+        {
+            var deletes = (from entityQuad in _entityQuads[Node.FromEntityId(entityId)].ToList()
+                           from removedQuad in RemoveTriple(entityQuad)
+                           select removedQuad).ToList();
+
+            if (entityId is BlankId)
+            {
+                deletes.AddRange(_entityQuads.RemoveWhereObject(Node.FromEntityId(entityId)));
+            }
+
+            var orphanedBlankEntities = (from quad in deletes
+                                         where quad.Object.IsBlank && !IsReferenced(quad.Object)
+                                         select quad).ToArray();
+            foreach (var quad in orphanedBlankEntities)
+            {
+                deletes.AddRange(DeleteQuads(quad.Object.ToEntityId()));
+            }
+
+            return deletes;
+        } 
 
         private DatasetChange CreateChangeForUpdate(EntityId entityId, EntityId graphUri, EntityQuad[] removedQuads, EntityQuad[] addedQuads)
         {

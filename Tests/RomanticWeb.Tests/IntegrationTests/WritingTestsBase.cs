@@ -3,12 +3,14 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Entities;
+using RomanticWeb.TestEntities;
 using RomanticWeb.TestEntities.Foaf;
 using RomanticWeb.Tests.Helpers;
 using RomanticWeb.Tests.Stubs;
 using RomanticWeb.Vocabularies;
 using VDS.RDF;
 using VDS.RDF.Query.Builder;
+using IPerson = RomanticWeb.TestEntities.Foaf.IPerson;
 
 namespace RomanticWeb.Tests.IntegrationTests
 {
@@ -351,6 +353,49 @@ namespace RomanticWeb.Tests.IntegrationTests
             Store.Should().MatchAsk(
                 tb => tb.Subject(new Uri("http://magi/addresses/Address")).PredicateUri(new Uri(RomanticWeb.Vocabularies.Schema.BaseUri + "addressLocality")).Object("street"),
                 eb => eb.Str(eb.Variable("street")) == "Litzmannstadt");
+        }
+
+        [Test]
+        public void Shoud_not_commit_volatile_deleted_entity()
+        {
+            // given
+            var entityId = new Uri("http://magi/people/Tomasz");
+            var tempId = new Uri("http://magi/people/TomaszTwo");
+            
+            // when
+            var person = EntityContext.Create<IPerson>(entityId);
+            var tempPerson = EntityContext.Create<IPerson>(tempId);
+            tempPerson.Name = "Tomasz";
+            person.Name = person.Name;
+            EntityContext.Delete(tempId);
+            EntityContext.Commit();
+
+            // then
+            Store.Should().NotMatchAsk(tpb => tpb.Subject(tempId).Predicate("p").Object("o"));
+            Store.Should().NotMatchAsk(tpb => tpb.Subject("s").Predicate("p").Object(tempId));
+        }
+
+        [Test]
+        public void Shoud_not_commit_volatile_deleted_entity_with_list()
+        {
+            // given
+            var tempId = new Uri("temp://magi/people/Tomasz");
+            var saved = EntityContext.Create<IEntityWithCollections>(new Uri("http://magi/people/Tomasz"));
+            var temp = EntityContext.Create<IEntityWithCollections>(tempId);
+            temp.DefaultListMapping.Add("test 1");
+            temp.DefaultListMapping.Add("test 2");
+            foreach (var val in temp.DefaultListMapping)
+            {
+                saved.DefaultListMapping.Add(val);
+            }
+            
+            // when
+            EntityContext.Delete(tempId);
+            EntityContext.Commit();
+
+            // then
+            Store.Should().NotMatchAsk(tpb => tpb.Subject(tempId).Predicate("p").Object("o"));
+            Store.Should().NotMatchAsk(tpb => tpb.Subject("s").Predicate("p").Object(tempId));
         }
 
         protected override void ChildSetup()

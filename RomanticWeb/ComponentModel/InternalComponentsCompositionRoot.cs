@@ -26,11 +26,7 @@ namespace RomanticWeb.ComponentModel
             registry.Register<IConverterCatalog, ConverterCatalog>(new PerContainerLifetime());
 
             registry.Register<IResultTransformerCatalog, ResultTransformerCatalog>(new PerContainerLifetime());
-            RegisterResultAggregator<AnyResultCheck>(registry);
-            RegisterResultAggregator<FirstOrDefault>(registry);
-            RegisterResultAggregator<FirstResult>(registry);
-            RegisterResultAggregator<SingleOrDefault>(registry);
-            RegisterResultAggregator<SingleResult>(registry);
+            registry.RegisterAssembly(GetType().Assembly, () => new PerContainerLifetime(), (service, impl) => service == typeof(IResultAggregator));
 
             registry.Register(factory => CreateEntitySource(factory), new PerContainerLifetime());
 
@@ -62,11 +58,6 @@ namespace RomanticWeb.ComponentModel
             var entitySource = factory.GetInstance<IEntitySource>("EntitySource");
             entitySource.MetaGraphUri = factory.GetInstance<Uri>("MetaGraphUri");
             return entitySource;
-        }
-
-        private static void RegisterResultAggregator<T>(IServiceRegistry registry) where T : IResultAggregator
-        {
-            registry.Register<IResultAggregator, T>(typeof(T).FullName, new PerContainerLifetime());
         }
 
         private static MappingContext CreateMappingContext(IServiceFactory factory)

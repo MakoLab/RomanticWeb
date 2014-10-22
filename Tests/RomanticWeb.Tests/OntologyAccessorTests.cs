@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
 using RomanticWeb.Entities;
-using RomanticWeb.LightInject;
 using RomanticWeb.Model;
 using RomanticWeb.Ontologies;
 using RomanticWeb.Tests.Stubs;
@@ -49,9 +48,8 @@ namespace RomanticWeb.Tests
         public void Getting_known_predicate_should_return_objects()
         {
             // given
-            IServiceContainer container = new ServiceContainer();
             _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor = new OntologyAccessor(_entity, _ontology, new FallbackNodeConverter(new ConverterCatalog(null)), new TestTransformerCatalog());
+            dynamic accessor = new OntologyAccessor(_entity, _ontology, new FallbackNodeConverter(new ConverterCatalog(new INodeConverter[0])), new TestTransformerCatalog());
 
             // when
             var givenName = accessor.givenName;
@@ -64,9 +62,8 @@ namespace RomanticWeb.Tests
         public void Getting_unknown_predicate_should_use_the_property_name()
         {
             // given
-            IServiceContainer container = new ServiceContainer();
             _store.Setup(g => g.GetObjectsForPredicate(_entity.Id, It.IsAny<Uri>(), It.IsAny<Uri>())).Returns(new Node[0]);
-            dynamic accessor = new OntologyAccessor(_entity, _ontology, new FallbackNodeConverter(new ConverterCatalog(null)), new TestTransformerCatalog());
+            dynamic accessor = new OntologyAccessor(_entity, _ontology, new FallbackNodeConverter(new ConverterCatalog(new INodeConverter[0])), new TestTransformerCatalog());
 
             // when
             var givenName = accessor.fullName;

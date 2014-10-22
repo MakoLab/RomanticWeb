@@ -66,6 +66,7 @@
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\CompositionRootBase.cs" />
+    <Compile Include="ComponentModel\ConvertersRegistrator.cs" />
     <Compile Include="ComponentModel\IComponentRegistry.cs" />
     <Compile Include="ComponentModel\OntologyLoaderCompositionRoot.cs" />
     <Compile Include="ComponentModel\MappingCompositionRoot.cs" />
@@ -280,7 +281,6 @@
     <Compile Include="Mapping\Providers\TermMappingProvider.cs" />
     <Compile Include="Mapping\Providers\ValueMappingProvider.cs" />
     <Compile Include="Mapping\Providers\VisitableEntityMappingProviderBase.cs" />
-    <Compile Include="Mapping\Visitors\ConverterCatalogVisitor.cs" />
     <Compile Include="Mapping\Visitors\MappingProviderVisitorChain.cs" />
     <Compile Include="Mapping\Visitors\RdfTypeCacheBuilder.cs" />
     <Compile Include="Mapping\Sources\AssemblyMappingsSource.cs" />

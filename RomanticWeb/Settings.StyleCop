@@ -7,4 +7,12 @@
 	  </GlobalSettings>
     </Settings>
   </SourceFileList>
+  <SourceFileList>
+    <SourceFile>LightInject.cs</SourceFile>
+    <Settings>
+	  <GlobalSettings>
+	    <BooleanProperty Name="RulesEnabledByDefault">False</BooleanProperty>
+	  </GlobalSettings>
+    </Settings>
+  </SourceFileList>
 </StyleCopSettings>

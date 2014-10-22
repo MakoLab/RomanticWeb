@@ -27,14 +27,14 @@ namespace RomanticWeb
             if ((Object.ReferenceEquals(x, null)) && (Object.ReferenceEquals(y, null))) { return 0; }
             if (Object.ReferenceEquals(y, null)) { return 1; }
             if (Object.ReferenceEquals(x, null)) { return -1; }
+            if (y.IsAssignableFrom(x)) { return -1; }
+            if (x.IsAssignableFrom(y)) { return 1; }
+            if (y.IsAssignableFromSpecificGeneric(x)) { return -1; }
+            if (x.IsAssignableFromSpecificGeneric(y)) { return 1; }
             int assemblyXHashCode = x.Assembly.GetHashCode();
             int assemblyYHashCode = y.Assembly.GetHashCode();
             if (assemblyXHashCode != assemblyYHashCode)
             {
-                if (y.IsAssignableFrom(x)) { return -1; }
-                if (x.IsAssignableFrom(y)) { return 1; }
-                if (y.IsAssignableFromSpecificGeneric(x)) { return -1; }
-                if (x.IsAssignableFromSpecificGeneric(y)) { return 1; }
                 AssemblyDependencyEntry cachedValue = _assemblyDependencyCache
                     .FirstOrDefault(item => (item.AssemblyXHashCode == assemblyXHashCode) && (item.AssemblyYHashCode == assemblyYHashCode));
                 if (cachedValue.Equals(AssemblyDependencyEntry.Empty))

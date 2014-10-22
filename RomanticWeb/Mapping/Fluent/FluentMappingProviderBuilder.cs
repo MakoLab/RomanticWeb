@@ -31,7 +31,7 @@ namespace RomanticWeb.Mapping.Fluent
             return CreatePropertyMapping(propertyMap);
         }
 
-        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, IPredicateMappingProvider key, IPredicateMappingProvider value)
+        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value)
         {
             var propertyMapping = CreatePropertyMapping(dictionaryMap);
             return new DictionaryMappingProvider(propertyMapping, key, value);
@@ -48,53 +48,34 @@ namespace RomanticWeb.Mapping.Fluent
             return result;
         }
 
-        public IPredicateMappingProvider Visit(DictionaryMap.KeyMap keyMap)
+        public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)
         {
-            KeyMappingProvider provider;
             if (keyMap.TermUri != null)
             {
-                provider = new KeyMappingProvider(keyMap.TermUri);
+                return new KeyMappingProvider(keyMap.TermUri);
             }
-            else if (keyMap.NamespacePrefix != null && keyMap.TermName != null)
+
+            if (keyMap.NamespacePrefix != null && keyMap.TermName != null)
             {
                 return new KeyMappingProvider(keyMap.NamespacePrefix, keyMap.TermName);
             }
-            else
-            {
-                provider = new KeyMappingProvider();
-            }
 
-            if (keyMap.ConverterType != null)
-            {
-                provider.ConverterType = keyMap.ConverterType;
-            }
-
-            return provider;
+            return new KeyMappingProvider();
         }
 
-        public IPredicateMappingProvider Visit(DictionaryMap.ValueMap valueMap)
+        public ITermMappingProvider Visit(DictionaryMap.ValueMap valueMap)
         {
-            ValueMappingProvider provider;
-
             if (valueMap.TermUri != null)
             {
-                provider = new ValueMappingProvider(valueMap.TermUri);
-            }
-            else if (valueMap.NamespacePrefix != null && valueMap.TermName != null)
-            {
-                provider = new ValueMappingProvider(valueMap.NamespacePrefix, valueMap.TermName);
-            }
-            else
-            {
-                provider = new ValueMappingProvider();
+                return new ValueMappingProvider(valueMap.TermUri);
             }
 
-            if (valueMap.ConverterType != null)
+            if (valueMap.NamespacePrefix != null && valueMap.TermName != null)
             {
-                provider.ConverterType = valueMap.ConverterType;
+                return new ValueMappingProvider(valueMap.NamespacePrefix, valueMap.TermName);
             }
 
-            return provider;
+            return new ValueMappingProvider();
         }
 
         private static PropertyMappingProvider CreatePropertyMapping(PropertyMapBase propertyMap)

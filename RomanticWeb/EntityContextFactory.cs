@@ -37,7 +37,7 @@ namespace RomanticWeb
         internal EntityContextFactory(IServiceContainer container)
         {
             _container = container;
-            _container.RegisterAssembly("RomanticWeb.dll");
+            _container.RegisterAssembly(GetType().Assembly);
             _container.Register<IEntityContextFactory>(f => this);
 
             WithMappings(DefaultMappings);

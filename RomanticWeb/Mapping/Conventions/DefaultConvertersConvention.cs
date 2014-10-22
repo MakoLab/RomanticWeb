@@ -10,7 +10,7 @@ namespace RomanticWeb.Mapping.Conventions
     /// <summary>
     /// Convention, which sets converter types based the property type
     /// </summary>
-    public class DefaultConvertersConvention : IPropertyConvention, ICollectionConvention, IDictionaryConvention
+    public class DefaultConvertersConvention : IPropertyConvention, ICollectionConvention
     {
         private readonly IDictionary<Type, Type> _defaultConverters;
 
@@ -53,30 +53,6 @@ namespace RomanticWeb.Mapping.Conventions
         void IConvention<ICollectionMappingProvider>.Apply(ICollectionMappingProvider target)
         {
             target.ElementConverterType = GetConverterType(target.PropertyInfo.PropertyType.FindItemType());
-        }
-
-        /// <inheritdoc/>
-        bool IConvention<IDictionaryMappingProvider>.ShouldApply(IDictionaryMappingProvider target)
-        {
-            var keyType = target.PropertyInfo.PropertyType.GenericTypeArguments[0];
-            var valueType = target.PropertyInfo.PropertyType.GenericTypeArguments[1];
-
-            return (target.Key.ConverterType == null && (GetConverterType(keyType.FindItemType()) != null))
-                || (target.Value.ConverterType == null && (GetConverterType(valueType.FindItemType()) != null));
-        }
-
-        /// <inheritdoc/>
-        void IConvention<IDictionaryMappingProvider>.Apply(IDictionaryMappingProvider target)
-        {
-            if (target.Key.ConverterType == null)
-            {
-                target.Key.ConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[0].FindItemType());
-            }
-
-            if (target.Value.ConverterType == null)
-            {
-                target.Value.ConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[1].FindItemType());
-            }
         }
 
         /// <summary>

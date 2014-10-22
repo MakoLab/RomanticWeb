@@ -219,13 +219,11 @@
     <Compile Include="Mapping\AmbiguousPropertyException.cs" />
     <Compile Include="Mapping\Attributes\AttributeMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Attributes\DictionaryAttribute.cs" />
-    <Compile Include="Mapping\Attributes\PredicateMappingAttribute.cs" />
     <Compile Include="Mapping\Conventions\DefaultConvertersConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityIdPropertiesConvention.cs" />
     <Compile Include="Mapping\Conventions\EntityPropertiesConvention.cs" />
     <Compile Include="Mapping\Model\IQueryableClassMapping.cs" />
     <Compile Include="Mapping\Model\MultiMapping.cs" />
-    <Compile Include="Mapping\Providers\IPredicateMappingProvider.cs" />
     <Compile Include="Mapping\RdfTypeCache.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />
     <Compile Include="Mapping\Fluent\IClassMap.cs" />

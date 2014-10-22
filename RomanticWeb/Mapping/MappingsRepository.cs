@@ -12,7 +12,6 @@ namespace RomanticWeb.Mapping
     /// <summary>
     /// Default implementation of <see cref="IMappingsRepository"/>
     /// </summary>
-    [NullGuard(ValidationFlags.All)]
     internal sealed class MappingsRepository : IMappingsRepository
     {
         private readonly IList<IMappingProviderSource> _sources;

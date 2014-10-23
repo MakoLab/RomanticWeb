@@ -42,6 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmbiguousMembers\ChildMap.cs" />
+    <Compile Include="AmbiguousMembers\IChild.cs" />
+    <Compile Include="AmbiguousMembers\IParent1.cs" />
+    <Compile Include="AmbiguousMembers\IParent2.cs" />
+    <Compile Include="AmbiguousMembers\IParent3.cs" />
+    <Compile Include="AmbiguousMembers\Parent1Map.cs" />
+    <Compile Include="AmbiguousMembers\Parent2Map.cs" />
+    <Compile Include="AmbiguousMembers\Parent3Map.cs" />
     <Compile Include="ConcreteEntity.cs" />
     <Compile Include="ConcreteEntityChild.cs" />
     <Compile Include="Derived2Map.cs" />

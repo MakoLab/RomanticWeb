@@ -48,14 +48,19 @@ namespace RomanticWeb.Mapping.Model
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            var propertyMapping = Properties.SingleOrDefault(p => p.Name == propertyName);
+            var propertyMappings = Properties.Where(p => p.Name == propertyName).ToList();
 
-            if (propertyMapping == null)
+            if (!propertyMappings.Any())
             {
                 throw new MappingException(string.Format("No mapping found for property {0}", propertyName));
             }
 
-            return propertyMapping;
+            if (propertyMappings.Count > 1)
+            {
+                throw new AmbiguousPropertyException(propertyName);
+            }
+
+            return propertyMappings.Single();
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)

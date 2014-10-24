@@ -69,9 +69,9 @@ namespace RomanticWeb.Tests
             _entityStore.Setup(es => es.GetObjectsForPredicate(It.IsAny<EntityId>(), Rdf.type, It.IsAny<Uri>()))
                         .Returns(new Node[0]);
             _mappings.Setup(m => m.MappingFor<ITypedEntity>())
-                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
+                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }, new PropertyMapping[0]));
             _mappings.Setup(m => m.MappingFor(typeof(ITypedEntity)))
-                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }));
+                     .Returns(new EntityMapping(typeof(ITypedEntity), new ClassMapping[0], new[] { _typesMapping }, new PropertyMapping[0]));
             _store = new Mock<IEntitySource>();
             _baseUriSelector = new Mock<IBaseUriSelectionPolicy>(MockBehavior.Strict);
             _factory.Setup(f => f.Ontologies).Returns(_ontologyProvider);

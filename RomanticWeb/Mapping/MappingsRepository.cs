@@ -76,7 +76,7 @@ namespace RomanticWeb.Mapping
                     select property).FirstOrDefault();
         }
 
-        private void CreateMappings(IMappingProviderSource[] sources)
+        private void CreateMappings(IEnumerable<IMappingProviderSource> sources)
         {
             var mappings = (from source in sources
                             from provider in source.GetMappingProviders()

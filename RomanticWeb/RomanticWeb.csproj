@@ -226,6 +226,7 @@
     <Compile Include="Mapping\Conventions\EntityPropertiesConvention.cs" />
     <Compile Include="Mapping\Model\IQueryableClassMapping.cs" />
     <Compile Include="Mapping\Model\MultiMapping.cs" />
+    <Compile Include="Mapping\Providers\IEntityMappingProviderWithHiddenProperties.cs" />
     <Compile Include="Mapping\Providers\IPredicateMappingProvider.cs" />
     <Compile Include="Mapping\RdfTypeCache.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingProviderBuilder.cs" />

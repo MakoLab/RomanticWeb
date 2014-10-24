@@ -9,7 +9,7 @@ namespace RomanticWeb.Mapping.Model
         public MultiMapping(params IEntityMapping[] mappings)
             : base(
             mappings.SelectMany(m => m.Classes),
-            mappings.SelectMany(m => m.Properties).Distinct(new PropertyMappingComparer()))
+            mappings.SelectMany(m => m.Properties).Distinct(new PropertyMappingComparer()).Cast<PropertyMapping>())
         {
         }
 

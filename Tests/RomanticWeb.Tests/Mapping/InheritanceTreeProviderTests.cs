@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
@@ -29,11 +28,12 @@ namespace RomanticWeb.Tests.Mapping
         public void Should_ignore_overriden_parent_properties()
         {
             // given
-            PropertyInfo property = new TestPropertyInfo(GetType());
+            PropertyInfo property = new TestPropertyInfo(GetType(), typeof(IDerived));
+            PropertyInfo overridenProperty = new TestPropertyInfo(GetType(), typeof(IDerivedLevel2));
             var child = new
                           {
                               EntityType = typeof(IDerivedLevel2),
-                              Properties = CreateProperty(property, new Uri("urn:in:child")).AsEnumerable(),
+                              Properties = CreateProperty(overridenProperty, new Uri("urn:in:child")).AsEnumerable(),
                           }.ActLike<IEntityMappingProvider>();
             var parent = new
                            {

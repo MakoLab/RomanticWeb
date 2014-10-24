@@ -12,7 +12,7 @@ namespace RomanticWeb.Mapping.Providers
     public class CollectionMappingProvider : ICollectionMappingProvider
     {
         private readonly IPropertyMappingProvider _propertyMapping;
-        private Type _elementConverterType = null;
+        private Type _elementConverterType;
 
         /// <summary>Initializes a new instance of the <see cref="CollectionMappingProvider" /> class.</summary>
         /// <param name="propertyMapping">The property mapping.</param>

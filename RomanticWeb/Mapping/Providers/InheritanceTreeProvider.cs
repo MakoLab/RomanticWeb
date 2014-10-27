@@ -5,16 +5,18 @@ using RomanticWeb.Mapping.Sources;
 
 namespace RomanticWeb.Mapping.Providers
 {
-    internal class InheritanceTreeProvider : VisitableEntityMappingProviderBase
+    internal class InheritanceTreeProvider : VisitableEntityMappingProviderBase, IEntityMappingProviderWithHiddenProperties
     {
         private readonly IEntityMappingProvider _mainProvider;
         private readonly IDictionary<Type, IEntityMappingProvider> _parentProviders;
-        private ICollection<IPropertyMappingProvider> _propertyProviders;
+        private readonly List<IPropertyMappingProvider> _hiddenProperties = new List<IPropertyMappingProvider>();
+        private readonly List<IPropertyMappingProvider> _propertyProviders = new List<IPropertyMappingProvider>();
 
         public InheritanceTreeProvider(IEntityMappingProvider mainProvider, IEnumerable<IEntityMappingProvider> parentProviders)
         {
             _mainProvider = mainProvider;
             _parentProviders = parentProviders.ToDictionary(mp => mp.EntityType, mp => mp);
+            DiscoverProperties();
         }
 
         public override Type EntityType
@@ -37,21 +39,25 @@ namespace RomanticWeb.Mapping.Providers
         {
             get
             {
-                if (_propertyProviders == null)
-                {
-                    _propertyProviders = CombineProperties();
-                }
-
                 return _propertyProviders;
             }
         }
 
-        private ICollection<IPropertyMappingProvider> CombineProperties()
+        public IEnumerable<IPropertyMappingProvider> HiddenProperties
         {
-            var providers = new Dictionary<string, IPropertyMappingProvider>();
+            get
+            {
+                return _hiddenProperties;
+            }
+        }
+
+        private void DiscoverProperties()
+        {
+            var inheritedProperties = new HashSet<IPropertyMappingProvider>();
+            var properties = new Dictionary<string, IPropertyMappingProvider>();
             foreach (var property in _mainProvider.Properties)
             {
-                providers[property.PropertyInfo.Name] = property;
+                properties[property.PropertyInfo.Name] = property;
             }
 
             var parents = new Queue<Type>(_mainProvider.EntityType.GetImmediateParents());
@@ -72,17 +78,37 @@ namespace RomanticWeb.Mapping.Providers
                 if (_parentProviders.ContainsKey(iface))
                 {
                     var provider = _parentProviders[iface];
-                    foreach (var property in provider.Properties)
+                    foreach (var propertyMapping in provider.Properties)
                     {
-                        if (!providers.ContainsKey(property.PropertyInfo.Name))
-                        {
-                            providers[property.PropertyInfo.Name] = property;
-                        }
+                        inheritedProperties.Add(propertyMapping);
                     }
                 }
             }
 
-            return providers.Values;
+            _propertyProviders.AddRange(properties.Values);
+
+            foreach (var inheritedProperty in inheritedProperties.GroupBy(p => p.PropertyInfo.Name))
+            {
+                if (properties.ContainsKey(inheritedProperty.Key))
+                {
+                    _hiddenProperties.AddRange(inheritedProperty.Where(p => p.PropertyInfo.DeclaringType.IsGenericTypeDefinition == false));
+                }
+                else
+                {
+                    var propertyMappingProvider = (from property in inheritedProperty
+                                                   group property by property.PropertyInfo.DeclaringType.IsGenericTypeDefinition into g 
+                                                   select g).ToDictionary(g => g.Key, g => g);
+
+                    if (propertyMappingProvider[false].Any())
+                    {
+                        _propertyProviders.AddRange(propertyMappingProvider[false]);
+                    }
+                    else
+                    {
+                        _propertyProviders.AddRange(propertyMappingProvider[true]); 
+                    }
+                }
+            }
         }
     }
 }

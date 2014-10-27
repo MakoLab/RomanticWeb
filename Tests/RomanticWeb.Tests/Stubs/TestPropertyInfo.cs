@@ -7,11 +7,13 @@ namespace RomanticWeb.Tests.Stubs
     internal class TestPropertyInfo : PropertyInfo
     {
         private readonly Type _type;
+        private readonly Type _declaringType;
         private readonly string _name;
 
-        public TestPropertyInfo(Type type, string name = "Property")
+        public TestPropertyInfo(Type type, Type declaringType = null, string name = "Property")
         {
             _type = type;
+            _declaringType = declaringType;
             _name = name;
         }
 
@@ -27,7 +29,7 @@ namespace RomanticWeb.Tests.Stubs
         {
             get
             {
-                throw new NotImplementedException();
+                return _declaringType;
             }
         }
 

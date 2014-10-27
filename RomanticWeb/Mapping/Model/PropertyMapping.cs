@@ -11,6 +11,8 @@ namespace RomanticWeb.Mapping.Model
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     internal class PropertyMapping : IPropertyMapping
     {
+        private readonly bool _isHidden;
+
         public PropertyMapping(Type declaringType, Type returnType, string name, Uri predicateUri)
         {
             DeclaringType = declaringType;
@@ -30,6 +32,14 @@ namespace RomanticWeb.Mapping.Model
         public Type ReturnType { get; private set; }
 
         public INodeConverter Converter { get; internal set; }
+
+        public bool IsHidden
+        {
+            get
+            {
+                return _isHidden;
+            }
+        }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)
         {

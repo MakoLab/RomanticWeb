@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Model
@@ -12,22 +13,24 @@ namespace RomanticWeb.Mapping.Model
     internal class EntityMapping : IEntityMapping
     {
         private readonly Type _entityType;
+        private readonly List<PropertyMapping> _hiddenProperties;
         private readonly List<IClassMapping> _classes;
-        private readonly List<IPropertyMapping> _properties;
+        private readonly List<PropertyMapping> _properties;
 
-        internal EntityMapping(Type entityType, IEnumerable<IClassMapping> classes, IEnumerable<IPropertyMapping> properties)
+        internal EntityMapping(Type entityType, IEnumerable<IClassMapping> classes, IEnumerable<PropertyMapping> properties, IEnumerable<PropertyMapping> hiddenProperties)
             : this(classes, properties)
         {
             _entityType = entityType;
-            _properties.OfType<PropertyMapping>().ToList().ForEach(p => p.EntityMapping = this);
+            _hiddenProperties = hiddenProperties.ToList();
+            _properties.ToList().ForEach(p => p.EntityMapping = this);
         }
 
         internal EntityMapping(Type entityType)
-            : this(entityType, new IClassMapping[0], new PropertyMapping[0])
+            : this(entityType, new IClassMapping[0], new PropertyMapping[0], new PropertyMapping[0])
         {
         }
 
-        protected EntityMapping(IEnumerable<IClassMapping> classes, IEnumerable<IPropertyMapping> properties)
+        protected EntityMapping(IEnumerable<IClassMapping> classes, IEnumerable<PropertyMapping> properties)
         {
             _entityType = typeof(IEntity);
             _properties = properties.ToList();
@@ -44,18 +47,29 @@ namespace RomanticWeb.Mapping.Model
 
         public IEnumerable<IClassMapping> Classes { get { return _classes; } }
 
-        public IEnumerable<IPropertyMapping> Properties { get { return _properties; } }
+        public IEnumerable<IPropertyMapping> Properties
+        {
+            get
+            {
+                return _properties.Concat(_hiddenProperties);
+            }
+        }
 
         public IPropertyMapping PropertyFor(string propertyName)
         {
-            var propertyMapping = Properties.SingleOrDefault(p => p.Name == propertyName);
+            var propertyMappings = _properties.Where(p => p.Name == propertyName && !p.IsHidden).ToList();
 
-            if (propertyMapping == null)
+            if (!propertyMappings.Any())
             {
                 throw new MappingException(string.Format("No mapping found for property {0}", propertyName));
             }
 
-            return propertyMapping;
+            if (propertyMappings.Count > 1)
+            {
+                throw new AmbiguousPropertyException(propertyName);
+            }
+
+            return propertyMappings.Single();
         }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Providers;
@@ -22,8 +23,15 @@ namespace RomanticWeb.Mapping.Model
             _currentType = mapping.EntityType;
             var classes = mapping.Classes.Select(BuildMapping);
             var properties = mapping.Properties.Select(BuildMapping);
+            IEnumerable<PropertyMapping> hiddenProperties = new PropertyMapping[0];
 
-            return new EntityMapping(mapping.EntityType, classes, properties);
+            var providerWithHiddenProperties = mapping as IEntityMappingProviderWithHiddenProperties;
+            if (providerWithHiddenProperties != null)
+            {
+                hiddenProperties = providerWithHiddenProperties.HiddenProperties.Select(BuildMapping);
+            }
+
+            return new EntityMapping(mapping.EntityType, classes, properties, hiddenProperties);
         }
 
         private PropertyMapping BuildMapping(IPropertyMappingProvider mapping)

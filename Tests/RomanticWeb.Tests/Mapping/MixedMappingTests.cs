@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.TestEntities.MixedMappings;
+using RomanticWeb.TestEntities.MixedMappings.AmbiguousMembers;
 
 namespace RomanticWeb.Tests.Mapping
 {
@@ -124,6 +126,29 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             properties.Should().HaveCount(2);
+        }
+
+        [Test]
+        public void Should_fail_when_getting_ambiguous_property_mapping()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IChild>();
+            
+            // then
+            mapping.Invoking(m => m.PropertyFor("Member")).ShouldThrow<AmbiguousPropertyException>();
+        }
+
+        [Test]
+        public void Should_give_access_to_all_ambiguous_property_mappings()
+        {
+            // given
+            var mapping = MappingsRepository.MappingFor<IChild>();
+
+            // when
+            var properties = mapping.Properties;
+
+            // then
+            properties.Should().HaveCount(4);
         }
 
         protected override IEnumerable<IMappingProviderSource> CreateMappingSources()

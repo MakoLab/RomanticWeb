@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RomanticWeb.Converters;
 using RomanticWeb.Dynamic;
@@ -16,13 +17,14 @@ using RomanticWeb.Updates;
 
 namespace RomanticWeb.ComponentModel
 {
-    internal delegate void RegisterConverterDelegate(Type converterType);
+    internal delegate INodeConverter GetConverterDelegate(Type converterType);
+
+    internal delegate IEnumerable<INodeConverter> GetAllConvertersDelegate(); 
 
     internal class InternalComponentsCompositionRoot : ICompositionRoot
     {
         public void Compose(IServiceRegistry registry)
         {
-            registry.RegisterInstance<RegisterConverterDelegate>(type => RegisterConverter(type, registry));
             registry.Register<IConverterCatalog, ConverterCatalog>(new PerContainerLifetime());
 
             registry.Register<IResultTransformerCatalog, ResultTransformerCatalog>(new PerContainerLifetime());
@@ -41,6 +43,19 @@ namespace RomanticWeb.ComponentModel
             registry.Register(factory => CreateEntityProxy(factory));
 
             registry.Register<IDatasetChangesTracker, DatasetChanges>(new PerScopeLifetime());
+
+            var container = (IServiceContainer)registry;
+            container.RegisterInstance<GetConverterDelegate>(type =>
+            {
+                if (!container.CanGetInstance(type, string.Empty))
+                {
+                    container.Register(typeof(INodeConverter), type, type.FullName, new PerContainerLifetime());
+                    container.Register(type, new PerContainerLifetime());
+                }
+
+                return (INodeConverter)container.GetInstance(type);
+            });
+            container.RegisterInstance<GetAllConvertersDelegate>(container.GetAllInstances<INodeConverter>);
         }
 
         private static Func<Entity, IEntityMapping, IEntityProxy> CreateEntityProxy(IServiceFactory factory)
@@ -77,21 +92,6 @@ namespace RomanticWeb.ComponentModel
                 factory.GetAllInstances<IMappingProviderSource>(),
                 visitors,
                 factory.GetAllInstances<IMappingModelVisitor>());
-        }
-
-        private void RegisterConverter(Type converterType, IServiceRegistry registry)
-        {
-            if (converterType == null || IsAlreadyRegistered(converterType, registry))
-            {
-                return;
-            }
-
-            registry.Register(converterType, converterType, string.Empty, new PerContainerLifetime());
-        }
-
-        private bool IsAlreadyRegistered(Type converterType, IServiceRegistry registry)
-        {
-            return registry.AvailableServices.Any(s => s.ServiceName == converterType.FullName);
         }
     }
 }

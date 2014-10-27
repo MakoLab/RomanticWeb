@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using RomanticWeb.ComponentModel;
 
 namespace RomanticWeb.Converters
 {
@@ -10,14 +11,13 @@ namespace RomanticWeb.Converters
     /// </summary>
     internal sealed class ConverterCatalog : IConverterCatalog
     {
-        private readonly Func<Type, INodeConverter> _createConverter;
-
-        private readonly Func<IEnumerable<INodeConverter>> _getConverters;
+        private readonly GetConverterDelegate _createConverter;
+        private readonly GetAllConvertersDelegate _getConverters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
         /// </summary>
-        public ConverterCatalog(Func<Type, INodeConverter> createConverter, Func<IEnumerable<INodeConverter>> getConverters)
+        public ConverterCatalog(GetConverterDelegate createConverter, GetAllConvertersDelegate getConverters)
         {
             _createConverter = createConverter;
             _getConverters = getConverters;
@@ -54,14 +54,7 @@ namespace RomanticWeb.Converters
                 return new FallbackNodeConverter(this);
             }
 
-            try
-            {
-                return _createConverter(converterType);
-            }
-            catch
-            {
-                return (INodeConverter)Activator.CreateInstance(converterType);
-            }
+            return _createConverter(converterType);
         }
     }
 }

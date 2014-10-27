@@ -310,6 +310,14 @@ namespace RomanticWeb.Tests.IntegrationTests
         }
 
         [Test]
+        public void Should_allow_setting_relative_EntityId_values()
+        {
+            IProduct product = EntityContext.Create<IProduct>(new EntityId("http://test.com/test"));
+            product.Industry = new EntityId(new Uri("/test", UriKind.Relative));
+            Assert.That(product.Industry.Uri.ToString().StartsWith("http"));
+        }
+
+        [Test]
         [TestCase("http://chem.com/vocab/tensile", 400.0, 600.0)]
         public void Select_with_predicate_value_type_casted_to_collection_of_IQuantitativeFloatProperty(string predicateUriString, double minValue, double maxValue)
         {

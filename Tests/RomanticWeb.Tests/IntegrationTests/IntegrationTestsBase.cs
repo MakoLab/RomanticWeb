@@ -77,7 +77,8 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithOntology(new ChemOntology())
                                                  .WithMappings(BuildMappings)
                                                  .WithMetaGraphUri(MetaGraphUri)
-                                                 .WithDotNetRDF(_store);
+                                                 .WithDotNetRDF(_store)
+                                                 .WithBaseUri(b => b.Default.Is(new Uri("http://example.com/")));
 
             ChildSetup();
         }

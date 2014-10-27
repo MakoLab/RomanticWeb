@@ -12,7 +12,7 @@ namespace RomanticWeb.Converters
     public class EntityIdConverter : EntityIdConverter<EntityId>
     {
         /// <summary>Creates an instance of the <see cref="EntityIdConverter"/>.</summary>
-        public EntityIdConverter() : base()
+        public EntityIdConverter()
         {
         }
 
@@ -29,15 +29,14 @@ namespace RomanticWeb.Converters
     public class EntityIdConverter<TEntityId> : INodeConverter where TEntityId : EntityId
     {
         private static TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TEntityId));
+        private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
 
-        private IBaseUriSelectionPolicy _baseUriSelectionPolicy = null;
-
-        /// <summary>Creates an instance of the <see cref="EntityIdConverter<TEntityId>"/>.</summary>
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter{TEntityId}"/>.</summary>
         public EntityIdConverter()
         {
         }
 
-        /// <summary>Creates an instance of the <see cref="EntityIdConverter<TEntityId>"/>.</summary>
+        /// <summary>Creates an instance of the <see cref="EntityIdConverter{TEntityId}"/>.</summary>
         /// <param name="baseUriSelectionPolicy">Base Uri selection policy.</param>
         public EntityIdConverter(IBaseUriSelectionPolicy baseUriSelectionPolicy)
         {

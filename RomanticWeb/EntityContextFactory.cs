@@ -39,6 +39,15 @@ namespace RomanticWeb
             _container = container;
             _container.RegisterAssembly("RomanticWeb.dll");
             _container.Register<IEntityContextFactory>(f => this);
+            _container.RegisterInstance<Func<Type, INodeConverter>>(type =>
+                {
+                    if (!_container.CanGetInstance(type, string.Empty))
+                    {
+                         _container.Register(type);   
+                    }
+
+                    return (INodeConverter)_container.GetInstance(type);
+                });
 
             WithMappings(DefaultMappings);
 

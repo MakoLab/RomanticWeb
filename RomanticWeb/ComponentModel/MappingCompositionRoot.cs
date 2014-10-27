@@ -14,7 +14,7 @@ namespace RomanticWeb.ComponentModel
             MappingModelVisitor<RdfTypeCacheBuilder>();
             MappingProviderVisitor<ConventionsVisitor>();
             MappingProviderVisitor<MappingProvidersValidator>();
-            MappingProviderVisitor<ConvertersRegistrator>();
+            ////MappingProviderVisitor<ConvertersRegistrator>();
             MappingProviderVisitor<GeneratedListMappingSource>();
             MappingProviderVisitor<GeneratedDictionaryMappingSource>();
         }

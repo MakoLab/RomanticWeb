@@ -10,14 +10,21 @@ namespace RomanticWeb.Converters
     /// </summary>
     internal sealed class ConverterCatalog : IConverterCatalog
     {
+        private readonly Func<Type, INodeConverter> _createConverter;
+
         private readonly IDictionary<Type, INodeConverter> _converters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
         /// </summary>
-        public ConverterCatalog(IEnumerable<INodeConverter> converters)
+        public ConverterCatalog(Func<Type, INodeConverter> createConverter)
         {
-            _converters = converters.ToDictionary(c => c.GetType(), c => c);
+            _createConverter = createConverter;
+        }
+
+        internal ConverterCatalog()
+            : this(type => null)
+        {
         }
 
         /// <inheritdoc/>
@@ -45,13 +52,8 @@ namespace RomanticWeb.Converters
             {
                 return new FallbackNodeConverter(this);
             }
-            
-            if (!_converters.ContainsKey(converterType))
-            {
-                _converters[converterType] = (INodeConverter)Activator.CreateInstance(converterType);
-            }
 
-            return _converters[converterType];
+            return _createConverter(converterType);
         }
     }
 }

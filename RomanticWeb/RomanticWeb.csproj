@@ -66,7 +66,6 @@
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
     <Compile Include="ComponentModel\CompositionRootBase.cs" />
-    <Compile Include="ComponentModel\ConvertersRegistrator.cs" />
     <Compile Include="ComponentModel\IComponentRegistry.cs" />
     <Compile Include="ComponentModel\OntologyLoaderCompositionRoot.cs" />
     <Compile Include="ComponentModel\MappingCompositionRoot.cs" />

@@ -12,18 +12,19 @@ namespace RomanticWeb.Converters
     {
         private readonly Func<Type, INodeConverter> _createConverter;
 
-        private readonly IDictionary<Type, INodeConverter> _converters;
+        private readonly Func<IEnumerable<INodeConverter>> _getConverters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterCatalog"/> class.
         /// </summary>
-        public ConverterCatalog(Func<Type, INodeConverter> createConverter)
+        public ConverterCatalog(Func<Type, INodeConverter> createConverter, Func<IEnumerable<INodeConverter>> getConverters)
         {
             _createConverter = createConverter;
+            _getConverters = getConverters;
         }
 
         internal ConverterCatalog()
-            : this(type => null)
+            : this(type => null, () => new INodeConverter[0])
         {
         }
 
@@ -32,7 +33,7 @@ namespace RomanticWeb.Converters
         {
             get
             {
-                return new ReadOnlyCollection<INodeConverter>(_converters.Values.ToList());
+                return new ReadOnlyCollection<INodeConverter>(_getConverters().ToList());
             }
         }
 
@@ -41,7 +42,7 @@ namespace RomanticWeb.Converters
         {
             get
             {
-                return new ReadOnlyCollection<ILiteralNodeConverter>(_converters.Values.Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
+                return new ReadOnlyCollection<ILiteralNodeConverter>(_getConverters().Where(c => c is LiteralNodeConverter).Cast<ILiteralNodeConverter>().ToList());
             }
         }
 
@@ -53,7 +54,14 @@ namespace RomanticWeb.Converters
                 return new FallbackNodeConverter(this);
             }
 
-            return _createConverter(converterType);
+            try
+            {
+                return _createConverter(converterType);
+            }
+            catch
+            {
+                return (INodeConverter)Activator.CreateInstance(converterType);
+            }
         }
     }
 }

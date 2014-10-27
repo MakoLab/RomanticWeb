@@ -86,7 +86,7 @@ namespace RomanticWeb.ComponentModel
                 return;
             }
 
-            registry.Register(converterType, converterType, converterType.FullName, new PerContainerLifetime());
+            registry.Register(converterType, converterType, string.Empty, new PerContainerLifetime());
         }
 
         private bool IsAlreadyRegistered(Type converterType, IServiceRegistry registry)

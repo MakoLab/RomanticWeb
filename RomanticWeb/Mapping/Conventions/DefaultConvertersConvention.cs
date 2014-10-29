@@ -61,21 +61,21 @@ namespace RomanticWeb.Mapping.Conventions
             var keyType = target.PropertyInfo.PropertyType.GenericTypeArguments[0];
             var valueType = target.PropertyInfo.PropertyType.GenericTypeArguments[1];
 
-            return (target.Key.ConverterType == null && (GetConverterType(keyType.FindItemType()) != null))
-                || (target.Value.ConverterType == null && (GetConverterType(valueType.FindItemType()) != null));
+            return (target.KeyConverterType == null && (GetConverterType(keyType.FindItemType()) != null))
+                || (target.ValueConverterType == null && (GetConverterType(valueType.FindItemType()) != null));
         }
 
         /// <inheritdoc/>
         void IConvention<IDictionaryMappingProvider>.Apply(IDictionaryMappingProvider target)
         {
-            if (target.Key.ConverterType == null)
+            if (target.KeyConverterType == null)
             {
-                target.Key.ConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[0].FindItemType());
+                target.KeyConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[0].FindItemType());
             }
 
-            if (target.Value.ConverterType == null)
+            if (target.ValueConverterType == null)
             {
-                target.Value.ConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[1].FindItemType());
+                target.ValueConverterType = GetConverterType(target.PropertyInfo.PropertyType.GenericTypeArguments[1].FindItemType());
             }
         }
 

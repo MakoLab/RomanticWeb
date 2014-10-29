@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
+using NullGuard;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Visitors;
 
@@ -26,6 +28,12 @@ namespace RomanticWeb.Mapping.Attributes
             : base(termUri)
         {
         }
+
+        /// <summary>Gets or sets the key converter type.</summary>
+        public Type KeyConverterType { [return: AllowNull] get; set; }
+
+        /// <summary>Gets or sets the value converter type.</summary>
+        public Type ValueConverterType { [return: AllowNull] get; set; }
 
         internal override IPropertyMappingProvider Accept(IMappingAttributesVisitor visitor, PropertyInfo property)
         {

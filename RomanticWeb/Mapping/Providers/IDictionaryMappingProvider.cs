@@ -1,3 +1,5 @@
+using System;
+
 namespace RomanticWeb.Mapping.Providers
 {
     /// <summary>
@@ -8,11 +10,17 @@ namespace RomanticWeb.Mapping.Providers
         /// <summary>
         /// Gets the key mapping provider.
         /// </summary>
-        IPredicateMappingProvider Key { get; }
+        ITermMappingProvider Key { get; }
 
         /// <summary>
         /// Gets the value mapping provider.
         /// </summary>
-        IPredicateMappingProvider Value { get; }
+        ITermMappingProvider Value { get; }
+
+        /// <summary>Gets or sets a key converter type.</summary>
+        Type KeyConverterType { get; set; }
+
+        /// <summary>Gets or sets a value converter type.</summary>
+        Type ValueConverterType { get; set; }
     }
 }

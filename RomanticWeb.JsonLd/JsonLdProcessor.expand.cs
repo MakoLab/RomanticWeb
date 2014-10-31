@@ -26,7 +26,7 @@ namespace RomanticWeb.JsonLd
             {
                 JToken data = (JToken)JsonConvert.DeserializeObject(json);
                 IList<string> remoteContexts = new List<string>();
-                Context activeContext = new Context() { BaseIri = options.BaseUri.ToString(), DocumentUri = options.BaseUri };
+                Context activeContext = new Context() { BaseIri = (options.BaseUri != null ? options.BaseUri.ToString() : System.String.Empty), DocumentUri = options.BaseUri };
                 if (!System.String.IsNullOrEmpty(options.ExpandContext))
                 {
                     ExpandContext(activeContext, (JToken)JsonConvert.DeserializeObject(options.ExpandContext), remoteContexts);

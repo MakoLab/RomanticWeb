@@ -250,7 +250,8 @@ namespace RomanticWeb
         // TODO: Make the GraphEquals method a bit less rigid.
         private bool GraphEquals(EntityQuad triple, Uri graph)
         {
-            return (triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri)));
+            return (triple.Graph != null) && ((triple.Graph.Uri.AbsoluteUri == graph.AbsoluteUri) || 
+                ((triple.Subject.IsBlank) && (graph.AbsoluteUri.EndsWith(triple.Graph.Uri.AbsoluteUri))));
         }
 
         private void DecrementRefCount(Node node)

@@ -132,6 +132,7 @@
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
     <Compile Include="Model\EntityQuadCollectionTests.cs" />
+    <Compile Include="TypeComparerTests.cs" />
     <Compile Include="Updates\DatasetChangesTests.cs" />
     <Compile Include="Updates\GraphUpdateTests.cs" />
     <Compile Include="Updates\GraphReconstructTests.cs" />

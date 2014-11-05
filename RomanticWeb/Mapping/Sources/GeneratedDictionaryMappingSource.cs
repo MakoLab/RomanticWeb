@@ -128,19 +128,19 @@ namespace RomanticWeb.Mapping.Sources
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                 typeof(void),
                 new[] { typeof(ITermPart<IPropertyMap>) });
-            EmitSetupPropertyOverride(setupKeyMethod, map.Key);
+            EmitSetupPropertyOverride(setupKeyMethod, map.Key, map.KeyConverterType);
 
             var setupValueMethod = typeBuilderHelper.DefineMethod(
                 "SetupValueProperty",
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                 typeof(void),
                 new[] { typeof(ITermPart<IPropertyMap>) });
-            EmitSetupPropertyOverride(setupValueMethod, map.Value);
+            EmitSetupPropertyOverride(setupValueMethod, map.Value, map.ValueConverterType);
             
             return typeBuilderHelper;
         }
 
-        private void EmitSetupPropertyOverride(MethodBuilder methodBuilder, IPredicateMappingProvider termMapping)
+        private void EmitSetupPropertyOverride(MethodBuilder methodBuilder, ITermMappingProvider termMapping, Type converterType)
         {
             var ilGenerator = methodBuilder.GetILGenerator();
             ilGenerator.Emit(OpCodes.Nop);
@@ -148,9 +148,9 @@ namespace RomanticWeb.Mapping.Sources
             ilGenerator.Emit(OpCodes.Ldstr, termMapping.GetTerm(_ontologyProvider).ToString());
             ilGenerator.Emit(OpCodes.Newobj, typeof(Uri).GetConstructor(new[] { typeof(string) }));
             ilGenerator.Emit(OpCodes.Callvirt, typeof(ITermPart<PropertyMap>).GetMethod("Is", new Type[] { typeof(Uri) }));
-            if (termMapping.ConverterType != null)
+            if (converterType != null)
             {
-                ilGenerator.Emit(OpCodes.Callvirt, typeof(IPropertyMap).GetMethod("ConvertWith").MakeGenericMethod(termMapping.ConverterType));
+                ilGenerator.Emit(OpCodes.Callvirt, typeof(IPropertyMap).GetMethod("ConvertWith").MakeGenericMethod(converterType));
             }
 
             ilGenerator.Emit(OpCodes.Pop);

@@ -13,7 +13,6 @@ namespace RomanticWeb.Mapping.Fluent
     public sealed class DictionaryMap : PropertyMapBase, IDictionaryMap
     {
         private readonly KeyMap _keyMap;
-
         private readonly ValueMap _valueMap;
 
         internal DictionaryMap(PropertyInfo propertyInfo)
@@ -50,17 +49,21 @@ namespace RomanticWeb.Mapping.Fluent
             }
         }
 
+        public Type KeyConverterType { [return: AllowNull] get; set; }
+
+        public Type ValueConverterType { [return: AllowNull] get; set; }
+
         /// <inheritdoc />
         public IDictionaryMap ConvertKeysWith<TConverter>() where TConverter : INodeConverter
         {
-            _keyMap.ConverterType = typeof(TConverter);
+            KeyConverterType = typeof(TConverter);
             return this;
         }
 
         /// <inheritdoc />
         public IDictionaryMap ConvertValuesWith<TConverter>() where TConverter : INodeConverter
         {
-            _valueMap.ConverterType = typeof(TConverter);
+            ValueConverterType = typeof(TConverter);
             return this;
         }
 
@@ -76,14 +79,9 @@ namespace RomanticWeb.Mapping.Fluent
         public class ValueMap : TermMap
         {
             /// <summary>
-            /// Gets or sets the type of the converter.
-            /// </summary>
-            public Type ConverterType { [return: AllowNull] get; set; }
-
-            /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }
@@ -95,14 +93,9 @@ namespace RomanticWeb.Mapping.Fluent
         public class KeyMap : TermMap
         {
             /// <summary>
-            /// Gets or sets the type of the converter.
-            /// </summary>
-            public Type ConverterType { [return: AllowNull] get; set; }
-
-            /// <summary>
             /// Accepts the specified fluent maps visitor.
             /// </summary>
-            public IPredicateMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
+            public ITermMappingProvider Accept(IFluentMapsVisitor fluentMapsVisitor)
             {
                 return fluentMapsVisitor.Visit(this);
             }

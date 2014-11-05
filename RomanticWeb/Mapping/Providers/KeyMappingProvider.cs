@@ -1,5 +1,4 @@
 using System;
-using NullGuard;
 using RomanticWeb.Mapping.Visitors;
 
 namespace RomanticWeb.Mapping.Providers
@@ -7,7 +6,7 @@ namespace RomanticWeb.Mapping.Providers
     /// <summary>
     /// Mapping provider, which returns a mapping for dictionary key predicate
     /// </summary>
-    public class KeyMappingProvider : TermMappingProviderBase, IPredicateMappingProvider
+    public class KeyMappingProvider : TermMappingProviderBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyMappingProvider"/> class.
@@ -34,9 +33,6 @@ namespace RomanticWeb.Mapping.Providers
         public KeyMappingProvider()
         {
         }
-
-        /// <inheritdoc/>
-        public Type ConverterType { [return: AllowNull] get; set; }
 
         /// <summary>
         /// Does nothing

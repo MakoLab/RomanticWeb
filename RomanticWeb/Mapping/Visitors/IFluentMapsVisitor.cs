@@ -32,7 +32,7 @@ namespace RomanticWeb.Mapping.Visitors
         /// <param name="dictionaryMap">The dictionary map.</param>
         /// <param name="key">The key property mapping provider.</param>
         /// <param name="value">The value property mapping provider.</param>
-        IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, IPredicateMappingProvider key, IPredicateMappingProvider value);
+        IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value);
 
         /// <summary>
         /// Visits the specified collection map.
@@ -44,13 +44,13 @@ namespace RomanticWeb.Mapping.Visitors
         /// Visits the specified dictionary key property map.
         /// </summary>
         /// <param name="keyMap">The key map.</param>
-        IPredicateMappingProvider Visit(DictionaryMap.KeyMap keyMap);
+        ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap);
 
         /// <summary>
         /// Visits the specified dictionary value property map.
         /// </summary>
         /// <param name="valueMap">The value map.</param>
         /// <returns></returns>
-        IPredicateMappingProvider Visit(DictionaryMap.ValueMap valueMap);
+        ITermMappingProvider Visit(DictionaryMap.ValueMap valueMap);
     }
 }

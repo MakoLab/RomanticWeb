@@ -36,18 +36,18 @@ namespace RomanticWeb.Mapping.Visitors
         /// <param name="property">The property.</param>
         /// <param name="key">The key property mapping provider.</param>
         /// <param name="value">The value property mapping provider.</param>
-        IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, IPredicateMappingProvider key, IPredicateMappingProvider value);
+        IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value);
 
         /// <summary>
         /// Visits the specified key attribute.
         /// </summary>
         /// <param name="keyAttribute">The key attribute.</param>
-        IPredicateMappingProvider Visit(KeyAttribute keyAttribute);
+        ITermMappingProvider Visit(KeyAttribute keyAttribute);
 
         /// <summary>
         /// Visits the specified value attribute.
         /// </summary>
         /// <param name="valueAttribute">The value attribute.</param>
-        IPredicateMappingProvider Visit(ValueAttribute valueAttribute);
+        ITermMappingProvider Visit(ValueAttribute valueAttribute);
     }
 }

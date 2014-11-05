@@ -166,7 +166,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             ((IDictionaryConvention)_convention).Apply(mapping);
 
             // then
-            mapping.Key.ConverterType.Should().Be(typeof(IntegerConverter));
+            mapping.KeyConverterType.Should().Be(typeof(IntegerConverter));
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace RomanticWeb.Tests.Mapping.Conventions
             ((IDictionaryConvention)_convention).Apply(mapping);
 
             // then
-            mapping.Key.ConverterType.Should().Be(typeof(IntegerConverter));
+            mapping.KeyConverterType.Should().Be(typeof(IntegerConverter));
         }
     }
 }

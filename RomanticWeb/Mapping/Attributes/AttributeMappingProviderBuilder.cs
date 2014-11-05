@@ -38,13 +38,25 @@ namespace RomanticWeb.Mapping.Attributes
             return result;
         }
 
-        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, IPredicateMappingProvider key, IPredicateMappingProvider value)
+        public IDictionaryMappingProvider Visit(DictionaryAttribute dictionaryAttribute, PropertyInfo property, ITermMappingProvider key, ITermMappingProvider value)
         {
             var prop = CreatePropertyMapping(dictionaryAttribute, property);
-            return new DictionaryMappingProvider(prop, key, value);
+            var dictionaryMappingProvider = new DictionaryMappingProvider(prop, key, value);
+
+            if (dictionaryAttribute.KeyConverterType != null)
+            {
+                dictionaryMappingProvider.KeyConverterType = dictionaryAttribute.KeyConverterType;
+            }
+
+            if (dictionaryAttribute.ValueConverterType != null)
+            {
+                dictionaryMappingProvider.ValueConverterType = dictionaryAttribute.ValueConverterType;
+            }
+
+            return dictionaryMappingProvider;
         }
 
-        public IPredicateMappingProvider Visit(KeyAttribute keyAttribute)
+        public ITermMappingProvider Visit(KeyAttribute keyAttribute)
         {
             if (keyAttribute == null)
             {
@@ -55,15 +67,10 @@ namespace RomanticWeb.Mapping.Attributes
                 ? new KeyMappingProvider(keyAttribute.Uri) 
                 : new KeyMappingProvider(keyAttribute.Prefix, keyAttribute.Term);
 
-            if (keyAttribute.ConverterType != null)
-            {
-                keyMappingProvider.ConverterType = keyAttribute.ConverterType;
-            }
-
             return keyMappingProvider;
         }
 
-        public IPredicateMappingProvider Visit(ValueAttribute valueAttribute)
+        public ITermMappingProvider Visit(ValueAttribute valueAttribute)
         {
             if (valueAttribute == null)
             {
@@ -73,11 +80,6 @@ namespace RomanticWeb.Mapping.Attributes
             var valueMappingProvider = valueAttribute.Uri != null
                 ? new ValueMappingProvider(valueAttribute.Uri)
                 : new ValueMappingProvider(valueAttribute.Prefix, valueAttribute.Term);
-
-            if (valueAttribute.ConverterType != null)
-            {
-                valueMappingProvider.ConverterType = valueAttribute.ConverterType;
-            }
 
             return valueMappingProvider;
         }

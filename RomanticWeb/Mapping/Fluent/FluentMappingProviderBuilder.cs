@@ -31,10 +31,22 @@ namespace RomanticWeb.Mapping.Fluent
             return CreatePropertyMapping(propertyMap);
         }
 
-        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, IPredicateMappingProvider key, IPredicateMappingProvider value)
+        public IPropertyMappingProvider Visit(DictionaryMap dictionaryMap, ITermMappingProvider key, ITermMappingProvider value)
         {
             var propertyMapping = CreatePropertyMapping(dictionaryMap);
-            return new DictionaryMappingProvider(propertyMapping, key, value);
+            var dictionaryMappingProvider = new DictionaryMappingProvider(propertyMapping, key, value);
+
+            if (dictionaryMap.KeyConverterType != null)
+            {
+                dictionaryMappingProvider.KeyConverterType = dictionaryMap.KeyConverterType;
+            }
+
+            if (dictionaryMap.ValueConverterType != null)
+            {
+                dictionaryMappingProvider.ValueConverterType = dictionaryMap.ValueConverterType;
+            }
+
+            return dictionaryMappingProvider;
         }
 
         public IPropertyMappingProvider Visit(CollectionMap collectionMap)
@@ -48,7 +60,7 @@ namespace RomanticWeb.Mapping.Fluent
             return result;
         }
 
-        public IPredicateMappingProvider Visit(DictionaryMap.KeyMap keyMap)
+        public ITermMappingProvider Visit(DictionaryMap.KeyMap keyMap)
         {
             KeyMappingProvider provider;
             if (keyMap.TermUri != null)
@@ -64,15 +76,10 @@ namespace RomanticWeb.Mapping.Fluent
                 provider = new KeyMappingProvider();
             }
 
-            if (keyMap.ConverterType != null)
-            {
-                provider.ConverterType = keyMap.ConverterType;
-            }
-
             return provider;
         }
 
-        public IPredicateMappingProvider Visit(DictionaryMap.ValueMap valueMap)
+        public ITermMappingProvider Visit(DictionaryMap.ValueMap valueMap)
         {
             ValueMappingProvider provider;
 
@@ -87,11 +94,6 @@ namespace RomanticWeb.Mapping.Fluent
             else
             {
                 provider = new ValueMappingProvider();
-            }
-
-            if (valueMap.ConverterType != null)
-            {
-                provider.ConverterType = valueMap.ConverterType;
             }
 
             return provider;

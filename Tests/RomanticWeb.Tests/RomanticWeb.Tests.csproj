@@ -128,10 +128,12 @@
     <Compile Include="Helpers\CultureScope.cs" />
     <Compile Include="Helpers\StoreAssertions.cs" />
     <Compile Include="Helpers\TestingExtensions.cs" />
+    <Compile Include="IEvenMoreSpecificContainer.cs" />
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
     <Compile Include="Model\EntityQuadCollectionTests.cs" />
+    <Compile Include="Collections\TopologicSortTests.cs" />
     <Compile Include="Updates\DatasetChangesTests.cs" />
     <Compile Include="Updates\GraphUpdateTests.cs" />
     <Compile Include="Updates\GraphReconstructTests.cs" />

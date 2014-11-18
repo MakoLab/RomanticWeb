@@ -51,7 +51,7 @@ namespace RomanticWeb
             }
             else
             {
-                return 0;
+                return System.StringComparer.Ordinal.Compare(x.FullName, y.FullName);
             }
 
             return System.StringComparer.Ordinal.Compare(x.AssemblyQualifiedName, y.AssemblyQualifiedName);

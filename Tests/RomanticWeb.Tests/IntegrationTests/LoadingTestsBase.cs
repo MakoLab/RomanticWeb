@@ -292,7 +292,7 @@ namespace RomanticWeb.Tests.IntegrationTests
         public void Select_with_alternative_property_conditions()
         {
             LoadTestFile("LargeDataset.nq");
-            EntityId id = new EntityId("http://nusil.com/vocab/LifeSciences");
+            EntityId id = new EntityId("http://chem.com/vocab/LifeSciences");
             IEnumerable<IProduct> result = (from product in EntityContext.AsQueryable<IProduct>()
                                             where (product.Industry == id) || (product.Industry == null)
                                             select product).ToList();

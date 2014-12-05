@@ -65,6 +65,7 @@
     <Compile Include="Collections\Mapping\ListOwnerMap.cs" />
     <Compile Include="Collections\RdfDictionary.cs" />
     <Compile Include="Collections\RdfListAdapter.cs" />
+    <Compile Include="Collections\TypeTopologyExtensions.cs" />
     <Compile Include="ComponentModel\CompositionRootBase.cs" />
     <Compile Include="ComponentModel\IComponentRegistry.cs" />
     <Compile Include="ComponentModel\OntologyLoaderCompositionRoot.cs" />

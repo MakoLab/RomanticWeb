@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
+using RomanticWeb.Collections;
 using RomanticWeb.Mapping.Model;
 using RomanticWeb.Mapping.Providers;
 using RomanticWeb.Mapping.Sources;
@@ -82,7 +83,9 @@ namespace RomanticWeb.Mapping
                             from provider in source.GetMappingProviders()
                             group provider by provider.EntityType into g
                             select new KeyValuePair<Type, IList<IEntityMappingProvider>>(g.Key, g.ToList()))
-                           .OrderByDescending(item => item.Key, TypeComparer.Default);
+                           .ToList()
+                           .TopologicSort()
+                           .Reverse();
 
             var singleProviderPerType = mappings.Select(provider => provider.Value.Count > 1 ? new MultiMappingProvider(provider.Key, provider.Value) : provider.Value[0]).ToList();
 

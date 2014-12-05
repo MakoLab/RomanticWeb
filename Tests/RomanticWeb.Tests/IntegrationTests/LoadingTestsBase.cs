@@ -140,7 +140,6 @@ namespace RomanticWeb.Tests.IntegrationTests
                 string viscosity = (product.Viscosity != null ? System.String.Join(", ", product.Viscosity.Viscosity.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value))) : System.String.Empty);
                 string cureSystem = (product.CureSystem != null ? product.CureSystem.ToString() : System.String.Empty);
                 string cureTemperature = System.String.Join(", ", product.CureTemperature.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
-                string cureTime = System.String.Join(", ", product.CureTime.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
                 string durometer = System.String.Join(", ", product.Durometer.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
                 string tensile = System.String.Join(", ", product.Tensile.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));
                 string elongation = System.String.Join(", ", product.Elongation.Select(item => System.String.Format("{0}{1}", item.Unit, item.Value)));

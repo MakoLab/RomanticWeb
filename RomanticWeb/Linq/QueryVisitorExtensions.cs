@@ -162,7 +162,7 @@ namespace RomanticWeb.Linq
                         Uri predicate = (Uri)objectValue;
                         Type type;
                         string name;
-                        visitor.GetMappingDetails(predicate, out type, out name);
+                        visitor.GetMappingDetails(predicate, methodCallExpression.Arguments[0].Type, out type, out name);
                         System.Linq.Expressions.MemberExpression memberExpression = System.Linq.Expressions.Expression.MakeMemberAccess(methodCallExpression.Arguments[0], type.GetProperty(name));
                         TransformedExpressionsCache[expression] = result = memberExpression;
                     }
@@ -176,7 +176,7 @@ namespace RomanticWeb.Linq
             return result;
         }
 
-        private static void GetMappingDetails(this IQueryVisitor visitor, Uri predicate, out Type itemType, out string itemName)
+        private static void GetMappingDetails(this IQueryVisitor visitor, Uri predicate, Type suggestedType, out Type itemType, out string itemName)
         {
             if (!predicate.IsAbsoluteUri)
             {
@@ -192,7 +192,20 @@ namespace RomanticWeb.Linq
             }
             else
             {
-                IPropertyMapping propertyMapping = visitor.MappingsRepository.MappingForProperty(predicate);
+                IPropertyMapping propertyMapping = null;
+                if (suggestedType != null)
+                {
+                    IEntityMapping entityMapping = visitor.MappingsRepository.MappingFor(suggestedType);
+                    if (entityMapping != null)
+                    {
+                        propertyMapping = entityMapping.Properties.FirstOrDefault(item => item.Uri.AbsoluteUri == predicate.AbsoluteUri); 
+                    }
+                }
+
+                if (propertyMapping == null)
+                {
+                    propertyMapping = visitor.MappingsRepository.MappingForProperty(predicate);
+                }
 
                 if (propertyMapping == null)
                 {

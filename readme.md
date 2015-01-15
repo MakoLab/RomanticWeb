@@ -34,7 +34,7 @@ Console must be run as admin.
 	
 ### Install Jekyll gem
 
-    gem install jekyll --all
+    gem uninstall jekyll --all
     gem install jekyll --version 1.4.2
     gem uninstall pygments.rb --all
     gem install pygments.rb --version 0.5.0

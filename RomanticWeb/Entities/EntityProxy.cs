@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Collections;
@@ -19,6 +21,7 @@ namespace RomanticWeb.Entities
     public class EntityProxy : DynamicObject, IEntity, IEntityProxy
     {
         #region Fields
+        private readonly IEntityContext _context;
         private readonly IEntityStore _store;
         private readonly Entity _entity;
         private readonly IEntityMapping _entityMapping;
@@ -31,10 +34,7 @@ namespace RomanticWeb.Entities
         #endregion
 
         #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EntityProxy" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="EntityProxy" /> class.</summary>
         /// <param name="entity">The entity.</param>
         /// <param name="entityMapping">The entity mappings.</param>
         /// <param name="resultTransformers">The result transformers.</param>
@@ -45,36 +45,27 @@ namespace RomanticWeb.Entities
             IResultTransformerCatalog resultTransformers,
             INamedGraphSelector selector)
         {
-            _store = entity.Context.Store;
+            _store = (_context = entity.Context).Store;
             _entity = entity;
             _entityMapping = entityMapping;
             _resultTransformers = resultTransformers;
             _selector = selector;
         }
-
         #endregion
 
         #region Properties
         /// <inheritdoc/>
         public EntityId Id { get { return _entity.Id; } }
 
-        /// <summary>
-        /// Gets the entity mapping.
-        /// </summary>
-        /// <value>
-        /// The entity mapping.
-        /// </value>
+        /// <summary>Gets the entity mapping.</summary>
+        /// <value>The entity mapping.</value>
         public IEntityMapping EntityMapping { get { return _entityMapping; } }
 
         /// <inheritdoc/>
         public IEntityContext Context { get { return _entity.Context; } }
 
-        /// <summary>
-        /// Gets the graph selection override.
-        /// </summary>
-        /// <value>
-        /// The graph selection override.
-        /// </value>
+        /// <summary>Gets the graph selection override.</summary>
+        /// <value>The graph selection override.</value>
         public ISourceGraphSelectionOverride GraphSelectionOverride { [return: AllowNull] get { return _overrideSourceGraph; } }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -90,16 +81,25 @@ namespace RomanticWeb.Entities
             {
                 _entity.EnsureIsInitialized();
                 var graph = SelectNamedGraph(property);
-                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0);
+                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0) ^
+                    _context.CurrentCulture.TwoLetterISOLanguageName.GetHashCode();
                 if (!_memberCache.TryGetValue(key, out result))
                 {
                     LogTo.Trace("Reading property {0} from graph {1}", property.Uri, graph);
 
-                    IEnumerable<Node> objects = _store.GetObjectsForPredicate(_entity.Id, property.Uri, graph);
+                    IEnumerable<Node> objects = from node in _store.GetObjectsForPredicate(_entity.Id, property.Uri, graph)
+                                                where (!node.IsLiteral) || ((node.IsLiteral) && 
+                                                    ((node.Language == null) ||
+                                                    ((node.Language == _context.CurrentCulture.TwoLetterISOLanguageName))))
+                                                orderby ((node.IsUri) || (node.IsBlank) ? -1 : 
+                                                    (node.Language == _context.CurrentCulture.TwoLetterISOLanguageName ? Int32.MaxValue : 
+                                                    (node.Language == null) && (_context.CurrentCulture.Equals(CultureInfo.InvariantCulture)) ? 1 : 0))
+                                                descending
+                                                select node;
                     var resultTransformer = _resultTransformers.GetTransformer(property);
                     result = resultTransformer.FromNodes(this, property, Context, objects);
 
-                    if (result == null && property.ReturnType.IsValueType)
+                    if ((result == null) && (property.ReturnType.IsValueType))
                     {
                         result = Activator.CreateInstance(property.ReturnType);
                     }
@@ -137,7 +137,8 @@ namespace RomanticWeb.Entities
                 _entity.EnsureIsInitialized();
                 var property = _entityMapping.PropertyFor(binder.Name);
                 var graph = SelectNamedGraph(property);
-                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0);
+                int key = _entity.Id.GetHashCode() ^ property.Uri.AbsoluteUri.GetHashCode() ^ (graph != null ? graph.AbsoluteUri.GetHashCode() : 0) ^
+                    _context.CurrentCulture.TwoLetterISOLanguageName.GetHashCode();
                 _memberCache.Remove(key);
 
                 LogTo.Trace("Setting property {0}", property.Uri);

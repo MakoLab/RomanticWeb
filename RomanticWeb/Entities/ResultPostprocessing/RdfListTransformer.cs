@@ -22,8 +22,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfListTransformer"/> class.
         /// </summary>
-        public RdfListTransformer(EmitHelper emitHelper)
-            : base(new SingleOrDefault())
+        public RdfListTransformer(EmitHelper emitHelper) : base(new SingleOrDefault())
         {
             _emitHelper = emitHelper;
         }
@@ -95,6 +94,11 @@ namespace RomanticWeb.Entities.ResultPostprocessing
 
                 yield return Node.FromEntityId(((IEntity)interfaceMapping.InterfaceMethods.First(item => item.Name == "get_Head").Invoke(rdfList, null)).Id);
             }
+        }
+
+        protected override object Transform(Node node, IPropertyMapping property, IEntityContext context)
+        {
+            return property.Converter.Convert(node, context);
         }
 
         private Type GetOwnerType(IPropertyMapping property)

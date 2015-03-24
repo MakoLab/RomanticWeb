@@ -38,6 +38,14 @@ namespace RomanticWeb.Tests.Stubs
             }
         }
 
+        public IEnumerable<IPropertyMapping> HiddenProperties
+        {
+            get
+            {
+                return new IPropertyMapping[0];
+            }
+        }
+
         public IPropertyMapping PropertyFor(string propertyName)
         {
             return _properties.FirstOrDefault(p => p.Name == propertyName);

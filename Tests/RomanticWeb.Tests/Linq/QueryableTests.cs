@@ -75,6 +75,24 @@ namespace RomanticWeb.Tests.Linq
             _entityStore.Verify(store => store.AssertEntity(It.IsAny<EntityId>(), It.Is<IEnumerable<EntityQuad>>(t => t.Count() == 10)), Times.Exactly(totalCount));
         }
 
+        [Test]
+        public void Should_provide_an_underlying_command_text()
+        {
+            // given
+            string commandText = "command text";
+
+            _entitySource.Setup(e => e.GetCommandText(It.IsAny<Query>())).Returns(commandText);
+            var query = from p in persons
+                        where p.FirstName.Substring(2, 1) == "A"
+                        select p;
+
+            // when
+            var result = ((EntityQueryable<IPerson>)query).ToTraceString();
+
+            // then
+            Assert.That(result, Is.EqualTo(commandText));
+        }
+
         protected IEnumerable<EntityQuad> GetSamplePersonTriples(int count)
         {
             const string IdFormat = "http://magi/test/person/{0}";

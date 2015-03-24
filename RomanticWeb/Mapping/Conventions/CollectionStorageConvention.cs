@@ -4,10 +4,7 @@ using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Conventions
 {
-    /// <summary>
-    /// Convention to ensure <see cref="ICollection{T}"/> and <see cref="IEnumerable{T}"/> properties
-    /// are stored and read as RDF multi objects
-    /// </summary>
+    /// <summary>Convention to ensure <see cref="ICollection{T}"/> and <see cref="IEnumerable{T}"/> properties are stored and read as RDF multi objects.</summary>
     public class CollectionStorageConvention : ICollectionConvention
     {
         /// <inheritdoc/>
@@ -15,9 +12,8 @@ namespace RomanticWeb.Mapping.Conventions
         {
             var propertyType = target.PropertyInfo.PropertyType;
 
-            return (target.StoreAs == StoreAs.Undefined) && propertyType.IsGenericType
-                   && (propertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
-                      || propertyType.GetGenericTypeDefinition() == typeof(ICollection<>));
+            return (target.StoreAs == StoreAs.Undefined) && ((propertyType.IsArray) || ((propertyType.IsGenericType) && 
+                (propertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>) || (propertyType.GetGenericTypeDefinition() == typeof(ICollection<>)))));
         }
 
         /// <inheritdoc/>

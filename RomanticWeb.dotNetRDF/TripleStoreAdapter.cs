@@ -112,6 +112,12 @@ namespace RomanticWeb.DotNetRDF
             return ExecuteSelect(GetSparqlQuery(queryModel)).Result;
         }
 
+        /// <inheritdoc />
+        public string GetCommandText(Query queryModel)
+        {
+            return GetSparqlQuery(queryModel).ToString();
+        }
+
         /// <summary>One-by-one retracts deleted triples, asserts new triples and updates the meta graph.</summary>
         /// <param name="changes"></param>
         public void Commit(IEnumerable<DatasetChange> changes)

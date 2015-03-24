@@ -100,6 +100,13 @@ namespace RomanticWeb.Linq
 
             return result;
         }
+
+        /// <inheritdoc />
+        public string GetCommandText(QueryModel queryModel)
+        {
+            Model.Query sparqlQuery = VisitQueryModel(queryModel);
+            return _entitySource.GetCommandText(sparqlQuery);
+        }
         #endregion
 
         #region Non-public methods

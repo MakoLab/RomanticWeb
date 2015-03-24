@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
@@ -57,6 +59,16 @@ namespace RomanticWeb
 
         /// <summary>Gets the <see cref="IBaseUriSelectionPolicy" />.</summary>
         IBaseUriSelectionPolicy BaseUriSelector { get; }
+
+        /// <summary>Gets the cultures present in current context's data.</summary>
+        IEnumerable<CultureInfo> Cultures { get; }
+
+        /// <summary>Gets or sets current culture to filter localized literals through.</summary>
+        /// <remarks>
+        /// By default this should not be set resulting in using <see cref="System.Threading.Thread.CurrentThread.CurrentCulture" /> value.
+        /// Setting any value other than <b>null</b> should override this behaviour. Using <b>null</b> should reset the default behaviour back again.
+        /// </remarks>
+        CultureInfo CurrentCulture { get; set; }
 
         /// <summary>
         /// Gets the changes.

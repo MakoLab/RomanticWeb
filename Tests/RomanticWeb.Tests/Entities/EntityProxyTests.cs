@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using ImpromptuInterface;
 using Moq;
@@ -28,6 +29,7 @@ namespace RomanticWeb.Tests.Entities
             _entityStore = new EntityStore(new Mock<RomanticWeb.Updates.IDatasetChangesTracker>().Object);
             _mapping = new Mock<IEntityMapping>(MockBehavior.Strict);
             _context = new Mock<IEntityContext>(MockBehavior.Strict);
+            _context.SetupGet(instance => instance.CurrentCulture).Returns(CultureInfo.GetCultureInfo("en"));
             _graphSelector = new Mock<INamedGraphSelector>();
 
             _context.Setup(c => c.Store).Returns(_entityStore);

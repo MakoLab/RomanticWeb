@@ -16,6 +16,9 @@ namespace RomanticWeb.Mapping.Model
         /// <summary>Gets the RDF type mapping.</summary>
         IEnumerable<IPropertyMapping> Properties { get; }
 
+        /// <summary>Gets the RDF type mapping for hidden properties (those overriden with the 'new' operator).</summary>
+        IEnumerable<IPropertyMapping> HiddenProperties { get; }
+
         /// <summary>Gets the property mapping for a property by name.</summary>
         IPropertyMapping PropertyFor(string propertyName);
 

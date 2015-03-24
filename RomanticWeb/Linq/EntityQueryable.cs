@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
@@ -24,6 +25,25 @@ namespace RomanticWeb.Linq
         public EntityQueryable(IQueryProvider provider, Expression expression)
             : base(provider, expression)
         {
+        }
+
+        /// <summary>Gets the underlying entity source query string.</summary>
+        /// <returns>String with a query string to be run on the underlying entity source.</returns>
+        public string ToTraceString()
+        {
+            DefaultQueryProvider provider = Provider as DefaultQueryProvider;
+            if (provider == null)
+            {
+                throw new InvalidOperationException("Unsupported query provider.");
+            }
+            
+            EntityQueryExecutor executor = provider.Executor as EntityQueryExecutor;
+            if (executor == null)
+            {
+                throw new InvalidOperationException("Unsupported query executor.");
+            }
+
+            return executor.GetCommandText(provider.GenerateQueryModel(Expression));
         }
     }
 }

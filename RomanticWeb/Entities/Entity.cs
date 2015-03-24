@@ -184,7 +184,7 @@ namespace RomanticWeb.Entities
         /// <summary>Ensures the entity is initialized and filled with data.</summary>
         internal void EnsureIsInitialized()
         {
-            if ((Context != null) && !IsInitialized)
+            if ((Context != null) && (!IsInitialized))
             {
                 _context.InitializeEnitity(this);
                 _isInitialized = true;

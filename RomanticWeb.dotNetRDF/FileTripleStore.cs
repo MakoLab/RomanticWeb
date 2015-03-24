@@ -15,6 +15,7 @@ namespace RomanticWeb.DotNetRDF
         private const int MaxTries = 5;
         private static readonly object Locker = new Object();
 
+        private FileSystemWatcher _watcher = null;
         private string _filePath = null;
         private Stream _fileStream = null;
         private IRdfReader _rdfReader = null;
@@ -27,11 +28,12 @@ namespace RomanticWeb.DotNetRDF
         public FileTripleStore(string filePath)
         {
             CreateIOHandlers(Path.GetExtension(filePath).ToLower());
-            if (!File.Exists(_filePath = filePath))
+            if (!File.Exists(_filePath = EnsureAbsolute(filePath)))
             {
-                File.Create(filePath).Close();
+                File.Create(_filePath).Close();
             }
 
+            _watcher = CreateFileHooks(_filePath);
             Read();
         }
 
@@ -41,11 +43,12 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="storeWriter">Store writer to write the file.</param>
         public FileTripleStore(string filePath, IStoreReader storeReader, IStoreWriter storeWriter)
         {
-            if (!File.Exists(_filePath = filePath))
+            if (!File.Exists(_filePath = EnsureAbsolute(filePath)))
             {
-                File.Create(filePath).Close();
+                File.Create(_filePath).Close();
             }
 
+            _watcher = CreateFileHooks(_filePath);
             _storeReader = storeReader;
             _storeWriter = storeWriter;
 
@@ -58,11 +61,12 @@ namespace RomanticWeb.DotNetRDF
         /// <param name="rdfWriter">RDF writer to write the file.</param>
         public FileTripleStore(string filePath, IRdfReader rdfReader, IRdfWriter rdfWriter)
         {
-            if (!File.Exists(_filePath = filePath))
+            if (!File.Exists(_filePath = EnsureAbsolute(filePath)))
             {
-                File.Create(filePath).Close();
+                File.Create(_filePath).Close();
             }
 
+            _watcher = CreateFileHooks(_filePath);
             _rdfReader = rdfReader;
             _rdfWriter = rdfWriter;
 
@@ -251,7 +255,9 @@ namespace RomanticWeb.DotNetRDF
         {
             if (_filePath != null)
             {
+                _watcher.EnableRaisingEvents = false;
                 _storeWriter.Save(this, _filePath);
+                _watcher.EnableRaisingEvents = true;
             }
             else
             {
@@ -298,6 +304,45 @@ namespace RomanticWeb.DotNetRDF
                     {
                         fileStream.Close();
                     }
+                }
+            }
+        }
+
+        private string EnsureAbsolute(string path)
+        {
+            if (path.StartsWith("~"))
+            {
+                path = path.Substring(1);
+            }
+
+            if (path.StartsWith("/"))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.GetPrimaryAssemblyPath(), path);
+            }
+
+            return path;
+        }
+
+        private FileSystemWatcher CreateFileHooks(string path)
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetExtension(path));
+            watcher.Changed += OnFileChanged;
+            watcher.EnableRaisingEvents = true;
+            return watcher;
+        }
+
+        private void OnFileChanged(object sender, FileSystemEventArgs e)
+        {
+            if ((e.ChangeType == WatcherChangeTypes.Changed) && (System.String.Compare(e.Name, Path.GetFileName(_filePath), true) == 0))
+            {
+                lock (Locker)
+                {
+                    while (this.Graphs.Count > 0)
+                    {
+                        this.Remove(this.Graphs.First().BaseUri);
+                    }
+
+                    Read();
                 }
             }
         }

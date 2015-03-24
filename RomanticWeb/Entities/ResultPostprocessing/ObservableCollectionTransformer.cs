@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -18,8 +19,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         private static readonly MethodInfo EnumerableCast = Info.OfMethod("System.Core", "System.Linq.Enumerable", "Cast", "IEnumerable");
 
         /// <summary>Initializes a new instance of the <see cref="ObservableCollectionTransformer"/> class.</summary>
-        public ObservableCollectionTransformer()
-            : base(new OriginalResult())
+        public ObservableCollectionTransformer() : base(new OriginalResult())
         {
         }
 
@@ -29,7 +29,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             var convertedValues = nodes.Select(node => ((ICollectionMapping)property).ElementConverter.Convert(node, context));
             var collectionElements = ((IEnumerable<object>)Aggregator.Aggregate(convertedValues)).ToArray();
 
-            var genericArguments = property.ReturnType.GetGenericArguments();
+            var genericArguments = (property.ReturnType.IsArray ? new[] { property.ReturnType.GetElementType() } : property.ReturnType.GetGenericArguments());
             if (typeof(IEntity).IsAssignableFrom(genericArguments.Single()))
             {
                 genericArguments = new[] { typeof(IEntity) };
@@ -50,6 +50,11 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         {
             return from object value in (IEnumerable)collection
                    select base.ToNodes(value, proxy, property, context).Single();
+        }
+
+        protected override object Transform(Node node, IPropertyMapping property, IEntityContext context)
+        {
+            return property.Converter.Convert(node, context);
         }
     }
 }

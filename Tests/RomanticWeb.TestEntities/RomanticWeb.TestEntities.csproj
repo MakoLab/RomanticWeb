@@ -65,10 +65,12 @@
     <Compile Include="IEntityWithCollections.cs" />
     <Compile Include="IEntityWithDictionary.cs" />
     <Compile Include="IEntityWithExplicitConverters.cs" />
+    <Compile Include="Inheritance\ISomeSpecializedEntity.cs" />
     <Compile Include="Inheritance\IAttributesParent.cs" />
     <Compile Include="Inheritance\IFluentChild.cs" />
     <Compile Include="Inheritance\IGenericContainer.cs" />
     <Compile Include="Inheritance\IInterface.cs" />
+    <Compile Include="Inheritance\ISomeEntity.cs" />
     <Compile Include="Inheritance\ISpecificContainer.cs" />
     <Compile Include="Inheritance\Specialized\IInterface.cs" />
     <Compile Include="IPerson.cs" />

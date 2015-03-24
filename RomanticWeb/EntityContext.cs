@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Entities;
@@ -32,11 +34,11 @@ namespace RomanticWeb
         private readonly IEntityMapping _typedEntityMapping;
         private readonly IPropertyMapping _typesPropertyMapping;
 
+        private CultureInfo _currentCulture;
         private bool _disposed;
         #endregion
 
         #region Constructors
-
         public EntityContext(
             IEntityContextFactory factory,
             IMappingsRepository mappings,
@@ -95,6 +97,7 @@ namespace RomanticWeb
         private EntityContext(IDatasetChangesTracker changeTracker)
         {
             _changeTracker = changeTracker;
+            _currentCulture = null;
             LogTo.Info("Creating entity context");
             EntityCache = new InMemoryEntityCache();
         }
@@ -122,6 +125,26 @@ namespace RomanticWeb
         /// <inheritdoc />
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
+
+        /// <inheritdoc />
+        public IEnumerable<CultureInfo> Cultures
+        {
+            get
+            {
+                return (from triple in Store.Quads
+                        where (triple.Object.IsLiteral) && (!String.IsNullOrEmpty(triple.Object.Language))
+                        select triple.Object.Language)
+                        .Distinct().Select(CultureInfo.GetCultureInfo);
+            }
+        }
+
+        [AllowNull]
+        public CultureInfo CurrentCulture
+        {
+            get { return (_currentCulture ?? Thread.CurrentThread.CurrentCulture); }
+
+            set { _currentCulture = value; }
+        }
 
         public IDatasetChanges Changes
         {
@@ -238,7 +261,6 @@ namespace RomanticWeb
         {
             _entityStore.Rollback();
         }
-
         #endregion
 
         #region Non-public methods

@@ -57,11 +57,18 @@
 					dc:date "2014-04-19"^^xsd:dateTime .
 }
 
+<http://data.magi/other/Something>
+{
+	<other/Something> foaf:knows _:guy .
+	_:guy a foaf:Person .
+}
+
 <http://app.magi/graphs>
 {
-	<http://data.magi/people/Karol> foaf:primaryTopic <people/Karol>.
-	<http://data.magi/people/Gniewoslaw> foaf:primaryTopic <people/Gniewoslaw>.
-	<http://data.magi/people/Tomasz> foaf:primaryTopic <people/Tomasz>.
-	<http://data.magi/people/Dominik> foaf:primaryTopic <people/Dominik>.
-	<http://data.magi/addresses/Address> foaf:primaryTopic <addresses/Address>.
+	<http://data.magi/people/Karol> foaf:primaryTopic <people/Karol> .
+	<http://data.magi/people/Gniewoslaw> foaf:primaryTopic <people/Gniewoslaw> .
+	<http://data.magi/people/Tomasz> foaf:primaryTopic <people/Tomasz> .
+	<http://data.magi/people/Dominik> foaf:primaryTopic <people/Dominik> .
+	<http://data.magi/addresses/Address> foaf:primaryTopic <addresses/Address> .
+	<http://data.magi/other/Something> foaf:primaryTopic <other/Something> .
 }

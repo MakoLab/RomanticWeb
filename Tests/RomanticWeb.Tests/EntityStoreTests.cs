@@ -106,6 +106,24 @@ namespace RomanticWeb.Tests
              .Should().HaveCount(0);
         }
 
+        [Test]
+        public void Asserting_entities_from_shared_graphs_should_not_duplicate_statements()
+        {
+            var graph = new Uri("http://temp.uri/graph");
+            var predicateUri = new Uri("http://temp.uri/vocab#predicate");
+            var otherEntityId = new EntityId("http://temp.uri/root-entity/other-entity");
+            var entityId = new EntityId("http://temp.uri/root-entity");
+            var quads = new[] { new EntityQuad(entityId, Node.ForUri(otherEntityId.Uri), Node.ForUri(predicateUri), Node.ForLiteral("test"), Node.ForUri(graph)) };
+            _entityStore.AssertEntity(entityId, quads);
+
+            var otherQuads = new[] { new EntityQuad(otherEntityId, Node.ForUri(otherEntityId.Uri), Node.ForUri(predicateUri), Node.ForLiteral("test"), Node.ForUri(graph)) };
+            _entityStore.AssertEntity(otherEntityId, otherQuads);
+
+            var statements = _entityStore.GetObjectsForPredicate(otherEntityId, predicateUri, graph);
+
+            statements.Should().HaveCount(1);
+        }
+
         private void LoadEntities(string fileName)
         {
             var store = new TripleStore();

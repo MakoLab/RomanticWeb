@@ -46,7 +46,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             object result = property.Converter.Convert(node, context);
             if (result != null)
             {
-                bool isEnumerable = property.ReturnType.IsEnumerable();
+                bool isEnumerable = (property.ReturnType.IsEnumerable()) && (property.ReturnType != typeof(byte[]));
                 Type itemType = property.ReturnType;
                 if (isEnumerable)
                 {

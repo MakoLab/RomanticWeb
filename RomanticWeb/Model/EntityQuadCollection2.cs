@@ -165,7 +165,7 @@ namespace RomanticWeb.Model
             var key = Tuple.Create(entityId, predicate);
             if (!_subjectPredicateQuads.ContainsKey(key))
             {
-                _subjectPredicateQuads[key] = new HashSet<EntityQuad>();
+                _subjectPredicateQuads[key] = new HashSet<EntityQuad>(LooseEntityQuadEqualityComparer.Instance);
             }
 
             return _subjectPredicateQuads[key];

@@ -140,15 +140,15 @@ namespace RomanticWeb.Tests.Linq
             IList<IPerson> entities = (from resources in _entityContext.AsQueryable<IPerson>()
                                        select resources).ToList();
             Assert.That(entities.Count, Is.EqualTo(3));
-            IPerson tomasz = entities.Where(item => item.Id == (EntityId)"http://magi/people/Tomasz").FirstOrDefault();
+            IPerson tomasz = entities.FirstOrDefault(item => item.Id == (EntityId)"http://magi/people/Tomasz");
             Assert.That(tomasz, Is.Not.Null);
             Assert.That(tomasz, Is.InstanceOf<IEntity>());
             Assert.That(tomasz.Surname, Is.EqualTo("Pluskiewicz"));
-            IPerson gniewoslaw = entities.Where(item => item.Id == (EntityId)"http://magi/people/Gniewoslaw").FirstOrDefault();
+            IPerson gniewoslaw = entities.FirstOrDefault(item => item.Id == (EntityId)"http://magi/people/Gniewoslaw");
             Assert.That(gniewoslaw, Is.Not.Null);
             Assert.That(gniewoslaw, Is.InstanceOf<IEntity>());
             Assert.That(gniewoslaw.Surname, Is.EqualTo("Rzepka"));
-            IPerson dominik = entities.Where(item => item.Id == (EntityId)"http://magi/people/Dominik").FirstOrDefault();
+            IPerson dominik = entities.FirstOrDefault(item => item.Id == (EntityId)"http://magi/people/Dominik");
             Assert.That(dominik, Is.Not.Null);
             Assert.That(dominik, Is.InstanceOf<IEntity>());
             Assert.That(dominik.Surname, Is.Null);

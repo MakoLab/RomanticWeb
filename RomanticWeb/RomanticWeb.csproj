@@ -301,6 +301,7 @@
     <Compile Include="Model\IEntityQuadCollection.cs" />
     <Compile Include="Model\Index.cs" />
     <Compile Include="Model\IndexCollection.cs" />
+    <Compile Include="Model\LooseEntityQuadEqualityComparer.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />

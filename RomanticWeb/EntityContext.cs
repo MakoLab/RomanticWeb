@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Anotar.NLog;
 using NullGuard;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
@@ -125,6 +126,9 @@ namespace RomanticWeb
         /// <inheritdoc />
         [AllowNull]
         public IBaseUriSelectionPolicy BaseUriSelector { get { return _baseUriSelector; } }
+
+        /// <inheritdoc />
+        public IFallbackNodeConverter FallbackNodeConverter { get { return _factory.FallbackNodeConverter; } }
 
         /// <inheritdoc />
         public IEnumerable<CultureInfo> Cultures

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.Mapping;
 using RomanticWeb.Ontologies;
@@ -59,6 +60,9 @@ namespace RomanticWeb
 
         /// <summary>Gets the <see cref="IBaseUriSelectionPolicy" />.</summary>
         IBaseUriSelectionPolicy BaseUriSelector { get; }
+
+        /// <summary>Gets the fallback node converter.</summary>
+        IFallbackNodeConverter FallbackNodeConverter { get; }
 
         /// <summary>Gets the cultures present in current context's data.</summary>
         IEnumerable<CultureInfo> Cultures { get; }

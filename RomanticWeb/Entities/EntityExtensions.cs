@@ -135,7 +135,8 @@ namespace RomanticWeb.Entities
             IPropertyMapping propertyMapping = entity.Context.Mappings.MappingForProperty(predicate);
             if (propertyMapping != null)
             {
-                result = Impromptu.InvokeGet(entity, propertyMapping.Name);
+                var mappedEntity = typeof(EntityExtensions).GetMethod("AsEntity").MakeGenericMethod(propertyMapping.EntityMapping.EntityType).Invoke(null, new object[] { entity });
+                result = Impromptu.InvokeGet(mappedEntity, propertyMapping.Name);
             }
             else
             {
@@ -152,8 +153,7 @@ namespace RomanticWeb.Entities
                     }
                     else
                     {
-                        var converter = (FallbackNodeConverter)((IServiceProvider)entity.Context).GetService(typeof(FallbackNodeConverter));
-                        object item = converter.Convert(@object, entity.Context);
+                        object item = entity.Context.FallbackNodeConverter.Convert(@object, entity.Context);
                         if (item != null)
                         {
                             output.Add(item);

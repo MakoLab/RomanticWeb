@@ -112,6 +112,7 @@
     <Compile Include="Configuration\StoresConfigurationSectionTests.cs" />
     <Compile Include="ConstantBaseUriSelectionPolicyTests.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
+    <Compile Include="Converters\StringConverterTests.cs" />
     <Compile Include="Converters\EntityIdConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
     <Compile Include="Converters\DecimalConverterTests.cs" />

@@ -30,7 +30,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc />
-        public Node ConvertBack(object value)
+        public Node ConvertBack(object value, IEntityContext context)
         {
             return Node.ForLiteral(value.ToString());
         }

@@ -13,7 +13,7 @@ namespace RomanticWeb.Converters
         protected override IEnumerable<Uri> SupportedDataTypes { get { yield return Xsd.Duration; } }
 
         /// <inheritdoc/>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
             return Node.ForLiteral(((Duration)value).ToString(), Xsd.Duration);
         }

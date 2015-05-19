@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -31,7 +32,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public Node ConvertBack(object value)
+        public Node ConvertBack(object value, IEntityContext context)
         {
             if (value is IEntity)
             {
@@ -43,10 +44,10 @@ namespace RomanticWeb.Converters
                 throw new InvalidOperationException();
             }
 
-            return ConvertOneBack(value);
+            return ConvertOneBack(value, context);
         }
 
-        private static Node ConvertOneBack(object element)
+        private static Node ConvertOneBack(object element, IEntityContext context)
         {
             if (element is IEntity)
             {
@@ -56,6 +57,13 @@ namespace RomanticWeb.Converters
             if (element is Uri)
             {
                 return Node.ForUri((Uri)element);
+            }
+
+            if (element is string)
+            {
+                return (context.CurrentCulture.Equals(CultureInfo.InvariantCulture) ?
+                    Node.ForLiteral((string)element) :
+                    Node.ForLiteral((string)element, context.CurrentCulture.TwoLetterISOLanguageName));
             }
 
             return Node.ForLiteral(element.ToString());

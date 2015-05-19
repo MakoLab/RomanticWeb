@@ -11,7 +11,7 @@ namespace RomanticWeb.Tests.IntegrationTests.TestMappings
             return (objectNode.IsUri ? objectNode.Uri.ToString() : objectNode.IsBlank ? objectNode.BlankNode : objectNode.Literal);
         }
 
-        public Node ConvertBack(object value)
+        public Node ConvertBack(object value, IEntityContext context)
         {
             throw new NotImplementedException();
         }

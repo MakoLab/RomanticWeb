@@ -28,7 +28,7 @@ namespace RomanticWeb.Converters
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Generic nad non-generic class")]
     public class EntityIdConverter<TEntityId> : INodeConverter where TEntityId : EntityId
     {
-        private static TypeConverter _converter = TypeDescriptor.GetConverter(typeof(TEntityId));
+        private static readonly TypeConverter Converter = TypeDescriptor.GetConverter(typeof(TEntityId));
         private readonly IBaseUriSelectionPolicy _baseUriSelectionPolicy;
 
         /// <summary>Creates an instance of the <see cref="EntityIdConverter{TEntityId}"/>.</summary>
@@ -51,7 +51,7 @@ namespace RomanticWeb.Converters
                 return node.ToEntityId();
             }
 
-            return _converter.ConvertFrom(node.Uri);
+            return Converter.ConvertFrom(node.Uri);
         }
 
         /// <inheritdoc />
@@ -61,7 +61,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc />
-        public Node ConvertBack(object obj)
+        public Node ConvertBack(object obj, IEntityContext context)
         {
             if (obj is BlankId)
             {

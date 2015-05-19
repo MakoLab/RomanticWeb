@@ -37,9 +37,9 @@ namespace RomanticWeb.Converters
         /// <summary>
         /// Converts an entity back to <see cref="Node" />.
         /// </summary>
-        public Node ConvertBack(object obj)
+        public Node ConvertBack(object obj, IEntityContext context)
         {
-            return _entityIdConverter.ConvertBack(((IEntity)obj).Id);
+            return _entityIdConverter.ConvertBack(((IEntity)obj).Id, context);
         }
     }
 }

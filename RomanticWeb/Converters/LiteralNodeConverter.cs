@@ -23,7 +23,7 @@ namespace RomanticWeb.Converters
 
         /// <summary>Converts the given value to a literal node.</summary>
         [return: AllowNull]
-        public abstract Node ConvertBack(object value);
+        public abstract Node ConvertBack(object value, IEntityContext context);
 
         /// <inheritdoc />
         public abstract Uri CanConvertBack(Type type);

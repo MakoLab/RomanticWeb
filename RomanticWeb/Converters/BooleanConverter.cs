@@ -14,7 +14,7 @@ namespace RomanticWeb.Converters
         protected override IEnumerable<Uri> SupportedDataTypes { get { yield return Xsd.Boolean; } }
 
         /// <summary>Converts a bool value to it's XML string representation.</summary>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
             return Node.ForLiteral(XmlConvert.ToString((bool)value), Xsd.Boolean);
         }

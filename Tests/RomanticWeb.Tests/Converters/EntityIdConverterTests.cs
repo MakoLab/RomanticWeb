@@ -32,7 +32,7 @@ namespace RomanticWeb.Tests.Converters
             _baseUriSelectionPolicy.Setup(instance => instance.SelectBaseUri(It.IsAny<EntityId>())).Returns(new Uri(absoluteUri, UriKind.Absolute));
 
             // When
-            Node node = _converter.ConvertBack(new EntityId(relativeUri));
+            Node node = _converter.ConvertBack(new EntityId(relativeUri), new Mock<IEntityContext>().Object);
 
             // Then
             node.Should().NotBeNull();

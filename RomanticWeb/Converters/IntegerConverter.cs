@@ -33,7 +33,7 @@ namespace RomanticWeb.Converters
         protected override IEnumerable<Uri> SupportedDataTypes { get { return IntegerTypes.Values.SelectMany(t => t); } }
 
         /// <inheritdoc/>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
             return Node.ForLiteral(XmlConvert.ToString((dynamic)value), IntegerTypes[value.GetType()].First());
         }

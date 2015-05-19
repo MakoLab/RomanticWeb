@@ -21,7 +21,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc/>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
             if (value is float)
             {

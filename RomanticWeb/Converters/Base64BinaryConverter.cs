@@ -8,7 +8,7 @@ namespace RomanticWeb.Converters
     public class Base64BinaryConverter : LiteralNodeConverter
     {
         /// <summary>Converts given array of bytes to it's base64 representation.</summary>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
             return Node.ForLiteral(System.Convert.ToBase64String((byte[])value), Xsd.Base64Binary);
         }

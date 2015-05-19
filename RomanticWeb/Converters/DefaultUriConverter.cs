@@ -27,7 +27,7 @@ namespace RomanticWeb.Converters
         }
 
         /// <inheritdoc />
-        public Node ConvertBack(object obj)
+        public Node ConvertBack(object obj, IEntityContext context)
         {
             return Node.ForUri(((Uri)obj));
         }

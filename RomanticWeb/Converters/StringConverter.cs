@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using NullGuard;
 using RomanticWeb.Model;
 using RomanticWeb.Vocabularies;
@@ -9,9 +10,11 @@ namespace RomanticWeb.Converters
     public class StringConverter : LiteralNodeConverter
     {
         /// <inheritdoc/>
-        public override Node ConvertBack(object value)
+        public override Node ConvertBack(object value, IEntityContext context)
         {
-            return Node.ForLiteral(value.ToString(), Xsd.String);
+            return (context.CurrentCulture.Equals(CultureInfo.InvariantCulture) ? 
+                Node.ForLiteral(value.ToString(), Xsd.String) : 
+                Node.ForLiteral(value.ToString(), context.CurrentCulture.TwoLetterISOLanguageName));
         }
 
         /// <inheritdoc/>

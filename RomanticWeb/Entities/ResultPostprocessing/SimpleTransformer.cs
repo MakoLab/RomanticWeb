@@ -38,7 +38,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
         /// <summary>Converts the given <paramref name="value"/> to <see cref="Node"/>s.</summary>
         public virtual IEnumerable<Node> ToNodes(object value, IEntityProxy proxy, IPropertyMapping property, IEntityContext context)
         {
-            return new[] { property.Converter.ConvertBack(value) };
+            return new[] { property.Converter.ConvertBack(value, context) };
         }
 
         protected virtual object Transform(Node node, IPropertyMapping property, IEntityContext context)

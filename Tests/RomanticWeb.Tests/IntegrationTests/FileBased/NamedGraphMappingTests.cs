@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -23,6 +24,7 @@ namespace RomanticWeb.Tests.IntegrationTests.FileBased
         public void Should_store_blank_nodes_correctly()
         {
             // given
+            EntityContext.CurrentCulture = CultureInfo.InvariantCulture;
             var entity = EntityContext.Create<IPerson>(new EntityId("urn:t:p"));
             var friend = EntityContext.Create<IPerson>(entity.CreateBlankId());
             entity.Friend = friend;

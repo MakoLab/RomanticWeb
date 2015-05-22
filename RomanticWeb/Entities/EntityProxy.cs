@@ -87,15 +87,8 @@ namespace RomanticWeb.Entities
                 {
                     LogTo.Trace("Reading property {0} from graph {1}", property.Uri, graph);
 
-                    IEnumerable<Node> objects = from node in _store.GetObjectsForPredicate(_entity.Id, property.Uri, graph)
-                                                where (!node.IsLiteral) || ((node.IsLiteral) && 
-                                                    ((node.Language == null) ||
-                                                    ((node.Language == _context.CurrentCulture.TwoLetterISOLanguageName))))
-                                                orderby ((node.IsUri) || (node.IsBlank) ? -1 : 
-                                                    (node.Language == _context.CurrentCulture.TwoLetterISOLanguageName ? Int32.MaxValue : 
-                                                    (node.Language == null) && (_context.CurrentCulture.Equals(CultureInfo.InvariantCulture)) ? 1 : 0))
-                                                descending
-                                                select node;
+                    var objects = _store.GetObjectsForPredicate(_entity.Id, property.Uri, graph).WhereMatchesContextRequirements(_context);
+
                     var resultTransformer = _resultTransformers.GetTransformer(property);
                     result = resultTransformer.FromNodes(this, property, Context, objects);
 
@@ -152,7 +145,7 @@ namespace RomanticWeb.Entities
                     newValues = () => resultTransformer.ToNodes(value, this, property, Context).ToArray();
                 }
 
-                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph);
+                _store.ReplacePredicateValues(Id, propertyUri, newValues, graph, _entity.Context.CurrentCulture);
                 return true;
             }
             catch
@@ -247,7 +240,6 @@ namespace RomanticWeb.Entities
                 throw new InvalidOperationException(String.Format("Blank node entity <{0}> is read-only.", id));
             }
         }
-
         #endregion
 
         private class DebuggerDisplayProxy

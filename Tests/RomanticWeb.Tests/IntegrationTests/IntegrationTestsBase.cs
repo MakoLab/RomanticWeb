@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Moq;
 using NUnit.Framework;
 using RomanticWeb.DotNetRDF;

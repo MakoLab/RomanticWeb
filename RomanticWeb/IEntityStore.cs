@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using RomanticWeb.Entities;
 using RomanticWeb.Model;
 
@@ -31,7 +32,8 @@ namespace RomanticWeb
         /// <param name="propertyUri">the predicate</param>
         /// <param name="newValues">new object node(s)</param>
         /// <param name="graphUri">destination graph</param>
-        void ReplacePredicateValues(EntityId id, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri);       
+        /// <param name="language">language of literal values.</param>
+        void ReplacePredicateValues(EntityId id, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri, CultureInfo language);       
         
         /// <summary>Marks an entity for deletion.</summary>
         /// <param name="entityId">Identifier of the entity to be removed.</param>

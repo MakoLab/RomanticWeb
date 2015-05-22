@@ -75,7 +75,7 @@ namespace RomanticWeb.Entities
             var entityIds = currentTypes.Union(additionalTypes).ToList();
             if (entityIds.Count > 0)
             {
-                _store.ReplacePredicateValues(entity.Id, Model.Node.ForUri(RomanticWeb.Vocabularies.Rdf.type), () => entityIds, graphName);
+                _store.ReplacePredicateValues(entity.Id, Model.Node.ForUri(RomanticWeb.Vocabularies.Rdf.type), () => entityIds, graphName, entity.Context.CurrentCulture);
             }
         }
 

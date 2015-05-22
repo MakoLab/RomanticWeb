@@ -110,6 +110,7 @@
     <Compile Include="Entities\ConstantBaseUri.cs" />
     <Compile Include="Entities\DefaultBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\EntityIdExtensions.cs" />
+    <Compile Include="Entities\EntityProxyHelpers.cs" />
     <Compile Include="Entities\IBaseUriSelectionPolicy.cs" />
     <Compile Include="Entities\IBlankNodeIdGenerator.cs" />
     <Compile Include="Entities\IEntityProxy.cs" />

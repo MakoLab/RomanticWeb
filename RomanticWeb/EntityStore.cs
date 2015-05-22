@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Anotar.NLog;
 using NullGuard;
@@ -78,10 +79,10 @@ namespace RomanticWeb
             }
         }
 
-        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri)
+        public void ReplacePredicateValues(EntityId entityId, Node propertyUri, Func<IEnumerable<Node>> newValues, Uri graphUri, CultureInfo language)
         {
             var subjectNode = Node.FromEntityId(entityId);
-            var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri).ToArray();
+            var removedQuads = RemoveTriples(subjectNode, propertyUri, graphUri, language).ToArray();
             var newQuads = (from node in newValues()
                             select new EntityQuad(entityId, subjectNode, propertyUri, node).InGraph(graphUri)).ToArray();
             _entityQuads.Add(entityId, newQuads);
@@ -216,22 +217,21 @@ namespace RomanticWeb
         /// Removes triple and blank node's subgraph if present
         /// </summary>
         /// <returns>a value indicating that the was a blank node object value</returns>
-        private IEnumerable<EntityQuad> RemoveTriples(Node entityId, Node predicate = null, Uri graphUri = null)
+        private IEnumerable<EntityQuad> RemoveTriples(Node entityId, Node predicate = null, Uri graphUri = null, CultureInfo language = null)
         {
             IEnumerable<EntityQuad> quadsRemoved;
 
-            if (predicate == null)
-            {
-                quadsRemoved = _entityQuads[entityId];
-            }
-            else
-            {
-                quadsRemoved = _entityQuads[entityId, predicate];
-            }
+            quadsRemoved = (predicate == null ? _entityQuads[entityId] : _entityQuads[entityId, predicate]);
 
             if (graphUri != null)
             {
                 quadsRemoved = quadsRemoved.Where(quad => GraphEquals(quad, graphUri));
+            }
+
+            if (language != null)
+            {
+                quadsRemoved = quadsRemoved.Where(quad => ((!quad.Object.IsLiteral) || ((quad.Object.IsLiteral) && 
+                    (((quad.Object.Language == null) && (CultureInfo.InvariantCulture.Equals(language))) || (quad.Object.Language == language.TwoLetterISOLanguageName)))));
             }
 
             return quadsRemoved.ToList().SelectMany(RemoveTriple);

@@ -145,7 +145,7 @@ namespace RomanticWeb
         [AllowNull]
         public CultureInfo CurrentCulture
         {
-            get { return (_currentCulture ?? Thread.CurrentThread.CurrentCulture); }
+            get { return (_currentCulture ?? CultureInfo.InvariantCulture); }
 
             set { _currentCulture = value; }
         }

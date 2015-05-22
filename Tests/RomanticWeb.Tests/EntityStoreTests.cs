@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using FluentAssertions;
 using Moq;
@@ -37,7 +38,7 @@ namespace RomanticWeb.Tests
             var newValue = Node.ForLiteral("Tomek");
 
             // when
-            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri);
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri, CultureInfo.InvariantCulture);
 
             // then
             _entityStore.Quads.Where(q => q.Graph.Uri == GraphUri).Should().HaveCount(6);
@@ -92,7 +93,7 @@ namespace RomanticWeb.Tests
             LoadEntities("TriplesWithLiteralSubjects.trig");
             var property = Node.ForUri(Foaf.givenName);
             var newValue = Node.ForLiteral("Tomek");
-            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri);
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri, CultureInfo.InvariantCulture);
 
             // when
             _entityStore.Rollback();

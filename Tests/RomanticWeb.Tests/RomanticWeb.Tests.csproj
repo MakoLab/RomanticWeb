@@ -137,6 +137,7 @@
     <Compile Include="IEvenMoreSpecificContainer.cs" />
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
+    <Compile Include="IntegrationTests\GlobalizationTest.cs.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
     <Compile Include="Mapping\PropertyOverridingTests.cs" />
     <Compile Include="Model\EntityQuadCollectionTests.cs" />

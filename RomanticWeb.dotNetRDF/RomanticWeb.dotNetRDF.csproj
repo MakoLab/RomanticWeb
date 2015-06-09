@@ -18,6 +18,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <GitVersionOnlyMajorAndMinorInAssemblyVersion>true</GitVersionOnlyMajorAndMinorInAssemblyVersion>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +52,7 @@
     <Compile Include="..\.build\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ComponentModel\BaseUriResolutionStrategyComposition.cs" />
     <Compile Include="Configuration\ConfigurationFileElement.cs" />
     <Compile Include="Configuration\ConfigurationFilesCollection.cs" />
     <Compile Include="Configuration\FileStoreElement.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="EntityIdExtensions.cs" />
     <Compile Include="FileTripleStore.cs" />
     <Compile Include="ISparqlCommandFactory.cs" />
+    <Compile Include="LinkedData\UrlMatchingResourceResolutionStrategy.cs" />
+    <Compile Include="Mapping\BaseUriMappingModelVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NodeExtensions.cs" />
     <Compile Include="SparqlQueryVisitor.cs" />
@@ -134,7 +138,9 @@
     <Reference Include="Resourcer">
       <HintPath>..\packages\Resourcer.Fody.1.2.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml" />
     <Reference Include="VDS.Common">
@@ -156,6 +162,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets'))" />
     <Error Condition="!Exists('..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <Import Project="..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets" Condition="Exists('..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

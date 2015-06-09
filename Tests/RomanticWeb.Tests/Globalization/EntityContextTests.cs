@@ -55,7 +55,8 @@ namespace RomanticWeb.Tests.Globalization
                 new Mock<IBlankNodeIdGenerator>().Object,
                 new Mock<IResultTransformerCatalog>().Object,
                 new Mock<IEntityCaster>().Object,
-                new Mock<IDatasetChangesTracker>().Object);
+                new Mock<IDatasetChangesTracker>().Object,
+                null);
         }
     }
 }

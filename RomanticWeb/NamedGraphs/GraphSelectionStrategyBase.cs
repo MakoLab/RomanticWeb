@@ -1,14 +1,15 @@
 ﻿using System;
+using NullGuard;
 using RomanticWeb.Entities;
+using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.NamedGraphs
 {
-    /// <summary>
-    /// Defines method for selecting named graph URI based on <see cref="EntityId"/> 
-    /// </summary>
-    public abstract class GraphSelectionStrategyBase
+    /// <summary>Defines method for selecting named graph URI based on <see cref="EntityId"/>.</summary>
+    public abstract class GraphSelectionStrategyBase : INamedGraphSelector
     {
-        internal Uri SelectGraph(EntityId entityId, Uri predicate)
+        /// <inheritdoc />
+        Uri INamedGraphSelector.SelectGraph(EntityId entityId, [AllowNull] IEntityMapping entityMapping, [AllowNull] IPropertyMapping predicate)
         {
             var nonBlankId = entityId;
             while (nonBlankId is BlankId)
@@ -21,14 +22,14 @@ namespace RomanticWeb.NamedGraphs
                 }
             }
 
-            return GetGraphForEntityId(nonBlankId, predicate);
+            return GetGraphForEntityId(nonBlankId, entityMapping, predicate);
         }
 
-        /// <summary>
-        /// Gets a named graph URI for a given entity
-        /// </summary>
-        /// <param name="entityId">Entity's identifier</param>
-        /// <param name="predicate"></param>
-        protected abstract Uri GetGraphForEntityId(EntityId entityId, Uri predicate);
+        /// <summary>Gets a named graph URI for a given entity.</summary>
+        /// <param name="entityId">The entity identifier.</param>
+        /// <param name="entityMapping">The entity mapping.</param>
+        /// <param name="predicate">The predicate.</param>
+        /// <returns>In implementing classes returns an absolute <see cref="Uri"/>.</returns>
+        protected abstract Uri GetGraphForEntityId(EntityId entityId, IEntityMapping entityMapping, IPropertyMapping predicate);
     }
 }

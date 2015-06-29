@@ -16,6 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <GitVersionOnlyMajorAndMinorInAssemblyVersion>true</GitVersionOnlyMajorAndMinorInAssemblyVersion>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -155,6 +156,7 @@
     <Compile Include="IEntityContextFactory.cs" />
     <Compile Include="IEntityStore.cs" />
     <Compile Include="LightInject\LightInject.cs" />
+    <Compile Include="LinkedData\IResourceResolutionStrategy.cs" />
     <Compile Include="Linq\CamelCaseVariableNamingConvention.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\GenericQueryOptimizer.cs" />
@@ -303,6 +305,7 @@
     <Compile Include="Model\Index.cs" />
     <Compile Include="Model\IndexCollection.cs" />
     <Compile Include="Model\LooseEntityQuadEqualityComparer.cs" />
+    <Compile Include="NamedGraphs\BaseUriNamedGraphSelector.cs" />
     <Compile Include="NamedGraphs\GraphSelectionStrategyBase.cs" />
     <Compile Include="IO\ContentTypeResolver.cs" />
     <Compile Include="IO\FileExtensionContentTypeResolver.cs" />
@@ -553,7 +556,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Remotion.Linq.1.15.13.0\lib\portable-net45+wp80+win\Remotion.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
@@ -576,6 +581,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.2\build\PepitaPackage.targets'))" />
     <Error Condition="!Exists('..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <Import Project="..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets" Condition="Exists('..\packages\Zoltu.Versioning.1.1.23.0\build\Zoltu.Versioning.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

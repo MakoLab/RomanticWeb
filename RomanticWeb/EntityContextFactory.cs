@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using Anotar.NLog;
 using RomanticWeb.ComponentModel;
 using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
+using RomanticWeb.LinkedData;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Visitors;
@@ -16,9 +18,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    /// <summary>
-    /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
-    /// </summary>
+    /// <summary>An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>.</summary>
     public class EntityContextFactory : IEntityContextFactory, IComponentRegistryFacade
     {
         private static readonly object Locker = new object();
@@ -26,11 +26,8 @@ namespace RomanticWeb
         private readonly IList<Scope> _trackedScopes = new List<Scope>();
         private bool _disposed;
 
-        /// <summary>
-        /// Creates a new instance of <see cref="EntityContextFactory"/>
-        /// </summary>
-        public EntityContextFactory()
-            : this(new ServiceContainer())
+        /// <summary>Initializes a new instance of <see cref="EntityContextFactory"/> class.</summary>
+        public EntityContextFactory() : this(new ServiceContainer())
         {
         }
 
@@ -46,79 +43,32 @@ namespace RomanticWeb
         }
 
         /// <inheritdoc/>
-        public IOntologyProvider Ontologies
-        {
-            get
-            {
-                return new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>());
-            }
-        }
+        public IOntologyProvider Ontologies { get { return new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>()); } }
 
         /// <inheritdoc/>
-        public IMappingsRepository Mappings
-        {
-            get
-            {
-                return _container.GetInstance<IMappingsRepository>();
-            }
-        }
+        public IMappingsRepository Mappings { get { return _container.GetInstance<IMappingsRepository>(); } }
 
         /// <inheritdoc/>
-        public IEnumerable<IConvention> Conventions
-        {
-            get
-            {
-                return _container.GetAllInstances<IConvention>();
-            }
-        }
+        public IEnumerable<IConvention> Conventions { get { return _container.GetAllInstances<IConvention>(); } }
 
         /// <inheritdoc/>
-        public IFallbackNodeConverter FallbackNodeConverter
-        {
-            get
-            {
-                return _container.GetInstance<IFallbackNodeConverter>();
-            }
-        }
+        public IFallbackNodeConverter FallbackNodeConverter { get { return _container.GetInstance<IFallbackNodeConverter>(); } }
 
         /// <inheritdoc/>
-        public IEnumerable<IMappingModelVisitor> MappingModelVisitors
-        {
-            get
-            {
-                return _container.GetAllInstances<IMappingModelVisitor>();
-            }
-        }
+        public IEnumerable<IMappingModelVisitor> MappingModelVisitors { get { return _container.GetAllInstances<IMappingModelVisitor>(); } }
 
         /// <inheritdoc />
-        public IResultTransformerCatalog TransformerCatalog
-        {
-            get
-            {
-                return _container.GetInstance<IResultTransformerCatalog>();
-            }
-        }
+        public IResultTransformerCatalog TransformerCatalog { get { return _container.GetInstance<IResultTransformerCatalog>(); } }
 
         /// <inheritdoc />
-        public INamedGraphSelector NamedGraphSelector
-        {
-            get
-            {
-                return _container.GetInstance<INamedGraphSelector>();
-            }
-        }
+        public INamedGraphSelector NamedGraphSelector { get { return _container.GetInstance<INamedGraphSelector>(); } }
 
-        internal IList<Scope> TrackedScopes
-        {
-            get
-            {
-                return _trackedScopes;
-            }
-        }
+        /// <inheritdoc />
+        public IResourceResolutionStrategy ResourceResolutionStrategy { get { return _container.GetInstance<IResourceResolutionStrategy>(); } }
 
-        /// <summary>
-        /// Creates a factory defined in the configuration section.
-        /// </summary>
+        internal IList<Scope> TrackedScopes { get { return _trackedScopes; } }
+
+        /// <summary>Creates a factory defined in the configuration section.</summary>
         public static EntityContextFactory FromConfiguration(string factoryName)
         {
             var configuration = ConfigurationSectionHandler.Default.Factories[factoryName];
@@ -214,18 +164,21 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>
-        /// Sets the meta graph Uri
-        /// </summary>
+        /// <summary>Exposes a method to define how the default which resources should be considered external and be obtained.</summary>
+        public EntityContextFactory WithResourceResolutionStrategy(IResourceResolutionStrategy resourceResolutionStrategy)
+        {
+            _container.RegisterInstance(resourceResolutionStrategy);
+            return this;
+        }
+
+        /// <summary>Sets the meta graph Uri.</summary>
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
             _container.RegisterInstance(metaGraphUri, "MetaGraphUri");
             return this;
         }
 
-        /// <summary>
-        /// Registers dependencies from a given <see cref="CompositionRootBase"/> type
-        /// </summary>
+        /// <summary>Registers dependencies from a given <see cref="CompositionRootBase"/> type.</summary>
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
             return WithDependenciesInternal<T>();
@@ -241,9 +194,7 @@ namespace RomanticWeb
             _container.RegisterInstance(instance);
         }
 
-        /// <summary>
-        /// Dispose this entity context factory and all components
-        /// </summary>
+        /// <summary>Dispose this entity context factory and all components.</summary>
         public void Dispose()
         {
             if (_disposed)
@@ -257,7 +208,6 @@ namespace RomanticWeb
             }
 
             _container.Dispose();
-
             _disposed = true;
         }
 

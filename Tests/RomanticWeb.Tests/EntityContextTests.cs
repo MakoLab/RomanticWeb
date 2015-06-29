@@ -87,7 +87,8 @@ namespace RomanticWeb.Tests
                 new DefaultBlankNodeIdGenerator(),
                 catalog,
                 new ImpromptuInterfaceCaster((entity, mapping) => new EntityProxy(entity, mapping, catalog, new TestGraphSelector()), _mappings.Object, new TestGraphSelector(), _entityStore.Object),
-                _changesTracker.Object);
+                _changesTracker.Object,
+                null);
         }
 
         [TearDown]
@@ -135,8 +136,7 @@ namespace RomanticWeb.Tests
         [Test]
         [TestCaseSource("TypedAndUntypedEntities")]
         [ExpectedException(typeof(RuntimeBinderException))]
-        public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces(
-            Lazy<IEntity> lazyEntity)
+        public void Creating_new_Entity_should_not_add_getters_for_any_other_ontology_namespaces(Lazy<IEntity> lazyEntity)
         {
             // given
             dynamic entity = lazyEntity.Value.AsDynamic();

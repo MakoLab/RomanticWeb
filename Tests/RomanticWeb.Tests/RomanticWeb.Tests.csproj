@@ -14,6 +14,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <GitVersionOnlyMajorAndMinorInAssemblyVersion>true</GitVersionOnlyMajorAndMinorInAssemblyVersion>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -124,6 +125,7 @@
     <Compile Include="Converters\XsdConverterTestsBase.cs" />
     <Compile Include="dotNetRDF\DefaultSparqlCommandFactoryTests.cs" />
     <Compile Include="dotNetRDF\FileTripleStoreTests.cs" />
+    <Compile Include="dotNetRDF\UrlMatchingResourceResolutionStrategyTests.cs" />
     <Compile Include="Dynamic\DictionaryEntityNamesTests.cs" />
     <Compile Include="Entities\EntityProxyTests.cs" />
     <Compile Include="Entities\SimpleTransformerTests.cs" />
@@ -138,10 +140,12 @@
     <Compile Include="Indexing\IndexCollectionTests.cs" />
     <Compile Include="IntegrationTests\FileBased\NamedGraphMappingTests.cs" />
     <Compile Include="IntegrationTests\GlobalizationTest.cs.cs" />
+    <Compile Include="IntegrationTests\LinkedData\LinkedDataTests.cs" />
     <Compile Include="IntegrationTests\TestMappings\AsStringConverter.cs" />
     <Compile Include="Mapping\PropertyOverridingTests.cs" />
     <Compile Include="Model\EntityQuadCollectionTests.cs" />
     <Compile Include="Collections\TopologicSortTests.cs" />
+    <Compile Include="NamedGraphs\BaseUriNamedGraphSelectorTests.cs" />
     <Compile Include="Updates\DatasetChangesTests.cs" />
     <Compile Include="Updates\GraphUpdateTests.cs" />
     <Compile Include="Updates\GraphReconstructTests.cs" />
@@ -3243,7 +3247,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Zoltu.Versioning.1.1.19.0\build\Zoltu.Versioning.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

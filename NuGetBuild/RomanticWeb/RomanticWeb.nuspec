@@ -3,19 +3,20 @@
   <metadata>
     <id>RomanticWeb</id>
     <version>$version$</version>
-    <authors>tpluscode, alien-mcl</authors>
-    <owners>tpluscode</owners>
+    <authors>alien-mcl, tpluscode</authors>
+    <owners>alien-mcl, tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <title>Romantic Web</title>
     <description>$description$</description>
     <releaseNotes>
-      * Fixes to using relative identifiers
-      * Converters fod IDictionary key/value
+      * Significant performance improvement
+      * Thread-safety
+      * Read-only mode
     </releaseNotes>
     <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://romanticweb.net</projectUrl>
-    <copyright>Copyright MakoLab © 2013 - 2014</copyright>
+    <copyright>Copyright MakoLab © 2013 - 2015</copyright>
     <tags>rdf orm semanticweb semantic sparql linq</tags>
     <dependencies>
       <dependency id="RomanticWeb.Fody" />
@@ -23,7 +24,7 @@
       <dependency id="Remotion.Linq" />
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration"  />
+      <frameworkAssembly assemblyName="System.Configuration" />
     </frameworkAssemblies>
   </metadata>
 </package>

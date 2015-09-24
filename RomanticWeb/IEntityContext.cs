@@ -67,6 +67,9 @@ namespace RomanticWeb
         /// <summary>Gets the cultures present in current context's data.</summary>
         IEnumerable<CultureInfo> Cultures { get; }
 
+        /// <summary>Gets or sets a lag indicating whether to track changes or not.</summary>
+        bool TrackChanges { get; set; }
+
         /// <summary>Gets or sets current culture to filter localized literals through.</summary>
         /// <remarks>
         /// By default this should not be set resulting in using <see cref="System.Threading.Thread.CurrentThread.CurrentCulture" /> value.
@@ -74,9 +77,7 @@ namespace RomanticWeb
         /// </remarks>
         CultureInfo CurrentCulture { get; set; }
 
-        /// <summary>
-        /// Gets the changes.
-        /// </summary>
+        /// <summary>Gets the changes.</summary>
         Updates.IDatasetChanges Changes { get; }
 
         /// <summary>Converts this context into a LINQ queryable data source.</summary>

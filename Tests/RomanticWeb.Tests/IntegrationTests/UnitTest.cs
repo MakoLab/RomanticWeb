@@ -17,6 +17,10 @@ namespace TestProject
     [TestClass]
     public class UnitTest : IntegrationTestsBase
     {
+        protected override bool ThreadSafe { get { return false; } }
+
+        protected override bool TrackChanges { get { return false; } }
+
         [TestInitialize]
         public void Setup()
         {
@@ -46,7 +50,7 @@ namespace TestProject
             DateTime startedAt = DateTime.Now;
 
             // when
-            foreach (IProduct product in entities)
+            /*foreach (IProduct product in entities)
             {
                 string name = product.Name;
                 string comments = product.Comments;
@@ -66,6 +70,7 @@ namespace TestProject
                 string msdsFile = System.String.Join(", ", product.MsdsFile.Select(item => item.Id.ToString()));
                 string function = System.String.Join(", ", product.Function.Select(item => item.ToString()));
             }
+            */
 
             // then
             TimeSpan testLength = DateTime.Now - startedAt;

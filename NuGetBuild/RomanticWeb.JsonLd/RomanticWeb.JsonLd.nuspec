@@ -3,14 +3,14 @@
   <metadata>
     <id>RomanticWeb.JsonLd</id>
     <version>$version$</version>
-    <authors>tpluscode, alien-mcl</authors>
+    <authors>alien-mcl, tpluscode</authors>
+    <owners>alien-mcl, tpluscode</owners>
     <description>$description$</description>
-    <owners>tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes>Initial release</releaseNotes>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://romanticweb.net</projectUrl>
-    <copyright>Copyright MakoLab © 2013 - 2014</copyright>
+    <copyright>Copyright MakoLab © 2013 - 2015</copyright>
     <tags>rdf orm jsonld json-ld json lnked-data semanticweb semantic</tags>
     <dependencies>
       <dependency id="Newtonsoft.Json"/>

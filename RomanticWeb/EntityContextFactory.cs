@@ -16,9 +16,7 @@ using RomanticWeb.Ontologies;
 
 namespace RomanticWeb
 {
-    /// <summary>
-    /// An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>
-    /// </summary>
+    /// <summary>An entrypoint to RomanticWeb, which encapsulates modularity and creation of <see cref="IEntityContext"/>.</summary>
     public class EntityContextFactory : IEntityContextFactory, IComponentRegistryFacade
     {
         private static readonly object Locker = new object();
@@ -26,11 +24,8 @@ namespace RomanticWeb
         private readonly IList<Scope> _trackedScopes = new List<Scope>();
         private bool _disposed;
 
-        /// <summary>
-        /// Creates a new instance of <see cref="EntityContextFactory"/>
-        /// </summary>
-        public EntityContextFactory()
-            : this(new ServiceContainer())
+        /// <summary>Creates a new instance of <see cref="EntityContextFactory"/>.</summary>
+        public EntityContextFactory() : this(new ServiceContainer())
         {
         }
 
@@ -46,79 +41,33 @@ namespace RomanticWeb
         }
 
         /// <inheritdoc/>
-        public IOntologyProvider Ontologies
-        {
-            get
-            {
-                return new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>());
-            }
-        }
+        public IOntologyProvider Ontologies { get { return new CompoundOntologyProvider(_container.GetAllInstances<IOntologyProvider>()); } }
 
         /// <inheritdoc/>
-        public IMappingsRepository Mappings
-        {
-            get
-            {
-                return _container.GetInstance<IMappingsRepository>();
-            }
-        }
+        public IMappingsRepository Mappings { get { return _container.GetInstance<IMappingsRepository>(); } }
 
         /// <inheritdoc/>
-        public IEnumerable<IConvention> Conventions
-        {
-            get
-            {
-                return _container.GetAllInstances<IConvention>();
-            }
-        }
+        public IEnumerable<IConvention> Conventions { get { return _container.GetAllInstances<IConvention>(); } }
 
         /// <inheritdoc/>
-        public IFallbackNodeConverter FallbackNodeConverter
-        {
-            get
-            {
-                return _container.GetInstance<IFallbackNodeConverter>();
-            }
-        }
+        public IFallbackNodeConverter FallbackNodeConverter { get { return _container.GetInstance<IFallbackNodeConverter>(); } }
 
         /// <inheritdoc/>
-        public IEnumerable<IMappingModelVisitor> MappingModelVisitors
-        {
-            get
-            {
-                return _container.GetAllInstances<IMappingModelVisitor>();
-            }
-        }
+        public IEnumerable<IMappingModelVisitor> MappingModelVisitors { get { return _container.GetAllInstances<IMappingModelVisitor>(); } }
 
         /// <inheritdoc />
-        public IResultTransformerCatalog TransformerCatalog
-        {
-            get
-            {
-                return _container.GetInstance<IResultTransformerCatalog>();
-            }
-        }
+        public IResultTransformerCatalog TransformerCatalog { get { return _container.GetInstance<IResultTransformerCatalog>(); } }
 
         /// <inheritdoc />
-        public INamedGraphSelector NamedGraphSelector
-        {
-            get
-            {
-                return _container.GetInstance<INamedGraphSelector>();
-            }
-        }
+        public INamedGraphSelector NamedGraphSelector { get { return _container.GetInstance<INamedGraphSelector>(); } }
 
-        internal IList<Scope> TrackedScopes
-        {
-            get
-            {
-                return _trackedScopes;
-            }
-        }
+        internal IList<Scope> TrackedScopes { get { return _trackedScopes; } }
 
-        /// <summary>
-        /// Creates a factory defined in the configuration section.
-        /// </summary>
+        internal bool ThreadSafe { get; set; }
+
+        internal bool TrackChanges { get; set; }
+
+        /// <summary>Creates a factory defined in the configuration section.</summary>
         public static EntityContextFactory FromConfiguration(string factoryName)
         {
             var configuration = ConfigurationSectionHandler.Default.Factories[factoryName];
@@ -127,14 +76,19 @@ namespace RomanticWeb
             var mappingAssemblies = from element in configuration.MappingAssemblies.Cast<MappingAssemblyElement>()
                                     select Assembly.Load(element.Assembly);
 
-            var entityContextFactory = new EntityContextFactory().WithOntology(new OntologyProviderBase(ontologies)).WithMappings(m =>
+            var entityContextFactory = new EntityContextFactory()
+                .WithOntology(new OntologyProviderBase(ontologies))
+                .WithMetaGraphUri(configuration.MetaGraphUri)
+                .WithMappings(m =>
                 {
                     foreach (var mappingAssembly in mappingAssemblies)
                     {
                         m.Fluent.FromAssembly(mappingAssembly);
                         m.Attributes.FromAssembly(mappingAssembly);
                     }
-                }).WithMetaGraphUri(configuration.MetaGraphUri);
+                });
+            entityContextFactory.ThreadSafe = configuration.ThreadSafe;
+            entityContextFactory.TrackChanges = configuration.TrackChanges;
             if (configuration.BaseUris.Default != null)
             {
                 entityContextFactory.WithBaseUri(b => b.Default.Is(configuration.BaseUris.Default));
@@ -153,6 +107,12 @@ namespace RomanticWeb
                 var scope = _container.BeginScope();
                 TrackedScopes.Add(scope);
                 var context = _container.GetInstance<IEntityContext>();
+                context.TrackChanges = TrackChanges;
+                if (context.Store is IThreadSafeEntityStore)
+                {
+                    ((IThreadSafeEntityStore)context.Store).ThreadSafe = ThreadSafe;
+                }
+
                 context.Disposed += () =>
                     {
                         scope.Dispose();

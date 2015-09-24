@@ -11,31 +11,78 @@ using RomanticWeb.Updates;
 
 namespace RomanticWeb
 {
-    internal class EntityStore : IEntityStore
+    internal class EntityStore : IThreadSafeEntityStore
     {
         private readonly IDatasetChangesTracker _changesTracker;
         private readonly ISet<EntityId> _assertedEntities = new HashSet<EntityId>();
         private readonly IDictionary<Node, int> _blankNodeRefCounts = new ConcurrentDictionary<Node, int>();
-        private readonly IEntityQuadCollection _entityQuads;
-        private readonly IEntityQuadCollection _initialQuads;
+        private IEntityQuadCollection _entityQuads;
+        private IEntityQuadCollection _initialQuads;
         private bool _disposed;
+        private bool _threadSafe = false;
+        private bool _trackChanges = true;
 
         public EntityStore(IDatasetChangesTracker changesTracker)
         {
             _changesTracker = changesTracker;
-            _entityQuads = new EntityQuadCollection2();
-            _initialQuads = new EntityQuadCollection2();
+            _entityQuads = new EntityQuadCollection2(_threadSafe);
+            _initialQuads = new EntityQuadCollection2(_threadSafe);
+        }
+
+        public bool ThreadSafe
+        {
+            get
+            {
+                return _threadSafe;
+            }
+
+            set
+            {
+                if (_threadSafe == value)
+                {
+                    return;
+                }
+
+                if ((_entityQuads.Count > 0) || (_initialQuads.Count > 0))
+                {
+                    throw new InvalidOperationException("Cannot set thread-safety flag. EntityStore already in use.");
+                }
+
+                _threadSafe = value;
+                _entityQuads = new EntityQuadCollection2(_threadSafe);
+                _initialQuads = new EntityQuadCollection2(_threadSafe);
+            }
         }
 
         public IEnumerable<EntityQuad> Quads { get { return _entityQuads; } }
 
-        public IDatasetChanges Changes
+        public bool TrackChanges
         {
             get
             {
-                return _changesTracker;
+                return _trackChanges;
+            }
+
+            set
+            {
+                if (_trackChanges == value)
+                {
+                    return;
+                }
+
+                if (!(_trackChanges = value))
+                {
+                    _initialQuads = null;
+                    _changesTracker.Clear();
+                }
+                else
+                {
+                    _initialQuads = new EntityQuadCollection2(_threadSafe);
+                }
             }
         }
+
+        public IDatasetChanges Changes { get { return _changesTracker; } }
 
         public IEnumerable<Node> GetObjectsForPredicate(EntityId entityId, Uri predicate, [AllowNull] Uri graph)
         {
@@ -69,10 +116,12 @@ namespace RomanticWeb
 
             var entityQuads = entityTriples as EntityQuad[] ?? entityTriples.ToArray();
             _entityQuads.Add(entityId, entityQuads);
-            _initialQuads.Add(entityId, entityQuads);
+            if (_trackChanges)
+            {
+                _initialQuads.Add(entityId, entityQuads);
+            }
 
             _assertedEntities.Add(entityId);
-
             foreach (var entityQuad in entityQuads.Where(entityQuad => entityQuad.Object.IsBlank))
             {
                 IncrementRefCount(entityQuad.Object);
@@ -94,13 +143,20 @@ namespace RomanticWeb
 
             DeleteOrphanedBlankNodes(removedQuads);
 
-            dynamic datasetChange = CreateChangeForUpdate(entityId, graphUri, removedQuads, newQuads);
-            _changesTracker.Add(datasetChange);
+            if (_trackChanges)
+            {
+                dynamic datasetChange = CreateChangeForUpdate(entityId, graphUri, removedQuads, newQuads);
+                _changesTracker.Add(datasetChange);
+            }
         }
 
         public void Delete(EntityId entityId, DeleteBehaviour deleteBehaviour = DeleteBehaviour.Default)
         {
             IEnumerable<EntityQuad> deletes = DeleteQuads(entityId);
+            if (!_trackChanges)
+            {
+                return;
+            }
 
             var deletesGrouped = (from removedQuad in deletes 
                                   group removedQuad by removedQuad.Graph into g 
@@ -131,10 +187,14 @@ namespace RomanticWeb
 
         public void ResetState()
         {
-            _initialQuads.Clear();
-            foreach (var entityId in _entityQuads)
+            if (_trackChanges)
             {
-                _initialQuads.Add(entityId.EntityId, _entityQuads[entityId.EntityId]);
+                _initialQuads.Clear();
+
+                foreach (var entityId in _entityQuads)
+                {
+                    _initialQuads.Add(entityId.EntityId, _entityQuads[entityId.EntityId]);
+                }
             }
 
             _changesTracker.Clear();
@@ -144,9 +204,12 @@ namespace RomanticWeb
         {
             _changesTracker.Clear();
             _entityQuads.Clear();
-            foreach (var entityId in _initialQuads)
+            if (_trackChanges)
             {
-                _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
+                foreach (var entityId in _initialQuads)
+                {
+                    _entityQuads.Add(entityId.EntityId, _initialQuads[entityId.EntityId]);
+                }
             }
         }
 
@@ -158,7 +221,10 @@ namespace RomanticWeb
             }
 
             _entityQuads.Clear();
-            _initialQuads.Clear();
+            if (_trackChanges)
+            {
+                _initialQuads.Clear();
+            }
 
             _disposed = true;
         }
@@ -213,9 +279,7 @@ namespace RomanticWeb
             }
         }
 
-        /// <summary>
-        /// Removes triple and blank node's subgraph if present
-        /// </summary>
+        /// <summary>Removes triple and blank node's subgraph if present.</summary>
         /// <returns>a value indicating that the was a blank node object value</returns>
         private IEnumerable<EntityQuad> RemoveTriples(Node entityId, Node predicate = null, Uri graphUri = null, CultureInfo language = null)
         {

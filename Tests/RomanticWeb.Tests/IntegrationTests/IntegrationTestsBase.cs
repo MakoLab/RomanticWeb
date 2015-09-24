@@ -25,13 +25,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         public IMappingProviderSource Mappings { get; private set; }
 
-        protected static Uri MetaGraphUri
-        {
-            get
-            {
-                return new Uri("http://app.magi/graphs");
-            }
-        }
+        protected static Uri MetaGraphUri { get { return new Uri("http://app.magi/graphs"); } }
 
         protected IEntityContext EntityContext
         {
@@ -46,23 +40,15 @@ namespace RomanticWeb.Tests.IntegrationTests
             }
         }
 
-        protected IEntityStore EntityStore
-        {
-            get
-            {
-                return EntityContext.Store;
-            }
-        }
+        protected IEntityStore EntityStore { get { return EntityContext.Store; } }
 
         protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
-        protected virtual ITripleStore Store
-        {
-            get
-            {
-                return _store;
-            }
-        }
+        protected virtual ITripleStore Store { get { return _store; } }
+
+        protected virtual bool ThreadSafe { get { return false; } }
+
+        protected virtual bool TrackChanges { get { return true; } }
 
         [SetUp]
         public void Setup()
@@ -71,7 +57,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
             _container = new ServiceContainer();
             _store = CreateTripleStore();
-            _factory = new EntityContextFactory(_container)
+            EntityContextFactory factory = new EntityContextFactory(_container)
                                                  .WithOntology(new DefaultOntologiesProvider())
                                                  .WithOntology(new LifeOntology())
                                                  .WithOntology(new TestOntologyProvider(IncludeFoaf))
@@ -79,8 +65,10 @@ namespace RomanticWeb.Tests.IntegrationTests
                                                  .WithMappings(BuildMappings)
                                                  .WithMetaGraphUri(MetaGraphUri)
                                                  .WithDotNetRDF(_store)
-                                                 .WithBaseUri(b => b.Default.Is(new Uri("http://example.com/")));
-
+                                                .WithBaseUri(b => b.Default.Is(new Uri("http://example.com/")));
+            factory.ThreadSafe = ThreadSafe;
+            factory.TrackChanges = TrackChanges;
+            _factory = factory;
             ChildSetup();
         }
 

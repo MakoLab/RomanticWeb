@@ -3,15 +3,15 @@
   <metadata>
     <id>RomanticWeb.Fody</id>
     <version>$version$</version>
-    <authors>tpluscode, alien-mcl</authors>
-    <owners>tpluscode</owners>
+    <authors>alien-mcl, tpluscode</authors>
+    <owners>alien-mcl, tpluscode</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial release</releaseNotes>
     <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
     <iconUrl>http://makolab.github.io/RomanticWeb/images/logo-small.png</iconUrl>
     <projectUrl>http://romanticweb.net</projectUrl>
-    <copyright>Copyright MakoLab © 2013 - 2014</copyright>
+    <copyright>Copyright MakoLab © 2013 - 2015</copyright>
     <dependencies>
       <dependency id="Fody" />
     </dependencies>

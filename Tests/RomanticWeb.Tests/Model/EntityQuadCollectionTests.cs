@@ -15,7 +15,7 @@ namespace RomanticWeb.Tests.Model
         [SetUp]
         public void Setup()
         {
-            _quads = new EntityQuadCollection2();
+            _quads = new EntityQuadCollection2(false);
         }
 
         [Test]

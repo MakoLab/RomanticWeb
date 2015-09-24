@@ -9,11 +9,32 @@ namespace RomanticWeb.Model
 {
     internal sealed class EntityQuadCollection2 : IEntityQuadCollection
     {
-        private readonly IDictionary<int, EntityQuad> _quads = new ConcurrentDictionary<int, EntityQuad>();
-        private readonly IDictionary<EntityId, IDictionary<int, EntityQuad>> _entityQuads = new ConcurrentDictionary<EntityId, IDictionary<int, EntityQuad>>();
-        private readonly IDictionary<Node, IDictionary<int, EntityQuad>> _subjectQuads = new ConcurrentDictionary<Node, IDictionary<int, EntityQuad>>();
-        private readonly IDictionary<Tuple<Node, Node>, IDictionary<EntityQuad, EntityQuad>> _subjectPredicateQuads = new ConcurrentDictionary<Tuple<Node, Node>, IDictionary<EntityQuad, EntityQuad>>();
-        private readonly IDictionary<Node, IDictionary<int, EntityId>> _objectIndex = new ConcurrentDictionary<Node, IDictionary<int, EntityId>>();
+        private readonly bool _threadSafe;
+        private readonly IDictionary<int, EntityQuad> _quads;
+        private readonly IDictionary<EntityId, IDictionary<int, EntityQuad>> _entityQuads;
+        private readonly IDictionary<Node, IDictionary<int, EntityQuad>> _subjectQuads;
+        private readonly IDictionary<Tuple<Node, Node>, IDictionary<EntityQuad, EntityQuad>> _subjectPredicateQuads;
+        private readonly IDictionary<Node, IDictionary<int, EntityId>> _objectIndex;
+
+        internal EntityQuadCollection2(bool threadSafe)
+        {
+            if (_threadSafe = threadSafe)
+            {
+                _quads = new Dictionary<int, EntityQuad>();
+                _entityQuads = new Dictionary<EntityId, IDictionary<int, EntityQuad>>();
+                _subjectQuads = new Dictionary<Node, IDictionary<int, EntityQuad>>();
+                _subjectPredicateQuads = new Dictionary<Tuple<Node, Node>, IDictionary<EntityQuad, EntityQuad>>();
+                _objectIndex = new Dictionary<Node, IDictionary<int, EntityId>>();
+            }
+            else
+            {
+                _quads = new ConcurrentDictionary<int, EntityQuad>();
+                _entityQuads = new ConcurrentDictionary<EntityId, IDictionary<int, EntityQuad>>();
+                _subjectQuads = new ConcurrentDictionary<Node, IDictionary<int, EntityQuad>>();
+                _subjectPredicateQuads = new ConcurrentDictionary<Tuple<Node, Node>, IDictionary<EntityQuad, EntityQuad>>();
+                _objectIndex = new ConcurrentDictionary<Node, IDictionary<int, EntityId>>();
+            }
+        }
 
         public int Count { get { return _quads.Count; } }
 
@@ -37,7 +58,7 @@ namespace RomanticWeb.Model
                            where quadWithSubject.Value.Object == obj
                            select quadWithSubject.Value;
 
-            return toRemove.Where(Remove).ToList();
+            return toRemove.ToList().Where(Remove).ToList();
         }
 
         public void Add(EntityId entityId, IEnumerable<EntityQuad> entityQuads)
@@ -115,7 +136,7 @@ namespace RomanticWeb.Model
         {
             if (!_entityQuads.ContainsKey(entityId))
             {
-                _entityQuads[entityId] = new ConcurrentDictionary<int, EntityQuad>();
+                _entityQuads[entityId] = (_threadSafe ? (IDictionary<int, EntityQuad>)new ConcurrentDictionary<int, EntityQuad>() : new Dictionary<int, EntityQuad>());
             }
 
             return _entityQuads[entityId];
@@ -125,7 +146,7 @@ namespace RomanticWeb.Model
         {
             if (!_subjectQuads.ContainsKey(subject))
             {
-                _subjectQuads[subject] = new ConcurrentDictionary<int, EntityQuad>();
+                _subjectQuads[subject] = (_threadSafe ? (IDictionary<int, EntityQuad>)new ConcurrentDictionary<int, EntityQuad>() : new Dictionary<int, EntityQuad>());
             }
 
             return _subjectQuads[subject];
@@ -136,7 +157,9 @@ namespace RomanticWeb.Model
             var key = Tuple.Create(entityId, predicate);
             if (!_subjectPredicateQuads.ContainsKey(key))
             {
-                _subjectPredicateQuads[key] = new ConcurrentDictionary<EntityQuad, EntityQuad>(LooseEntityQuadEqualityComparer.Instance);
+                _subjectPredicateQuads[key] = (_threadSafe ?
+                    (IDictionary<EntityQuad, EntityQuad>)new ConcurrentDictionary<EntityQuad, EntityQuad>(LooseEntityQuadEqualityComparer.Instance) :
+                    new Dictionary<EntityQuad, EntityQuad>(LooseEntityQuadEqualityComparer.Instance));
             }
 
             return _subjectPredicateQuads[key];
@@ -146,7 +169,7 @@ namespace RomanticWeb.Model
         {
             if (!_objectIndex.ContainsKey(entityId))
             {
-                _objectIndex[entityId] = new ConcurrentDictionary<int, EntityId>();
+                _objectIndex[entityId] = (_threadSafe ? (IDictionary<int, EntityId>)new ConcurrentDictionary<int, EntityId>() : new Dictionary<int, EntityId>());
             }
 
             return _objectIndex[entityId];

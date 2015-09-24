@@ -37,6 +37,7 @@ namespace RomanticWeb
 
         private CultureInfo _currentCulture;
         private bool _disposed;
+        private bool _trackChanges;
         #endregion
 
         #region Constructors
@@ -139,6 +140,25 @@ namespace RomanticWeb
                         where (triple.Object.IsLiteral) && (!String.IsNullOrEmpty(triple.Object.Language))
                         select triple.Object.Language)
                         .Distinct().Select(CultureInfo.GetCultureInfo);
+            }
+        }
+
+        /// <inheritdoc />
+        public bool TrackChanges
+        {
+            get
+            {
+                return _trackChanges;
+            }
+
+            set
+            {
+                if (_trackChanges == value)
+                {
+                    return;
+                }
+
+                _entityStore.TrackChanges = _trackChanges = value;
             }
         }
 

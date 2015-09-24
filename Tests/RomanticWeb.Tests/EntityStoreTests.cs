@@ -30,6 +30,26 @@ namespace RomanticWeb.Tests
         }
 
         [Test]
+        public void Should_not_track_changes_when_configured_so()
+        {
+            // given
+            _entityStore.TrackChanges = false;
+            LoadEntities("TriplesWithLiteralSubjects.trig");
+            var property = Node.ForUri(Foaf.givenName);
+            var newValue = Node.ForLiteral("Tomek");
+
+            // when
+            _entityStore.ReplacePredicateValues(EntityId, property, () => new[] { newValue }, GraphUri, CultureInfo.InvariantCulture);
+
+            // then
+            _entityStore.Quads.Where(q => q.Graph.Uri == GraphUri).Should().HaveCount(6);
+            var expectedAddedQuad = new EntityQuad(EntityId, Node.FromEntityId(EntityId), property, newValue).InGraph(GraphUri);
+            var expectedRemovedQuad = new EntityQuad(EntityId, Node.FromEntityId(EntityId), property, Node.ForLiteral("Tomasz")).InGraph(GraphUri);
+            _changesTracker.Verify(
+                c => c.Add(It.Is<GraphUpdate>(gu => gu.AddedQuads.Contains(expectedAddedQuad) && gu.RemovedQuads.Contains(expectedRemovedQuad))), Times.Never);
+        }
+
+        [Test]
         public void Replacing_triples_should_track_graph_change()
         {
             // given

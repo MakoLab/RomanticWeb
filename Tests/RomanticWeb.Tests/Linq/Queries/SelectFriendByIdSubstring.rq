@@ -3,16 +3,16 @@
 SELECT ?s ?p ?o ?Gperson0 ?person0 ?person0 
 WHERE 
 { 
+	GRAPH <http://app.magi/graphs> 
+	{ 
+		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
+	} 
+	
 	GRAPH ?Gperson0 
 	{ 
 		?s ?p ?o . 
 		?person0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> . 
 		?person0 <http://xmlns.com/foaf/0.1/friends> ?friends0 . 
-	} 
-	
-	GRAPH <http://app.magi/graphs> 
-	{ 
-		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
 	} 
 	
 	GRAPH ?Gfriends0 

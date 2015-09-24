@@ -56,7 +56,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         protected EntityContextFactory Factory { get { return (EntityContextFactory)_factory; } }
 
-        protected ITripleStore Store
+        protected virtual ITripleStore Store
         {
             get
             {
@@ -90,6 +90,7 @@ namespace RomanticWeb.Tests.IntegrationTests
             ChildTeardown();
             _factory.Dispose();
             _entityContext = null;
+            _store = null;
         }
 
         protected virtual void BuildMappings(MappingBuilder m)

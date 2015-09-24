@@ -17,21 +17,6 @@ namespace TestProject
     [TestClass]
     public class UnitTest : IntegrationTestsBase
     {
-        private TripleStore _store;
-
-        protected override ITripleStore Store
-        {
-            get
-            {
-                if (_store == null)
-                {
-                    _store = new TripleStore();
-                }
-
-                return _store;
-            }
-        }
-
         [TestInitialize]
         public void Setup()
         {
@@ -48,11 +33,6 @@ namespace TestProject
         {
             Console.WriteLine("Reading dataset file '{0}'", fileName);
             Store.LoadTestFile(fileName);
-        }
-
-        protected override void ChildTeardown()
-        {
-            _store = null;
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Mapping.Visitors;
@@ -12,6 +13,7 @@ namespace RomanticWeb.Mapping.Model
     internal class PropertyMapping : IPropertyMapping
     {
         private readonly bool _isHidden;
+        private readonly int _hashCode;
 
         public PropertyMapping(Type declaringType, Type returnType, string name, Uri predicateUri)
         {
@@ -19,6 +21,7 @@ namespace RomanticWeb.Mapping.Model
             ReturnType = returnType;
             Name = name;
             Uri = predicateUri;
+            _hashCode = CalculateHashCode();
         }
 
         public IEntityMapping EntityMapping { get; internal set; }
@@ -33,13 +36,7 @@ namespace RomanticWeb.Mapping.Model
 
         public INodeConverter Converter { get; internal set; }
 
-        public bool IsHidden
-        {
-            get
-            {
-                return _isHidden;
-            }
-        }
+        public bool IsHidden { get { return _isHidden; } }
 
         public void Accept(IMappingModelVisitor mappingModelVisitor)
         {
@@ -51,7 +48,31 @@ namespace RomanticWeb.Mapping.Model
         {
             return Name;
         }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if ((ReferenceEquals(obj, null)) || (obj.GetType() != GetType()))
+            {
+                return false;
+            }
+
+            PropertyMapping other = (PropertyMapping)obj;
+            return (DeclaringType == other.DeclaringType) && (ReturnType == other.ReturnType) && (Name.Equals(other.Name)) && (Uri.ToString().Equals(other.Uri.ToString()));
+        }
 #pragma warning restore
+
+        private int CalculateHashCode()
+        {
+            unchecked
+            {
+                return 2978 * (DeclaringType.GetHashCode() ^ ReturnType.GetHashCode() ^ Name.GetHashCode() ^ Uri.ToString().GetHashCode());
+            }
+        }
 
         private class DebuggerViewProxy
         {
@@ -62,37 +83,13 @@ namespace RomanticWeb.Mapping.Model
                 _mapping = mapping;
             }
 
-            public Uri Predicate
-            {
-                get
-                {
-                    return _mapping.Uri;
-                }
-            }
+            public Uri Predicate { get { return _mapping.Uri; } }
 
-            public string Name
-            {
-                get
-                {
-                    return _mapping.Name;
-                }
-            }
+            public string Name { get { return _mapping.Name; } }
 
-            public Type ReturnType
-            {
-                get
-                {
-                    return _mapping.ReturnType;
-                }
-            }
+            public Type ReturnType { get { return _mapping.ReturnType; } }
 
-            public IEntityMapping EntityMapping
-            {
-                get
-                {
-                    return _mapping.EntityMapping;
-                }
-            }
+            public IEntityMapping EntityMapping { get { return _mapping.EntityMapping; } }
         }
     }
 }

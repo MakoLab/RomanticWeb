@@ -11,7 +11,6 @@ namespace RomanticWeb.Model
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
     public sealed class Node : IComparable, IComparable<Node>, IEquatable<Node>
     {
-        #region Fields
         /// <summary>Gets a reference for node with rdf:type predicate usually shortened in Turtle syntax to 'a'.</summary>
         private static readonly Node A = new Node(Vocabularies.Rdf.type);
 
@@ -25,9 +24,6 @@ namespace RomanticWeb.Model
         private readonly EntityId _entityId;
         private readonly int _hashCode;
 
-        #endregion
-
-        #region Constructors
         private Node(Uri uri)
         {
             _uri = uri;
@@ -57,9 +53,6 @@ namespace RomanticWeb.Model
             _hashCode = CalculateHashCode();
         }
 
-        #endregion
-
-        #region Properties
         /// <summary>Gets the value indicating that the node is a URI.</summary>
         public bool IsUri { get { return (_uri != null) && (_blankNodeId == null); } }
 
@@ -168,9 +161,7 @@ namespace RomanticWeb.Model
                 return null;
             }
         }
-        #endregion
 
-        #region Public methods
         /// <summary>Factory method for creating URI nodes.</summary>
         public static Node ForUri(Uri uri)
         {
@@ -319,9 +310,7 @@ namespace RomanticWeb.Model
             throw new InvalidOperationException("Invalid node state");
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
+        /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
         /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public string ToString(bool nQuadFormat)
         {
@@ -373,41 +362,31 @@ namespace RomanticWeb.Model
 
             throw new InvalidOperationException("Cannot convert literal node to EntityId");
         }
-        #endregion
-
-        #region Non-public methods
 
         private bool Equals(Node other)
         {
-            if (IsLiteral)
+            if ((ReferenceEquals(other, null)) || (other.GetType() != GetType()))
             {
-                return string.Equals(_literal, other._literal) && string.Equals(_language, other._language) && Equals(_dataType, other._dataType);
+                return false;
             }
 
-            return AbsoluteUriComparer.Default.Compare(_uri, other._uri) == 0;
+            return _hashCode == other._hashCode;
+            ////if (IsLiteral)
+            ////{
+            ////    return string.Equals(_literal, other._literal) && string.Equals(_language, other._language) && Equals(_dataType, other._dataType);
+            ////}
+
+            ////return AbsoluteUriComparer.Default.Compare(_uri, other._uri) == 0;
         }
 
         private int CalculateHashCode()
         {
             unchecked
             {
-                int hashCode;
-
-                if (IsLiteral)
-                {
-                    hashCode = _literal.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (_language != null ? _language.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (_dataType != null ? _dataType.GetHashCode() : 0);
-                }
-                else
-                {
-                    hashCode = _uri.AbsoluteUri.GetHashCode();
-                }
-
-                return hashCode;
+                return 397 * (!IsLiteral ? _uri.AbsoluteUri.GetHashCode() :
+                    (_literal.GetHashCode() ^ (_language != null ? _language.GetHashCode() : 0) ^ (_dataType != null ? _dataType.GetHashCode() : 0)));
             }
         }
-        #endregion
 
         private class DebuggerViewProxy
         {
@@ -437,13 +416,7 @@ namespace RomanticWeb.Model
                 }
             }
 
-            public string Value
-            {
-                get
-                {
-                    return _displayString;
-                }
-            }
+            public string Value { get { return _displayString; } }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace RomanticWeb.Tests.Mapping
         }
 
         [Test]
-        public void Should_not_include_hidden_mapping_form_parent()
+        public void Should_not_include_hidden_mapping_from_parent()
         {
             _provider.Properties.Should().HaveCount(3);
         }

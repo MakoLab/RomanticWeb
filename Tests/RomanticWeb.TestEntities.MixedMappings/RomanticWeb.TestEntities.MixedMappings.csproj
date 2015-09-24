@@ -58,6 +58,8 @@
     <Compile Include="IGenericDerived.cs" />
     <Compile Include="IGenericParent.cs" />
     <Compile Include="IHidesMember.cs" />
+    <Compile Include="Inheritance\ISomeEntity.cs" />
+    <Compile Include="Inheritance\ISomeSpecializedEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -70,12 +70,18 @@ namespace RomanticWeb.Entities
         {
             Uri graphName = (_graphSelector != null ? _graphSelector.SelectGraph(entity.Id, _typedEntityMapping, _typesPropertyMapping) : null);
             var currentTypes = _store.GetObjectsForPredicate(entity.Id, RomanticWeb.Vocabularies.Rdf.type, graphName);
-            var additionalTypes = entityMapping.Classes.Select(c => Model.Node.ForUri(c.Uri));
-
-            var entityIds = currentTypes.Union(additionalTypes).ToList();
-            if (entityIds.Count > 0)
+            var additionalTypes = new List<Model.Node>();
+            foreach (var additionalType in entityMapping.Classes.Select(c => Model.Node.ForUri(c.Uri)))
             {
-                _store.ReplacePredicateValues(entity.Id, Model.Node.ForUri(RomanticWeb.Vocabularies.Rdf.type), () => entityIds, graphName, entity.Context.CurrentCulture);
+                if (!currentTypes.Contains(additionalType))
+                {
+                    additionalTypes.Add(additionalType);
+                }
+            }
+
+            if (additionalTypes.Count > 0)
+            {
+                _store.ReplacePredicateValues(entity.Id, Model.Node.ForUri(RomanticWeb.Vocabularies.Rdf.type), () => currentTypes.Union(additionalTypes), graphName, entity.Context.CurrentCulture);
             }
         }
 

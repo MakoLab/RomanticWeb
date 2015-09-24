@@ -27,6 +27,13 @@ namespace RomanticWeb.Linq
         {
         }
 
+        /// <summary>Gets a string representation of this query serialized with underlying query provided.</summary>
+        /// <returns>String of this query.</returns>
+        public override string ToString()
+        {
+            return ToTraceString();
+        }
+
         /// <summary>Gets the underlying entity source query string.</summary>
         /// <returns>String with a query string to be run on the underlying entity source.</returns>
         public string ToTraceString()

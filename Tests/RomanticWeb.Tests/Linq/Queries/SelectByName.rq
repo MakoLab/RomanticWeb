@@ -3,6 +3,11 @@
 SELECT ?s ?p ?o ?Gperson0 ?person0 ?person0 
 WHERE 
 { 
+	GRAPH <http://app.magi/graphs> 
+	{ 
+		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
+	} 
+	
 	GRAPH ?Gperson0 
 	{ 
 		?s ?p ?o . 
@@ -10,10 +15,5 @@ WHERE
 		?person0 <http://xmlns.com/foaf/0.1/givenName> ?firstName0 . 
 		
 		FILTER (?firstName0 = "Karol"^^xsd:string) 
-	} 
-	
-	GRAPH <http://app.magi/graphs> 
-	{ 
-		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
 	} 
 }

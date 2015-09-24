@@ -4,9 +4,7 @@ using RomanticWeb.Entities;
 
 namespace RomanticWeb.Model
 {
-    /// <summary>
-    /// Represents a triple (subject, predicate, object)
-    /// </summary>
+    /// <summary>Represents a triple (subject, predicate, object).</summary>
     public sealed class EntityQuad : Triple, IComparable, IComparable<EntityQuad>
     {
         private readonly int _hashCode;
@@ -14,26 +12,26 @@ namespace RomanticWeb.Model
         private readonly EntityId _entityId;
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> from given <see cref="Triple"/>.</summary>
-        public EntityQuad(EntityId entityId, Triple triple)
-            : this(entityId, triple.Subject, triple.Predicate, triple.Object)
+        public EntityQuad(EntityId entityId, Triple triple) : this(entityId, triple.Subject, triple.Predicate, triple.Object)
         {
         }
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> in named graph.</summary>
-        public EntityQuad(EntityId entityId, Node s, Node p, Node o, [AllowNull]Node graph)
-            : this(entityId, s, p, o)
+        public EntityQuad(EntityId entityId, Node s, Node p, Node o, [AllowNull] Node graph) : this(entityId, s, p, o)
         {
             if ((graph != null) && (!graph.IsUri) && (!graph.IsBlank))
             {
                 throw new ArgumentOutOfRangeException("graph", "Graph must not be a literal.");
             }
 
-            _graph = graph;
+            if (graph != null)
+            {
+                _hashCode ^= (_graph = graph).GetHashCode();
+            }
         }
 
         /// <summary>Creates a new instance of <see cref="EntityQuad"/> in default graph.</summary>
-        public EntityQuad(EntityId entityId, Node s, Node p, Node o)
-            : base(s, p, o)
+        public EntityQuad(EntityId entityId, Node s, Node p, Node o) : base(s, p, o)
         {
             _entityId = entityId;
             _hashCode = ComputeHashCode();
@@ -149,9 +147,17 @@ namespace RomanticWeb.Model
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
-            if (ReferenceEquals(this, obj)) { return true; }
-            return obj is EntityQuad && Equals((EntityQuad)obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return (obj is EntityQuad) && (Equals((EntityQuad)obj));
         }
 
         public override int GetHashCode()
@@ -164,9 +170,7 @@ namespace RomanticWeb.Model
             return String.Format("{0} {1} {2} {3}", Subject, Predicate, Object, Graph);
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
+        /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
         /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad.</param>
         public string ToString(bool nQuadFormat)
         {
@@ -215,10 +219,14 @@ namespace RomanticWeb.Model
         {
             unchecked
             {
-                var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_graph != null ? _graph.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ _entityId.GetHashCode();
-                return hashCode;
+                var result = base.GetHashCode();
+                result = (result * 397) ^ _entityId.GetHashCode();
+                if (_graph != null)
+                {
+                    result ^= _graph.GetHashCode();
+                }
+
+                return result;
             }
         }
     }

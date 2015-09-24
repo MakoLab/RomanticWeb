@@ -4,9 +4,7 @@ using NullGuard;
 
 namespace RomanticWeb
 {
-    /// <summary>
-    /// Compares absolute Uris
-    /// </summary>
+    /// <summary>Compares absolute Uris.</summary>
     [NullGuard(ValidationFlags.None)]
     public sealed class AbsoluteUriComparer : IComparer<Uri>, IEqualityComparer<Uri>
     {

@@ -5,9 +5,7 @@ using RomanticWeb.Model;
 
 namespace RomanticWeb.Entities
 {
-    /// <summary>
-    /// A Blank Node identifier
-    /// </summary>
+    /// <summary>A Blank Node identifier.</summary>
     /// <remarks>Internally it is stored as a node:// URI, similarily to the Virtuoso way</remarks>
     [DebuggerDisplay("_:{_identifier,nq}")]
     [DebuggerTypeProxy(typeof(DebuggerViewProxy))]
@@ -21,15 +19,13 @@ namespace RomanticWeb.Entities
         /// <param name="identifier">Internal identifier.</param>
         /// <param name="root">Optional owning <see cref="IEntity" />'s identifier.</param>
         /// <param name="graphUri">Optional graph Uri.</param>
-        public BlankId(string identifier, EntityId root = null, Uri graphUri = null)
-            : this(CreateBlankNodeUri(identifier, graphUri), root)
+        public BlankId(string identifier, EntityId root = null, Uri graphUri = null) : this(CreateBlankNodeUri(identifier, graphUri), root)
         {
             _identifier = identifier;
             _graph = graphUri;
         }
 
-        private BlankId(Uri blankNodeUri, EntityId root)
-            : base(blankNodeUri)
+        private BlankId(Uri blankNodeUri, EntityId root) : base(blankNodeUri)
         {
             while (root is BlankId)
             {
@@ -50,18 +46,11 @@ namespace RomanticWeb.Entities
         [AllowNull]
         public Uri Graph { get { return _graph; } }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
+        /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
         /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public override string ToString(bool nQuadFormat)
         {
-            if (!nQuadFormat)
-            {
-                return ToString();
-            }
-
-            return string.Format("_:{0}", _identifier);
+            return !nQuadFormat ? ToString() : string.Format("_:{0}", _identifier);
         }
 
         internal static Uri CreateBlankNodeUri(string blankNodeId, Uri graphUri)
@@ -88,29 +77,11 @@ namespace RomanticWeb.Entities
                 _entityId = entityId;
             }
 
-            public string Identifier
-            {
-                get
-                {
-                    return _entityId._identifier;
-                }
-            }
+            public string Identifier { get { return _entityId._identifier; } }
 
-            public EntityId RootEntityId
-            {
-                get
-                {
-                    return _entityId.RootEntityId;
-                }
-            }
+            public EntityId RootEntityId { get { return _entityId.RootEntityId; } }
 
-            public Uri Graph
-            {
-                get
-                {
-                    return _entityId._graph;
-                }
-            }
+            public Uri Graph { get { return _entityId._graph; } }
         }
     }
 }

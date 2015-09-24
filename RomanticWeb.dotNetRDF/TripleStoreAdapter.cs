@@ -44,8 +44,8 @@ namespace RomanticWeb.DotNetRDF
         public IEnumerable<EntityQuad> LoadEntity(EntityId entityId)
         {
             var sparql = QueryBuilder.Select("s", "p", "o", "g")
-                            .Graph("?g", graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")))
-                            .Graph(MetaGraphUri, graph => graph.Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri)));
+                                     .Graph(MetaGraphUri, graph => graph.Where(triple => triple.Subject("g").PredicateUri("foaf:primaryTopic").Object(entityId.Uri)))
+                                     .Graph("?g", graph => graph.Where(triple => triple.Subject("s").Predicate("p").Object("o")));
             sparql.Prefixes.Import(_namespaces);
             return (from result in ExecuteSelect(sparql.BuildQuery())
                     let subject = result["s"].WrapNode(entityId)

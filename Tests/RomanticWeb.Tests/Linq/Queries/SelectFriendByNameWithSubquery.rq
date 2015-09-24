@@ -3,6 +3,11 @@
 SELECT ?s ?p ?o ?Gperson0 ?person0 ?person0 
 WHERE 
 { 
+	GRAPH <http://app.magi/graphs> 
+	{ 
+		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
+	} 
+	
 	GRAPH ?Gperson0 
 	{ 
 		?s ?p ?o . 
@@ -23,10 +28,5 @@ WHERE
 				} 
 			} 
 		} ) 
-	} 
-	
-	GRAPH <http://app.magi/graphs> 
-	{ 
-		?Gperson0 <http://xmlns.com/foaf/0.1/primaryTopic> ?person0 . 
 	} 
 }

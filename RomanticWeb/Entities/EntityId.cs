@@ -14,35 +14,29 @@ namespace RomanticWeb.Entities
     [TypeConverter(typeof(EntityIdTypeConverter<EntityId>))]
     public class EntityId : IComparable, IComparable<EntityId>, IXmlSerializable
     {
-        #region Fields
+        private const string BlankScheme = "_";
+        private int _hashCode = 0;
         private Uri _uri;
-        #endregion
 
-        #region Constructors
         /// <summary>Creates a new instance of <see cref="EntityId"/> from string.</summary>
-        public EntityId(string uri)
-            : this(new Uri(uri, UriKind.RelativeOrAbsolute))
+        public EntityId(string uri) : this(new Uri(uri, UriKind.RelativeOrAbsolute))
         {
         }
 
         /// <summary>Creates a new instance of <see cref="EntityId"/> from an Uniform Resource Identifies.</summary>
         public EntityId(Uri uri)
         {
-            _uri = uri;
+            _hashCode = (_uri = uri).ToString().GetHashCode();
         }
 
         /// <summary>Used for XML serialization.</summary>
         protected EntityId()
         {
         }
-        #endregion
 
-        #region Properties
         /// <summary>The underlying Uniform Resource Identifier.</summary>
         public Uri Uri { get { return _uri; } }
-        #endregion
 
-        #region Public methods
         /// <summary>Tests for equality two entity identifiers.</summary>
         /// <param name="left">Left operand.</param>
         /// <param name="right">Right operand.</param>
@@ -94,7 +88,7 @@ namespace RomanticWeb.Entities
         /// A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return _uri.ToString().GetHashCode();
+            return _hashCode;
         }
 
         /// <summary>Compares the current object with another object of the same type.</summary>
@@ -104,7 +98,33 @@ namespace RomanticWeb.Entities
         /// A value that indicates the relative order of the objects being compared.</returns>
         int IComparable.CompareTo(object operand)
         {
-            return FluentCompare<EntityId>.Arguments(this, operand).By(id => id.Uri, new AbsoluteUriComparer()).End();
+            if (ReferenceEquals(operand, null))
+            {
+                return 1;
+            }
+
+            if (!(operand is EntityId))
+            {
+                throw new ArgumentException("operand");
+            }
+
+            var other = (EntityId)operand;
+            if ((_uri.Scheme == BlankScheme) && (other._uri.Scheme == BlankScheme))
+            {
+                return _uri.ToString().CompareTo(other._uri.ToString());
+            }
+
+            if ((_uri.Scheme == BlankScheme) && (other._uri.Scheme != BlankScheme))
+            {
+                return -1;
+            }
+
+            if ((_uri.Scheme != BlankScheme) && (other._uri.Scheme == BlankScheme))
+            {
+                return 1;
+            }
+
+            return _uri.ToString().CompareTo(other.ToString());
         }
 
         /// <summary>Compares the current identifier with another identifier of the same type.</summary>
@@ -124,7 +144,7 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified object is equal to the current object; otherwise, <b>false</b>.</returns>
         public override bool Equals([AllowNull] object obj)
         {
-            if ((obj == null) || (GetType() != obj.GetType()))
+            if ((ReferenceEquals(obj, null)) || (GetType() != obj.GetType()))
             {
                 return false;
             }
@@ -134,7 +154,7 @@ namespace RomanticWeb.Entities
                 return true;
             }
 
-            return AbsoluteUriComparer.Default.Compare(_uri, ((EntityId)obj)._uri) == 0;
+            return GetHashCode() == ((EntityId)obj).GetHashCode();
         }
 
         /// <summary>Creates a string representation of this entity identifier.</summary>
@@ -144,9 +164,7 @@ namespace RomanticWeb.Entities
             return _uri.ToString();
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
+        /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
         /// <param name="nQuadFormat">if set to <c>true</c> the string will be a valid NQuad node.</param>
         public virtual string ToString(bool nQuadFormat)
         {
@@ -166,7 +184,7 @@ namespace RomanticWeb.Entities
         /// The <see cref="System.Xml.XmlReader"/> stream from which the object is deserialized.</param>
         public void ReadXml(XmlReader reader)
         {
-            _uri = new Uri(reader.ReadElementContentAsString());
+            _hashCode = (_uri = new Uri(reader.ReadElementContentAsString())).ToString().GetHashCode();
         }
 
         /// <summary>Converts an object into its XML representation.</summary>
@@ -176,9 +194,7 @@ namespace RomanticWeb.Entities
         {
             writer.WriteValue(_uri.ToString());
         }
-        #endregion
 
-        #region Non-public methods
         /// <summary>Determines whether the specified entity identifier is equal to the current object.</summary>
         /// <param name="other">Type: <see cref="EntityId" />
         /// The entity identifier to compare with the current entity identifier.</param>
@@ -186,9 +202,8 @@ namespace RomanticWeb.Entities
         /// <b>true</b> if the specified identifier is equal to the current one; otherwise, <b>false</b>.</returns>
         protected bool Equals([AllowNull] EntityId other)
         {
-            return (other != null) && (Equals(_uri, other._uri));
+            return Equals((object)other);
         }
-        #endregion
 
         private class DebuggerViewProxy
         {
@@ -199,13 +214,7 @@ namespace RomanticWeb.Entities
                 _entityId = entityId;
             }
 
-            public Uri Uri
-            {
-                get
-                {
-                    return _entityId.Uri;
-                }
-            }
+            public Uri Uri { get { return _entityId.Uri; } }
         }
     }
 }

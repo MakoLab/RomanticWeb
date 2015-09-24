@@ -531,6 +531,13 @@ namespace RomanticWeb.Linq.Sparql
         {
             int startIndex = _commandText.Length;
             _currentEntityAccessor.Push(entityAccessor);
+            if (entityAccessor.UnboundGraphName == null)
+            {
+                _commandText.Append(_indentation);
+                _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, entityAccessor.About.Name, Foaf.primaryTopic);
+                _commandText.AppendLine();
+            }
+
             _commandText.Append(_indentation);
             _commandText.AppendFormat("GRAPH ?G{0} {{ ", entityAccessor.About.Name);
             _commandText.AppendLine();
@@ -559,9 +566,6 @@ namespace RomanticWeb.Linq.Sparql
                 _indentation = _indentation.Substring(0, _indentation.Length - 1);
                 _commandText.Append(_indentation);
                 _commandText.AppendLine("} ");
-                _commandText.Append(_indentation);
-                _commandText.AppendFormat("GRAPH <{0}> {{ ?G{1} <{2}> ?{1} . }} ", MetaGraphUri, entityAccessor.About.Name, Foaf.primaryTopic);
-                _commandText.AppendLine();
             }
             else
             {

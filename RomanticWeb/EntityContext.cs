@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Resources;
 using System.Threading;
 using Anotar.NLog;
 using NullGuard;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.LinkedData;
 using RomanticWeb.Linq;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Model;
@@ -34,6 +36,7 @@ namespace RomanticWeb
         private readonly IDatasetChanges _changeTracker;
         private readonly IEntityMapping _typedEntityMapping;
         private readonly IPropertyMapping _typesPropertyMapping;
+        private readonly IResourceResolutionStrategy _resourceResolutionStrategy;
 
         private CultureInfo _currentCulture;
         private bool _disposed;
@@ -51,7 +54,8 @@ namespace RomanticWeb
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog, 
             IEntityCaster caster, 
-            IDatasetChangesTracker changeTracker)
+            IDatasetChangesTracker changeTracker,
+            [AllowNull] IResourceResolutionStrategy resourceResolutionStrategy)
             : this(changeTracker)
         {
             _factory = factory;
@@ -65,11 +69,64 @@ namespace RomanticWeb
             _caster = caster;
             _typedEntityMapping = _mappings.MappingFor<ITypedEntity>();
             _typesPropertyMapping = _typedEntityMapping.PropertyFor("Types");
+            _resourceResolutionStrategy = resourceResolutionStrategy;
 
             if (_baseUriSelector == null)
             {
                 LogTo.Warn("No Base URI Selection Policy. It will not be possible to use relative URIs");
             }
+        }
+
+        public EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            IEntityStore entityStore,
+            IEntitySource entitySource,
+            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog,
+            IEntityCaster caster,
+            IDatasetChangesTracker changeTracker)
+            : this(
+                factory,
+                mappings,
+                entityStore,
+                entitySource,
+                baseUriSelector,
+                typeCache,
+                blankIdGenerator,
+                transformerCatalog,
+                caster,
+                changeTracker,
+                null)
+        {
+        }
+
+        public EntityContext(
+            IEntityContextFactory factory,
+            IMappingsRepository mappings,
+            IEntityStore entityStore,
+            IEntitySource entitySource,
+            IRdfTypeCache typeCache,
+            IBlankNodeIdGenerator blankIdGenerator,
+            IResultTransformerCatalog transformerCatalog,
+            IEntityCaster caster,
+            IDatasetChangesTracker changeTracker,
+            [AllowNull] IResourceResolutionStrategy resourceResolutionStrategy)
+            : this(
+                factory,
+                mappings,
+                entityStore,
+                entitySource,
+                null,
+                typeCache,
+                blankIdGenerator,
+                transformerCatalog,
+                caster,
+                changeTracker,
+                resourceResolutionStrategy)
+        {
         }
 
         public EntityContext(
@@ -201,7 +258,8 @@ namespace RomanticWeb
         {
             entityId = EnsureAbsoluteEntityId(entityId);
             LogTo.Info("Loading entity {0}", entityId);
-            return EntityAs<T>(LoadInternal(entityId));
+            var result = LoadInternal(entityId);
+            return result.Context != this ? result.AsEntity<T>() : EntityAs<T>(result);
         }
 
         /// <inheritdoc />
@@ -288,27 +346,38 @@ namespace RomanticWeb
         #endregion
 
         #region Non-public methods
-        private Entity LoadInternal(EntityId entityId)
+        private IEntity LoadInternal(EntityId entityId)
         {
             return CreateInternal(entityId, entityId is BlankId);
         }
 
-        private Entity CreateInternal(EntityId entityId, bool markAsInitialized)
+        private IEntity CreateInternal(EntityId entityId, bool markAsInitialized)
         {
             entityId = EnsureAbsoluteEntityId(entityId);
-            if (!EntityCache.HasEntity(entityId))
+            IEntity result = null;
+            if (_resourceResolutionStrategy != null)
             {
-                LogTo.Info("Creating entity {0}", entityId);
-                var entity = new Entity(entityId, this, _factory.FallbackNodeConverter, _transformerCatalog);
-
-                if (markAsInitialized)
-                {
-                    entity.MarkAsInitialized();
-                }
-
-                EntityCache.Add(entity);
+                result = _resourceResolutionStrategy.Resolve(entityId);
             }
 
+            if (result != null)
+            {
+                return result;
+            }
+
+            if (EntityCache.HasEntity(entityId))
+            {
+                return EntityCache.Get(entityId);
+            }
+
+            LogTo.Info("Creating entity {0}", entityId);
+            var entity = new Entity(entityId, this, _factory.FallbackNodeConverter, _transformerCatalog);
+            if (markAsInitialized)
+            {
+                entity.MarkAsInitialized();
+            }
+
+            EntityCache.Add(entity);
             return EntityCache.Get(entityId);
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
+using RomanticWeb.LinkedData;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Visitors;
@@ -33,6 +34,9 @@ namespace RomanticWeb
 
         /// <summary>Gets the transformer catalog.</summary>
         INamedGraphSelector NamedGraphSelector { get; }
+
+        /// <summary>Gets the external resource resolution strategy.</summary>
+        IResourceResolutionStrategy ResourceResolutionStrategy { get; }
 
         /// <summary>Creates a new instance of entity context.</summary>
         IEntityContext CreateContext();

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using Anotar.NLog;
 using RomanticWeb.ComponentModel;
 using RomanticWeb.Configuration;
 using RomanticWeb.Converters;
 using RomanticWeb.Entities;
 using RomanticWeb.LightInject;
+using RomanticWeb.LinkedData;
 using RomanticWeb.Mapping;
 using RomanticWeb.Mapping.Conventions;
 using RomanticWeb.Mapping.Visitors;
@@ -24,7 +26,7 @@ namespace RomanticWeb
         private readonly IList<Scope> _trackedScopes = new List<Scope>();
         private bool _disposed;
 
-        /// <summary>Creates a new instance of <see cref="EntityContextFactory"/>.</summary>
+        /// <summary>Initializes a new instance of <see cref="EntityContextFactory"/> class.</summary>
         public EntityContextFactory() : this(new ServiceContainer())
         {
         }
@@ -60,6 +62,9 @@ namespace RomanticWeb
 
         /// <inheritdoc />
         public INamedGraphSelector NamedGraphSelector { get { return _container.GetInstance<INamedGraphSelector>(); } }
+
+        /// <inheritdoc />
+        public IResourceResolutionStrategy ResourceResolutionStrategy { get { return _container.GetInstance<IResourceResolutionStrategy>(); } }
 
         internal IList<Scope> TrackedScopes { get { return _trackedScopes; } }
 
@@ -174,18 +179,21 @@ namespace RomanticWeb
             return this;
         }
 
-        /// <summary>
-        /// Sets the meta graph Uri
-        /// </summary>
+        /// <summary>Exposes a method to define how the default which resources should be considered external and be obtained.</summary>
+        public EntityContextFactory WithResourceResolutionStrategy(IResourceResolutionStrategy resourceResolutionStrategy)
+        {
+            _container.RegisterInstance(resourceResolutionStrategy);
+            return this;
+        }
+
+        /// <summary>Sets the meta graph Uri.</summary>
         public EntityContextFactory WithMetaGraphUri(Uri metaGraphUri)
         {
             _container.RegisterInstance(metaGraphUri, "MetaGraphUri");
             return this;
         }
 
-        /// <summary>
-        /// Registers dependencies from a given <see cref="CompositionRootBase"/> type
-        /// </summary>
+        /// <summary>Registers dependencies from a given <see cref="CompositionRootBase"/> type.</summary>
         public EntityContextFactory WithDependencies<T>() where T : CompositionRootBase, new()
         {
             return WithDependenciesInternal<T>();
@@ -201,9 +209,7 @@ namespace RomanticWeb
             _container.RegisterInstance(instance);
         }
 
-        /// <summary>
-        /// Dispose this entity context factory and all components
-        /// </summary>
+        /// <summary>Dispose this entity context factory and all components.</summary>
         public void Dispose()
         {
             if (_disposed)
@@ -217,7 +223,6 @@ namespace RomanticWeb
             }
 
             _container.Dispose();
-
             _disposed = true;
         }
 

@@ -51,10 +51,14 @@ namespace RomanticWeb.Converters
         {
             if (literalNode.Literal == "+INF")
             {
-                return double.PositiveInfinity;
+                return (AbsoluteUriComparer.Default.Equals(literalNode.DataType, Xsd.Float) ?
+                    (object)float.PositiveInfinity :
+                    double.PositiveInfinity);
             }
 
-            return XmlConvert.ToDouble(literalNode.Literal);
+            return (AbsoluteUriComparer.Default.Equals(literalNode.DataType, Xsd.Float) ?
+                (object)XmlConvert.ToSingle(literalNode.Literal) :
+                XmlConvert.ToDouble(literalNode.Literal));
         }
     }
 }

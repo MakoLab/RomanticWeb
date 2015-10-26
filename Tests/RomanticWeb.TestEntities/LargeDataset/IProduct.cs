@@ -44,7 +44,7 @@ namespace RomanticWeb.TestEntities.LargeDataset
         ICollection<IQuantitativeFloatProperty> Rheology { get; set; }
 
         [Collection("chem", "specificGravity")]
-        ICollection<double> SpecificGravity { get; set; }
+        ICollection<float> SpecificGravity { get; set; }
 
         [Property("chem", "industrySegment")]
         EntityId Industry { get; set; }

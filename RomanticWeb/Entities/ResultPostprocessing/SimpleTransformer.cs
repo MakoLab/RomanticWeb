@@ -46,6 +46,11 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             object result = property.Converter.Convert(node, context);
             if (result != null)
             {
+                if ((property.ReturnType.IsGenericType) && (typeof(Nullable<>) == property.ReturnType.GetGenericTypeDefinition()))
+                {
+                    return property.ReturnType.GetConstructor(property.ReturnType.GetGenericArguments()).Invoke(new[] { result });
+                }
+
                 bool isEnumerable = (property.ReturnType.IsEnumerable()) && (property.ReturnType != typeof(byte[]));
                 Type itemType = property.ReturnType;
                 if (isEnumerable)

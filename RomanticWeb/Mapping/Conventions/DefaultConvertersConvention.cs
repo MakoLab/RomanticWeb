@@ -7,20 +7,21 @@ using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Mapping.Conventions
 {
-    /// <summary>
-    /// Convention, which sets converter types based the property type
-    /// </summary>
+    /// <summary>Convention, which sets converter types based the property type.</summary>
     public class DefaultConvertersConvention : IPropertyConvention, ICollectionConvention, IDictionaryConvention
     {
+        private static readonly IEnumerable<Type> Predecesors = new[] { typeof(CollectionStorageConvention), typeof(RdfListConvention) };
+
         private readonly IDictionary<Type, Type> _defaultConverters;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultConvertersConvention"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="DefaultConvertersConvention"/> class.</summary>
         public DefaultConvertersConvention()
         {
             _defaultConverters = new Dictionary<Type, Type>();
         }
+
+        /// <inheritdoc/>
+        public IEnumerable<Type> Requires { get { return Predecesors; } }
 
         /// <inheritdoc/>
         bool IConvention<IPropertyMappingProvider>.ShouldApply(IPropertyMappingProvider target)
@@ -32,15 +33,7 @@ namespace RomanticWeb.Mapping.Conventions
         void IConvention<IPropertyMappingProvider>.Apply(IPropertyMappingProvider target)
         {
             var isRdfList = (target is ICollectionMappingProvider) && (target as ICollectionMappingProvider).StoreAs == StoreAs.RdfList;
-
-            if (isRdfList)
-            {
-                target.ConverterType = typeof(AsEntityConverter<IEntity>);
-            }
-            else
-            {
-                target.ConverterType = GetConverterType(target.PropertyInfo.PropertyType);
-            }
+            target.ConverterType = (isRdfList ? typeof(AsEntityConverter<IEntity>) : GetConverterType(target.PropertyInfo.PropertyType));
         }
 
         /// <inheritdoc/>
@@ -79,9 +72,7 @@ namespace RomanticWeb.Mapping.Conventions
             }
         }
 
-        /// <summary>
-        /// Sets a default converter for a given property type.
-        /// </summary>
+        /// <summary>Sets a default converter for a given property type.</summary>
         /// <typeparam name="T">Typ of property</typeparam>
         /// <typeparam name="TConverter">The type of the converter.</typeparam>
         public DefaultConvertersConvention SetDefault<T, TConverter>() where TConverter : INodeConverter
@@ -90,9 +81,7 @@ namespace RomanticWeb.Mapping.Conventions
             return this;
         }
 
-        /// <summary>
-        /// Sets a default converter for multiple property <paramref name="types"/>.
-        /// </summary>
+        /// <summary>Sets a default converter for multiple property <paramref name="types"/>.</summary>
         public DefaultConvertersConvention SetDefault<TConverter>(params Type[] types) where TConverter : INodeConverter
         {
             foreach (var type in types)
@@ -115,12 +104,7 @@ namespace RomanticWeb.Mapping.Conventions
                 propertyType = propertyType.FindItemType();
             }
 
-            if (_defaultConverters.ContainsKey(propertyType))
-            {
-                return _defaultConverters[propertyType];
-            }
-
-            return null;
+            return (_defaultConverters.ContainsKey(propertyType) ? _defaultConverters[propertyType] : null);
         }
     }
 }

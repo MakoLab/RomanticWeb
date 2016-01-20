@@ -82,7 +82,7 @@ namespace RomanticWeb
             IMappingsRepository mappings,
             IEntityStore entityStore,
             IEntitySource entitySource,
-            [AllowNull] IBaseUriSelectionPolicy baseUriSelector,
+            IBaseUriSelectionPolicy baseUriSelector,
             IRdfTypeCache typeCache,
             IBlankNodeIdGenerator blankIdGenerator,
             IResultTransformerCatalog transformerCatalog,
@@ -113,7 +113,7 @@ namespace RomanticWeb
             IResultTransformerCatalog transformerCatalog,
             IEntityCaster caster,
             IDatasetChangesTracker changeTracker,
-            [AllowNull] IResourceResolutionStrategy resourceResolutionStrategy)
+            IResourceResolutionStrategy resourceResolutionStrategy)
             : this(
                 factory,
                 mappings,
@@ -149,7 +149,8 @@ namespace RomanticWeb
                 blankIdGenerator,
                 transformerCatalog, 
                 caster, 
-                changeTracker)
+                changeTracker,
+                null)
         {
         }
 

@@ -44,5 +44,36 @@ namespace RomanticWeb.Tests.DotNetRDF
             commands[0].AffectsGraph(new Uri(EntityGraph)).Should().BeTrue();
             commands[1].Should().BeOfType<InsertDataCommand>();
         }
+
+        [Test]
+        public void Should_create_correct_command_for_graph_update_in_case_of_an_created_blank_node()
+        {
+            // given
+            var update = new GraphUpdate(EntityId, EntityGraph, new EntityQuad[0], new[] { BQuad });
+
+            // when
+            var commands = _commandFactory.CreateCommands(update).ToList();
+
+            // then
+            commands.Should().HaveCount(1);
+            commands[0].Should().BeOfType<InsertDataCommand>();
+        }
+
+        [Test]
+        public void Should_create_correct_command_for_graph_update_in_case_of_a_deleted_blank_node()
+        {
+            // given
+            var update = new GraphUpdate(EntityId, EntityGraph, new[] { AQuad }, new EntityQuad[0]);
+
+            // when
+            var commands = _commandFactory.CreateCommands(update).ToList();
+
+            // then
+            commands.Should().HaveCount(2);
+            commands[0].Should().BeOfType<DeleteCommand>();
+            commands[1].Should().BeOfType<InsertDataCommand>();
+            commands[1].AffectsGraph(new Uri(EntityGraph)).Should().BeFalse();
+            commands[1].AffectsGraph(MetaGraphUri).Should().BeTrue();
+        }
     }
 }

@@ -9,6 +9,7 @@ using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Update;
+using VDS.RDF.Update.Commands;
 using VDS.RDF.Writing.Formatting;
 using Triple = VDS.RDF.Triple;
 
@@ -120,7 +121,50 @@ namespace RomanticWeb.DotNetRDF
 
         private IEnumerable<SparqlUpdateCommand> GetParsedCommands(SparqlParameterizedString commandString)
         {
-            return _parser.ParseFromString(commandString).Commands;
+            var result = _parser.ParseFromString(commandString).Commands;
+            var toBeRemoved = new List<SparqlUpdateCommand>();
+            foreach (var command in result)
+            {
+                var deleteCommand = command as DeleteCommand;
+                if (deleteCommand != null)
+                {
+                    SanitizeDeleteCommand(toBeRemoved, deleteCommand);
+
+                    continue;
+                }
+
+                var insertDataCommand = command as InsertDataCommand;
+                if (insertDataCommand != null)
+                {
+                    SanitizeInsertDataCommand(toBeRemoved, insertDataCommand);
+                }
+            }
+
+            return result.Except(toBeRemoved);
+        }
+
+        private void SanitizeDeleteCommand(ICollection<SparqlUpdateCommand> toBeRemoved, DeleteCommand deleteCommand)
+        {
+            if (!deleteCommand.WherePattern.ChildGraphPatterns.SelectMany(graph => graph.TriplePatterns).Union(deleteCommand.WherePattern.TriplePatterns).Any())
+            {
+                toBeRemoved.Add(deleteCommand);
+            }
+        }
+
+        private void SanitizeInsertDataCommand(ICollection<SparqlUpdateCommand> toBeRemoved, InsertDataCommand insertDataCommand)
+        {
+            for (var index = insertDataCommand.DataPattern.ChildGraphPatterns.Count - 1; index >= 0; index--)
+            {
+                if (insertDataCommand.DataPattern.ChildGraphPatterns[index].TriplePatterns.Count == 0)
+                {
+                    insertDataCommand.DataPattern.ChildGraphPatterns.RemoveAt(index);
+                }
+            }
+
+            if (!insertDataCommand.DataPattern.ChildGraphPatterns.SelectMany(graph => graph.TriplePatterns).Union(insertDataCommand.DataPattern.TriplePatterns).Any())
+            {
+                toBeRemoved.Add(insertDataCommand);
+            }
         }
     }
 }

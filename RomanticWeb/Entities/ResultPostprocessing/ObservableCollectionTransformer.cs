@@ -52,6 +52,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
                    select base.ToNodes(value, proxy, property, context).Single();
         }
 
+        /// <inheritdoc />
         protected override object Transform(Node node, IPropertyMapping property, IEntityContext context)
         {
             return property.Converter.Convert(node, context);

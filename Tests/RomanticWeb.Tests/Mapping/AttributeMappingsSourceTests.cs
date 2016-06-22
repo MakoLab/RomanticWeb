@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Mapping.Sources;
 using RomanticWeb.TestEntities.Animals;
@@ -20,8 +22,8 @@ namespace RomanticWeb.Tests.Mapping
             var propertyMapping = mapping.PropertyFor("Property");
 
             // then
-            Assert.That(propertyMapping.Name, Is.EqualTo("Property"));
-            Assert.That(propertyMapping.Uri, Is.EqualTo(new Uri("urn:generic:property")));
+            propertyMapping.Name.Should().Be("Property");
+            propertyMapping.Uri.Should().Be(new Uri("urn:generic:property"));
         }
 
         [Test]
@@ -34,8 +36,16 @@ namespace RomanticWeb.Tests.Mapping
             var propertyMapping = mapping.PropertyFor("Collection");
 
             // then
-            Assert.That(propertyMapping.Name, Is.EqualTo("Collection"));
-            Assert.That(propertyMapping.Uri, Is.EqualTo(new Uri("urn:generic:collection")));
+            propertyMapping.Name.Should().Be("Collection");
+            propertyMapping.Uri.Should().Be(new Uri("urn:generic:collection"));
+        }
+
+        [Test]
+        public void Should_provide_all_entity_mappings()
+        {
+            var mappings = MappingsRepository.Count();
+
+            mappings.Should().NotBe(0);
         }
 
         protected override IEnumerable<IMappingProviderSource> CreateMappingSources()

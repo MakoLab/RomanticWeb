@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RomanticWeb.Mapping;
@@ -149,6 +150,14 @@ namespace RomanticWeb.Tests.Mapping
 
             // then
             properties.Should().HaveCount(4);
+        }
+
+        [Test]
+        public void Should_provide_all_entity_mappings()
+        {
+            var mappings = MappingsRepository.Count();
+
+            mappings.Should().NotBe(0);
         }
 
         protected override IEnumerable<IMappingProviderSource> CreateMappingSources()

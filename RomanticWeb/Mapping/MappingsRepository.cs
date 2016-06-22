@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
@@ -75,6 +76,18 @@ namespace RomanticWeb.Mapping
                     from property in type.Properties
                     where property.Uri.AbsoluteUri == predicateUri.AbsoluteUri
                     select property).FirstOrDefault();
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<IEntityMapping> GetEnumerator()
+        {
+            return _mappings.Values.GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         private void CreateMappings(IEnumerable<IMappingProviderSource> sources)

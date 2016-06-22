@@ -51,6 +51,16 @@ namespace RomanticWeb.Tests.Stubs
             throw new NotImplementedException();
         }
 
+        public IEnumerator<IEntityMapping> GetEnumerator()
+        {
+            return _mappings.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         internal void Add(IEntityMapping mapping)
         {
             _mappings.Add(mapping);

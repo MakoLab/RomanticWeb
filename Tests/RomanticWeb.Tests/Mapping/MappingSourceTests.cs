@@ -207,5 +207,13 @@ namespace RomanticWeb.Tests.Mapping
             // then
             Assert.DoesNotThrow(() => multiMapping.PropertyFor("Name"));
         }
+
+        [Test]
+        public void Should_provide_all_entity_mappings()
+        {
+            var mappings = MappingsRepository.Count();
+
+            mappings.Should().NotBe(0);
+        }
     }
 }

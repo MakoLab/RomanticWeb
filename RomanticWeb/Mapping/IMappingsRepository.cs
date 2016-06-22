@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using RomanticWeb.Mapping.Model;
 
 namespace RomanticWeb.Mapping
 {
-    /// <summary>
-    /// Provides access to entity mappings
-    /// </summary>
-    public interface IMappingsRepository
+    /// <summary>Provides access to entity mappings.</summary>
+    public interface IMappingsRepository : IEnumerable<IEntityMapping>
     {
         /// <summary>Gets a mapping for an Entity type.</summary>
         /// <typeparam name="TEntity">Entity type, for which mappings is going to be retrieved.</typeparam>

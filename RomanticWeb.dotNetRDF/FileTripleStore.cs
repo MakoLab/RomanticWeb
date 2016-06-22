@@ -317,7 +317,7 @@ namespace RomanticWeb.DotNetRDF
 
             if (path.StartsWith("/"))
             {
-                path = Path.Combine(AppDomain.CurrentDomain.GetPrimaryAssemblyPath(), path);
+                path = Path.Combine(AppDomain.CurrentDomain.GetPrimaryAssemblyPath(), path.Substring(1));
             }
 
             return path;

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RomanticWeb.Mapping.Providers;
 
 namespace RomanticWeb.Collections
@@ -12,7 +10,6 @@ namespace RomanticWeb.Collections
     internal static class TopologicSortExtensions
     {
         /// <summary>Sorts a list of items with dependencies such that items without dependencies come first.</summary>
-        /// <typeparam name="T">Type of list, which must implement <see cref="ITopologicSortable"/>.</typeparam>
         /// <param name="graph">List of items to sort.</param>
         /// <returns>A sorted list of item, where items with dependencies after items without dependencies.</returns>
         internal static IList<KeyValuePair<Type, IList<IEntityMappingProvider>>> TopologicSort(this IList<KeyValuePair<Type, IList<IEntityMappingProvider>>> graph)

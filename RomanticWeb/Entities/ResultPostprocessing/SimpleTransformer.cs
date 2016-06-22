@@ -41,6 +41,7 @@ namespace RomanticWeb.Entities.ResultPostprocessing
             return new[] { property.Converter.ConvertBack(value, context) };
         }
 
+        /// <inheritdoc />
         protected virtual object Transform(Node node, IPropertyMapping property, IEntityContext context)
         {
             object result = property.Converter.Convert(node, context);

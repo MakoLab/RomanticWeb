@@ -420,27 +420,26 @@ namespace RomanticWeb.Linq
                 {
                     return VisitEntityId(new EntityIdentifierExpression(expression, target));
                 }
-                else
-                {
-                    ExceptionHelper.ThrowInvalidCastException(typeof(IEntity), expression.Member.DeclaringType);
-                }
-            }
-            else if ((typeof(IEntity).IsAssignableFrom(expression.Member.DeclaringType)) && (expression.Member is PropertyInfo))
-            {
-                IPropertyMapping propertyMapping = _entityContext.Mappings.FindPropertyMapping((PropertyInfo)expression.Member);
-                Remotion.Linq.Clauses.FromClauseBase target = GetMemberTarget(expression);
-                if ((propertyMapping != null) && (target != null))
-                {
-                    return VisitEntityProperty(new EntityPropertyExpression(expression, propertyMapping, target, (_itemNameOverride != null ? _itemNameOverride : expression.Member.Name)));
-                }
-                else
-                {
-                    ExceptionHelper.ThrowInvalidCastException(typeof(IEntity), expression.Member.DeclaringType);
-                }
+
+                ExceptionHelper.ThrowInvalidCastException(typeof(IEntity), expression.Member.DeclaringType);
             }
             else if (expression.Member is PropertyInfo)
             {
-                return VisitPropertyExpression(expression);
+                IPropertyMapping propertyMapping = _entityContext.Mappings.FindPropertyMapping((PropertyInfo)expression.Member);
+                if (propertyMapping != null)
+                {
+                    Remotion.Linq.Clauses.FromClauseBase target = GetMemberTarget(expression);
+                    if (target != null)
+                    {
+                        return VisitEntityProperty(new EntityPropertyExpression(expression, propertyMapping, target, (_itemNameOverride ?? expression.Member.Name)));
+                    }
+
+                    ExceptionHelper.ThrowInvalidCastException(typeof(IEntity), expression.Member.DeclaringType);
+                }
+                else
+                {
+                    return VisitPropertyExpression(expression);
+                }
             }
 
             return base.VisitMemberExpression(expression);

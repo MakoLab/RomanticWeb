@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -23,8 +24,9 @@ namespace RomanticWeb
     {
         private static readonly object Locker = new object();
         private readonly IServiceContainer _container;
-        private readonly IList<Scope> _trackedScopes = new List<Scope>();
+        private IDictionary<Scope, Scope> _trackedScopes;
         private bool _disposed;
+        private bool _threadSafe;
 
         /// <summary>Initializes a new instance of <see cref="EntityContextFactory"/> class.</summary>
         public EntityContextFactory() : this(new ServiceContainer())
@@ -33,6 +35,7 @@ namespace RomanticWeb
 
         internal EntityContextFactory(IServiceContainer container)
         {
+            _trackedScopes = new Dictionary<Scope, Scope>();
             _container = container;
             _container.RegisterAssembly("RomanticWeb.dll");
             _container.Register<IEntityContextFactory>(f => this);
@@ -66,9 +69,37 @@ namespace RomanticWeb
         /// <inheritdoc />
         public IResourceResolutionStrategy ResourceResolutionStrategy { get { return _container.GetInstance<IResourceResolutionStrategy>(); } }
 
-        internal IList<Scope> TrackedScopes { get { return _trackedScopes; } }
+        internal IEnumerable<Scope> TrackedScopes { get { return _trackedScopes.Values; } }
 
-        internal bool ThreadSafe { get; set; }
+        internal bool ThreadSafe
+        {
+            get
+            {
+                return _threadSafe;
+            }
+
+            set
+            {
+                if (_threadSafe == value)
+                {
+                    return;
+                }
+
+                if (_trackedScopes.Count > 0)
+                {
+                    throw new InvalidOperationException("Cannot set thread-safety flag. EntityContextFactory already in use.");
+                }
+
+                if (_threadSafe = value)
+                {
+                    _trackedScopes = new ConcurrentDictionary<Scope, Scope>();
+                }
+                else
+                {
+                    _trackedScopes = new Dictionary<Scope, Scope>();
+                }
+            }
+        }
 
         internal bool TrackChanges { get; set; }
 
@@ -110,7 +141,7 @@ namespace RomanticWeb
             lock (Locker)
             {
                 var scope = _container.BeginScope();
-                TrackedScopes.Add(scope);
+                _trackedScopes.Add(scope, scope);
                 var context = _container.GetInstance<IEntityContext>();
                 context.TrackChanges = TrackChanges;
                 if (context.Store is IThreadSafeEntityStore)
@@ -217,8 +248,9 @@ namespace RomanticWeb
                 return;
             }
 
-            foreach (var scope in TrackedScopes.ToList())
+            while (_trackedScopes.Count > 0)
             {
+                var scope = _trackedScopes.Values.First();
                 scope.Dispose();
             }
 

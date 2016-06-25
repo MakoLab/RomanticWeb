@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
@@ -13,18 +14,18 @@ namespace RomanticWeb.Mapping
     /// </summary>
     public class RdfTypeCache : IRdfTypeCache
     {
-        private readonly IDictionary<string, IEnumerable<Type>> _cache;
-        private readonly IDictionary<Type, IList<IClassMapping>> _classMappings;
-        private readonly IDictionary<Type, ISet<Type>> _directlyDerivingTypes;
+        private IDictionary<string, IEnumerable<Type>> _cache;
+        private IDictionary<Type, IList<IClassMapping>> _classMappings;
+        private IDictionary<Type, ISet<Type>> _directlyDerivingTypes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RdfTypeCache"/> class.
         /// </summary>
         public RdfTypeCache()
         {
-            _classMappings = new Dictionary<Type, IList<IClassMapping>>();
-            _directlyDerivingTypes = new Dictionary<Type, ISet<Type>>();
-            _cache = new Dictionary<string, IEnumerable<Type>>();
+            _classMappings = new ConcurrentDictionary<Type, IList<IClassMapping>>();
+            _directlyDerivingTypes = new ConcurrentDictionary<Type, ISet<Type>>();
+            _cache = new ConcurrentDictionary<string, IEnumerable<Type>>();
         }
 
         /// <inheridoc/>
@@ -40,40 +41,42 @@ namespace RomanticWeb.Mapping
             IEnumerable<Type> cached;
             var classList = entityTypes as Uri[] ?? entityTypes.ToArray();
             string cacheKey = requestedType + ";" + String.Join(";", classList.Select(item => item.ToString()));
-            if (!_cache.TryGetValue(cacheKey, out cached))
+            if (_cache.TryGetValue(cacheKey, out cached))
             {
-                if ((classList.Any()) && (_directlyDerivingTypes.ContainsKey(requestedType)))
+                return cached;
+            }
+
+            if ((!classList.Any()) || (!_directlyDerivingTypes.ContainsKey(requestedType)))
+            {
+                return _cache[cacheKey] = selectedTypes.GetMostDerivedTypes();
+            }
+
+            var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
+            while (childTypesToCheck.Any())
+            {
+                Type potentialMatch = childTypesToCheck.Dequeue();
+
+                if (_directlyDerivingTypes.ContainsKey(potentialMatch))
                 {
-                    var childTypesToCheck = new Queue<Type>(_directlyDerivingTypes[requestedType]);
-                    while (childTypesToCheck.Any())
+                    foreach (var child in _directlyDerivingTypes[potentialMatch])
                     {
-                        Type potentialMatch = childTypesToCheck.Dequeue();
-
-                        if (_directlyDerivingTypes.ContainsKey(potentialMatch))
-                        {
-                            foreach (var child in _directlyDerivingTypes[potentialMatch])
-                            {
-                                childTypesToCheck.Enqueue(child);
-                            }
-                        }
-
-                        if (_classMappings.ContainsKey(potentialMatch))
-                        {
-                            foreach (var mapping in _classMappings[potentialMatch])
-                            {
-                                if (mapping.IsMatch(classList))
-                                {
-                                    selectedTypes.Add(potentialMatch);
-                                }
-                            }
-                        }
+                        childTypesToCheck.Enqueue(child);
                     }
                 }
 
-                _cache[cacheKey] = cached = selectedTypes.GetMostDerivedTypes();
+                if (_classMappings.ContainsKey(potentialMatch))
+                {
+                    foreach (var mapping in _classMappings[potentialMatch])
+                    {
+                        if (mapping.IsMatch(classList))
+                        {
+                            selectedTypes.Add(potentialMatch);
+                        }
+                    }
+                }
             }
 
-            return cached;
+            return _cache[cacheKey] = selectedTypes.GetMostDerivedTypes();
         }
 
         /// <inheridoc/>

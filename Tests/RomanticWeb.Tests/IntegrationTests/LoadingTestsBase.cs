@@ -19,7 +19,7 @@ namespace RomanticWeb.Tests.IntegrationTests
 
         internal interface ITrackedScopes
         {
-            IList<Scope> TrackedScopes { get; }
+            IEnumerable<Scope> TrackedScopes { get; }
         }
 
         [Test]

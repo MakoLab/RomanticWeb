@@ -76,14 +76,11 @@ namespace RomanticWeb.Mapping
         [return: AllowNull]
         public static IPropertyMapping FindPropertyMapping(this IMappingsRepository mappingsRepository, Type declaringType, string propertyName)
         {
-            IEntityMapping entityMapping = mappingsRepository.FindEntityMapping(declaringType);
-            IPropertyMapping result = null;
-            if (entityMapping != null)
-            {
-                result = entityMapping.PropertyFor(propertyName);
-            }
-
-            return result;
+            return (from entityMapping in mappingsRepository
+                    where (entityMapping.EntityType == declaringType) || (declaringType.IsAssignableFrom(entityMapping.EntityType))
+                    from propertyMapping in entityMapping.Properties
+                    where propertyMapping.Name == propertyName
+                    select propertyMapping).FirstOrDefault();
         }
 
         /// <summary>Searches for entity mappings.</summary>

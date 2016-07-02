@@ -152,7 +152,7 @@ namespace RomanticWeb.DotNetRDF
                     break;
                 case ".trig":
                     _storeReader = new TriGParser();
-                    _storeWriter = new TriGWriter();
+                    _storeWriter = new TriGWriter() { CompressionLevel = -1 };
                     break;
                 case ".xml":
                     _rdfReader = new RdfXmlParser();

@@ -67,7 +67,7 @@ namespace RomanticWeb.Tests.DotNetRDF
 
             // Then
             AssertTripleExists(tripleStore);
-            AssertTripleExists(System.Text.UTF8Encoding.UTF8.GetString(stream.ToArray()));
+            AssertTripleExists(System.Text.UTF8Encoding.UTF8.GetString(stream.ToArray()), true);
         }
 
         [Test]
@@ -169,9 +169,14 @@ namespace RomanticWeb.Tests.DotNetRDF
             tripleStore.Triples.Count(item => (item.Subject is IUriNode) && (((IUriNode)item.Subject).Uri.ToString() == EntityName + (discriminator == 0 ? System.String.Empty : discriminator.ToString()))).Should().Be(1);
         }
 
-        private void AssertTripleExists(string input, int discriminator = 0)
+        private void AssertTripleExists(string input, bool withoutCompression = false)
         {
-            input.Should().MatchRegex(System.String.Format("\\<{0}\\>[ \t\n\r]+a[ \t\n\r]+\\<{1}\\>", EntityName + (discriminator == 0 ? System.String.Empty : discriminator.ToString()), Ldp.Container));
+            var statement = System.String.Format(
+                "\\<{0}\\>[ \t\n\r]+{1}[ \t\n\r]+\\<{2}\\>",
+                EntityName,
+                (withoutCompression ? "a" : String.Format("\\<{0}\\>", Rdf.type)),
+                Ldp.Container);
+            input.Should().MatchRegex(statement);
         }
 
         private void DeleteTriple(IUpdateableTripleStore tripleStore)

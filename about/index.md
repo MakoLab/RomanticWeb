@@ -8,7 +8,7 @@ title:  "About"
         <div class="col-md-6 item">
             <h1>About Romantic Web</h1>
             <p>
-                Romantic Web is an open source project developed at <a href="http://makolab.pl">MakoLab</a>. It was
+                Romantic Web is an open source project developed at <a href="https://makolab.com">MakoLab</a>. It was
                 created to ease development of MakoLab's Semantic Web projects.
             </p>
 
